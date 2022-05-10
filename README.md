@@ -9,7 +9,7 @@ Created using go version `1.17`.
 Clone the project, get into the correct folder and execute the command:
 
 ```bash
-go run main.go
+go run cmd/main.go
 ```
 
 If you want to use the component as a docker service, run:
