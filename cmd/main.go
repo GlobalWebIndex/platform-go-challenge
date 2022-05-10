@@ -6,7 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	gwi "github.com/josedelrio85/platform-go-challenge/pkg"
+	gwi "github.com/josedelrio85/platform-go-challenge/internal"
 )
 
 func main() {
