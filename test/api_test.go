@@ -12,6 +12,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
+
+	gwi "github.com/josedelrio85/platform-go-challenge/internal"
 )
 
 func TestGetFavsFromUser(t *testing.T) {
@@ -51,10 +53,10 @@ func TestGetFavsFromUser(t *testing.T) {
 		},
 	}
 
-	mer, err := NewMemoryRepository()
+	mer, err := gwi.NewMemoryRepository()
 	assert.NoError(err)
 
-	handler := Handler{
+	handler := gwi.Handler{
 		Repo: mer,
 	}
 
@@ -113,9 +115,9 @@ func TestAddNewFav(t *testing.T) {
 			Input: map[string]string{
 				"userid": uuidval,
 			},
-			Payload: Asset{
-				AssetType: TypeInsight,
-				Insight: Insight{
+			Payload: gwi.Asset{
+				AssetType: gwi.TypeInsight,
+				Insight: gwi.Insight{
 					Id:          uuid.New().String(),
 					Description: "",
 				},
@@ -125,10 +127,10 @@ func TestAddNewFav(t *testing.T) {
 		},
 	}
 
-	mer, err := NewMemoryRepository()
+	mer, err := gwi.NewMemoryRepository()
 	assert.NoError(err)
 
-	handler := Handler{
+	handler := gwi.Handler{
 		Repo: mer,
 	}
 
@@ -187,9 +189,9 @@ func TestApiUpdateFav(t *testing.T) {
 			Input: map[string]string{
 				"userid": uuidval,
 			},
-			Payload: Asset{
-				AssetType: TypeInsight,
-				Insight: Insight{
+			Payload: gwi.Asset{
+				AssetType: gwi.TypeInsight,
+				Insight: gwi.Insight{
 					Id:          uuid.New().String(),
 					Description: "",
 				},
@@ -199,10 +201,10 @@ func TestApiUpdateFav(t *testing.T) {
 		},
 	}
 
-	mer, err := NewMemoryRepository()
+	mer, err := gwi.NewMemoryRepository()
 	assert.NoError(err)
 
-	handler := Handler{
+	handler := gwi.Handler{
 		Repo: mer,
 	}
 
@@ -261,9 +263,9 @@ func TestDeleteFav(t *testing.T) {
 			Input: map[string]string{
 				"userid": uuidval,
 			},
-			Payload: Asset{
-				AssetType: TypeInsight,
-				Insight: Insight{
+			Payload: gwi.Asset{
+				AssetType: gwi.TypeInsight,
+				Insight: gwi.Insight{
 					Id:          uuid.New().String(),
 					Description: "",
 				},
@@ -273,10 +275,10 @@ func TestDeleteFav(t *testing.T) {
 		},
 	}
 
-	mer, err := NewMemoryRepository()
+	mer, err := gwi.NewMemoryRepository()
 	assert.NoError(err)
 
-	handler := Handler{
+	handler := gwi.Handler{
 		Repo: mer,
 	}
 

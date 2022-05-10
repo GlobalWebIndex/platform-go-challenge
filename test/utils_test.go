@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	gwi "github.com/josedelrio85/platform-go-challenge/internal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -46,7 +47,7 @@ func TestValidateUuid(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
-			output := ValidateUuid(test.Input)
+			output := gwi.ValidateUuid(test.Input)
 			assert.Equal(test.ExpectedResult, output)
 		})
 	}
@@ -86,7 +87,7 @@ func TestGetUuid(t *testing.T) {
 			log.Println(test.Input)
 			req := httptest.NewRequest(http.MethodGet, testServer.URL, nil)
 			req = mux.SetURLVars(req, test.Input)
-			output := GetUuid(req)
+			output := gwi.GetUuid(req)
 			assert.Equal(test.ExpectedResult, output)
 		})
 	}
@@ -111,7 +112,7 @@ func TestDecode(t *testing.T) {
 	}))
 	defer func() { testServer.Close() }()
 
-	marshaledBody, err := json.Marshal(Asset{})
+	marshaledBody, err := json.Marshal(gwi.Asset{})
 	assert.Nil(err)
 
 	tests := []struct {
@@ -136,7 +137,7 @@ func TestDecode(t *testing.T) {
 			Description: "when the input type is an Asset entity, but the body does not represent an Asset payload, should return nil element and EOF error",
 			Input: input{
 				req:  httptest.NewRequest(http.MethodGet, testServer.URL, nil),
-				tipe: Asset{},
+				tipe: gwi.Asset{},
 			},
 			ExpectedOutput: output{
 				Element: nil,
@@ -148,10 +149,10 @@ func TestDecode(t *testing.T) {
 			Description: "when the input type is an Asset entity, and the body represents a valid Asset payload, should return an Asset entity and nil error",
 			Input: input{
 				req:  httptest.NewRequest(http.MethodPost, testServer.URL, bytes.NewBuffer(marshaledBody)),
-				tipe: Asset{},
+				tipe: gwi.Asset{},
 			},
 			ExpectedOutput: output{
-				Element: Asset{},
+				Element: gwi.Asset{},
 				Error:   nil,
 			},
 			ExpectedSuccess: true,
@@ -160,7 +161,7 @@ func TestDecode(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
-			output, err := Decode(test.Input.req, test.Input.tipe)
+			output, err := gwi.Decode(test.Input.req, test.Input.tipe)
 			if test.ExpectedSuccess {
 				assert.NoError(err)
 			} else {

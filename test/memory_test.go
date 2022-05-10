@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	gwi "github.com/josedelrio85/platform-go-challenge/internal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,7 +16,7 @@ func TestAddAssetToFavs(t *testing.T) {
 
 	type input struct {
 		userid string
-		asset  Asset
+		asset  gwi.Asset
 	}
 
 	tests := []struct {
@@ -28,9 +29,9 @@ func TestAddAssetToFavs(t *testing.T) {
 			Description: "when the asset does not previously exist",
 			Input: input{
 				userid: uuid.New().String(),
-				asset: Asset{
+				asset: gwi.Asset{
 					AssetType: "chart",
-					Chart: Chart{
+					Chart: gwi.Chart{
 						Id: uuid.New().String(),
 					},
 				},
@@ -40,7 +41,7 @@ func TestAddAssetToFavs(t *testing.T) {
 		},
 	}
 
-	mer, err := NewMemoryRepository()
+	mer, err := gwi.NewMemoryRepository()
 	assert.NoError(err)
 
 	ctx := context.Background()
@@ -61,7 +62,7 @@ func TestUpdateFav(t *testing.T) {
 
 	type input struct {
 		userid string
-		asset  Asset
+		asset  gwi.Asset
 	}
 	tests := []struct {
 		Description    string
@@ -73,9 +74,9 @@ func TestUpdateFav(t *testing.T) {
 			Description: "when asset does not previously exists",
 			Input: input{
 				userid: uuid.New().String(),
-				asset: Asset{
+				asset: gwi.Asset{
 					AssetType: "chart",
-					Chart: Chart{
+					Chart: gwi.Chart{
 						Id: uuid.New().String(),
 					},
 				},
@@ -87,9 +88,9 @@ func TestUpdateFav(t *testing.T) {
 			Description: "when asset previously exists",
 			Input: input{
 				userid: uuid.New().String(),
-				asset: Asset{
+				asset: gwi.Asset{
 					AssetType: "chart",
-					Chart: Chart{
+					Chart: gwi.Chart{
 						Id: uuid.New().String(),
 					},
 				},
@@ -99,7 +100,7 @@ func TestUpdateFav(t *testing.T) {
 		},
 	}
 
-	mer, err := NewMemoryRepository()
+	mer, err := gwi.NewMemoryRepository()
 	assert.NoError(err)
 
 	ctx := context.Background()
@@ -126,7 +127,7 @@ func TestRemoveFav(t *testing.T) {
 
 	type input struct {
 		userid string
-		asset  Asset
+		asset  gwi.Asset
 	}
 	tests := []struct {
 		Description    string
@@ -138,9 +139,9 @@ func TestRemoveFav(t *testing.T) {
 			Description: "when asset does not previously exists",
 			Input: input{
 				userid: uuid.New().String(),
-				asset: Asset{
+				asset: gwi.Asset{
 					AssetType: "chart",
-					Chart: Chart{
+					Chart: gwi.Chart{
 						Id: uuid.New().String(),
 					},
 				},
@@ -152,9 +153,9 @@ func TestRemoveFav(t *testing.T) {
 			Description: "when asset previously exists",
 			Input: input{
 				userid: uuid.New().String(),
-				asset: Asset{
+				asset: gwi.Asset{
 					AssetType: "chart",
-					Chart: Chart{
+					Chart: gwi.Chart{
 						Id: uuid.New().String(),
 					},
 				},
@@ -164,7 +165,7 @@ func TestRemoveFav(t *testing.T) {
 		},
 	}
 
-	mer, err := NewMemoryRepository()
+	mer, err := gwi.NewMemoryRepository()
 	assert.NoError(err)
 
 	ctx := context.Background()
@@ -174,7 +175,7 @@ func TestRemoveFav(t *testing.T) {
 			if test.ExpectedResult {
 				mer.AddAssetToFavs(ctx, test.Input.userid, &test.Input.asset)
 			}
-			output, err := mer.removeFav(ctx, test.Input.userid, &test.Input.asset)
+			output, err := mer.RemoveFav(ctx, test.Input.userid, &test.Input.asset)
 			if test.ExpectedResult {
 				assert.NoError(err)
 			} else {
@@ -191,14 +192,14 @@ func TestRetrieveFavs(t *testing.T) {
 
 	type input struct {
 		userid string
-		asset  Asset
+		asset  gwi.Asset
 	}
 
 	tests := []struct {
 		Description    string
 		Input          input
 		ExpectedOutput error
-		ExpectedResult map[AssetType][]Asseter
+		ExpectedResult map[gwi.AssetType][]gwi.Asseter
 	}{
 		{
 			Description: "retrieve empty list of favorites",
@@ -206,11 +207,11 @@ func TestRetrieveFavs(t *testing.T) {
 				userid: uuid.New().String(),
 			},
 			ExpectedOutput: errors.New("no results"),
-			ExpectedResult: make(map[AssetType][]Asseter),
+			ExpectedResult: make(map[gwi.AssetType][]gwi.Asseter),
 		},
 	}
 
-	mer, err := NewMemoryRepository()
+	mer, err := gwi.NewMemoryRepository()
 	assert.NoError(err)
 
 	ctx := context.Background()

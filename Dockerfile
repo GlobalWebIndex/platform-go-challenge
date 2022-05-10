@@ -9,7 +9,7 @@ RUN apk update && apk add --no-cache \
 
 # Add source files and set the proper workdir |
 COPY . $GOPATH/src/github.com/josedelri85/platform-go-challenge/
-WORKDIR $GOPATH/src/github.com/josedelri85/platform-go-challenge/
+WORKDIR $GOPATH/src/github.com/josedelri85/platform-go-challenge/cmd
 
 # Enable GO Modules
 ENV GO111MODULES=on
