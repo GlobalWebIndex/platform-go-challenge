@@ -5,7 +5,7 @@ For the current project, I will use only HTTP and SQL, but the company will be a
 
 It will be like this simple code, where it represents a brain when it says hello and asks for a name. Look how seamlessly corporates the drivers with the logic.
 
-`
+```go
 package main
 
 import (
@@ -124,7 +124,7 @@ func (rd *RamDriver) RememberName(ctx context.Context, name string) error {
 	return nil
 }
 
-`
+```
 
 The same way of corporation we will follow for the current project.
 We will have an interface for the users and assets to ask for these methods.
