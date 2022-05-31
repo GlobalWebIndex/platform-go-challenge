@@ -128,13 +128,13 @@ func (rd *RamDriver) RememberName(ctx context.Context, name string) error {
 
 The same way of corporation we will follow for the current project.
 We will have an interface for the users and assets to ask for these methods.
-AddUser
-LoginUser
-AddAsset
-DeleteAsset
-UpdateAsset
-ListAssets
-FavourAnAsset
+* AddUser
+* LoginUser
+* AddAsset
+* DeleteAsset
+* UpdateAsset
+* ListAssets
+* FavourAnAsset
 
 
-For simplicity, anyone will add a user.
+For simplicity, anyone will be able to add a user. But only admin users can add/update/delete assets.
