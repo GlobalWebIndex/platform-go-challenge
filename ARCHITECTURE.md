@@ -135,3 +135,6 @@ DeleteAsset
 UpdateAsset
 ListAssets
 FavourAnAsset
+
+
+For simplicity, anyone will add a user.

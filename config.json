@@ -1,0 +1,9 @@
+{
+    "sql_db":{
+
+    },
+    "http_api":{
+        "port": 8000,
+        "jwt_secret":"secret"
+    }
+}
