@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	db, err := sqldb.NewDB()
+	db, err := sqldb.NewDB("user", "user", "127.0.0.1:3306", "mydb")
 	if err != nil {
 		log.Fatal(err)
 	}

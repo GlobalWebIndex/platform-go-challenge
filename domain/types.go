@@ -1,77 +1,106 @@
 package domain
 
-import "context"
+import (
+	"context"
+
+	"github.com/go-playground/validator/v10"
+)
 
 type Domain struct {
-	repo IDBRepository
+	validate *validator.Validate
+	repo     IDBRepository
+}
+
+type XYData struct {
+	X []interface{}
+	Y []interface{}
 }
 
 type Chart struct {
-	ID          string
-	XTitle      string
-	YTitle      string
-	Description string
-	DataJson    string
+	Title       string `validate:"required"`
+	XTitle      string `validate:"required"`
+	YTitle      string `validate:"required"`
+	Description string `validate:"required"`
+	Data        XYData
 }
 
 type Insight struct {
-	ID          string
-	Text        string
-	Description string
+	Text        string `validate:"required"`
+	Description string `validate:"required"`
 }
 
 type Audience struct {
-	AgeMax            int
-	AgeMin            int
-	Gender            string
-	Country           string
-	HoursSpent        int
-	NumberOfPurchases int
-	Description       string
+	AgeMax            int        `validate:"required,gte=1,lte=102"`
+	AgeMin            int        `validate:"required,gte=1,lte=102"`
+	Gender            GenderType `validate:"required"`
+	Country           string     `validate:"required"`
+	HoursSpent        int        `validate:"required,gte=1,lte=24"`
+	NumberOfPurchases int        `validate:"required,gte=1,lte=100"`
+	Description       string     `validate:"required"`
 }
+
+type GenderType string
+
+const (
+	MaleGenderType   = GenderType("male")
+	FemaleGenderType = GenderType("female")
+)
 
 type AssetType string
 
 const (
-	ChartAssetType    = AssetType("chart")
 	InsightAssetType  = AssetType("insight")
 	AudienceAssetType = AssetType("audience")
+	ChartAssetType    = AssetType("chart")
 )
 
 type Asset struct {
-	AssetType AssetType
-	Data      interface{}
+	ID   uint
+	Type AssetType
+	Data interface{}
 }
+
 type QueryAssets struct {
+	Limit  int       `validate:"required,gte=1"`
+	LastID uint      `validate:"required,gte=1"`
+	Type   AssetType `validate:"required"`
+}
+
+type ListedAssets struct {
+	Limit   int
+	FirstID uint
+	LastID  uint
+	Type    AssetType
+	Assets  []Asset
 }
 
 type User struct {
-	Username string
-	Password string
+	Username string `validate:"required"`
+	Password string `validate:"required"`
 	IsAdmin  bool
 }
 
 type LoginCredentials struct {
-	Username string
-	Password string
+	Username string `validate:"required"`
+	Password string `validate:"required"`
 }
 
 type IDomain interface {
 	AddAsset(ctx context.Context, asset Asset) error
-	DeleteAsset(ctx context.Context, assetID string) error
-	UpdateAsset(ctx context.Context, assetID string, asset Asset) error
-	ListAssets(ctx context.Context, userID string, query QueryAssets) error
-	FavourAnAsset(ctx context.Context, userID, assetID string) error
-	CreateUser(ctx context.Context, user User) error
+	DeleteAsset(ctx context.Context, assetID uint) error
+	UpdateAsset(ctx context.Context, assetID uint, asset Asset) error
+	ListAssets(ctx context.Context, userID uint, query QueryAssets) (*ListedAssets, error)
+	FavourAnAsset(ctx context.Context, userID, assetID uint) error
+	CreateUser(ctx context.Context, user User) (*User, error)
 	LoginUser(ctx context.Context, cred LoginCredentials) error
 }
 
 type IDBRepository interface {
 	AddAsset(ctx context.Context, asset Asset) (*Asset, error)
-	DeleteAsset(ctx context.Context, assetID string) error
+	DeleteAsset(ctx context.Context, assetID uint) error
 	UpdateAsset(ctx context.Context, asset Asset) (*Asset, error)
-	ListAssets(ctx context.Context, userID string, query QueryAssets) error
-	FavourAnAsset(ctx context.Context, userID, assetID string) (string, error)
+	ListAssets(ctx context.Context, userID uint, query QueryAssets) error
+	FavourAnAsset(ctx context.Context, userID, assetID uint) (uint, error)
 	CreateUser(ctx context.Context, user User) (*User, error)
 	FindUser(ctx context.Context, cred LoginCredentials) (*User, error)
 }
