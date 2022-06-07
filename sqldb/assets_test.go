@@ -29,26 +29,25 @@ func TestCRUDInsight(t *testing.T) {
 	db, teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 	ctx := context.Background()
-	asset, err := db.AddAsset(ctx, domain.Asset{Type: domain.InsightAssetType,
+	asset, err := db.AddAsset(ctx, domain.Asset{
 		Data: &domain.Insight{
 			Text:        "40% of millenials spend more than 3hours on social media daily",
 			Description: "example",
 		}})
 	assert.NotNil(t, asset)
 	assert.Nil(t, err)
-	assert.Equal(t, 1, asset.ID)
+	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "example", asset.Data.(*domain.Insight).Description)
 
 	asset, err = db.UpdateAsset(ctx, domain.Asset{
-		ID:   1,
-		Type: domain.InsightAssetType,
+		ID: 1,
 		Data: &domain.Insight{
 			Text:        "100% of millenials spend more than 3hours on social media daily",
 			Description: "updated example",
 		}})
 	assert.NotNil(t, asset)
 	assert.Nil(t, err)
-	assert.Equal(t, 1, asset.ID)
+	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "updated example", asset.Data.(*domain.Insight).Description)
 
 	err = db.DeleteAsset(ctx, asset.ID)

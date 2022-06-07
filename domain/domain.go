@@ -23,6 +23,7 @@ func (d *Domain) validateAsset(asset Asset) error {
 		if err != nil {
 			return fmt.Errorf("%w: %v", ErrWrongAssetInput, err)
 		}
+
 	case *Chart:
 		err := d.validate.Struct(v)
 		if err != nil {

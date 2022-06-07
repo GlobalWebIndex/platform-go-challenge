@@ -13,6 +13,9 @@ func (d *MockDB) DeleteAsset(ctx context.Context, assetID uint) error {
 func (d *MockDB) UpdateAsset(ctx context.Context, asset Asset) (*Asset, error) {
 	return nil, nil
 }
+func (d *MockDB) GetAsset(ctx context.Context, at AssetType, assetID uint) (*Asset, error) {
+	return nil, nil
+}
 func (d *MockDB) ListAssets(ctx context.Context, userID uint, query QueryAssets) error {
 	return nil
 }

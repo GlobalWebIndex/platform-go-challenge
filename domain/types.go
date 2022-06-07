@@ -56,7 +56,6 @@ const (
 
 type Asset struct {
 	ID   uint
-	Type AssetType
 	Data interface{}
 }
 
@@ -99,6 +98,7 @@ type IDBRepository interface {
 	AddAsset(ctx context.Context, asset Asset) (*Asset, error)
 	DeleteAsset(ctx context.Context, assetID uint) error
 	UpdateAsset(ctx context.Context, asset Asset) (*Asset, error)
+	GetAsset(ctx context.Context, at AssetType, assetID uint) (*Asset, error)
 	ListAssets(ctx context.Context, userID uint, query QueryAssets) error
 	FavourAnAsset(ctx context.Context, userID, assetID uint) (uint, error)
 	CreateUser(ctx context.Context, user User) (*User, error)
