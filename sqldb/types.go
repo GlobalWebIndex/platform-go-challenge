@@ -27,7 +27,7 @@ type Chart struct {
 	Title       string         `gorm:"column:title"`
 	XTitle      string         `gorm:"column:x_title"`
 	YTitle      string         `gorm:"column:y_title"`
-	Description string         `gorm:"column:title"`
+	Description string         `gorm:"column:description"`
 	Data        datatypes.JSON `gorm:"column:data"`
 }
 

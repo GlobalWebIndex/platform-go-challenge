@@ -68,6 +68,7 @@ func (d *DB) UpdateAsset(ctx context.Context, asset domain.Asset) (*domain.Asset
 		}
 		newAsset.ID = ch.ID
 		newAsset.Data = ch.ToDomain()
+
 	case *domain.Audience:
 		au := &Audience{}
 		d.db.First(au, asset.ID)
@@ -86,16 +87,61 @@ func (d *DB) UpdateAsset(ctx context.Context, asset domain.Asset) (*domain.Asset
 }
 
 func (d *DB) GetAsset(ctx context.Context, at domain.AssetType, assetID uint) (*domain.Asset, error) {
+	newAsset := &domain.Asset{}
 	switch at {
 	case domain.InsightAssetType:
+		in := &Insight{}
+		err := d.db.First(in, assetID).Error
+		if err != nil {
+			return nil, err
+		}
+		newAsset.ID = in.ID
+		newAsset.Data = in.ToDomain()
 	case domain.ChartAssetType:
+		ch := &Chart{}
+		err := d.db.First(ch, assetID).Error
+		if err != nil {
+			return nil, err
+		}
+		newAsset.ID = ch.ID
+		newAsset.Data = ch.ToDomain()
 	case domain.AudienceAssetType:
-
+		au := &Audience{}
+		err := d.db.First(au, assetID).Error
+		if err != nil {
+			return nil, err
+		}
+		newAsset.ID = au.ID
+		newAsset.Data = au.ToDomain()
+	default:
+		return nil, errors.New("this asset type does not exist")
 	}
-	return nil, nil
+	return newAsset, nil
 }
 
-func (d *DB) DeleteAsset(ctx context.Context, assetID uint) error {
+func (d *DB) DeleteAsset(ctx context.Context, at domain.AssetType, assetID uint) error {
+	switch at {
+	case domain.InsightAssetType:
+		err := d.db.Delete(&Insight{}, assetID).Error
+		if err != nil {
+			return err
+		}
+
+	case domain.ChartAssetType:
+		err := d.db.Delete(&Chart{}, assetID).Error
+		if err != nil {
+			return err
+		}
+
+	case domain.AudienceAssetType:
+		err := d.db.Delete(&Audience{}, assetID).Error
+		if err != nil {
+			return err
+		}
+
+	default:
+		return errors.New("this asset type does not exist")
+	}
 	return nil
 }
 

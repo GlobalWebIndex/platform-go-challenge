@@ -7,7 +7,7 @@ type MockDB struct{}
 func (d *MockDB) AddAsset(ctx context.Context, asset Asset) (*Asset, error) {
 	return nil, nil
 }
-func (d *MockDB) DeleteAsset(ctx context.Context, assetID uint) error {
+func (d *MockDB) DeleteAsset(ctx context.Context, at AssetType, assetID uint) error {
 	return nil
 }
 func (d *MockDB) UpdateAsset(ctx context.Context, asset Asset) (*Asset, error) {

@@ -96,7 +96,7 @@ type IDomain interface {
 
 type IDBRepository interface {
 	AddAsset(ctx context.Context, asset Asset) (*Asset, error)
-	DeleteAsset(ctx context.Context, assetID uint) error
+	DeleteAsset(ctx context.Context, at AssetType, assetID uint) error
 	UpdateAsset(ctx context.Context, asset Asset) (*Asset, error)
 	GetAsset(ctx context.Context, at AssetType, assetID uint) (*Asset, error)
 	ListAssets(ctx context.Context, userID uint, query QueryAssets) error
