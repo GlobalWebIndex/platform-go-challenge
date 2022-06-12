@@ -2,6 +2,7 @@ package sqldb
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"platform-go-challenge/domain"
 	"testing"
@@ -153,4 +154,51 @@ func TestCRUDAudience(t *testing.T) {
 
 	_, err = db.GetAsset(ctx, domain.AudienceAssetType, asset.ID)
 	assert.NotNil(t, err)
+}
+
+func TestListInsights(t *testing.T) {
+	db, teardownSuite := setupSuite(t)
+	defer teardownSuite(t)
+	ctx := context.Background()
+	for i := 1; i <= 100; i++ {
+		desc := fmt.Sprintf("example %d", i)
+		asset, err := db.AddAsset(ctx, domain.Asset{
+			Data: &domain.Insight{
+				Text:        "40% of millenials spend more than 3hours on social media daily",
+				Description: desc,
+			}})
+		assert.NotNil(t, asset)
+		assert.NoError(t, err)
+		assert.Equal(t, uint(i), asset.ID)
+		assert.Equal(t, desc, asset.Data.(*domain.Insight).Description)
+	}
+	qa := domain.QueryAssets{
+		Limit:  10,
+		LastID: 0,
+		Type:   domain.InsightAssetType,
+		IsDesc: false,
+	}
+	la, err := db.ListAssets(ctx, qa)
+	fmt.Println(la)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, la)
+	assert.Equal(t, 10, len(la.Assets))
+	assert.Equal(t, uint(1), la.FirstID)
+	assert.Equal(t, uint(10), la.LastID)
+
+	qa = domain.QueryAssets{
+		Limit:  10,
+		LastID: 101,
+		Type:   domain.InsightAssetType,
+		IsDesc: true,
+	}
+	la, err = db.ListAssets(ctx, qa)
+	fmt.Println(la)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, la)
+	assert.Equal(t, 10, len(la.Assets))
+	assert.Equal(t, uint(100), la.FirstID)
+	assert.Equal(t, uint(91), la.LastID)
 }

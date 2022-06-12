@@ -85,7 +85,7 @@ func (d *Domain) ListAssets(ctx context.Context, userID uint, query QueryAssets)
 	}
 	return nil, nil
 }
-func (d *Domain) FavourAnAsset(ctx context.Context, userID, assetID uint) error {
+func (d *Domain) FavouriteAsset(ctx context.Context, userID, assetID uint, isFavourite bool) error {
 	return nil
 }
 func (d *Domain) CreateUser(ctx context.Context, user User) (*User, error) {

@@ -40,7 +40,7 @@ type FavouriteAsset struct {
 
 type User struct {
 	gorm.Model
-	Username   string `gorm:"column:username"`
-	PassHashed string `gorm:"column:pass_hashed"`
-	IsAdmin    bool   `gorm:"is_admin"`
+	Username string `gorm:"column:username"`
+	Password string `gorm:"column:password"`
+	IsAdmin  bool   `gorm:"is_admin"`
 }

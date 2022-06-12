@@ -145,9 +145,37 @@ func (d *DB) DeleteAsset(ctx context.Context, at domain.AssetType, assetID uint)
 	return nil
 }
 
-func (d *DB) ListAssets(ctx context.Context, userID uint, query domain.QueryAssets) error {
-	return nil
+func (d *DB) ListAssets(ctx context.Context, query domain.QueryAssets) (*domain.ListedAssets, error) {
+	gormQuery := d.db
+	if query.IsDesc {
+		gormQuery = gormQuery.Where("id < ?", query.LastID).Order("id desc")
+	} else {
+		gormQuery = gormQuery.Where("id > ?", query.LastID)
+	}
+	assets := []domain.Asset{}
+	switch query.Type {
+	case domain.InsightAssetType:
+		ins := []Insight{}
+		err := gormQuery.Limit(query.Limit).Find(&ins).Error
+		if err != nil {
+			return nil, err
+		}
+		assets = listRowsToAssets(ins)
+	}
+	var firstID uint = 0
+	var lastID uint = 0
+	if len(assets) > 0 {
+		firstID = uint(assets[0].ID)
+		lastID = uint(assets[len(assets)-1].ID)
+	}
+
+	dl := domain.ListedAssets{
+		FirstID: firstID,
+		LastID:  lastID,
+		Assets:  assets,
+	}
+	return &dl, nil
 }
-func (d *DB) FavourAnAsset(ctx context.Context, userID, assetID uint) (uint, error) {
+func (d *DB) FavouriteAsset(ctx context.Context, userID, assetID uint, isFavourite bool) (uint, error) {
 	return 0, nil
 }

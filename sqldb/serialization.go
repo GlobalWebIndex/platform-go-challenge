@@ -60,3 +60,28 @@ func (au *Audience) ToDomain() *domain.Audience {
 		Description:       au.Description,
 	}
 }
+
+func (u *User) FromDomain(user *domain.User) {
+	u.Username = user.Username
+	u.Password = user.Password
+	u.IsAdmin = user.IsAdmin
+}
+
+func (u *User) ToDomain() *domain.User {
+	return &domain.User{
+		Username: u.Username,
+		Password: u.Password,
+		ID:       u.ID,
+	}
+}
+
+func listRowsToAssets(rows interface{}) []domain.Asset {
+	assets := []domain.Asset{}
+	switch ls := rows.(type) {
+	case []Insight:
+		for _, v := range ls {
+			assets = append(assets, domain.Asset{ID: v.ID, Data: v.ToDomain()})
+		}
+	}
+	return assets
+}
