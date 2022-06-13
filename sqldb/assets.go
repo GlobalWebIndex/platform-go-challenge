@@ -161,6 +161,20 @@ func (d *DB) ListAssets(ctx context.Context, query domain.QueryAssets) (*domain.
 			return nil, err
 		}
 		assets = listRowsToAssets(ins)
+	case domain.ChartAssetType:
+		chs := []Chart{}
+		err := gormQuery.Limit(query.Limit).Find(&chs).Error
+		if err != nil {
+			return nil, err
+		}
+		assets = listRowsToAssets(chs)
+	case domain.AudienceAssetType:
+		aus := []Audience{}
+		err := gormQuery.Limit(query.Limit).Find(&aus).Error
+		if err != nil {
+			return nil, err
+		}
+		assets = listRowsToAssets(aus)
 	}
 	var firstID uint = 0
 	var lastID uint = 0
@@ -172,10 +186,94 @@ func (d *DB) ListAssets(ctx context.Context, query domain.QueryAssets) (*domain.
 	dl := domain.ListedAssets{
 		FirstID: firstID,
 		LastID:  lastID,
+		Limit:   query.Limit,
 		Assets:  assets,
 	}
 	return &dl, nil
 }
-func (d *DB) FavouriteAsset(ctx context.Context, userID, assetID uint, isFavourite bool) (uint, error) {
-	return 0, nil
+
+func (d *DB) FavouriteAsset(ctx context.Context, userID, assetID uint, at domain.AssetType, isFavourite bool) (uint, error) {
+	var nid uint = 0
+	var err error
+	switch at {
+	case domain.InsightAssetType:
+		if isFavourite {
+			count := int64(0)
+			d.db.Model(FavouriteInsight{}).Where("user_id = ? AND insight_id = ? ", userID, assetID).Count(&count)
+			if count == 0 {
+				in := &FavouriteInsight{UserID: userID, InsightID: assetID}
+				err = d.db.Create(in).Error
+				nid = in.ID
+			} else {
+				err = errors.New("record exists")
+			}
+		} else {
+			in := &FavouriteInsight{}
+			err = d.db.Where("user_id = ? AND insight_id = ? ", userID, assetID).Unscoped().Delete(in).Error
+		}
+	case domain.ChartAssetType:
+		if isFavourite {
+			count := int64(0)
+			d.db.Model(FavouriteChart{}).Where("user_id = ? AND chart_id = ? ", userID, assetID).Count(&count)
+			if count == 0 {
+				ch := &FavouriteChart{UserID: userID, ChartID: assetID}
+				err = d.db.Create(ch).Error
+				nid = ch.ID
+			} else {
+				err = errors.New("record exists")
+			}
+		} else {
+			in := &FavouriteChart{}
+			err = d.db.Where("user_id = ? AND chart_id = ? ", userID, assetID).Unscoped().Delete(in).Error
+		}
+	case domain.AudienceAssetType:
+		if isFavourite {
+			count := int64(0)
+			d.db.Model(FavouriteAudience{}).Where("user_id = ? AND audience_id = ? ", userID, assetID).Count(&count)
+			if count == 0 {
+				au := &FavouriteAudience{UserID: userID, AudienceID: assetID}
+				err = d.db.Create(au).Error
+				nid = au.ID
+			} else {
+				err = errors.New("record exists")
+			}
+		} else {
+			in := &FavouriteAudience{}
+			err = d.db.Where("user_id = ? AND audience_id = ? ", userID, assetID).Unscoped().Delete(in).Error
+		}
+	}
+	if err != nil {
+		return 0, err
+	}
+
+	return nid, nil
+}
+
+func (d *DB) ListFavouriteAssets(ctx context.Context, userID uint, query domain.QueryAssets) (*domain.ListedAssets, error) {
+	var aus []Audience
+	gormQuery := d.db.Model(FavouriteAudience{}).Select("audiences.*").
+		Joins("JOIN users ON favourite_audiences.user_id = users.id AND favourite_audiences.user_id =? ", userID)
+	if query.IsDesc {
+		gormQuery = gormQuery.Joins("JOIN audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id < ?", query.LastID).Order("audiences.id desc")
+	} else {
+		gormQuery = gormQuery.Joins("JOIN audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id > ?", query.LastID)
+	}
+
+	gormQuery.Limit(query.Limit).Find(&aus)
+	assets := listRowsToAssets(aus)
+	var firstID uint = 0
+	var lastID uint = 0
+	if len(assets) > 0 {
+		firstID = uint(assets[0].ID)
+		lastID = uint(assets[len(assets)-1].ID)
+	}
+	la := domain.ListedAssets{
+		FirstID: firstID,
+		LastID:  lastID,
+		Limit:   query.Limit,
+		Type:    query.Type,
+		Assets:  assets,
+	}
+
+	return &la, nil
 }

@@ -19,10 +19,12 @@ func (d *MockDB) GetAsset(ctx context.Context, at AssetType, assetID uint) (*Ass
 func (d *MockDB) ListAssets(ctx context.Context, query QueryAssets) (*ListedAssets, error) {
 	return nil, nil
 }
-func (d *MockDB) FavouriteAsset(ctx context.Context, userID, assetID uint, isFavourite bool) (uint, error) {
+func (d *MockDB) FavouriteAsset(ctx context.Context, userID, assetID uint, at AssetType, isFavourite bool) (uint, error) {
 	return 0, nil
 }
-
+func (d *MockDB) ListFavouriteAssets(ctx context.Context, userID uint, query QueryAssets) (*ListedAssets, error) {
+	return nil, nil
+}
 func (d *MockDB) AddUser(ctx context.Context, user User) (*User, error) {
 	return nil, nil
 }

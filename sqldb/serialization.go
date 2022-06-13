@@ -27,6 +27,10 @@ func (c *Chart) ToDomain() *domain.Chart {
 	return &asset
 }
 
+func (c *Chart) GetID() uint {
+	return c.ID
+}
+
 func (in *Insight) FromDomain(asset *domain.Insight) {
 	in.Text = asset.Text
 	in.Description = asset.Description
@@ -37,6 +41,10 @@ func (in *Insight) ToDomain() *domain.Insight {
 		Text:        in.Text,
 		Description: in.Description,
 	}
+}
+
+func (in *Insight) GetID() uint {
+	return in.ID
 }
 
 func (au *Audience) FromDomain(asset *domain.Audience) {
@@ -61,10 +69,18 @@ func (au *Audience) ToDomain() *domain.Audience {
 	}
 }
 
+func (au *Audience) GetID() uint {
+	return au.ID
+}
+
 func (u *User) FromDomain(user *domain.User) {
 	u.Username = user.Username
 	u.Password = user.Password
 	u.IsAdmin = user.IsAdmin
+}
+
+func (u *User) GetID() uint {
+	return u.ID
 }
 
 func (u *User) ToDomain() *domain.User {
@@ -80,7 +96,15 @@ func listRowsToAssets(rows interface{}) []domain.Asset {
 	switch ls := rows.(type) {
 	case []Insight:
 		for _, v := range ls {
-			assets = append(assets, domain.Asset{ID: v.ID, Data: v.ToDomain()})
+			assets = append(assets, domain.Asset{ID: v.GetID(), Data: v.ToDomain()})
+		}
+	case []Chart:
+		for _, v := range ls {
+			assets = append(assets, domain.Asset{ID: v.GetID(), Data: v.ToDomain()})
+		}
+	case []Audience:
+		for _, v := range ls {
+			assets = append(assets, domain.Asset{ID: v.GetID(), Data: v.ToDomain()})
 		}
 	}
 	return assets

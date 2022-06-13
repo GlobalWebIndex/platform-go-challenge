@@ -23,7 +23,9 @@ func (db *DB) createTables() {
 	db.db.AutoMigrate(&Insight{})
 	db.db.AutoMigrate(&Audience{})
 	db.db.AutoMigrate(&Chart{})
-	db.db.AutoMigrate(&FavouriteAsset{})
+	db.db.AutoMigrate(&FavouriteInsight{})
+	db.db.AutoMigrate(&FavouriteChart{})
+	db.db.AutoMigrate(&FavouriteAudience{})
 }
 
 func (db *DB) dropTablesIfExist() {
@@ -52,8 +54,20 @@ func (db *DB) dropTablesIfExist() {
 			log.Println("Error DB: ", err)
 		}
 	}
-	if mgt.HasTable(&FavouriteAsset{}) {
-		err := mgt.DropTable(&FavouriteAsset{})
+	if mgt.HasTable(&FavouriteInsight{}) {
+		err := mgt.DropTable(&FavouriteInsight{})
+		if err != nil {
+			log.Println("Error DB: ", err)
+		}
+	}
+	if mgt.HasTable(&FavouriteChart{}) {
+		err := mgt.DropTable(&FavouriteChart{})
+		if err != nil {
+			log.Println("Error DB: ", err)
+		}
+	}
+	if mgt.HasTable(&FavouriteAudience{}) {
+		err := mgt.DropTable(&FavouriteAudience{})
 		if err != nil {
 			log.Println("Error DB: ", err)
 		}

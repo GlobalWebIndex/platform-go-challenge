@@ -102,7 +102,8 @@ type IDBRepository interface {
 	UpdateAsset(ctx context.Context, asset Asset) (*Asset, error)
 	GetAsset(ctx context.Context, at AssetType, assetID uint) (*Asset, error)
 	ListAssets(ctx context.Context, query QueryAssets) (*ListedAssets, error)
-	FavouriteAsset(ctx context.Context, userID, assetID uint, isFavourite bool) (uint, error)
+	FavouriteAsset(ctx context.Context, userID, assetID uint, at AssetType, isFavourite bool) (uint, error)
+	ListFavouriteAssets(ctx context.Context, userID uint, query QueryAssets) (*ListedAssets, error)
 	AddUser(ctx context.Context, user User) (*User, error)
 	FindUser(ctx context.Context, cred LoginCredentials) (*User, error)
 }

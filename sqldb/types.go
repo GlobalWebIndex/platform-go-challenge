@@ -22,6 +22,11 @@ type Audience struct {
 	Description       string `gorm:"column:description"`
 }
 
+type AudienceWithFavour struct {
+	Audience
+	IsFavour bool `gorm:"column:is_favour"`
+}
+
 type Chart struct {
 	gorm.Model
 	Title       string         `gorm:"column:title"`
@@ -31,11 +36,22 @@ type Chart struct {
 	Data        datatypes.JSON `gorm:"column:data"`
 }
 
-type FavouriteAsset struct {
+type FavouriteInsight struct {
 	gorm.Model
-	AssetType string `gorm:"column:asset_type"`
-	AssetID   uint   `gorm:"column:asset_id"`
-	UserID    uint   `gorm:"column:user_id"`
+	InsightID uint `gorm:"column:insight_id"`
+	UserID    uint `gorm:"column:user_id"`
+}
+
+type FavouriteChart struct {
+	gorm.Model
+	ChartID uint `gorm:"column:chart_id"`
+	UserID  uint `gorm:"column:user_id"`
+}
+
+type FavouriteAudience struct {
+	gorm.Model
+	AudienceID uint `gorm:"column:audience_id"`
+	UserID     uint `gorm:"column:user_id"`
 }
 
 type User struct {
