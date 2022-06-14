@@ -122,19 +122,19 @@ func (d *DB) GetAsset(ctx context.Context, at domain.AssetType, assetID uint) (*
 func (d *DB) DeleteAsset(ctx context.Context, at domain.AssetType, assetID uint) error {
 	switch at {
 	case domain.InsightAssetType:
-		err := d.db.Delete(&Insight{}, assetID).Error
+		err := d.db.Unscoped().Delete(&Insight{}, assetID).Error
 		if err != nil {
 			return err
 		}
 
 	case domain.ChartAssetType:
-		err := d.db.Delete(&Chart{}, assetID).Error
+		err := d.db.Unscoped().Delete(&Chart{}, assetID).Error
 		if err != nil {
 			return err
 		}
 
 	case domain.AudienceAssetType:
-		err := d.db.Delete(&Audience{}, assetID).Error
+		err := d.db.Unscoped().Delete(&Audience{}, assetID).Error
 		if err != nil {
 			return err
 		}
@@ -249,17 +249,24 @@ func (d *DB) FavouriteAsset(ctx context.Context, userID, assetID uint, at domain
 	return nid, nil
 }
 
-func (d *DB) ListFavouriteAssets(ctx context.Context, userID uint, query domain.QueryAssets) (*domain.ListedAssets, error) {
-	var aus []Audience
-	gormQuery := d.db.Model(FavouriteAudience{}).Select("audiences.*").
-		Joins("JOIN users ON favourite_audiences.user_id = users.id AND favourite_audiences.user_id =? ", userID)
-	if query.IsDesc {
-		gormQuery = gormQuery.Joins("JOIN audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id < ?", query.LastID).Order("audiences.id desc")
+func (d *DB) ListFavouriteAssets(ctx context.Context, userID uint, onlyFav bool, query domain.QueryAssets) (*domain.ListedAssets, error) {
+	var aus []AudienceWithFavour
+	gormQuery := d.db.Model(Audience{}).Select("audiences.*, (favourite_audiences.user_id = ?) AS is_favourite", userID)
+	if onlyFav {
+		if query.IsDesc {
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id < ?", query.LastID).Order("audiences.id desc")
+		} else {
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id > ?", query.LastID).Order("audiences.id asc")
+		}
 	} else {
-		gormQuery = gormQuery.Joins("JOIN audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id > ?", query.LastID)
+		if query.IsDesc {
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id < ?", query.LastID).Order("audiences.id desc")
+		} else {
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id > ?", query.LastID).Order("audiences.id asc")
+		}
 	}
 
-	gormQuery.Limit(query.Limit).Find(&aus)
+	gormQuery.Limit(query.Limit).Unscoped().Find(&aus)
 	assets := listRowsToAssets(aus)
 	var firstID uint = 0
 	var lastID uint = 0

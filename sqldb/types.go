@@ -24,7 +24,7 @@ type Audience struct {
 
 type AudienceWithFavour struct {
 	Audience
-	IsFavour bool `gorm:"column:is_favour"`
+	IsFavour bool `gorm:"column:is_favourite"`
 }
 
 type Chart struct {

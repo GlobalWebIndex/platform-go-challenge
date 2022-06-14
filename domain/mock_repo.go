@@ -22,7 +22,7 @@ func (d *MockDB) ListAssets(ctx context.Context, query QueryAssets) (*ListedAsse
 func (d *MockDB) FavouriteAsset(ctx context.Context, userID, assetID uint, at AssetType, isFavourite bool) (uint, error) {
 	return 0, nil
 }
-func (d *MockDB) ListFavouriteAssets(ctx context.Context, userID uint, query QueryAssets) (*ListedAssets, error) {
+func (d *MockDB) ListFavouriteAssets(ctx context.Context, userID uint, onlyFav bool, query QueryAssets) (*ListedAssets, error) {
 	return nil, nil
 }
 func (d *MockDB) AddUser(ctx context.Context, user User) (*User, error) {

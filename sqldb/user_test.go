@@ -187,10 +187,11 @@ func TestListFavouriteAudiences(t *testing.T) {
 		Type:   domain.AudienceAssetType,
 		IsDesc: false,
 	}
-	la, err := db.ListFavouriteAssets(ctx, user.ID, qa)
+	la, err := db.ListFavouriteAssets(ctx, user.ID, true, qa)
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
+	assert.True(t, la.Assets[0].IsFavourite)
 	assert.Equal(t, uint(2), la.FirstID)
 	assert.Equal(t, uint(20), la.LastID)
 
@@ -200,12 +201,28 @@ func TestListFavouriteAudiences(t *testing.T) {
 		Type:   domain.AudienceAssetType,
 		IsDesc: true,
 	}
-	la, err = db.ListFavouriteAssets(ctx, user.ID, qa)
-	fmt.Println(counter, la, err)
-
+	la, err = db.ListFavouriteAssets(ctx, user.ID, true, qa)
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
+	assert.True(t, la.Assets[0].IsFavourite)
 	assert.Equal(t, uint(100), la.FirstID)
 	assert.Equal(t, uint(82), la.LastID)
+
+	qa = domain.QueryAssets{
+		Limit:  10,
+		LastID: 0,
+		Type:   domain.AudienceAssetType,
+		IsDesc: false,
+	}
+
+	la, err = db.ListFavouriteAssets(ctx, user.ID, false, qa)
+	fmt.Println(la)
+	assert.NoError(t, err)
+	assert.NotNil(t, la)
+	assert.Equal(t, 10, len(la.Assets))
+	assert.False(t, la.Assets[0].IsFavourite)
+	assert.True(t, la.Assets[1].IsFavourite)
+	assert.Equal(t, uint(1), la.FirstID)
+	assert.Equal(t, uint(10), la.LastID)
 }

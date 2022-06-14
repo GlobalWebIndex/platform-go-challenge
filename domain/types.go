@@ -55,8 +55,9 @@ const (
 )
 
 type Asset struct {
-	ID   uint
-	Data interface{}
+	ID          uint
+	IsFavourite bool
+	Data        interface{}
 }
 
 type QueryAssets struct {
@@ -103,7 +104,7 @@ type IDBRepository interface {
 	GetAsset(ctx context.Context, at AssetType, assetID uint) (*Asset, error)
 	ListAssets(ctx context.Context, query QueryAssets) (*ListedAssets, error)
 	FavouriteAsset(ctx context.Context, userID, assetID uint, at AssetType, isFavourite bool) (uint, error)
-	ListFavouriteAssets(ctx context.Context, userID uint, query QueryAssets) (*ListedAssets, error)
+	ListFavouriteAssets(ctx context.Context, userID uint, onlyFav bool, query QueryAssets) (*ListedAssets, error)
 	AddUser(ctx context.Context, user User) (*User, error)
 	FindUser(ctx context.Context, cred LoginCredentials) (*User, error)
 }
