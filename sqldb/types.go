@@ -27,6 +27,16 @@ type AudienceWithFavour struct {
 	IsFavour bool `gorm:"column:is_favourite"`
 }
 
+type ChartWithFavour struct {
+	Chart
+	IsFavour bool `gorm:"column:is_favourite"`
+}
+
+type InsightWithFavour struct {
+	Insight
+	IsFavour bool `gorm:"column:is_favourite"`
+}
+
 type Chart struct {
 	gorm.Model
 	Title       string         `gorm:"column:title"`

@@ -249,7 +249,7 @@ func (d *DB) FavouriteAsset(ctx context.Context, userID, assetID uint, at domain
 	return nid, nil
 }
 
-func (d *DB) ListFavouriteAssets(ctx context.Context, userID uint, onlyFav bool, query domain.QueryAssets) (*domain.ListedAssets, error) {
+func (d *DB) listFavouriteAudiences(ctx context.Context, userID uint, onlyFav bool, query domain.QueryAssets) (*domain.ListedAssets, error) {
 	var aus []AudienceWithFavour
 	gormQuery := d.db.Model(Audience{}).Select("audiences.*, (favourite_audiences.user_id = ?) AS is_favourite", userID)
 	if onlyFav {
@@ -283,4 +283,88 @@ func (d *DB) ListFavouriteAssets(ctx context.Context, userID uint, onlyFav bool,
 	}
 
 	return &la, nil
+}
+
+func (d *DB) listFavouriteInsights(ctx context.Context, userID uint, onlyFav bool, query domain.QueryAssets) (*domain.ListedAssets, error) {
+	var ins []InsightWithFavour
+	gormQuery := d.db.Model(Insight{}).Select("insights.*, (favourite_insights.user_id = ?) AS is_favourite", userID)
+	if onlyFav {
+		if query.IsDesc {
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id < ?", query.LastID).Order("insights.id desc")
+		} else {
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id > ?", query.LastID).Order("insights.id asc")
+		}
+	} else {
+		if query.IsDesc {
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id < ?", query.LastID).Order("insights.id desc")
+		} else {
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id > ?", query.LastID).Order("insights.id asc")
+		}
+	}
+
+	gormQuery.Limit(query.Limit).Unscoped().Find(&ins)
+	assets := listRowsToAssets(ins)
+	var firstID uint = 0
+	var lastID uint = 0
+	if len(assets) > 0 {
+		firstID = uint(assets[0].ID)
+		lastID = uint(assets[len(assets)-1].ID)
+	}
+	la := domain.ListedAssets{
+		FirstID: firstID,
+		LastID:  lastID,
+		Limit:   query.Limit,
+		Type:    query.Type,
+		Assets:  assets,
+	}
+
+	return &la, nil
+}
+
+func (d *DB) listFavouriteCharts(ctx context.Context, userID uint, onlyFav bool, query domain.QueryAssets) (*domain.ListedAssets, error) {
+	var chs []ChartWithFavour
+	gormQuery := d.db.Model(Chart{}).Select("charts.*, (favourite_charts.user_id = ?) AS is_favourite", userID)
+	if onlyFav {
+		if query.IsDesc {
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id < ?", query.LastID).Order("charts.id desc")
+		} else {
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id > ?", query.LastID).Order("charts.id asc")
+		}
+	} else {
+		if query.IsDesc {
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id < ?", query.LastID).Order("charts.id desc")
+		} else {
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id > ?", query.LastID).Order("charts.id asc")
+		}
+	}
+
+	gormQuery.Limit(query.Limit).Unscoped().Find(&chs)
+	assets := listRowsToAssets(chs)
+	var firstID uint = 0
+	var lastID uint = 0
+	if len(assets) > 0 {
+		firstID = uint(assets[0].ID)
+		lastID = uint(assets[len(assets)-1].ID)
+	}
+	la := domain.ListedAssets{
+		FirstID: firstID,
+		LastID:  lastID,
+		Limit:   query.Limit,
+		Type:    query.Type,
+		Assets:  assets,
+	}
+
+	return &la, nil
+}
+
+func (d *DB) ListFavouriteAssets(ctx context.Context, userID uint, onlyFav bool, query domain.QueryAssets) (*domain.ListedAssets, error) {
+	switch query.Type {
+	case domain.InsightAssetType:
+		return d.listFavouriteInsights(ctx, userID, onlyFav, query)
+	case domain.AudienceAssetType:
+		return d.listFavouriteAudiences(ctx, userID, onlyFav, query)
+	case domain.ChartAssetType:
+		return d.listFavouriteCharts(ctx, userID, onlyFav, query)
+	}
+	return nil, errors.New("this asset type does not exists")
 }
