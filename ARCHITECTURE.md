@@ -133,8 +133,22 @@ We will have an interface for the users and assets to ask for these methods.
 * AddAsset
 * DeleteAsset
 * UpdateAsset
+* GetAsset
 * ListAssets
 * FavourAnAsset
 
 
 For simplicity, anyone will be able to add a user. But only admin users can add/update/delete assets.
+POST /api/v1/users
+POST /api/v1/auth/login
+POST /api/v1/auth/logout
+
+POST 	/api/v1/auth/admin/assets
+PUT 	/api/v1/auth/admin/assets
+DELETE 	/api/v1/auth/admin/assets
+
+GET /api/v1/auth/assets/:id
+GET /api/v1/auth/admin/users/:user_id/assets
+GET /api/v1/auth/assets
+POST /api/v1/auth/assets/:id/favourite
+

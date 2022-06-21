@@ -25,12 +25,12 @@ func TestAddUser(t *testing.T) {
 func TestLoginUser(t *testing.T) {
 	dom := NewDomain(&MockDB{})
 	ctx := context.Background()
-	err := dom.LoginUser(ctx, LoginCredentials{
+	_, err := dom.LoginUser(ctx, LoginCredentials{
 		Username: "manos",
 		Password: "",
 	})
 	assert.ErrorIs(t, err, ErrWrongLoginInput)
-	err = dom.LoginUser(ctx, LoginCredentials{
+	_, err = dom.LoginUser(ctx, LoginCredentials{
 		Username: "",
 		Password: "secret",
 	})

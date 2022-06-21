@@ -88,13 +88,13 @@ type LoginCredentials struct {
 }
 
 type IDomain interface {
-	AddAsset(ctx context.Context, asset Asset) error
-	DeleteAsset(ctx context.Context, assetID uint) error
-	UpdateAsset(ctx context.Context, assetID uint, asset Asset) error
+	AddAsset(ctx context.Context, userID uint, asset Asset) error
+	DeleteAsset(ctx context.Context, userID uint, assetID uint) error
+	UpdateAsset(ctx context.Context, userID uint, assetID uint, asset Asset) error
 	ListAssets(ctx context.Context, userID uint, query QueryAssets) (*ListedAssets, error)
 	FavouriteAsset(ctx context.Context, userID, assetID uint, isFavourite bool) error
 	CreateUser(ctx context.Context, user User) (*User, error)
-	LoginUser(ctx context.Context, cred LoginCredentials) error
+	LoginUser(ctx context.Context, cred LoginCredentials) (*User, error)
 }
 
 type IDBRepository interface {
@@ -106,5 +106,6 @@ type IDBRepository interface {
 	FavouriteAsset(ctx context.Context, userID, assetID uint, at AssetType, isFavourite bool) (uint, error)
 	ListFavouriteAssets(ctx context.Context, userID uint, onlyFav bool, query QueryAssets) (*ListedAssets, error)
 	AddUser(ctx context.Context, user User) (*User, error)
-	FindUser(ctx context.Context, cred LoginCredentials) (*User, error)
+	FindUser(ctx context.Context, username string) (*User, error)
+	GetUser(ctx context.Context, userID uint) (*User, error)
 }

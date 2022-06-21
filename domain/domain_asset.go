@@ -57,7 +57,7 @@ func (d *Domain) validateAsset(asset Asset) error {
 	return nil
 }
 
-func (d *Domain) AddAsset(ctx context.Context, asset Asset) error {
+func (d *Domain) AddAsset(ctx context.Context, userID uint, asset Asset) error {
 	err := d.validateAsset(asset)
 	if err != nil {
 		return err
@@ -73,7 +73,7 @@ func (d *Domain) UpdateAsset(ctx context.Context, assetID uint, asset Asset) err
 	return nil
 }
 
-func (d *Domain) DeleteAsset(ctx context.Context, assetID uint) error {
+func (d *Domain) DeleteAsset(ctx context.Context, userID uint, assetID uint) error {
 
 	return nil
 }
@@ -86,19 +86,5 @@ func (d *Domain) ListAssets(ctx context.Context, userID uint, query QueryAssets)
 	return nil, nil
 }
 func (d *Domain) FavouriteAsset(ctx context.Context, userID, assetID uint, isFavourite bool) error {
-	return nil
-}
-func (d *Domain) CreateUser(ctx context.Context, user User) (*User, error) {
-	err := d.validate.Struct(user)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrWrongUserInput, err)
-	}
-	return nil, nil
-}
-func (d *Domain) LoginUser(ctx context.Context, cred LoginCredentials) error {
-	err := d.validate.Struct(cred)
-	if err != nil {
-		return fmt.Errorf("%w: %v", ErrWrongLoginInput, err)
-	}
 	return nil
 }

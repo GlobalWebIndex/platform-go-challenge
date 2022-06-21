@@ -16,12 +16,12 @@ func setupSuite(tb testing.TB) (*DB, func(tb testing.TB)) {
 	if err != nil {
 		tb.Fatal(err)
 	}
-	db.dropTablesIfExist()
+	db.DropTablesIfExist()
 	sqldb, _ := db.db.DB()
-	db.createTables()
+	db.CreateTables()
 	// Return a function to teardown the test
 	return db, func(tb testing.TB) {
-		db.dropTablesIfExist()
+		db.DropTablesIfExist()
 		sqldb.Close()
 	}
 }

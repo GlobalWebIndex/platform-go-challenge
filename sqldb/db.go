@@ -18,7 +18,11 @@ func NewDB(username, pass, host, dbname string) (*DB, error) {
 	return &DB{db: gormDB}, err
 }
 
-func (db *DB) createTables() {
+func (db *DB) GormDB() *gorm.DB {
+	return db.db
+}
+
+func (db *DB) CreateTables() {
 	db.db.AutoMigrate(&User{})
 	db.db.AutoMigrate(&Insight{})
 	db.db.AutoMigrate(&Audience{})
@@ -28,7 +32,7 @@ func (db *DB) createTables() {
 	db.db.AutoMigrate(&FavouriteAudience{})
 }
 
-func (db *DB) dropTablesIfExist() {
+func (db *DB) DropTablesIfExist() {
 	mgt := db.db.Migrator()
 	if mgt.HasTable(&User{}) {
 		err := mgt.DropTable(&User{})

@@ -23,10 +23,16 @@ func TestCRUser(t *testing.T) {
 	assert.NotNil(t, user)
 	assert.Equal(t, uint(1), user.ID)
 
-	nuser, err := db.FindUser(ctx, domain.LoginCredentials{Username: user.Username, Password: user.Password})
+	nuser, err := db.FindUser(ctx, user.Username)
 	assert.NoError(t, err)
 	assert.NotNil(t, nuser)
 	assert.Equal(t, user, nuser)
+
+	guser, err := db.GetUser(ctx, user.ID)
+	assert.NoError(t, err)
+	assert.NotNil(t, nuser)
+	assert.Equal(t, user, guser)
+
 }
 
 func TestFavourInsight(t *testing.T) {

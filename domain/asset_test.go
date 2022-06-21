@@ -163,10 +163,10 @@ func TestAddAsset(t *testing.T) {
 		},
 	}
 	ctx := context.Background()
-	err := dom.AddAsset(ctx, asset)
+	err := dom.AddAsset(ctx, 0, asset)
 	assert.NoError(t, err)
 	for _, v := range wrongInputTestAssetData {
-		err = dom.AddAsset(ctx, Asset{
+		err = dom.AddAsset(ctx, 0, Asset{
 			Data: v,
 		})
 		assert.ErrorIs(t, err, ErrWrongAssetInput)
@@ -182,7 +182,7 @@ func TestUpdateAsset(t *testing.T) {
 		},
 	}
 	ctx := context.Background()
-	err := dom.AddAsset(ctx, asset)
+	err := dom.AddAsset(ctx, 0, asset)
 	assert.NoError(t, err)
 	for _, v := range wrongInputTestAssetData {
 		err = dom.UpdateAsset(ctx, 1, Asset{

@@ -15,9 +15,19 @@ func (d *DB) AddUser(ctx context.Context, user domain.User) (*domain.User, error
 	nu := u.ToDomain()
 	return nu, nil
 }
-func (d *DB) FindUser(ctx context.Context, cred domain.LoginCredentials) (*domain.User, error) {
+
+func (d *DB) FindUser(ctx context.Context, username string) (*domain.User, error) {
 	u := User{}
-	err := d.db.Where("username = ? AND password = ?", cred.Username, cred.Password).First(&u).Error
+	err := d.db.Where("username = ? ", username).First(&u).Error
+	if err != nil {
+		return nil, err
+	}
+	return u.ToDomain(), nil
+}
+
+func (d *DB) GetUser(ctx context.Context, userID uint) (*domain.User, error) {
+	u := User{}
+	err := d.db.First(&u, userID).Error
 	if err != nil {
 		return nil, err
 	}

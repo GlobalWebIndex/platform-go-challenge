@@ -66,7 +66,7 @@ type FavouriteAudience struct {
 
 type User struct {
 	gorm.Model
-	Username string `gorm:"column:username"`
-	Password string `gorm:"column:password"`
+	Username string `gorm:"column:username;type:varchar(200)"`
+	Password string `gorm:"column:password;type:varchar(200)"`
 	IsAdmin  bool   `gorm:"is_admin"`
 }
