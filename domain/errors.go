@@ -8,5 +8,7 @@ var (
 	ErrWrongUserInput  = errors.New("wrong input for user")
 	ErrWrongLoginInput = errors.New("wrong input for login")
 
+	ErrUnauthorized = errors.New("unauthorized")
+
 	ErrInternalDBFailure = errors.New("internal failure with the DB")
 )

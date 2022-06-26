@@ -60,9 +60,14 @@ type Asset struct {
 	Data        interface{}
 }
 
+type QueryFavouriteAssets struct {
+	FromUserID uint
+	OnlyFav    bool
+}
+
 type QueryAssets struct {
 	Limit  int       `validate:"required,gte=1"`
-	LastID uint      `validate:"required,gte=1"`
+	LastID uint      `validate:"required,gte=0"`
 	Type   AssetType `validate:"required"`
 	IsDesc bool
 }
@@ -88,11 +93,12 @@ type LoginCredentials struct {
 }
 
 type IDomain interface {
-	AddAsset(ctx context.Context, userID uint, asset Asset) error
-	DeleteAsset(ctx context.Context, userID uint, assetID uint) error
-	UpdateAsset(ctx context.Context, userID uint, assetID uint, asset Asset) error
-	ListAssets(ctx context.Context, userID uint, query QueryAssets) (*ListedAssets, error)
-	FavouriteAsset(ctx context.Context, userID, assetID uint, isFavourite bool) error
+	GetAsset(ctx context.Context, user *User, assetID uint, assetType AssetType) (*Asset, error)
+	AddAsset(ctx context.Context, user *User, asset Asset) (*Asset, error)
+	DeleteAsset(ctx context.Context, user *User, assetID uint, assetType AssetType) error
+	UpdateAsset(ctx context.Context, user *User, asset Asset) (*Asset, error)
+	ListAssets(ctx context.Context, user *User, query QueryAssets, favQuery *QueryFavouriteAssets) (*ListedAssets, error)
+	FavouriteAsset(ctx context.Context, uuser *User, assetID uint, isFavourite bool) error
 	CreateUser(ctx context.Context, user User) (*User, error)
 	LoginUser(ctx context.Context, cred LoginCredentials) (*User, error)
 }
@@ -107,5 +113,6 @@ type IDBRepository interface {
 	ListFavouriteAssets(ctx context.Context, userID uint, onlyFav bool, query QueryAssets) (*ListedAssets, error)
 	AddUser(ctx context.Context, user User) (*User, error)
 	FindUser(ctx context.Context, username string) (*User, error)
+	UserExists(ctx context.Context, username string) (bool, error)
 	GetUser(ctx context.Context, userID uint) (*User, error)
 }

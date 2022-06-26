@@ -7,166 +7,36 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var wrongInputTestAssetData = []interface{}{
-	&Insight{
-		Text:        "",
-		Description: "bla bla",
-	},
-	&Insight{
-		Text:        "40% of millenials spend more than 3hours on social media daily",
-		Description: "",
-	},
-	&Insight{
-		Text:        "",
-		Description: "",
-	},
-	&Chart{
-		Description: "",
-		Title:       "Relationship between tax and GDP",
-		XTitle:      "GDP",
-		YTitle:      "Tax",
-		Data: XYData{
-			X: []interface{}{1, 2, 3, 4, 5},
-			Y: []interface{}{1, 2, 3, 4, 5},
-		},
-	},
-	&Chart{
-		Description: "bla bla",
-		Title:       "",
-		XTitle:      "GDP",
-		YTitle:      "Tax",
-		Data: XYData{
-			X: []interface{}{1, 2, 3, 4, 5},
-			Y: []interface{}{1, 2, 3, 4, 5},
-		},
-	},
-	&Chart{
-		Description: "bla bla",
-		Title:       "Relationship between tax and GDP",
-		XTitle:      "",
-		YTitle:      "Tax",
-		Data: XYData{
-			X: []interface{}{1, 2, 3, 4, 5},
-			Y: []interface{}{1, 2, 3, 4, 5},
-		},
-	},
-	&Chart{
-		Description: "bla bla",
-		Title:       "Relationship between tax and GDP",
-		XTitle:      "GDP",
-		YTitle:      "",
-		Data: XYData{
-			X: []interface{}{1, 2, 3, 4, 5},
-			Y: []interface{}{1, 2, 3, 4, 5},
-		},
-	},
-	&Chart{
-		Description: "bla bla",
-		Title:       "Relationship between tax and GDP",
-		XTitle:      "GDP",
-		YTitle:      "Tax",
-		Data: XYData{
-			X: []interface{}{},
-			Y: []interface{}{},
-		},
-	},
-	&Chart{
-		Description: "bla bla",
-		Title:       "Relationship between tax and GDP",
-		XTitle:      "GDP",
-		YTitle:      "Tax",
-		Data: XYData{
-			X: []interface{}{1, 2, 3, 4},
-			Y: []interface{}{1, 2, 3, 4, 5},
-		},
-	},
-	&Audience{
-		AgeMax:            200,
-		AgeMin:            0,
-		Gender:            FemaleGenderType,
-		Country:           "Sweden",
-		HoursSpent:        3,
-		NumberOfPurchases: 3,
-		Description:       "bla bla",
-	},
-	&Audience{
-		AgeMax:            30,
-		AgeMin:            20,
-		Gender:            GenderType("lalasdla"),
-		Country:           "Sweden",
-		HoursSpent:        3,
-		NumberOfPurchases: 3,
-		Description:       "bla bla",
-	},
-	&Audience{
-		AgeMax:            30,
-		AgeMin:            20,
-		Country:           "Sweden",
-		HoursSpent:        3,
-		NumberOfPurchases: 3,
-		Description:       "bla bla",
-	},
-	&Audience{
-		AgeMax:            30,
-		AgeMin:            20,
-		Gender:            FemaleGenderType,
-		Country:           "Mordor",
-		HoursSpent:        3,
-		NumberOfPurchases: 3,
-		Description:       "bla bla",
-	},
-	&Audience{
-		AgeMax:            30,
-		AgeMin:            20,
-		Gender:            FemaleGenderType,
-		Country:           "Sweden",
-		HoursSpent:        -3,
-		NumberOfPurchases: 3,
-		Description:       "bla bla",
-	},
-	&Audience{
-		AgeMax:            30,
-		AgeMin:            20,
-		Gender:            FemaleGenderType,
-		Country:           "Sweden",
-		HoursSpent:        3,
-		NumberOfPurchases: -3,
-		Description:       "bla bla",
-	},
-	&Audience{
-		AgeMax:            30,
-		AgeMin:            20,
-		Gender:            FemaleGenderType,
-		Country:           "Sweden",
-		HoursSpent:        3,
-		NumberOfPurchases: 3,
-	},
-}
-
-var wrongInputTestQueryData = []QueryAssets{
-	{
-		Limit:  0,
-		LastID: 10,
-	},
-	{
-		Limit:  10,
-		LastID: 0,
-	},
-}
-
 func TestAddAsset(t *testing.T) {
 	dom := NewDomain(&MockDB{})
-	asset := Asset{
-		Data: &Insight{
-			Text:        "40% of millenials spend more than 3hours on social media daily",
-			Description: "bla bla",
-		},
-	}
 	ctx := context.Background()
-	err := dom.AddAsset(ctx, 0, asset)
-	assert.NoError(t, err)
-	for _, v := range wrongInputTestAssetData {
-		err = dom.AddAsset(ctx, 0, Asset{
+	usr := &User{
+		ID:       1,
+		Username: "manos",
+		Password: "",
+		IsAdmin:  false,
+	}
+	asset := Asset{
+		Data: CorrectInputTestAssetData[0],
+	}
+	_, err := dom.AddAsset(ctx, usr, asset)
+	assert.ErrorIs(t, err, ErrUnauthorized)
+
+	usr = &User{
+		ID:       1,
+		Username: "manos",
+		Password: "",
+		IsAdmin:  true,
+	}
+	for _, v := range CorrectInputTestAssetData {
+		asset := Asset{
+			Data: v,
+		}
+		_, err := dom.AddAsset(ctx, usr, asset)
+		assert.NoError(t, err)
+	}
+	for _, v := range WrongInputTestAssetData {
+		_, err := dom.AddAsset(ctx, usr, Asset{
 			Data: v,
 		})
 		assert.ErrorIs(t, err, ErrWrongAssetInput)
@@ -182,10 +52,26 @@ func TestUpdateAsset(t *testing.T) {
 		},
 	}
 	ctx := context.Background()
-	err := dom.AddAsset(ctx, 0, asset)
+	usr := &User{
+		ID:       1,
+		Username: "manos",
+		Password: "",
+		IsAdmin:  false,
+	}
+	_, err := dom.AddAsset(ctx, usr, asset)
+	assert.ErrorIs(t, err, ErrUnauthorized)
+
+	usr = &User{
+		ID:       1,
+		Username: "manos",
+		Password: "",
+		IsAdmin:  true,
+	}
+	_, err = dom.AddAsset(ctx, usr, asset)
 	assert.NoError(t, err)
-	for _, v := range wrongInputTestAssetData {
-		err = dom.UpdateAsset(ctx, 1, Asset{
+	for _, v := range WrongInputTestAssetData {
+		_, err = dom.UpdateAsset(ctx, usr, Asset{
+			ID:   asset.ID,
 			Data: v,
 		})
 		assert.ErrorIs(t, err, ErrWrongAssetInput)
@@ -195,8 +81,14 @@ func TestUpdateAsset(t *testing.T) {
 func TestListAsset(t *testing.T) {
 	dom := NewDomain(&MockDB{})
 	ctx := context.Background()
-	for _, v := range wrongInputTestQueryData {
-		_, err := dom.ListAssets(ctx, 0, v)
+	usr := &User{
+		ID:       1,
+		Username: "manos",
+		Password: "",
+		IsAdmin:  false,
+	}
+	for _, v := range WrongInputTestQueryData {
+		_, err := dom.ListAssets(ctx, usr, v, nil)
 		assert.ErrorIs(t, err, ErrWrongQueryInput)
 	}
 }

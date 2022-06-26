@@ -19,6 +19,7 @@ func TestUser(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.NotNil(t, user)
+	assert.Equal(t, user.IsAdmin, true)
 
 	user2, err := dom.LoginUser(ctx, domain.LoginCredentials{
 		Username: "manos",

@@ -1,35 +1,27 @@
-package sqldb
+package intetests
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"platform-go-challenge/domain"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func setupSuite(tb testing.TB) (*DB, func(tb testing.TB)) {
-	log.Println("setup suite")
-	db, err := NewDB("user", "user", "127.0.0.1:3306", "mydb")
-	if err != nil {
-		tb.Fatal(err)
-	}
-	db.DropTablesIfExist()
-	sqldb, _ := db.db.DB()
-	db.CreateTables()
-	// Return a function to teardown the test
-	return db, func(tb testing.TB) {
-		db.DropTablesIfExist()
-		sqldb.Close()
-	}
-}
-
 func TestCRUDInsight(t *testing.T) {
-	db, teardownSuite := setupSuite(t)
+	dom, teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 	ctx := context.Background()
-	asset, err := db.AddAsset(ctx, domain.Asset{
+
+	admin, err := dom.CreateUser(ctx, domain.User{
+		Username: "admin",
+		Password: "password",
+		IsAdmin:  true,
+	})
+	assert.NoError(t, err)
+	fmt.Println(admin)
+	asset, err := dom.AddAsset(ctx, admin, domain.Asset{
 		Data: &domain.Insight{
 			Text:        "40% of millenials spend more than 3hours on social media daily",
 			Description: "example",
@@ -39,7 +31,7 @@ func TestCRUDInsight(t *testing.T) {
 	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "example", asset.Data.(*domain.Insight).Description)
 
-	asset, err = db.UpdateAsset(ctx, domain.Asset{
+	asset, err = dom.UpdateAsset(ctx, admin, domain.Asset{
 		ID: 1,
 		Data: &domain.Insight{
 			Text:        "100% of millenials spend more than 3hours on social media daily",
@@ -50,22 +42,29 @@ func TestCRUDInsight(t *testing.T) {
 	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "updated example", asset.Data.(*domain.Insight).Description)
 
-	gottenAsset, err := db.GetAsset(ctx, domain.InsightAssetType, asset.ID)
+	gottenAsset, err := dom.GetAsset(ctx, admin, asset.ID, domain.InsightAssetType)
 	assert.NotNil(t, gottenAsset)
 	assert.NoError(t, err)
 	assert.EqualValues(t, asset, gottenAsset)
-	err = db.DeleteAsset(ctx, domain.InsightAssetType, asset.ID)
+
+	err = dom.DeleteAsset(ctx, admin, asset.ID, domain.InsightAssetType)
 	assert.Nil(t, err)
 
-	_, err = db.GetAsset(ctx, domain.InsightAssetType, asset.ID)
+	_, err = dom.GetAsset(ctx, admin, asset.ID, domain.InsightAssetType)
 	assert.NotNil(t, err)
 }
 
 func TestCRUDChart(t *testing.T) {
-	db, teardownSuite := setupSuite(t)
+	dom, teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 	ctx := context.Background()
-	asset, err := db.AddAsset(ctx, domain.Asset{
+	admin, err := dom.CreateUser(ctx, domain.User{
+		Username: "admin",
+		Password: "password",
+		IsAdmin:  true,
+	})
+	assert.NoError(t, err)
+	asset, err := dom.AddAsset(ctx, admin, domain.Asset{
 		Data: &domain.Chart{
 			Description: "bla bla",
 			Title:       "Relationship between tax and GDP",
@@ -81,7 +80,7 @@ func TestCRUDChart(t *testing.T) {
 	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "bla bla", asset.Data.(*domain.Chart).Description)
 
-	asset, err = db.UpdateAsset(ctx, domain.Asset{
+	asset, err = dom.UpdateAsset(ctx, admin, domain.Asset{
 		ID: 1,
 		Data: &domain.Chart{
 			Description: "bla bla 2",
@@ -98,22 +97,28 @@ func TestCRUDChart(t *testing.T) {
 	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "bla bla 2", asset.Data.(*domain.Chart).Description)
 
-	gottenAsset, err := db.GetAsset(ctx, domain.ChartAssetType, asset.ID)
+	gottenAsset, err := dom.GetAsset(ctx, admin, asset.ID, domain.ChartAssetType)
 	assert.NotNil(t, gottenAsset)
 	assert.NoError(t, err)
 	assert.EqualValues(t, asset, gottenAsset)
-	err = db.DeleteAsset(ctx, domain.ChartAssetType, asset.ID)
+	err = dom.DeleteAsset(ctx, admin, asset.ID, domain.ChartAssetType)
 	assert.Nil(t, err)
 
-	_, err = db.GetAsset(ctx, domain.ChartAssetType, asset.ID)
+	_, err = dom.GetAsset(ctx, admin, asset.ID, domain.ChartAssetType)
 	assert.NotNil(t, err)
 }
 
 func TestCRUDAudience(t *testing.T) {
-	db, teardownSuite := setupSuite(t)
+	dom, teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 	ctx := context.Background()
-	asset, err := db.AddAsset(ctx, domain.Asset{
+	admin, err := dom.CreateUser(ctx, domain.User{
+		Username: "admin",
+		Password: "password",
+		IsAdmin:  true,
+	})
+	assert.NoError(t, err)
+	asset, err := dom.AddAsset(ctx, admin, domain.Asset{
 		Data: &domain.Audience{
 			AgeMax:            30,
 			AgeMin:            20,
@@ -128,7 +133,7 @@ func TestCRUDAudience(t *testing.T) {
 	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "bla bla", asset.Data.(*domain.Audience).Description)
 
-	asset, err = db.UpdateAsset(ctx, domain.Asset{
+	asset, err = dom.UpdateAsset(ctx, admin, domain.Asset{
 		ID: 1,
 		Data: &domain.Audience{
 			AgeMax:            30,
@@ -144,13 +149,13 @@ func TestCRUDAudience(t *testing.T) {
 	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "bla bla 2", asset.Data.(*domain.Audience).Description)
 
-	gottenAsset, err := db.GetAsset(ctx, domain.AudienceAssetType, asset.ID)
+	gottenAsset, err := dom.GetAsset(ctx, admin, asset.ID, domain.AudienceAssetType)
 	assert.NotNil(t, gottenAsset)
 	assert.NoError(t, err)
 	assert.EqualValues(t, asset, gottenAsset)
-	err = db.DeleteAsset(ctx, domain.AudienceAssetType, asset.ID)
+	err = dom.DeleteAsset(ctx, admin, asset.ID, domain.AudienceAssetType)
 	assert.Nil(t, err)
 
-	_, err = db.GetAsset(ctx, domain.AudienceAssetType, asset.ID)
+	_, err = dom.GetAsset(ctx, admin, asset.ID, domain.AudienceAssetType)
 	assert.NotNil(t, err)
 }

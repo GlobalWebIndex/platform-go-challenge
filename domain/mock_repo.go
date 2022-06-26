@@ -31,7 +31,9 @@ func (d *MockDB) AddUser(ctx context.Context, user User) (*User, error) {
 func (d *MockDB) FindUser(ctx context.Context, username string) (*User, error) {
 	return nil, nil
 }
-
+func (d *MockDB) UserExists(ctx context.Context, username string) (bool, error) {
+	return false, nil
+}
 func (d *MockDB) GetUser(ctx context.Context, userID uint) (*User, error) {
 	return nil, nil
 }

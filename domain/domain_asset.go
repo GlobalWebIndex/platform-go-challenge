@@ -57,34 +57,72 @@ func (d *Domain) validateAsset(asset Asset) error {
 	return nil
 }
 
-func (d *Domain) AddAsset(ctx context.Context, userID uint, asset Asset) error {
+func (d *Domain) AddAsset(ctx context.Context, user *User, asset Asset) (*Asset, error) {
 	err := d.validateAsset(asset)
 	if err != nil {
-		return err
+		return nil, err
+	}
+	if !user.IsAdmin {
+		return nil, fmt.Errorf("%w: %v", ErrUnauthorized, errors.New("only administrators are authorized"))
+	}
+
+	newAsset, err := d.repo.AddAsset(ctx, asset)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrInternalDBFailure, err)
+	}
+	return newAsset, nil
+}
+
+func (d *Domain) UpdateAsset(ctx context.Context, user *User, asset Asset) (*Asset, error) {
+	err := d.validateAsset(asset)
+	if err != nil {
+		return nil, err
+	}
+	if !user.IsAdmin {
+		return nil, fmt.Errorf("%w: %v", ErrUnauthorized, errors.New("only administrators are authorized"))
+	}
+	newAsset, err := d.repo.UpdateAsset(ctx, asset)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrInternalDBFailure, err)
+	}
+	return newAsset, nil
+}
+
+func (d *Domain) DeleteAsset(ctx context.Context, user *User, assetID uint, assetType AssetType) error {
+	if !user.IsAdmin {
+		return fmt.Errorf("%w: %v", ErrUnauthorized, errors.New("only administrators are authorized"))
+	}
+	err := d.repo.DeleteAsset(ctx, assetType, assetID)
+	if err != nil {
+		return fmt.Errorf("%w: %v", ErrInternalDBFailure, err)
 	}
 	return nil
 }
 
-func (d *Domain) UpdateAsset(ctx context.Context, assetID uint, asset Asset) error {
-	err := d.validateAsset(asset)
+func (d *Domain) GetAsset(ctx context.Context, user *User, assetID uint, assetType AssetType) (*Asset, error) {
+	asset, err := d.repo.GetAsset(ctx, assetType, assetID)
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("%w: %v", ErrInternalDBFailure, err)
 	}
-	return nil
+	return asset, nil
 }
 
-func (d *Domain) DeleteAsset(ctx context.Context, userID uint, assetID uint) error {
-
-	return nil
-}
-
-func (d *Domain) ListAssets(ctx context.Context, userID uint, query QueryAssets) (*ListedAssets, error) {
+func (d *Domain) ListAssets(ctx context.Context, user *User, query QueryAssets, favQuery *QueryFavouriteAssets) (*ListedAssets, error) {
 	err := d.validate.Struct(query)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrWrongQueryInput, err)
 	}
+
+	if favQuery == nil {
+		ls, err := d.repo.ListAssets(ctx, query)
+		if err != nil {
+			return nil, fmt.Errorf("%w: %v", ErrInternalDBFailure, err)
+		}
+		return ls, nil
+	}
 	return nil, nil
 }
-func (d *Domain) FavouriteAsset(ctx context.Context, userID, assetID uint, isFavourite bool) error {
+
+func (d *Domain) FavouriteAsset(ctx context.Context, user *User, assetID uint, isFavourite bool) error {
 	return nil
 }

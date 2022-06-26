@@ -88,6 +88,7 @@ func (u *User) ToDomain() *domain.User {
 		Username: u.Username,
 		Password: u.Password,
 		ID:       u.ID,
+		IsAdmin:  u.IsAdmin,
 	}
 }
 

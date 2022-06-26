@@ -12,8 +12,11 @@ func (d *Domain) CreateUser(ctx context.Context, user User) (*User, error) {
 		return nil, fmt.Errorf("%w: %v", ErrWrongUserInput, err)
 	}
 
-	u, err := d.repo.FindUser(ctx, user.Username)
-	if err == nil && u != nil {
+	exists, err := d.repo.UserExists(ctx, user.Username)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrInternalDBFailure, err)
+	}
+	if exists {
 		return nil, fmt.Errorf("%w: %v", ErrWrongUserInput, errors.New("user exists"))
 	}
 
