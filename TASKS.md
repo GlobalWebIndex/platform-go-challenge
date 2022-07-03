@@ -4,6 +4,7 @@
 - [x] Structure the HTTP and DB based on the domain
 - [x] TDD to complete domain's methods and its validations
 - [x] Integration tests to complete sqldb package based on repository methods from the domain
+- [x] Integration tests to complete domain package with sqldb
 - [ ] E2E tests to complete httpapi package
 - [ ] Dockerfile
 - [ ] Documentation

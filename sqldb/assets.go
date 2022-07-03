@@ -254,15 +254,15 @@ func (d *DB) listFavouriteAudiences(ctx context.Context, userID uint, onlyFav bo
 	gormQuery := d.db.Model(Audience{}).Select("audiences.*, (favourite_audiences.user_id = ?) AS is_favourite", userID)
 	if onlyFav {
 		if query.IsDesc {
-			gormQuery = gormQuery.Joins("INNER JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id < ?", query.LastID).Order("audiences.id desc")
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id < ? AND favourite_audiences.user_id = ?", query.LastID, userID).Order("audiences.id desc")
 		} else {
-			gormQuery = gormQuery.Joins("INNER JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id > ?", query.LastID).Order("audiences.id asc")
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id > ? AND favourite_audiences.user_id = ?", query.LastID, userID).Order("audiences.id asc")
 		}
 	} else {
 		if query.IsDesc {
-			gormQuery = gormQuery.Joins("LEFT JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id < ?", query.LastID).Order("audiences.id desc")
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id < ? AND favourite_audiences.user_id = ?", query.LastID, userID).Order("audiences.id desc")
 		} else {
-			gormQuery = gormQuery.Joins("LEFT JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id > ?", query.LastID).Order("audiences.id asc")
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_audiences ON favourite_audiences.audience_id = audiences.id AND audiences.id > ? AND favourite_audiences.user_id = ?", query.LastID, userID).Order("audiences.id asc")
 		}
 	}
 
@@ -290,15 +290,15 @@ func (d *DB) listFavouriteInsights(ctx context.Context, userID uint, onlyFav boo
 	gormQuery := d.db.Model(Insight{}).Select("insights.*, (favourite_insights.user_id = ?) AS is_favourite", userID)
 	if onlyFav {
 		if query.IsDesc {
-			gormQuery = gormQuery.Joins("INNER JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id < ?", query.LastID).Order("insights.id desc")
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id < ? AND favourite_insights.user_id = ?", query.LastID, userID).Order("insights.id desc")
 		} else {
-			gormQuery = gormQuery.Joins("INNER JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id > ?", query.LastID).Order("insights.id asc")
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id > ? AND favourite_insights.user_id = ?", query.LastID, userID).Order("insights.id asc")
 		}
 	} else {
 		if query.IsDesc {
-			gormQuery = gormQuery.Joins("LEFT JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id < ?", query.LastID).Order("insights.id desc")
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id < ? AND favourite_insights.user_id = ?", query.LastID, userID).Order("insights.id desc")
 		} else {
-			gormQuery = gormQuery.Joins("LEFT JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id > ?", query.LastID).Order("insights.id asc")
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_insights ON favourite_insights.insight_id = insights.id AND insights.id > ? AND favourite_insights.user_id = ?", query.LastID, userID).Order("insights.id asc")
 		}
 	}
 
@@ -326,15 +326,15 @@ func (d *DB) listFavouriteCharts(ctx context.Context, userID uint, onlyFav bool,
 	gormQuery := d.db.Model(Chart{}).Select("charts.*, (favourite_charts.user_id = ?) AS is_favourite", userID)
 	if onlyFav {
 		if query.IsDesc {
-			gormQuery = gormQuery.Joins("INNER JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id < ?", query.LastID).Order("charts.id desc")
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id < ? AND favourite_charts.user_id = ?", query.LastID, userID).Order("charts.id desc")
 		} else {
-			gormQuery = gormQuery.Joins("INNER JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id > ?", query.LastID).Order("charts.id asc")
+			gormQuery = gormQuery.Joins("INNER JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id > ? AND favourite_charts.user_id = ?", query.LastID, userID).Order("charts.id asc")
 		}
 	} else {
 		if query.IsDesc {
-			gormQuery = gormQuery.Joins("LEFT JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id < ?", query.LastID).Order("charts.id desc")
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id < ? AND favourite_charts.user_id = ?", query.LastID, userID).Order("charts.id desc")
 		} else {
-			gormQuery = gormQuery.Joins("LEFT JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id > ?", query.LastID).Order("charts.id asc")
+			gormQuery = gormQuery.Joins("LEFT JOIN favourite_charts ON favourite_charts.chart_id = charts.id AND charts.id > ? AND favourite_charts.user_id = ?", query.LastID, userID).Order("charts.id asc")
 		}
 	}
 

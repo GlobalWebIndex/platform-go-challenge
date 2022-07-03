@@ -67,7 +67,7 @@ type QueryFavouriteAssets struct {
 
 type QueryAssets struct {
 	Limit  int       `validate:"required,gte=1"`
-	LastID uint      `validate:"required,gte=0"`
+	LastID uint      `validate:"gte=0"`
 	Type   AssetType `validate:"required"`
 	IsDesc bool
 }
@@ -98,7 +98,7 @@ type IDomain interface {
 	DeleteAsset(ctx context.Context, user *User, assetID uint, assetType AssetType) error
 	UpdateAsset(ctx context.Context, user *User, asset Asset) (*Asset, error)
 	ListAssets(ctx context.Context, user *User, query QueryAssets, favQuery *QueryFavouriteAssets) (*ListedAssets, error)
-	FavouriteAsset(ctx context.Context, uuser *User, assetID uint, isFavourite bool) error
+	FavouriteAsset(ctx context.Context, uuser *User, assetID uint, assetType AssetType, isFavourite bool) error
 	CreateUser(ctx context.Context, user User) (*User, error)
 	LoginUser(ctx context.Context, cred LoginCredentials) (*User, error)
 }

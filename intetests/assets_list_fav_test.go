@@ -1,4 +1,4 @@
-package sqldb
+package intetests
 
 import (
 	"context"
@@ -9,21 +9,32 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFavourAudience(t *testing.T) {
-	db, teardownSuite := setupSuite(t)
+func TestAuthenticationToListFavOfOtherUsers(t *testing.T) {
+	dom, teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 	ctx := context.Background()
-	du := domain.User{
-		Username: "manos",
-		Password: "hashed",
-		IsAdmin:  false,
-	}
-	user, err := db.AddUser(ctx, du)
+	admin, err := dom.CreateUser(ctx, domain.User{
+		Username: "admin",
+		Password: "password",
+		IsAdmin:  true,
+	})
 	assert.NoError(t, err)
-	assert.NotNil(t, user)
-	assert.Equal(t, uint(1), user.ID)
 
-	asset, err := db.AddAsset(ctx, domain.Asset{
+	user, err := dom.CreateUser(ctx, domain.User{
+		Username: "user",
+		Password: "password",
+		IsAdmin:  false,
+	})
+	assert.NoError(t, err)
+
+	user2, err := dom.CreateUser(ctx, domain.User{
+		Username: "user2",
+		Password: "password2",
+		IsAdmin:  false,
+	})
+	assert.NoError(t, err)
+
+	asset, err := dom.AddAsset(ctx, admin, domain.Asset{
 		Data: &domain.Audience{
 			AgeMax:            30,
 			AgeMin:            20,
@@ -31,47 +42,94 @@ func TestFavourAudience(t *testing.T) {
 			Country:           "Sweden",
 			HoursSpent:        3,
 			NumberOfPurchases: 3,
-			Description:       "bla bla",
+			Description:       "example",
 		}})
-	assert.NoError(t, err)
 	assert.NotNil(t, asset)
-	fid, err := db.FavouriteAsset(ctx, user.ID, asset.ID, domain.AudienceAssetType, true)
 	assert.NoError(t, err)
-	assert.Equal(t, uint(1), fid)
+	assert.Equal(t, uint(1), asset.ID)
+	assert.Equal(t, "example", asset.Data.(*domain.Audience).Description)
 
-	fid, err = db.FavouriteAsset(ctx, user.ID, asset.ID, domain.AudienceAssetType, true)
-	assert.Error(t, err)
-	assert.Equal(t, uint(0), fid)
-
-	fid, err = db.FavouriteAsset(ctx, user.ID, asset.ID, domain.AudienceAssetType, false)
+	err = dom.FavouriteAsset(ctx, admin, asset.ID, domain.AudienceAssetType, true)
 	assert.NoError(t, err)
-	assert.Equal(t, uint(0), fid)
+
+	err = dom.FavouriteAsset(ctx, user, asset.ID, domain.AudienceAssetType, true)
+	assert.NoError(t, err)
+
+	err = dom.FavouriteAsset(ctx, user2, asset.ID, domain.AudienceAssetType, true)
+	assert.NoError(t, err)
+
+	qa := domain.QueryAssets{
+		Limit:  10,
+		LastID: 0,
+		Type:   domain.AudienceAssetType,
+		IsDesc: false,
+	}
+
+	favQuery := domain.QueryFavouriteAssets{
+		FromUserID: user.ID,
+		OnlyFav:    true,
+	}
+	la, err := dom.ListAssets(ctx, user, qa, &favQuery)
+	fmt.Println(la)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(la.Assets))
+
+	favQuery = domain.QueryFavouriteAssets{
+		FromUserID: admin.ID,
+		OnlyFav:    true,
+	}
+	la, err = dom.ListAssets(ctx, user, qa, &favQuery)
+	assert.ErrorIs(t, err, domain.ErrUnauthorized)
+	assert.Nil(t, la)
+
+	favQuery = domain.QueryFavouriteAssets{
+		FromUserID: user2.ID,
+		OnlyFav:    true,
+	}
+	la, err = dom.ListAssets(ctx, user, qa, &favQuery)
+	assert.ErrorIs(t, err, domain.ErrUnauthorized)
+	assert.Nil(t, la)
+
+	favQuery = domain.QueryFavouriteAssets{
+		FromUserID: admin.ID,
+		OnlyFav:    true,
+	}
+	la, err = dom.ListAssets(ctx, admin, qa, &favQuery)
+	assert.NoError(t, err)
+	assert.NotNil(t, la)
+	assert.Equal(t, 1, len(la.Assets))
+
+	favQuery = domain.QueryFavouriteAssets{
+		FromUserID: user2.ID,
+		OnlyFav:    true,
+	}
+	la, err = dom.ListAssets(ctx, admin, qa, &favQuery)
+	assert.NoError(t, err)
+	assert.NotNil(t, la)
+	assert.Equal(t, 1, len(la.Assets))
+
 }
 
 func TestListFavouriteAudiences(t *testing.T) {
-	db, teardownSuite := setupSuite(t)
+	dom, teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 	ctx := context.Background()
-	du := domain.User{
-		Username: "manos",
-		Password: "hashed",
-		IsAdmin:  false,
-	}
-	user, err := db.AddUser(ctx, du)
+	admin, err := dom.CreateUser(ctx, domain.User{
+		Username: "admin",
+		Password: "password",
+		IsAdmin:  true,
+	})
 	assert.NoError(t, err)
-	assert.NotNil(t, user)
-	du2 := domain.User{
-		Username: "nikos",
-		Password: "hashed",
+
+	user, err := dom.CreateUser(ctx, domain.User{
+		Username: "user",
+		Password: "password",
 		IsAdmin:  false,
-	}
-	user2, err := db.AddUser(ctx, du2)
+	})
 	assert.NoError(t, err)
-	assert.NotNil(t, user)
-	counter := 1
 	for i := 1; i <= 100; i++ {
 		desc := fmt.Sprintf("example %d", i)
-		asset, err := db.AddAsset(ctx, domain.Asset{
+		asset, err := dom.AddAsset(ctx, admin, domain.Asset{
 			Data: &domain.Audience{
 				AgeMax:            30,
 				AgeMin:            20,
@@ -85,16 +143,9 @@ func TestListFavouriteAudiences(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, uint(i), asset.ID)
 		assert.Equal(t, desc, asset.Data.(*domain.Audience).Description)
-
 		if i%2 == 0 {
-			fid, err := db.FavouriteAsset(ctx, user.ID, asset.ID, domain.AudienceAssetType, true)
+			err := dom.FavouriteAsset(ctx, user, asset.ID, domain.AudienceAssetType, true)
 			assert.NoError(t, err)
-			assert.Equal(t, uint(counter), fid)
-			counter += 1
-			fid, err = db.FavouriteAsset(ctx, user2.ID, asset.ID, domain.AudienceAssetType, true)
-			assert.NoError(t, err)
-			assert.Equal(t, uint(counter), fid)
-			counter += 1
 		}
 	}
 	qa := domain.QueryAssets{
@@ -103,7 +154,11 @@ func TestListFavouriteAudiences(t *testing.T) {
 		Type:   domain.AudienceAssetType,
 		IsDesc: false,
 	}
-	la, err := db.ListFavouriteAssets(ctx, user.ID, true, qa)
+	favQuery := domain.QueryFavouriteAssets{
+		FromUserID: user.ID,
+		OnlyFav:    true,
+	}
+	la, err := dom.ListAssets(ctx, user, qa, &favQuery)
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
@@ -117,12 +172,11 @@ func TestListFavouriteAudiences(t *testing.T) {
 		Type:   domain.AudienceAssetType,
 		IsDesc: true,
 	}
-	la, err = db.ListFavouriteAssets(ctx, user.ID, true, qa)
+	la, err = dom.ListAssets(ctx, user, qa, &favQuery)
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
 	assert.True(t, la.Assets[0].IsFavourite)
-	assert.True(t, la.Assets[1].IsFavourite)
 	assert.Equal(t, uint(100), la.FirstID)
 	assert.Equal(t, uint(82), la.LastID)
 
@@ -132,9 +186,12 @@ func TestListFavouriteAudiences(t *testing.T) {
 		Type:   domain.AudienceAssetType,
 		IsDesc: false,
 	}
+	favQuery = domain.QueryFavouriteAssets{
+		FromUserID: user.ID,
+		OnlyFav:    false,
+	}
 
-	la, err = db.ListFavouriteAssets(ctx, user.ID, false, qa)
-	fmt.Println(la)
+	la, err = dom.ListAssets(ctx, user, qa, &favQuery)
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
@@ -145,29 +202,25 @@ func TestListFavouriteAudiences(t *testing.T) {
 }
 
 func TestListFavouriteInsights(t *testing.T) {
-	db, teardownSuite := setupSuite(t)
+	dom, teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 	ctx := context.Background()
-	du := domain.User{
-		Username: "manos",
-		Password: "hashed",
-		IsAdmin:  false,
-	}
-	user, err := db.AddUser(ctx, du)
+	admin, err := dom.CreateUser(ctx, domain.User{
+		Username: "admin",
+		Password: "password",
+		IsAdmin:  true,
+	})
 	assert.NoError(t, err)
-	assert.NotNil(t, user)
-	du2 := domain.User{
-		Username: "nikos",
-		Password: "hashed",
+
+	user, err := dom.CreateUser(ctx, domain.User{
+		Username: "user",
+		Password: "password",
 		IsAdmin:  false,
-	}
-	user2, err := db.AddUser(ctx, du2)
+	})
 	assert.NoError(t, err)
-	assert.NotNil(t, user)
-	counter := 1
 	for i := 1; i <= 100; i++ {
 		desc := fmt.Sprintf("example %d", i)
-		asset, err := db.AddAsset(ctx, domain.Asset{
+		asset, err := dom.AddAsset(ctx, admin, domain.Asset{
 			Data: &domain.Insight{
 				Text:        "40% of millenials spend more than 3hours on social media daily",
 				Description: desc,
@@ -176,16 +229,9 @@ func TestListFavouriteInsights(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, uint(i), asset.ID)
 		assert.Equal(t, desc, asset.Data.(*domain.Insight).Description)
-
 		if i%2 == 0 {
-			fid, err := db.FavouriteAsset(ctx, user.ID, asset.ID, domain.InsightAssetType, true)
+			err := dom.FavouriteAsset(ctx, user, asset.ID, domain.InsightAssetType, true)
 			assert.NoError(t, err)
-			assert.Equal(t, uint(counter), fid)
-			counter += 1
-			fid, err = db.FavouriteAsset(ctx, user2.ID, asset.ID, domain.InsightAssetType, true)
-			assert.NoError(t, err)
-			assert.Equal(t, uint(counter), fid)
-			counter += 1
 		}
 	}
 	qa := domain.QueryAssets{
@@ -194,7 +240,11 @@ func TestListFavouriteInsights(t *testing.T) {
 		Type:   domain.InsightAssetType,
 		IsDesc: false,
 	}
-	la, err := db.ListFavouriteAssets(ctx, user.ID, true, qa)
+	favQuery := domain.QueryFavouriteAssets{
+		FromUserID: user.ID,
+		OnlyFav:    true,
+	}
+	la, err := dom.ListAssets(ctx, user, qa, &favQuery)
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
@@ -208,7 +258,7 @@ func TestListFavouriteInsights(t *testing.T) {
 		Type:   domain.InsightAssetType,
 		IsDesc: true,
 	}
-	la, err = db.ListFavouriteAssets(ctx, user.ID, true, qa)
+	la, err = dom.ListAssets(ctx, user, qa, &favQuery)
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
@@ -222,9 +272,12 @@ func TestListFavouriteInsights(t *testing.T) {
 		Type:   domain.InsightAssetType,
 		IsDesc: false,
 	}
+	favQuery = domain.QueryFavouriteAssets{
+		FromUserID: user.ID,
+		OnlyFav:    false,
+	}
 
-	la, err = db.ListFavouriteAssets(ctx, user.ID, false, qa)
-	fmt.Println(la)
+	la, err = dom.ListAssets(ctx, user, qa, &favQuery)
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
@@ -235,29 +288,25 @@ func TestListFavouriteInsights(t *testing.T) {
 }
 
 func TestListFavouriteCharts(t *testing.T) {
-	db, teardownSuite := setupSuite(t)
+	dom, teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 	ctx := context.Background()
-	du := domain.User{
-		Username: "manos",
-		Password: "hashed",
-		IsAdmin:  false,
-	}
-	user, err := db.AddUser(ctx, du)
+	admin, err := dom.CreateUser(ctx, domain.User{
+		Username: "admin",
+		Password: "password",
+		IsAdmin:  true,
+	})
 	assert.NoError(t, err)
-	assert.NotNil(t, user)
-	du2 := domain.User{
-		Username: "nikos",
-		Password: "hashed",
+
+	user, err := dom.CreateUser(ctx, domain.User{
+		Username: "user",
+		Password: "password",
 		IsAdmin:  false,
-	}
-	user2, err := db.AddUser(ctx, du2)
+	})
 	assert.NoError(t, err)
-	assert.NotNil(t, user)
-	counter := 1
 	for i := 1; i <= 100; i++ {
 		desc := fmt.Sprintf("example %d", i)
-		asset, err := db.AddAsset(ctx, domain.Asset{
+		asset, err := dom.AddAsset(ctx, admin, domain.Asset{
 			Data: &domain.Chart{
 				Description: desc,
 				Title:       "Relationship between tax and GDP",
@@ -272,16 +321,9 @@ func TestListFavouriteCharts(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, uint(i), asset.ID)
 		assert.Equal(t, desc, asset.Data.(*domain.Chart).Description)
-
 		if i%2 == 0 {
-			fid, err := db.FavouriteAsset(ctx, user.ID, asset.ID, domain.ChartAssetType, true)
+			err := dom.FavouriteAsset(ctx, user, asset.ID, domain.ChartAssetType, true)
 			assert.NoError(t, err)
-			assert.Equal(t, uint(counter), fid)
-			counter += 1
-			fid, err = db.FavouriteAsset(ctx, user2.ID, asset.ID, domain.ChartAssetType, true)
-			assert.NoError(t, err)
-			assert.Equal(t, uint(counter), fid)
-			counter += 1
 		}
 	}
 	qa := domain.QueryAssets{
@@ -290,7 +332,11 @@ func TestListFavouriteCharts(t *testing.T) {
 		Type:   domain.ChartAssetType,
 		IsDesc: false,
 	}
-	la, err := db.ListFavouriteAssets(ctx, user.ID, true, qa)
+	favQuery := domain.QueryFavouriteAssets{
+		FromUserID: user.ID,
+		OnlyFav:    true,
+	}
+	la, err := dom.ListAssets(ctx, user, qa, &favQuery)
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
@@ -304,7 +350,7 @@ func TestListFavouriteCharts(t *testing.T) {
 		Type:   domain.ChartAssetType,
 		IsDesc: true,
 	}
-	la, err = db.ListFavouriteAssets(ctx, user.ID, true, qa)
+	la, err = dom.ListAssets(ctx, user, qa, &favQuery)
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
@@ -318,9 +364,12 @@ func TestListFavouriteCharts(t *testing.T) {
 		Type:   domain.ChartAssetType,
 		IsDesc: false,
 	}
+	favQuery = domain.QueryFavouriteAssets{
+		FromUserID: user.ID,
+		OnlyFav:    false,
+	}
 
-	la, err = db.ListFavouriteAssets(ctx, user.ID, false, qa)
-	fmt.Println(la)
+	la, err = dom.ListAssets(ctx, user, qa, &favQuery)
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
