@@ -40,11 +40,11 @@ func (d *Domain) LoginUser(ctx context.Context, cred LoginCredentials) (*User, e
 	}
 	user, err := d.repo.FindUser(ctx, cred.Username)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrWrongUserInput, errors.New("user not found"))
+		return nil, ErrUserNotFound
 	}
 	ok := checkPasswordHash(cred.Password, user.Password)
 	if !ok {
-		return nil, fmt.Errorf("%w: %v", ErrWrongUserInput, errors.New("wrong password"))
+		return nil, ErrUnauthorized
 	}
 
 	user.Password = ""

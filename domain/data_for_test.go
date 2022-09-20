@@ -166,9 +166,10 @@ var WrongInputTestQueryData = []QueryAssets{
 	{
 		Limit:  0,
 		LastID: 10,
+		Type:   AudienceAssetType,
 	},
 	{
 		Limit:  10,
-		LastID: 0,
+		LastID: 1,
 	},
 }
