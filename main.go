@@ -31,3 +31,14 @@ func main() {
 	server := httpapi.NewServer(dom, port, secret)
 	server.Run()
 }
+
+// @title GWI Server API
+// @version 1.0
+// @description This is API for GWI Server.
+
+// @host localhost:8000
+// @BasePath /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization

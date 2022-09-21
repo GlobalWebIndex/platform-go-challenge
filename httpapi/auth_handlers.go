@@ -6,9 +6,18 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/labstack/echo/v4"
+	echo "github.com/labstack/echo/v4"
 )
 
+// @Summary      Create User
+// @Description  Create any user as many as you want
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        user  body  RequestUserCreation  true  "new user's info"
+// @Success      200  {object}  ResponseLogin
+// @Failure      400  {object}	ResponseStatus
+// @Router       /auth/users [post]
 func (s *Server) createUserHandler(c echo.Context) error {
 	in := RequestUserCreation{}
 	err := c.Bind(&in)
@@ -34,6 +43,15 @@ func (s *Server) createUserHandler(c echo.Context) error {
 	})
 }
 
+// @Summary      Login
+// @Description  Authenticate a user and take JWT token back
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        credentials  body  RequestUserLogin  true  "credentials"
+// @Success      200  {object}  ResponseLogin
+// @Failure      401  {object}	ResponseStatus
+// @Router       /auth/login [post]
 func (s *Server) loginUserHandler(c echo.Context) error {
 	in := RequestUserLogin{}
 	err := c.Bind(&in)
@@ -87,6 +105,15 @@ func (s *Server) loginUserHandler(c echo.Context) error {
 	})
 }
 
+// @Summary      Show user information
+// @Description  Get the information of the user you logined with
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  domain.User
+// @Failure      401  {object}	ResponseStatus
+// @Router       /api/v1/me [get]
+// @Security     BearerAuth
 func (s *Server) meHandler(c echo.Context) error {
 	user, err := getUserDomain(c)
 	if err != nil {

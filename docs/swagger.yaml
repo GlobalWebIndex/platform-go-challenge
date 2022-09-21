@@ -1,0 +1,828 @@
+basePath: /
+definitions:
+  domain.Audience:
+    properties:
+      ageMax:
+        maximum: 102
+        minimum: 1
+        type: integer
+      ageMin:
+        maximum: 102
+        minimum: 1
+        type: integer
+      country:
+        type: string
+      description:
+        type: string
+      gender:
+        type: string
+      hoursSpent:
+        maximum: 24
+        minimum: 1
+        type: integer
+      numberOfPurchases:
+        maximum: 100
+        minimum: 1
+        type: integer
+    required:
+    - ageMax
+    - ageMin
+    - country
+    - description
+    - gender
+    - hoursSpent
+    - numberOfPurchases
+    type: object
+  domain.Chart:
+    properties:
+      data:
+        $ref: '#/definitions/domain.XYData'
+      description:
+        type: string
+      title:
+        type: string
+      xTitle:
+        type: string
+      yTitle:
+        type: string
+    required:
+    - description
+    - title
+    - xTitle
+    - yTitle
+    type: object
+  domain.Insight:
+    properties:
+      description:
+        type: string
+      text:
+        type: string
+    required:
+    - description
+    - text
+    type: object
+  domain.QueryAssets:
+    properties:
+      isDesc:
+        type: boolean
+      lastID:
+        minimum: 0
+        type: integer
+      limit:
+        minimum: 1
+        type: integer
+      type:
+        type: string
+    required:
+    - limit
+    - type
+    type: object
+  domain.QueryFavouriteAssets:
+    properties:
+      fromUserID:
+        type: integer
+      onlyFavourite:
+        type: boolean
+    type: object
+  domain.User:
+    properties:
+      id:
+        type: integer
+      isAdmin:
+        type: boolean
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  domain.XYData:
+    properties:
+      x:
+        items:
+          type: number
+        type: array
+      "y":
+        items:
+          type: number
+        type: array
+    type: object
+  httpapi.AssetAudienceJson:
+    properties:
+      data:
+        $ref: '#/definitions/domain.Audience'
+      id:
+        type: integer
+    type: object
+  httpapi.AssetChartJson:
+    properties:
+      data:
+        $ref: '#/definitions/domain.Chart'
+      id:
+        type: integer
+    type: object
+  httpapi.AssetInsightJson:
+    properties:
+      data:
+        $ref: '#/definitions/domain.Insight'
+      id:
+        type: integer
+    type: object
+  httpapi.ListChartsJson:
+    properties:
+      assets:
+        items:
+          $ref: '#/definitions/httpapi.AssetChartJson'
+        type: array
+      firstID:
+        type: integer
+      lastID:
+        type: integer
+      limit:
+        type: integer
+      type:
+        type: string
+    type: object
+  httpapi.ListInsightsJson:
+    properties:
+      assets:
+        items:
+          $ref: '#/definitions/httpapi.AssetInsightJson'
+        type: array
+      firstID:
+        type: integer
+      lastID:
+        type: integer
+      limit:
+        type: integer
+      type:
+        type: string
+    type: object
+  httpapi.QueryAssets:
+    properties:
+      isDesc:
+        type: boolean
+      lastID:
+        minimum: 0
+        type: integer
+      limit:
+        minimum: 1
+        type: integer
+      type:
+        type: string
+      who:
+        $ref: '#/definitions/domain.QueryFavouriteAssets'
+    required:
+    - limit
+    - type
+    type: object
+  httpapi.RequestUserCreation:
+    properties:
+      isAdmin:
+        type: boolean
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  httpapi.RequestUserLogin:
+    properties:
+      expiresInMinutes:
+        type: integer
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  httpapi.ResponseLogin:
+    properties:
+      error: {}
+      expiresAt:
+        type: integer
+      status:
+        type: string
+      token:
+        type: string
+      username:
+        type: string
+    type: object
+  httpapi.ResponseStatus:
+    properties:
+      error:
+        type: string
+      status:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: This is API for GWI Server.
+  title: GWI Server API
+  version: "1.0"
+paths:
+  /api/v1/admin/audiences:
+    post:
+      consumes:
+      - application/json
+      description: Add new asset for audiences
+      parameters:
+      - description: audience
+        in: body
+        name: audience
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Audience'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.AssetAudienceJson'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Add Audience
+      tags:
+      - admin
+  /api/v1/admin/audiences/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an asset from audiences
+      parameters:
+      - description: Audience ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: audience
+        in: body
+        name: audience
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Audience'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Delete Audience
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Update an existing asset from audiences
+      parameters:
+      - description: Audience ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: audience
+        in: body
+        name: audience
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Audience'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.AssetAudienceJson'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Update Audience
+      tags:
+      - admin
+  /api/v1/admin/charts:
+    post:
+      consumes:
+      - application/json
+      description: Add new asset for charts
+      parameters:
+      - description: chart
+        in: body
+        name: chart
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Chart'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.AssetChartJson'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Add Chart
+      tags:
+      - admin
+  /api/v1/admin/charts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an asset from charts
+      parameters:
+      - description: Chart ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: chart
+        in: body
+        name: chart
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Chart'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Delete Chart
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Update an existing asset from charts
+      parameters:
+      - description: Chart ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: chart
+        in: body
+        name: chart
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Chart'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.AssetChartJson'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Update Chart
+      tags:
+      - admin
+  /api/v1/admin/insights:
+    post:
+      consumes:
+      - application/json
+      description: Add new asset for insights
+      parameters:
+      - description: insight
+        in: body
+        name: insight
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Insight'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.AssetInsightJson'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Add Insight
+      tags:
+      - admin
+  /api/v1/admin/insights/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an asset from insights
+      parameters:
+      - description: Insight ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Delete Insight
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Update an existing asset from insights
+      parameters:
+      - description: Insight ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: insight
+        in: body
+        name: insight
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Insight'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.AssetInsightJson'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Update Insight
+      tags:
+      - admin
+  /api/v1/assets:
+    post:
+      consumes:
+      - application/json
+      description: Get list of assets based on the asset type, the number of assets
+        in the page and the last ID to start counting
+      parameters:
+      - description: query options
+        in: body
+        name: query
+        required: true
+        schema:
+          $ref: '#/definitions/httpapi.QueryAssets'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.ListInsightsJson'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: List of assets
+      tags:
+      - user
+  /api/v1/audiences/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an audience based on ID
+      parameters:
+      - description: Audience ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.AssetAudienceJson'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Get Audience
+      tags:
+      - user
+  /api/v1/audiences/{id}/favourite:
+    put:
+      consumes:
+      - application/json
+      description: Favour an audience based on ID
+      parameters:
+      - description: Audience ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Favour Audience
+      tags:
+      - user
+  /api/v1/charts/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a chart based on ID
+      parameters:
+      - description: Chart ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.AssetChartJson'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Get Chart
+      tags:
+      - user
+  /api/v1/charts/{id}/favourite:
+    put:
+      consumes:
+      - application/json
+      description: Favour a chart based on ID
+      parameters:
+      - description: Chart ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Favour Chart
+      tags:
+      - user
+  /api/v1/insights/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an insight based on ID
+      parameters:
+      - description: Insight ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.AssetInsightJson'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Get Insight
+      tags:
+      - user
+  /api/v1/insights/{id}/favourite:
+    put:
+      consumes:
+      - application/json
+      description: Favour an insight based on ID
+      parameters:
+      - description: Insight ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Favour an Insight
+      tags:
+      - user
+  /api/v1/me:
+    get:
+      consumes:
+      - application/json
+      description: Get the information of the user you logined with
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: Show user information
+      tags:
+      - user
+  /api/v1/me/favourites:
+    post:
+      consumes:
+      - application/json
+      description: Get list of favourite assets of the user based on the asset type,
+        the number of assets in the page and the last ID to start counting
+      parameters:
+      - description: query options
+        in: body
+        name: query
+        required: true
+        schema:
+          $ref: '#/definitions/domain.QueryAssets'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.ListChartsJson'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      security:
+      - BearerAuth: []
+      summary: List of favourite assets
+      tags:
+      - user
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and take JWT token back
+      parameters:
+      - description: credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/httpapi.RequestUserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.ResponseLogin'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      summary: Login
+      tags:
+      - auth
+  /auth/users:
+    post:
+      consumes:
+      - application/json
+      description: Create any user as many as you want
+      parameters:
+      - description: new user's info
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/httpapi.RequestUserCreation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.ResponseLogin'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpapi.ResponseStatus'
+      summary: Create User
+      tags:
+      - auth
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

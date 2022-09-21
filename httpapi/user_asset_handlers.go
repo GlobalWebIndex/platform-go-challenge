@@ -2,7 +2,6 @@ package httpapi
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"platform-go-challenge/domain"
 	"strconv"
@@ -46,6 +45,17 @@ func (s *Server) getAssetHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, asset)
 }
 
+// @Summary      List of assets
+// @Description  Get list of assets based on the asset type, the number of assets in the page and the last ID to start counting
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        query  body  QueryAssets  true  "query options"
+// @Success      200  {object}  ListInsightsJson
+// @Failure      400  {object}	ResponseStatus
+// @Failure      401  {object}	ResponseStatus
+// @Router       /api/v1/assets [POST]
+// @Security     BearerAuth
 func (s *Server) listAssetsHandler(c echo.Context) error {
 	user, err := getUserDomain(c)
 	if err != nil {
@@ -122,6 +132,17 @@ func (s *Server) favourAnAssetHandler(c echo.Context) error {
 	})
 }
 
+// @Summary      List of favourite assets
+// @Description  Get list of favourite assets of the user based on the asset type, the number of assets in the page and the last ID to start counting
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        query  body  domain.QueryAssets  true  "query options"
+// @Success      200  {object}  ListChartsJson
+// @Failure      400  {object}	ResponseStatus
+// @Failure      401  {object}	ResponseStatus
+// @Router       /api/v1/me/favourites [POST]
+// @Security     BearerAuth
 func (s *Server) listMyFavourites(c echo.Context) error {
 	user, err := getUserDomain(c)
 	if err != nil {
@@ -138,7 +159,6 @@ func (s *Server) listMyFavourites(c echo.Context) error {
 			Error:  err.Error(),
 		})
 	}
-	fmt.Println(query)
 	favQur := domain.QueryFavouriteAssets{
 		FromUserID: user.ID,
 		OnlyFav:    true,

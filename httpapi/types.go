@@ -61,3 +61,44 @@ type QueryAssets struct {
 	domain.QueryAssets
 	Who *domain.QueryFavouriteAssets `json:"who"`
 }
+
+// dummy structures used for documenting better the swagger
+
+type AssetInsightJson struct {
+	ID   uint `json:"id"`
+	Data domain.Insight
+}
+
+type AssetChartJson struct {
+	ID   uint `json:"id"`
+	Data domain.Chart
+}
+
+type AssetAudienceJson struct {
+	ID   uint `json:"id"`
+	Data domain.Audience
+}
+
+type ListInsightsJson struct {
+	Limit   int                `json:"limit"`
+	FirstID uint               `json:"firstID"`
+	LastID  uint               `json:"lastID"`
+	Type    domain.AssetType   `json:"type"`
+	Assets  []AssetInsightJson `json:"assets"`
+}
+
+type ListChartsJson struct {
+	Limit   int              `json:"limit"`
+	FirstID uint             `json:"firstID"`
+	LastID  uint             `json:"lastID"`
+	Type    domain.AssetType `json:"type"`
+	Assets  []AssetChartJson `json:"assets"`
+}
+
+type ListAudiencesJson struct {
+	Limit   int                 `json:"limit"`
+	FirstID uint                `json:"firstID"`
+	LastID  uint                `json:"lastID"`
+	Type    domain.AssetType    `json:"type"`
+	Assets  []AssetAudienceJson `json:"assets"`
+}

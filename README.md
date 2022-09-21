@@ -37,7 +37,9 @@ docker-compose -f docker-compose.yml -f docker-compose.server.yml up -d
 
 ## How to test everything
 There are two options to play with the system.</br>
-The first option is to try it out from [Swagger](http://localhost:8000/api).</br>
+
+The first option is to try it out from [Swagger](http://localhost:8000/swagger/index.html), but on authorization("Authorize" button) of the token don't forget to add "Bearer" front of the token.</br>
+
 The second option is to try it out from Postman by importing the file 'GWI-Exercise-Go.postman_collection.json'</br>
 Both contain some information on how to create a user, login and CRUD assets </br>
 
