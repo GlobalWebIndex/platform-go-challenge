@@ -138,17 +138,31 @@ We will have an interface for the users and assets to ask for these methods.
 * FavourAnAsset
 
 
-For simplicity, anyone will be able to add a user. But only admin users can add/update/delete assets.
-POST /api/v1/users
-POST /api/v1/auth/login
-POST /api/v1/auth/logout
+For simplicity, anyone will be able to add a user. But only users can see assets and admins can add/update/delete assets.
+POST /auth/users
+POST /auth/login
 
-POST 	/api/v1/auth/admin/assets
-PUT 	/api/v1/auth/admin/assets
-DELETE 	/api/v1/auth/admin/assets
+Calls from admin
+POST 	/api/v1/admin/charts
+PUT 	/api/v1/admin/charts/:id
+DELETE 	/api/v1/admin/charts/:id
 
-GET /api/v1/auth/assets/:id
-GET /api/v1/auth/admin/users/:user_id/assets
-GET /api/v1/auth/assets
-POST /api/v1/auth/assets/:id/favourite
+POST 	/api/v1/admin/audiences
+PUT 	/api/v1/admin/audiences/:id
+DELETE 	/api/v1/admin/audiences/:id
 
+POST 	/api/v1/admin/insights
+PUT 	/api/v1/admin/insights/:id
+DELETE 	/api/v1/admin/insights/:id
+
+Calls from any user
+GET 	/api/v1/me
+GET 	/api/v1/me/favourites
+GET 	/api/v1/charts/:id
+GET 	/api/v1/audiences/:id
+GET 	/api/v1/insights/:id
+
+GET 	/api/v1/assets
+PUT 	/api/v1/charts/:id/favourite
+PUT 	/api/v1/audiences/:id/favourite
+PUT 	/api/v1/insights/:id/favourite

@@ -1,0 +1,1052 @@
+{
+	"info": {
+		"_postman_id": "2479f107-69ee-42cd-b7ca-3d05b93f386b",
+		"name": "GWI-Exercise-Go",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "Create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"user\",\n    \"password\":\"secret\",\n    \"isAdmin\":false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/auth/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"auth",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"secret\",\n    \"isAdmin\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/auth/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"auth",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"admin\",\n    \"password\":\"secret\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user's requests",
+			"item": [
+				{
+					"name": "Get my user info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3NTEzMDV9.9r2AVZZGM6oFt24vSp66B5Gu6jU6nuQnohQ7MHZnm7I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Insight",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3NTEzMDV9.9r2AVZZGM6oFt24vSp66B5Gu6jU6nuQnohQ7MHZnm7I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/insights/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"insights",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Chart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3NTEzMDV9.9r2AVZZGM6oFt24vSp66B5Gu6jU6nuQnohQ7MHZnm7I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/charts/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"charts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Audience",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3NTEzMDV9.9r2AVZZGM6oFt24vSp66B5Gu6jU6nuQnohQ7MHZnm7I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/audiences/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"audiences",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get List Of Insights",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MjE4MDZ9.AlR3bfBBAU6UcNxXZiuno5AXMHPLNwpzyyNpT8pnfdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"limit\":100,\n    \"lastID\":1,\n    \"type\": \"insights\",\n    \"isDesc\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/assets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get List Of Charts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MjE4MDZ9.AlR3bfBBAU6UcNxXZiuno5AXMHPLNwpzyyNpT8pnfdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"limit\":100,\n    \"lastID\":1,\n    \"type\": \"charts\",\n    \"isDesc\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/assets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get List Of Audiences",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MjE4MDZ9.AlR3bfBBAU6UcNxXZiuno5AXMHPLNwpzyyNpT8pnfdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"limit\":100,\n    \"lastID\":1,\n    \"type\": \"audiences\",\n    \"isDesc\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/assets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a favourite insight",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MjE4MDZ9.AlR3bfBBAU6UcNxXZiuno5AXMHPLNwpzyyNpT8pnfdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/insights/1/favourite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"insights",
+								"1",
+								"favourite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a favourite insight",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MjE4MDZ9.AlR3bfBBAU6UcNxXZiuno5AXMHPLNwpzyyNpT8pnfdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/insights/1/favourite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"insights",
+								"1",
+								"favourite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a favourite chart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MTc2MjB9.fLNktFuXC1cNs5KtoKr2DQDZe6ZGJrWKYVcg-hyS9I8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/charts/1/favourite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"charts",
+								"1",
+								"favourite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a favourite chart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MjE4MDZ9.AlR3bfBBAU6UcNxXZiuno5AXMHPLNwpzyyNpT8pnfdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/charts/1/favourite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"charts",
+								"1",
+								"favourite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a favourite audience",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MTc2MjB9.fLNktFuXC1cNs5KtoKr2DQDZe6ZGJrWKYVcg-hyS9I8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/audiences/2/favourite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"audiences",
+								"2",
+								"favourite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a favourite audience",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MjE4MDZ9.AlR3bfBBAU6UcNxXZiuno5AXMHPLNwpzyyNpT8pnfdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/audiences/1/favourite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"audiences",
+								"1",
+								"favourite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List my favourites insights",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MjE4MDZ9.AlR3bfBBAU6UcNxXZiuno5AXMHPLNwpzyyNpT8pnfdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"limit\":100,\n    \"lastID\":1,\n    \"type\": \"insights\",\n    \"isDesc\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/me/favourites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"me",
+								"favourites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List my favourite charts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MjE4MDZ9.AlR3bfBBAU6UcNxXZiuno5AXMHPLNwpzyyNpT8pnfdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"limit\":100,\n    \"lastID\":1,\n    \"type\": \"charts\",\n    \"isDesc\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/me/favourites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"me",
+								"favourites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List my favourite audiences",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE2NjM3MjE4MDZ9.AlR3bfBBAU6UcNxXZiuno5AXMHPLNwpzyyNpT8pnfdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"limit\":100,\n    \"lastID\":1,\n    \"type\": \"audiences\",\n    \"isDesc\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/me/favourites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"me",
+								"favourites"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin's requests",
+			"item": [
+				{
+					"name": "Create Insight",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3NTEzMDV9.9r2AVZZGM6oFt24vSp66B5Gu6jU6nuQnohQ7MHZnm7I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\":\"new insight\",\n    \"description\": \"the newest of them all\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/admin/insights",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"insights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Chart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3NTEzMDV9.9r2AVZZGM6oFt24vSp66B5Gu6jU6nuQnohQ7MHZnm7I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \t\"description\": \"bla bla\",\n\t\t\"title\":       \"Relationship between tax and GDP\",\n\t\t\"xTitle\":      \"GDP\",\n\t\t\"yTitle\":      \"tax\",\n\t\t\"data\": {\n\t\t\t\"x\": [1,2,3,4,5],\n\t\t\t\"y\": [1,2,3,4,5]\n\t\t}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/admin/charts",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"charts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Audience",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3NTEzMDV9.9r2AVZZGM6oFt24vSp66B5Gu6jU6nuQnohQ7MHZnm7I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ageMax\":            30,\n\t\"ageMin\":           20,\n\t\"gender\":            \"female\",\n\t\"country\":           \"Sweden\",\n\t\"hoursSpent\":        3,\n\t\"numberOfPurchases\": 3,\n\t\"description\":       \"bla bla\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/admin/audiences",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"audiences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Audience",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3NTEzMDV9.9r2AVZZGM6oFt24vSp66B5Gu6jU6nuQnohQ7MHZnm7I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ageMax\":            30,\n\t\"ageMin\":           20,\n\t\"gender\":            \"male\",\n\t\"country\":           \"Sweden\",\n\t\"hoursSpent\":        3,\n\t\"numberOfPurchases\": 3,\n\t\"description\":       \"bla bla\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/admin/audiences/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"audiences",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Insight",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3NTEzMDV9.9r2AVZZGM6oFt24vSp66B5Gu6jU6nuQnohQ7MHZnm7I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\":\"new insight 1\",\n    \"description\": \"the newest of them all\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/admin/insights/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"insights",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Chart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3NTEzMDV9.9r2AVZZGM6oFt24vSp66B5Gu6jU6nuQnohQ7MHZnm7I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \t\"description\": \"bla bla 1\",\n\t\t\"title\":       \"Relationship between tax and GDP\",\n\t\t\"xTitle\":      \"GDP\",\n\t\t\"yTitle\":      \"tax\",\n\t\t\"data\": {\n\t\t\t\"x\": [1,2,3,4,5],\n\t\t\t\"y\": [1,2,3,4,5]\n\t\t}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/admin/charts/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"charts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete insight",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3MTUyMDJ9.0VdSYxq7pyO6FuQ5Qv3ze8SuQykdrptqG9loFOuLUao",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/admin/insights/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"insights",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Chart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3MTUyMDJ9.0VdSYxq7pyO6FuQ5Qv3ze8SuQykdrptqG9loFOuLUao",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/admin/charts/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"charts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Audience",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJleHAiOjE2NjM3MTUyMDJ9.0VdSYxq7pyO6FuQ5Qv3ze8SuQykdrptqG9loFOuLUao",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/admin/audiences/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"audiences",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
