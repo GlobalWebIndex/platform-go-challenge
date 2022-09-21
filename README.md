@@ -1,31 +1,78 @@
-# GlobalWebIndex Engineering Challenge
+# GWI Exercise Server
+
+## Table of Contents
+- [Introduction](#introduction)
+- [List of services](#list-of-services)
+- [List of ports used](#list-of-ports-used)
+- [How to deploy everything](#how-to-deploy-everything)
+- [How to test everything](#how-to-test-everything)
+- [How to close everything](#how-to-close-everything)
+- [How to run indivindually](#how-to-run-indivindually)
+- [Bugs](#bugs)
+
 
 ## Introduction
+This is a simple server for admins to add/update/delete assets (audience, chart and insights) and users to favour the assets.
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+## List of services
+- MariaDB for storing user and CV information.
+- Adminer for looking at the data in MariaDB.
+- GWI Server for the REST-API.
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+## List of ports used
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+The system will take these ports: 3306, 8080, 8000 </br>
+Before starting the services, <span style="color:red">make sure you don't have any application that use any of these ports.</span>
 
-## Challenge
+## How to deploy everything
+First, make sure you have docker-compose installed. </br>
+After installing docker-compose, you have to build the docker images.
+```shell
+docker-compose -f docker-compose.yml -f docker-compose.server.yml build
+```
+Start all the services
+```shell
+docker-compose -f docker-compose.yml -f docker-compose.server.yml up -d
+```
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+## How to test everything
+There are two options to play with the system.</br>
+The first option is to try it out from [Swagger](http://localhost:8000/api).</br>
+The second option is to try it out from Postman by importing the file 'GWI-Exercise-Go.postman_collection.json'</br>
+Both contain some information on how to create a user, login and CRUD assets </br>
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+After you create a user and an asset, you can check the SQL data from [Adminer](http://localhost:8080/)</br>
+For Adminer, the username and password is 'user'</br>
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+## How to close everything
+Because the system is based on docker-compose, just call this command line to close everything down.
+```shell
+docker-compose -f docker-compose.yml -f docker-compose.server.yml down
+```
+The system uses only ephemeral volumes, so you don't have to worry on looking for any volume to delete.
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
 
-It is appreciated, though not required, if a Dockerfile is included.
+## How to run indivindually
+Run docker-compose to start the DB
+```shell
+docker-compose up
+```
 
-## Submission
+Compile and run the binary
+```shell
+go build
 
-Just create a fork from the current repo and send it to us!
+./platform-go-challenge
+```
+OR
 
-Good luck, potential colleague!
+Run the docker image
+```shell
+docker build -t gwiserver .
+
+docker run --env-file .env.docker -p 8000:8000 --network platform-go-challenge_default -it gwiserver
+```
+
+## Bugs
+Known bugs
+- The isDesc query option for getting any list, does not seem to work properly

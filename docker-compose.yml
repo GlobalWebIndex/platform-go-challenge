@@ -1,7 +1,6 @@
 version: '3.1'
 
 services:
-
   db:
     image: mariadb
     restart: always
@@ -10,12 +9,13 @@ services:
       MYSQL_DATABASE: mydb
       MYSQL_USER: user
       MYSQL_PASSWORD: user
-    # volumes: 
-    #  - ./.database:/var/lib/mysql
     ports:
       - 3306:3306
-
-  # for viewing the database at http://localhost:8080
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-pexample"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
   adminer:
     image: adminer
     restart: always
