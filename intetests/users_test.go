@@ -63,7 +63,7 @@ func TestAuthenticationToListFavOfOtherUsersSuccess(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	asset, err := dom.AddAsset(ctx, admin, domain.Asset{
+	asset, err := dom.AddAsset(ctx, admin, domain.InputAsset{
 		Data: &domain.Audience{
 			AgeMax:            30,
 			AgeMin:            20,

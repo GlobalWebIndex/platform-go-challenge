@@ -23,7 +23,7 @@ func TestFavourAudience(t *testing.T) {
 	assert.NotNil(t, user)
 	assert.Equal(t, uint(1), user.ID)
 
-	asset, err := db.AddAsset(ctx, domain.Asset{
+	asset, err := db.AddAsset(ctx, domain.InputAsset{
 		Data: &domain.Audience{
 			AgeMax:            30,
 			AgeMin:            20,
@@ -71,7 +71,7 @@ func TestListFavouriteAudiences(t *testing.T) {
 	counter := 1
 	for i := 1; i <= 100; i++ {
 		desc := fmt.Sprintf("example %d", i)
-		asset, err := db.AddAsset(ctx, domain.Asset{
+		asset, err := db.AddAsset(ctx, domain.InputAsset{
 			Data: &domain.Audience{
 				AgeMax:            30,
 				AgeMin:            20,
@@ -107,7 +107,7 @@ func TestListFavouriteAudiences(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.True(t, la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[0].IsFavourite)
 	assert.Equal(t, uint(2), la.FirstID)
 	assert.Equal(t, uint(20), la.LastID)
 
@@ -121,8 +121,8 @@ func TestListFavouriteAudiences(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.True(t, la.Assets[0].IsFavourite)
-	assert.True(t, la.Assets[1].IsFavourite)
+	assert.True(t, *la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[1].IsFavourite)
 	assert.Equal(t, uint(100), la.FirstID)
 	assert.Equal(t, uint(82), la.LastID)
 
@@ -138,8 +138,8 @@ func TestListFavouriteAudiences(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.False(t, la.Assets[0].IsFavourite)
-	assert.True(t, la.Assets[1].IsFavourite)
+	assert.False(t, *la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[1].IsFavourite)
 	assert.Equal(t, uint(1), la.FirstID)
 	assert.Equal(t, uint(10), la.LastID)
 }
@@ -167,7 +167,7 @@ func TestListFavouriteInsights(t *testing.T) {
 	counter := 1
 	for i := 1; i <= 100; i++ {
 		desc := fmt.Sprintf("example %d", i)
-		asset, err := db.AddAsset(ctx, domain.Asset{
+		asset, err := db.AddAsset(ctx, domain.InputAsset{
 			Data: &domain.Insight{
 				Text:        "40% of millenials spend more than 3hours on social media daily",
 				Description: desc,
@@ -198,7 +198,7 @@ func TestListFavouriteInsights(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.True(t, la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[0].IsFavourite)
 	assert.Equal(t, uint(2), la.FirstID)
 	assert.Equal(t, uint(20), la.LastID)
 
@@ -212,7 +212,7 @@ func TestListFavouriteInsights(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.True(t, la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[0].IsFavourite)
 	assert.Equal(t, uint(100), la.FirstID)
 	assert.Equal(t, uint(82), la.LastID)
 
@@ -228,8 +228,8 @@ func TestListFavouriteInsights(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.False(t, la.Assets[0].IsFavourite)
-	assert.True(t, la.Assets[1].IsFavourite)
+	assert.False(t, *la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[1].IsFavourite)
 	assert.Equal(t, uint(1), la.FirstID)
 	assert.Equal(t, uint(10), la.LastID)
 }
@@ -257,15 +257,15 @@ func TestListFavouriteCharts(t *testing.T) {
 	counter := 1
 	for i := 1; i <= 100; i++ {
 		desc := fmt.Sprintf("example %d", i)
-		asset, err := db.AddAsset(ctx, domain.Asset{
+		asset, err := db.AddAsset(ctx, domain.InputAsset{
 			Data: &domain.Chart{
 				Description: desc,
 				Title:       "Relationship between tax and GDP",
 				XTitle:      "GDP",
 				YTitle:      "Tax",
 				Data: domain.XYData{
-					X: []interface{}{1, 2, 3, 4, 5},
-					Y: []interface{}{1, 2, 3, 4, 5},
+					X: []float64{1, 2, 3, 4, 5},
+					Y: []float64{1, 2, 3, 4, 5},
 				},
 			}})
 		assert.NotNil(t, asset)
@@ -294,7 +294,7 @@ func TestListFavouriteCharts(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.True(t, la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[0].IsFavourite)
 	assert.Equal(t, uint(2), la.FirstID)
 	assert.Equal(t, uint(20), la.LastID)
 
@@ -308,7 +308,7 @@ func TestListFavouriteCharts(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.True(t, la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[0].IsFavourite)
 	assert.Equal(t, uint(100), la.FirstID)
 	assert.Equal(t, uint(82), la.LastID)
 
@@ -324,8 +324,8 @@ func TestListFavouriteCharts(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.False(t, la.Assets[0].IsFavourite)
-	assert.True(t, la.Assets[1].IsFavourite)
+	assert.False(t, *la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[1].IsFavourite)
 	assert.Equal(t, uint(1), la.FirstID)
 	assert.Equal(t, uint(10), la.LastID)
 }

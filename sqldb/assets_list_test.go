@@ -15,7 +15,7 @@ func TestListInsights(t *testing.T) {
 	ctx := context.Background()
 	for i := 1; i <= 100; i++ {
 		desc := fmt.Sprintf("example %d", i)
-		asset, err := db.AddAsset(ctx, domain.Asset{
+		asset, err := db.AddAsset(ctx, domain.InputAsset{
 			Data: &domain.Insight{
 				Text:        "40% of millenials spend more than 3hours on social media daily",
 				Description: desc,
@@ -62,15 +62,15 @@ func TestListCharts(t *testing.T) {
 	ctx := context.Background()
 	for i := 1; i <= 100; i++ {
 		desc := fmt.Sprintf("example %d", i)
-		asset, err := db.AddAsset(ctx, domain.Asset{
+		asset, err := db.AddAsset(ctx, domain.InputAsset{
 			Data: &domain.Chart{
 				Description: desc,
 				Title:       "Relationship between tax and GDP",
 				XTitle:      "GDP",
 				YTitle:      "Tax",
 				Data: domain.XYData{
-					X: []interface{}{1, 2, 3, 4, 5},
-					Y: []interface{}{1, 2, 3, 4, 5},
+					X: []float64{1, 2, 3, 4, 5},
+					Y: []float64{1, 2, 3, 4, 5},
 				},
 			}})
 		assert.NotNil(t, asset)
@@ -115,7 +115,7 @@ func TestListAudiences(t *testing.T) {
 	ctx := context.Background()
 	for i := 1; i <= 100; i++ {
 		desc := fmt.Sprintf("example %d", i)
-		asset, err := db.AddAsset(ctx, domain.Asset{
+		asset, err := db.AddAsset(ctx, domain.InputAsset{
 			Data: &domain.Audience{
 				AgeMax:            30,
 				AgeMin:            20,

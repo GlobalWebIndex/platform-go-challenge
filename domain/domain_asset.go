@@ -16,8 +16,8 @@ func NewDomain(db IDBRepository) *Domain {
 	}
 }
 
-func (d *Domain) validateAsset(asset Asset) error {
-	switch v := asset.Data.(type) {
+func (d *Domain) validateAsset(asset IAsset) error {
+	switch v := asset.GetData().(type) {
 	case *Insight:
 		err := d.validate.Struct(v)
 		if err != nil {
@@ -57,11 +57,11 @@ func (d *Domain) validateAsset(asset Asset) error {
 	return nil
 }
 
-func (d *Domain) AddAsset(ctx context.Context, user *User, asset Asset) (*Asset, error) {
+func (d *Domain) AddAsset(ctx context.Context, user *User, asset InputAsset) (*Asset, error) {
 	if user == nil {
 		return nil, ErrUnauthorized
 	}
-	err := d.validateAsset(asset)
+	err := d.validateAsset(&asset)
 	if err != nil {
 		return nil, err
 	}
@@ -76,18 +76,18 @@ func (d *Domain) AddAsset(ctx context.Context, user *User, asset Asset) (*Asset,
 	return newAsset, nil
 }
 
-func (d *Domain) UpdateAsset(ctx context.Context, user *User, asset Asset) (*Asset, error) {
+func (d *Domain) UpdateAsset(ctx context.Context, user *User, assetID uint, asset InputAsset) (*Asset, error) {
 	if user == nil {
 		return nil, ErrUnauthorized
 	}
-	err := d.validateAsset(asset)
+	err := d.validateAsset(&asset)
 	if err != nil {
 		return nil, err
 	}
 	if !user.IsAdmin {
 		return nil, fmt.Errorf("%w: %v", ErrUnauthorized, errors.New("only administrators are authorized"))
 	}
-	newAsset, err := d.repo.UpdateAsset(ctx, asset)
+	newAsset, err := d.repo.UpdateAsset(ctx, assetID, asset)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrInternalDBFailure, err)
 	}
@@ -101,10 +101,17 @@ func (d *Domain) DeleteAsset(ctx context.Context, user *User, assetID uint, asse
 	if !user.IsAdmin {
 		return fmt.Errorf("%w: %v", ErrUnauthorized, errors.New("only administrators are authorized"))
 	}
-	err := d.repo.DeleteAsset(ctx, assetType, assetID)
+
+	err := d.repo.RemoveFavouriteAssetFromEveryone(ctx, assetID, assetType)
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrInternalDBFailure, err)
 	}
+
+	err = d.repo.DeleteAsset(ctx, assetType, assetID)
+	if err != nil {
+		return fmt.Errorf("%w: %v", ErrInternalDBFailure, err)
+	}
+
 	return nil
 }
 

@@ -12,6 +12,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	db.CreateTables()
 	dom := domain.NewDomain(db)
 	server := httpapi.NewServer(dom, 8000, "secret")
 	server.Run()

@@ -58,7 +58,7 @@ func TestFavourInsight(t *testing.T) {
 	assert.NotNil(t, user)
 	assert.Equal(t, uint(1), user.ID)
 
-	asset, err := db.AddAsset(ctx, domain.Asset{
+	asset, err := db.AddAsset(ctx, domain.InputAsset{
 		Data: &domain.Insight{
 			Text:        "40% of millenials spend more than 3hours on social media daily",
 			Description: "example",
@@ -93,16 +93,15 @@ func TestFavourChart(t *testing.T) {
 	assert.NotNil(t, user)
 	assert.Equal(t, uint(1), user.ID)
 
-	asset, err := db.AddAsset(ctx, domain.Asset{
-		ID: 1,
+	asset, err := db.AddAsset(ctx, domain.InputAsset{
 		Data: &domain.Chart{
 			Description: "bla bla",
 			Title:       "Relationship between tax and GDP",
 			XTitle:      "GDP",
 			YTitle:      "Tax",
 			Data: domain.XYData{
-				X: []interface{}{1, 2, 3, 4, 5},
-				Y: []interface{}{1, 2, 3, 4, 5},
+				X: []float64{1, 2, 3, 4, 5},
+				Y: []float64{1, 2, 3, 4, 5},
 			},
 		}})
 	assert.NoError(t, err)

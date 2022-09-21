@@ -19,7 +19,7 @@ func TestCRUDAudienceSuccess(t *testing.T) {
 		IsAdmin:  true,
 	})
 	assert.NoError(t, err)
-	asset, err := dom.AddAsset(ctx, admin, domain.Asset{
+	asset, err := dom.AddAsset(ctx, admin, domain.InputAsset{
 		Data: &domain.Audience{
 			AgeMax:            30,
 			AgeMin:            20,
@@ -34,8 +34,7 @@ func TestCRUDAudienceSuccess(t *testing.T) {
 	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "bla bla", asset.Data.(*domain.Audience).Description)
 
-	asset, err = dom.UpdateAsset(ctx, admin, domain.Asset{
-		ID: 1,
+	asset, err = dom.UpdateAsset(ctx, admin, 1, domain.InputAsset{
 		Data: &domain.Audience{
 			AgeMax:            30,
 			AgeMin:            20,
@@ -80,7 +79,7 @@ func TestListAudiencesSuccess(t *testing.T) {
 	assert.NoError(t, err)
 	for i := 1; i <= 100; i++ {
 		desc := fmt.Sprintf("example %d", i)
-		asset, err := dom.AddAsset(ctx, admin, domain.Asset{
+		asset, err := dom.AddAsset(ctx, admin, domain.InputAsset{
 			Data: &domain.Audience{
 				AgeMax:            30,
 				AgeMin:            20,
@@ -143,7 +142,7 @@ func TestListFavouriteAudiencesSuccess(t *testing.T) {
 	assert.NoError(t, err)
 	for i := 1; i <= 100; i++ {
 		desc := fmt.Sprintf("example %d", i)
-		asset, err := dom.AddAsset(ctx, admin, domain.Asset{
+		asset, err := dom.AddAsset(ctx, admin, domain.InputAsset{
 			Data: &domain.Audience{
 				AgeMax:            30,
 				AgeMin:            20,
@@ -176,7 +175,7 @@ func TestListFavouriteAudiencesSuccess(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.True(t, la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[0].IsFavourite)
 	assert.Equal(t, uint(2), la.FirstID)
 	assert.Equal(t, uint(20), la.LastID)
 
@@ -190,7 +189,7 @@ func TestListFavouriteAudiencesSuccess(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.True(t, la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[0].IsFavourite)
 	assert.Equal(t, uint(100), la.FirstID)
 	assert.Equal(t, uint(82), la.LastID)
 
@@ -209,8 +208,32 @@ func TestListFavouriteAudiencesSuccess(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, la)
 	assert.Equal(t, 10, len(la.Assets))
-	assert.False(t, la.Assets[0].IsFavourite)
-	assert.True(t, la.Assets[1].IsFavourite)
+	assert.False(t, *la.Assets[0].IsFavourite)
+	assert.True(t, *la.Assets[1].IsFavourite)
 	assert.Equal(t, uint(1), la.FirstID)
 	assert.Equal(t, uint(10), la.LastID)
+
+	// Delete a favourite asset, and check the favourite of user
+	favQuery = domain.QueryFavouriteAssets{
+		FromUserID: user.ID,
+		OnlyFav:    true,
+	}
+	la, err = dom.ListAssets(ctx, user, qa, &favQuery)
+	assert.NoError(t, err)
+	assert.Equal(t, 10, len(la.Assets))
+	assert.Equal(t, uint(2), la.Assets[0].ID)
+
+	err = dom.DeleteAsset(ctx, admin, la.Assets[0].ID, domain.AudienceAssetType)
+	assert.NoError(t, err)
+
+	favQuery = domain.QueryFavouriteAssets{
+		FromUserID: user.ID,
+		OnlyFav:    true,
+	}
+	la, err = dom.ListAssets(ctx, user, qa, &favQuery)
+	assert.NoError(t, err)
+	assert.NotNil(t, la)
+	assert.Equal(t, 10, len(la.Assets))
+	assert.Equal(t, uint(4), la.Assets[0].ID)
+
 }

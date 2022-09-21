@@ -11,8 +11,8 @@ var CorrectInputTestAssetData = []interface{}{
 		XTitle:      "GDP",
 		YTitle:      "Tax",
 		Data: XYData{
-			X: []interface{}{1, 2, 3, 4, 5},
-			Y: []interface{}{1, 2, 3, 4, 5},
+			X: []float64{1, 2, 3, 4, 5},
+			Y: []float64{1, 2, 3, 4, 5},
 		},
 	},
 	&Audience{
@@ -45,8 +45,8 @@ var WrongInputTestAssetData = []interface{}{
 		XTitle:      "GDP",
 		YTitle:      "Tax",
 		Data: XYData{
-			X: []interface{}{1, 2, 3, 4, 5},
-			Y: []interface{}{1, 2, 3, 4, 5},
+			X: []float64{1, 2, 3, 4, 5},
+			Y: []float64{1, 2, 3, 4, 5},
 		},
 	},
 	&Chart{
@@ -55,8 +55,8 @@ var WrongInputTestAssetData = []interface{}{
 		XTitle:      "GDP",
 		YTitle:      "Tax",
 		Data: XYData{
-			X: []interface{}{1, 2, 3, 4, 5},
-			Y: []interface{}{1, 2, 3, 4, 5},
+			X: []float64{1, 2, 3, 4, 5},
+			Y: []float64{1, 2, 3, 4, 5},
 		},
 	},
 	&Chart{
@@ -65,8 +65,8 @@ var WrongInputTestAssetData = []interface{}{
 		XTitle:      "",
 		YTitle:      "Tax",
 		Data: XYData{
-			X: []interface{}{1, 2, 3, 4, 5},
-			Y: []interface{}{1, 2, 3, 4, 5},
+			X: []float64{1, 2, 3, 4, 5},
+			Y: []float64{1, 2, 3, 4, 5},
 		},
 	},
 	&Chart{
@@ -75,8 +75,8 @@ var WrongInputTestAssetData = []interface{}{
 		XTitle:      "GDP",
 		YTitle:      "",
 		Data: XYData{
-			X: []interface{}{1, 2, 3, 4, 5},
-			Y: []interface{}{1, 2, 3, 4, 5},
+			X: []float64{1, 2, 3, 4, 5},
+			Y: []float64{1, 2, 3, 4, 5},
 		},
 	},
 	&Chart{
@@ -85,8 +85,8 @@ var WrongInputTestAssetData = []interface{}{
 		XTitle:      "GDP",
 		YTitle:      "Tax",
 		Data: XYData{
-			X: []interface{}{},
-			Y: []interface{}{},
+			X: []float64{},
+			Y: []float64{},
 		},
 	},
 	&Chart{
@@ -95,8 +95,8 @@ var WrongInputTestAssetData = []interface{}{
 		XTitle:      "GDP",
 		YTitle:      "Tax",
 		Data: XYData{
-			X: []interface{}{1, 2, 3, 4},
-			Y: []interface{}{1, 2, 3, 4, 5},
+			X: []float64{1, 2, 3, 4},
+			Y: []float64{1, 2, 3, 4, 5},
 		},
 	},
 	&Audience{

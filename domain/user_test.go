@@ -112,9 +112,9 @@ func TestLoginUserSuccess(t *testing.T) {
 func TestAuthenticationFailures(t *testing.T) {
 	dom := NewDomain(&MockDB{})
 	ctx := context.Background()
-	_, err := dom.AddAsset(ctx, nil, Asset{})
+	_, err := dom.AddAsset(ctx, nil, InputAsset{})
 	assert.ErrorIs(t, err, ErrUnauthorized)
-	_, err = dom.UpdateAsset(ctx, nil, Asset{})
+	_, err = dom.UpdateAsset(ctx, nil, 1, InputAsset{})
 	assert.ErrorIs(t, err, ErrUnauthorized)
 	err = dom.DeleteAsset(ctx, nil, 1, AudienceAssetType)
 	assert.ErrorIs(t, err, ErrUnauthorized)

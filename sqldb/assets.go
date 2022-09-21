@@ -3,10 +3,11 @@ package sqldb
 import (
 	"context"
 	"errors"
+	"fmt"
 	"platform-go-challenge/domain"
 )
 
-func (d *DB) AddAsset(ctx context.Context, asset domain.Asset) (*domain.Asset, error) {
+func (d *DB) AddAsset(ctx context.Context, asset domain.InputAsset) (*domain.Asset, error) {
 	newAsset := &domain.Asset{}
 	switch v := asset.Data.(type) {
 	case *domain.Insight:
@@ -37,20 +38,20 @@ func (d *DB) AddAsset(ctx context.Context, asset domain.Asset) (*domain.Asset, e
 		newAsset.ID = au.ID
 		newAsset.Data = au.ToDomain()
 	default:
-		return nil, errors.New("this asset type does not exist")
+		return nil, fmt.Errorf("AddAsset: %w", ErrThisAssetTypeDoesNotExist)
 	}
 	return newAsset, nil
 }
 
-func (d *DB) UpdateAsset(ctx context.Context, asset domain.Asset) (*domain.Asset, error) {
-	if asset.ID == 0 {
+func (d *DB) UpdateAsset(ctx context.Context, assetID uint, asset domain.InputAsset) (*domain.Asset, error) {
+	if assetID <= 0 {
 		return nil, errors.New("add id ")
 	}
 	newAsset := &domain.Asset{}
 	switch v := asset.Data.(type) {
 	case *domain.Insight:
 		in := &Insight{}
-		d.db.First(in, asset.ID)
+		d.db.First(in, assetID)
 		in.FromDomain(v)
 		err := d.db.Save(in).Error
 		if err != nil {
@@ -60,7 +61,7 @@ func (d *DB) UpdateAsset(ctx context.Context, asset domain.Asset) (*domain.Asset
 		newAsset.Data = in.ToDomain()
 	case *domain.Chart:
 		ch := &Chart{}
-		d.db.First(ch, asset.ID)
+		d.db.First(ch, assetID)
 		ch.FromDomain(v)
 		err := d.db.Save(ch).Error
 		if err != nil {
@@ -71,7 +72,7 @@ func (d *DB) UpdateAsset(ctx context.Context, asset domain.Asset) (*domain.Asset
 
 	case *domain.Audience:
 		au := &Audience{}
-		d.db.First(au, asset.ID)
+		d.db.First(au, assetID)
 		au.FromDomain(v)
 		err := d.db.Save(au).Error
 		if err != nil {
@@ -80,7 +81,7 @@ func (d *DB) UpdateAsset(ctx context.Context, asset domain.Asset) (*domain.Asset
 		newAsset.ID = au.ID
 		newAsset.Data = au.ToDomain()
 	default:
-		return nil, errors.New("this asset type does not exist")
+		return nil, fmt.Errorf("UpdateAsset: %w", ErrThisAssetTypeDoesNotExist)
 	}
 
 	return newAsset, nil
@@ -114,7 +115,7 @@ func (d *DB) GetAsset(ctx context.Context, at domain.AssetType, assetID uint) (*
 		newAsset.ID = au.ID
 		newAsset.Data = au.ToDomain()
 	default:
-		return nil, errors.New("this asset type does not exist")
+		return nil, fmt.Errorf("GetAsset: %w", ErrThisAssetTypeDoesNotExist)
 	}
 	return newAsset, nil
 }
@@ -138,9 +139,8 @@ func (d *DB) DeleteAsset(ctx context.Context, at domain.AssetType, assetID uint)
 		if err != nil {
 			return err
 		}
-
 	default:
-		return errors.New("this asset type does not exist")
+		return fmt.Errorf("DeleteAsset: %w", ErrThisAssetTypeDoesNotExist)
 	}
 	return nil
 }
@@ -366,5 +366,28 @@ func (d *DB) ListFavouriteAssets(ctx context.Context, userID uint, onlyFav bool,
 	case domain.ChartAssetType:
 		return d.listFavouriteCharts(ctx, userID, onlyFav, query)
 	}
-	return nil, errors.New("this asset type does not exists")
+	return nil, fmt.Errorf("ListFavouriteAssets: %w", ErrThisAssetTypeDoesNotExist)
+}
+
+func (d *DB) RemoveFavouriteAssetFromEveryone(ctx context.Context, assetID uint, at domain.AssetType) error {
+	switch at {
+	case domain.InsightAssetType:
+		err := d.db.Unscoped().Where("insight_id = ? ", assetID).Delete(&FavouriteInsight{}).Error
+		if err != nil {
+			return err
+		}
+	case domain.ChartAssetType:
+		err := d.db.Unscoped().Where("chart_id = ? ", assetID).Delete(&FavouriteChart{}).Error
+		if err != nil {
+			return err
+		}
+	case domain.AudienceAssetType:
+		err := d.db.Unscoped().Where("audience_id = ? ", assetID).Delete(&FavouriteAudience{}).Error
+		if err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf("RemoveFavouriteAssetFromEveryone: %w", ErrThisAssetTypeDoesNotExist)
+	}
+	return nil
 }

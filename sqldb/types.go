@@ -1,8 +1,14 @@
 package sqldb
 
 import (
+	"errors"
+
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
+)
+
+var (
+	ErrThisAssetTypeDoesNotExist = errors.New("this asset type does not exists")
 )
 
 type Insight struct {

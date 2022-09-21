@@ -15,7 +15,7 @@ func TestAddAssetUnauthorizedFailure(t *testing.T) {
 		Username: "manos",
 		IsAdmin:  false,
 	}
-	asset := Asset{
+	asset := InputAsset{
 		Data: CorrectInputTestAssetData[0],
 	}
 	_, err := dom.AddAsset(ctx, usr, asset)
@@ -32,7 +32,7 @@ func TestAddAssetWrongInputFailure(t *testing.T) {
 		IsAdmin:  true,
 	}
 	for _, v := range WrongInputTestAssetData {
-		_, err := dom.AddAsset(ctx, usr, Asset{
+		_, err := dom.AddAsset(ctx, usr, InputAsset{
 			Data: v,
 		})
 		assert.ErrorIs(t, err, ErrWrongAssetInput)
@@ -42,9 +42,12 @@ func TestAddAssetWrongInputFailure(t *testing.T) {
 
 func TestAddAssetSuccess(t *testing.T) {
 	mdb := &MockDB{}
-	mdb.addAsset = func(ctx context.Context, asset Asset) (*Asset, error) {
-		asset.ID = 1
-		return &asset, nil
+	mdb.addAsset = func(ctx context.Context, asset InputAsset) (*Asset, error) {
+		newAsset := Asset{
+			ID:   1,
+			Data: asset.Data,
+		}
+		return &newAsset, nil
 	}
 	dom := NewDomain(mdb)
 	ctx := context.Background()
@@ -54,7 +57,7 @@ func TestAddAssetSuccess(t *testing.T) {
 		IsAdmin:  true,
 	}
 	for _, v := range CorrectInputTestAssetData {
-		asset := Asset{
+		asset := InputAsset{
 			Data: v,
 		}
 		newAsset, err := dom.AddAsset(ctx, usr, asset)
@@ -68,7 +71,7 @@ func TestAddAssetSuccess(t *testing.T) {
 func TestUpdateAssetUnauthorizedFailure(t *testing.T) {
 	dom := NewDomain(&MockDB{})
 	ctx := context.Background()
-	asset := Asset{
+	asset := InputAsset{
 		Data: &Insight{
 			Text:        "40% of millenials spend more than 3hours on social media daily",
 			Description: "bla bla",
@@ -94,8 +97,7 @@ func TestUpdateAssetWrongInputFailure(t *testing.T) {
 		IsAdmin:  true,
 	}
 	for _, v := range WrongInputTestAssetData {
-		_, err := dom.UpdateAsset(ctx, usr, Asset{
-			ID:   1,
+		_, err := dom.UpdateAsset(ctx, usr, 1, InputAsset{
 			Data: v,
 		})
 		assert.ErrorIs(t, err, ErrWrongAssetInput)
@@ -104,9 +106,12 @@ func TestUpdateAssetWrongInputFailure(t *testing.T) {
 
 func TestUpdateAssetSuccess(t *testing.T) {
 	mdb := &MockDB{}
-	mdb.updateAsset = func(ctx context.Context, asset Asset) (*Asset, error) {
-		asset.ID = 1
-		return &asset, nil
+	mdb.updateAsset = func(ctx context.Context, assetID uint, asset InputAsset) (*Asset, error) {
+		newAsset := Asset{
+			ID:   assetID,
+			Data: asset.Data,
+		}
+		return &newAsset, nil
 	}
 	dom := NewDomain(mdb)
 	ctx := context.Background()
@@ -116,8 +121,7 @@ func TestUpdateAssetSuccess(t *testing.T) {
 		IsAdmin:  true,
 	}
 	for _, v := range CorrectInputTestAssetData {
-		newAsset, err := dom.UpdateAsset(ctx, usr, Asset{
-			ID:   1,
+		newAsset, err := dom.UpdateAsset(ctx, usr, 1, InputAsset{
 			Data: v,
 		})
 		assert.NoError(t, err)

@@ -109,15 +109,18 @@ func listRowsToAssets(rows interface{}) []domain.Asset {
 		}
 	case []AudienceWithFavour:
 		for _, v := range ls {
-			assets = append(assets, domain.Asset{ID: v.GetID(), Data: v.ToDomain(), IsFavourite: v.IsFavour})
+			favor := v.IsFavour
+			assets = append(assets, domain.Asset{ID: v.GetID(), Data: v.ToDomain(), IsFavourite: &favor})
 		}
 	case []InsightWithFavour:
 		for _, v := range ls {
-			assets = append(assets, domain.Asset{ID: v.GetID(), Data: v.ToDomain(), IsFavourite: v.IsFavour})
+			favor := v.IsFavour
+			assets = append(assets, domain.Asset{ID: v.GetID(), Data: v.ToDomain(), IsFavourite: &favor})
 		}
 	case []ChartWithFavour:
 		for _, v := range ls {
-			assets = append(assets, domain.Asset{ID: v.GetID(), Data: v.ToDomain(), IsFavourite: v.IsFavour})
+			favor := v.IsFavour
+			assets = append(assets, domain.Asset{ID: v.GetID(), Data: v.ToDomain(), IsFavourite: &favor})
 		}
 	}
 	return assets

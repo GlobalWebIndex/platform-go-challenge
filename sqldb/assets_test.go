@@ -29,7 +29,7 @@ func TestCRUDInsight(t *testing.T) {
 	db, teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 	ctx := context.Background()
-	asset, err := db.AddAsset(ctx, domain.Asset{
+	asset, err := db.AddAsset(ctx, domain.InputAsset{
 		Data: &domain.Insight{
 			Text:        "40% of millenials spend more than 3hours on social media daily",
 			Description: "example",
@@ -39,8 +39,7 @@ func TestCRUDInsight(t *testing.T) {
 	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "example", asset.Data.(*domain.Insight).Description)
 
-	asset, err = db.UpdateAsset(ctx, domain.Asset{
-		ID: 1,
+	asset, err = db.UpdateAsset(ctx, 1, domain.InputAsset{
 		Data: &domain.Insight{
 			Text:        "100% of millenials spend more than 3hours on social media daily",
 			Description: "updated example",
@@ -65,15 +64,15 @@ func TestCRUDChart(t *testing.T) {
 	db, teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 	ctx := context.Background()
-	asset, err := db.AddAsset(ctx, domain.Asset{
+	asset, err := db.AddAsset(ctx, domain.InputAsset{
 		Data: &domain.Chart{
 			Description: "bla bla",
 			Title:       "Relationship between tax and GDP",
 			XTitle:      "GDP",
 			YTitle:      "Tax",
 			Data: domain.XYData{
-				X: []interface{}{1, 2, 3, 4, 5},
-				Y: []interface{}{1, 2, 3, 4, 5},
+				X: []float64{1, 2, 3, 4, 5},
+				Y: []float64{1, 2, 3, 4, 5},
 			},
 		}})
 	assert.NotNil(t, asset)
@@ -81,16 +80,15 @@ func TestCRUDChart(t *testing.T) {
 	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "bla bla", asset.Data.(*domain.Chart).Description)
 
-	asset, err = db.UpdateAsset(ctx, domain.Asset{
-		ID: 1,
+	asset, err = db.UpdateAsset(ctx, 1, domain.InputAsset{
 		Data: &domain.Chart{
 			Description: "bla bla 2",
 			Title:       "Relationship between tax and GDP",
 			XTitle:      "GDP",
 			YTitle:      "Tax",
 			Data: domain.XYData{
-				X: []interface{}{1, 2, 3, 4, 5},
-				Y: []interface{}{1, 2, 3, 4, 5},
+				X: []float64{1, 2, 3, 4, 5},
+				Y: []float64{1, 2, 3, 4, 5},
 			},
 		}})
 	assert.NotNil(t, asset)
@@ -113,7 +111,7 @@ func TestCRUDAudience(t *testing.T) {
 	db, teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 	ctx := context.Background()
-	asset, err := db.AddAsset(ctx, domain.Asset{
+	asset, err := db.AddAsset(ctx, domain.InputAsset{
 		Data: &domain.Audience{
 			AgeMax:            30,
 			AgeMin:            20,
@@ -128,8 +126,7 @@ func TestCRUDAudience(t *testing.T) {
 	assert.Equal(t, uint(1), asset.ID)
 	assert.Equal(t, "bla bla", asset.Data.(*domain.Audience).Description)
 
-	asset, err = db.UpdateAsset(ctx, domain.Asset{
-		ID: 1,
+	asset, err = db.UpdateAsset(ctx, 1, domain.InputAsset{
 		Data: &domain.Audience{
 			AgeMax:            30,
 			AgeMin:            20,
