@@ -1,0 +1,12 @@
+# github.com/Masterminds/squirrel v1.5.3
+## explicit; go 1.14
+github.com/Masterminds/squirrel
+# github.com/go-sql-driver/mysql v1.6.0
+## explicit; go 1.10
+github.com/go-sql-driver/mysql
+# github.com/lann/builder v0.0.0-20180802200727-47ae307949d0
+## explicit
+github.com/lann/builder
+# github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0
+## explicit
+github.com/lann/ps
