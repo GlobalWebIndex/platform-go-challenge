@@ -30,3 +30,10 @@ type StarredAudience struct {
 }
 
 type StarredAudiences []StarredAudience
+
+type DashboardActionParams struct {
+	DashboardID uint32
+	AssetID     uint32
+	AssetType   assets.AssetType
+	Description string
+}
