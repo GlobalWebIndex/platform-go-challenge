@@ -1,5 +1,11 @@
 package assets
 
+type Assets struct {
+	Charts    Charts    `json:"charts"`
+	Insights  Insights  `json:"insights"`
+	Audiences Audiences `json:"audience"`
+}
+
 type Chart struct {
 	ID         uint32 `json:"id"`
 	Title      string `json:"title"`
@@ -8,10 +14,14 @@ type Chart struct {
 	Data       []byte `json:"data"`
 }
 
+type Charts []Chart
+
 type Insight struct {
 	ID    uint32 `json:"id"`
 	Title string `json:"title"`
 }
+
+type Insights []Insight
 
 type Audience struct {
 	ID                         uint32       `json:"id"`
@@ -21,6 +31,8 @@ type Audience struct {
 	HoursSpentOnline           uint32       `json:"hours_spent_online"`
 	NumberOfPerchasesLastMonth uint32       `json:"number_of_perchases_last_month"`
 }
+
+type Audiences []Audience
 
 type GenderOption string
 
@@ -45,4 +57,10 @@ var (
 	AssetTypeChart    = AssetType("chart")
 	AssetTypeInsight  = AssetType("insight")
 	AssetTypeAudience = AssetType("audience")
+
+	AssetTypes = map[AssetType]struct{}{
+		AssetTypeChart:    {},
+		AssetTypeInsight:  {},
+		AssetTypeAudience: {},
+	}
 )
