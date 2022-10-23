@@ -2,7 +2,7 @@ package asset
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 
 	"platform-go-challenge/internal/app/assets"
@@ -25,7 +25,7 @@ func (h *Handler) ListAssets(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	assets, err := h.service.List(ctx)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Print(err.Error())
 		http.Error(w, "error", http.StatusInternalServerError)
 		return
 	}

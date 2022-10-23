@@ -3,6 +3,7 @@ package user
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -51,7 +52,7 @@ func (h *Handler) GetDashboard(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	dashboard, err := h.service.GetDashboard(ctx, uint32(userID))
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Print(err.Error())
 		http.Error(w, "error", http.StatusInternalServerError)
 		return
 	}
@@ -81,7 +82,7 @@ func (h *Handler) AddToDashboard(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	err = h.service.AddToDashboard(ctx, uint32(userID), action.AssetID, action.AssetType, action.Description)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Print(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -105,7 +106,7 @@ func (h *Handler) RemoveFromDashboard(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	err = h.service.RemoveFromDashboard(ctx, uint32(userID), action.AssetID, action.AssetType)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Print(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -129,7 +130,7 @@ func (h *Handler) EditDescription(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	err = h.service.EditDescription(ctx, uint32(userID), action.AssetID, action.AssetType, action.Description)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Print(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
