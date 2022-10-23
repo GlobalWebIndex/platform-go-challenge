@@ -1,0 +1,68 @@
+version: '3.7'
+# Define services
+services:
+
+  # App Service
+  platform-go-challenge:
+    # Configuration for building the docker image for the service
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    container_name: app
+    ports:
+      - "6060:5000" 
+    depends_on: 
+      - mysql 
+    environment: 
+       MYSQL_HOST: mysql
+       MYSQL_USER: root
+       MYSQL_PASSWORD: secret
+       MYSQL_DB: challenge
+       MYSQL_PORT: 3306
+    networks: 
+      backend:
+        aliases:
+          - "app"
+
+# DB
+  mysql:
+    image: mysql:8.0.23
+    container_name: sqlserver
+    ports:
+        - 3307:3306
+    volumes:
+      - type: bind
+        source: $PWD/db/dump/
+        target: /docker-entrypoint-initdb.d/
+        read_only: true
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: challenge
+    networks: 
+      backend:
+        aliases:
+          - "db"
+
+  mysql-test:
+    image: mysql:8.0.23
+    container_name: sqlserver-test
+    ports:
+        - 3308:3306
+    volumes:
+      - type: bind
+        source: $PWD/db/dump/
+        target: /docker-entrypoint-initdb.d/
+        read_only: true
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: challenge
+    networks: 
+      backend:
+        aliases:
+          - "dbtest"
+volumes:
+  mysql-data:
+
+networks:
+  backend:
+    driver: bridge    

@@ -9,7 +9,7 @@ import (
 
 // NewDBClient returns a new sql client.
 func NewDBClient() *sql.DB {
-	cs := "root:secret@tcp(localhost:3306)/challenge"
+	cs := "root:secret@tcp(localhost:3308)/challenge"
 
 	client, _ := sql.Open("mysql", cs+"?loc=Europe%2FAthens&parseTime=true")
 	client.SetMaxOpenConns(10)
