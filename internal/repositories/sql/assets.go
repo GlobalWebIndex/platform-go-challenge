@@ -3,6 +3,7 @@ package sql
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 
 	"platform-go-challenge/internal/app/assets"
 
@@ -59,13 +60,18 @@ func scanCharts(rows *sql.Rows) (assets.Charts, error) {
 	var err error
 	charts := make([]assets.Chart, 0, 5)
 	for rows.Next() {
+		data := []byte{}
 		chart := assets.Chart{}
 		err = rows.Scan(
 			&chart.ID,
 			&chart.Title,
 			&chart.AxisXTitle,
 			&chart.AxisYTitle,
-			&chart.Data)
+			&data)
+		if err != nil {
+			return assets.Charts{}, err
+		}
+		err = json.Unmarshal(data, &chart.Data)
 		if err != nil {
 			return assets.Charts{}, err
 		}

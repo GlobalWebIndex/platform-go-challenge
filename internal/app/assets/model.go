@@ -7,11 +7,11 @@ type Assets struct {
 }
 
 type Chart struct {
-	ID         uint32 `json:"id"`
-	Title      string `json:"title"`
-	AxisXTitle string `json:"axis_x_title"`
-	AxisYTitle string `json:"axis_y_title"`
-	Data       []byte `json:"data"`
+	ID         uint32                 `json:"id"`
+	Title      string                 `json:"title"`
+	AxisXTitle string                 `json:"axis_x_title"`
+	AxisYTitle string                 `json:"axis_y_title"`
+	Data       map[string]interface{} `json:"data"`
 }
 
 type Charts []Chart

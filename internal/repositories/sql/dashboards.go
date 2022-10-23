@@ -3,6 +3,7 @@ package sql
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 
 	"platform-go-challenge/internal/app/assets"
 	"platform-go-challenge/internal/app/dashboards"
@@ -84,14 +85,19 @@ func scanStarredCharts(rows *sql.Rows) (dashboards.StarredCharts, error) {
 	var err error
 	starredCharts := make(dashboards.StarredCharts, 0, 5)
 	for rows.Next() {
+		data := []byte{}
 		starredChart := dashboards.StarredChart{}
 		err = rows.Scan(
 			&starredChart.ID,
 			&starredChart.Title,
 			&starredChart.AxisXTitle,
 			&starredChart.AxisYTitle,
-			&starredChart.Data,
+			&data,
 			&starredChart.Description)
+		if err != nil {
+			return dashboards.StarredCharts{}, err
+		}
+		err = json.Unmarshal(data, &starredChart.Data)
 		if err != nil {
 			return dashboards.StarredCharts{}, err
 		}
