@@ -10,6 +10,10 @@ type Service struct {
 	repository Repository
 }
 
+func NewDashboardService(repository Repository) *Service {
+	return &Service{repository: repository}
+}
+
 func (s *Service) GetUserDashboard(ctx context.Context, userID uint32) (Dashboard, error) {
 	return s.repository.GetUserDashboard(ctx, userID)
 }
@@ -45,7 +49,7 @@ func (s *Service) RemoveFromDashboard(ctx context.Context, userID uint32, assetI
 	return s.repository.RemoveFromDashboard(ctx, actionParams)
 }
 
-func (s *Service) EditDescription(ctx context.Context, assetID uint32, userID uint32, assetType assets.AssetType, description string) error {
+func (s *Service) EditDescription(ctx context.Context, userID uint32, assetID uint32, assetType assets.AssetType, description string) error {
 	dashboardID, err := s.GetUserDashboardID(ctx, userID)
 	if err != nil {
 		return err
