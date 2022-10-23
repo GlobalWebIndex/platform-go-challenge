@@ -1,0 +1,204 @@
+{
+	"info": {
+		"_postman_id": "13346c13-4e48-4276-af97-0624e79c972b",
+		"name": "challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "GetDashboard",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "0.0.0.0:6060/user/1/dashboard/list?page=1&per_page=10",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "6060",
+							"path": [
+								"user",
+								"1",
+								"dashboard",
+								"list"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddToDashboard",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjY2NjIxOTk2LCJ1c2VyX2lkIjoiMSJ9.ZuJzSSsUFsX0KC7yUA_AZRpm1ihbeUT9d4REurHahRI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"asset_id\":3,\n    \"asset_type\":\"insight\",\n    \"description\": \"insight description new\"\n}"
+						},
+						"url": {
+							"raw": "0.0.0.0:6060/user/1/dashboard/asset/add",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "6060",
+							"path": [
+								"user",
+								"1",
+								"dashboard",
+								"asset",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RemoveFromDashbord",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjY2NjIxOTk2LCJ1c2VyX2lkIjoiMSJ9.ZuJzSSsUFsX0KC7yUA_AZRpm1ihbeUT9d4REurHahRI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"asset_id\":1,\n    \"asset_type\":\"insight\"\n}"
+						},
+						"url": {
+							"raw": "0.0.0.0:6060/user/1/dashboard/asset/remove",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "6060",
+							"path": [
+								"user",
+								"1",
+								"dashboard",
+								"asset",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EditAssetDescription",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjY2NjIxOTk2LCJ1c2VyX2lkIjoiMSJ9.ZuJzSSsUFsX0KC7yUA_AZRpm1ihbeUT9d4REurHahRI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"asset_id\":1,\n    \"asset_type\":\"chart\",\n    \"description\": \"new description 2\"\n}"
+						},
+						"url": {
+							"raw": "0.0.0.0:6060/user/1/dashboard/asset/edit",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "6060",
+							"path": [
+								"user",
+								"1",
+								"dashboard",
+								"asset",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTokenForUser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "0.0.0.0:6060/user/1/token/get",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "6060",
+							"path": [
+								"user",
+								"1",
+								"token",
+								"get"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "asset",
+			"item": [
+				{
+					"name": "ListAssets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "0.0.0.0:6060/asset/list",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "6060",
+							"path": [
+								"asset",
+								"list"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
