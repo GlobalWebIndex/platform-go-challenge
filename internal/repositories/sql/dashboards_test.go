@@ -6,6 +6,7 @@ import (
 
 	"platform-go-challenge/internal/app/assets"
 	"platform-go-challenge/internal/app/dashboards"
+	"platform-go-challenge/internal/pagination"
 	"platform-go-challenge/test"
 
 	"github.com/stretchr/testify/assert"
@@ -90,7 +91,7 @@ func TestGetUserDashboardSuccess(t *testing.T) {
 	}
 
 	repo := NewDashboardsRepository(db)
-	got, err := repo.GetUserDashboard(context.Background(), 1)
+	got, err := repo.GetUserDashboard(context.Background(), 1, pagination.Pagination{Page: 1, PerPage: 10})
 	assert.NoError(t, err)
 	assert.Len(t, got.Charts, 2)
 	assert.Equal(t, expected, got)
@@ -104,7 +105,7 @@ func TestAddToDashboardSuccess(t *testing.T) {
 	)
 	defer down()
 	repo := NewDashboardsRepository(db)
-	got, err := repo.GetUserDashboard(context.Background(), 1)
+	got, err := repo.GetUserDashboard(context.Background(), 1, pagination.Pagination{Page: 1, PerPage: 10})
 	assert.NoError(t, err)
 	assert.Len(t, got.Audiences, 1)
 
@@ -117,7 +118,7 @@ func TestAddToDashboardSuccess(t *testing.T) {
 
 	err = repo.AddToDashboard(context.Background(), action)
 	assert.NoError(t, err)
-	got, err = repo.GetUserDashboard(context.Background(), 1)
+	got, err = repo.GetUserDashboard(context.Background(), 1, pagination.Pagination{Page: 1, PerPage: 10})
 	assert.NoError(t, err)
 	assert.Len(t, got.Audiences, 2)
 }
@@ -130,7 +131,7 @@ func TestRemoveFromDashboardSuccess(t *testing.T) {
 	)
 	defer down()
 	repo := NewDashboardsRepository(db)
-	got, err := repo.GetUserDashboard(context.Background(), 1)
+	got, err := repo.GetUserDashboard(context.Background(), 1, pagination.Pagination{Page: 1, PerPage: 10})
 	assert.NoError(t, err)
 	assert.Len(t, got.Charts, 2)
 
@@ -156,7 +157,7 @@ func TestRemoveFromDashboardSuccess(t *testing.T) {
 		},
 	}
 
-	got, err = repo.GetUserDashboard(context.Background(), 1)
+	got, err = repo.GetUserDashboard(context.Background(), 1, pagination.Pagination{Page: 1, PerPage: 10})
 	assert.NoError(t, err)
 	assert.Len(t, got.Charts, 1)
 	assert.Equal(t, expectedStarredCharts, got.Charts)
@@ -170,7 +171,7 @@ func TestEditDescriptionSuccess(t *testing.T) {
 	)
 	defer down()
 	repo := NewDashboardsRepository(db)
-	got, err := repo.GetUserDashboard(context.Background(), 1)
+	got, err := repo.GetUserDashboard(context.Background(), 1, pagination.Pagination{Page: 1, PerPage: 10})
 	assert.NoError(t, err)
 	assert.Equal(t, got.Audiences[0].Description, "audience description 1")
 
@@ -184,7 +185,7 @@ func TestEditDescriptionSuccess(t *testing.T) {
 	err = repo.EditDescription(context.Background(), action)
 	assert.NoError(t, err)
 
-	got, err = repo.GetUserDashboard(context.Background(), 1)
+	got, err = repo.GetUserDashboard(context.Background(), 1, pagination.Pagination{Page: 1, PerPage: 10})
 	assert.NoError(t, err)
 	assert.Equal(t, action.Description, got.Audiences[0].Description)
 }

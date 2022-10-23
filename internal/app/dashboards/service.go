@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"platform-go-challenge/internal/app/assets"
+	"platform-go-challenge/internal/pagination"
 )
 
 type Service struct {
@@ -14,8 +15,8 @@ func NewDashboardService(repository Repository) *Service {
 	return &Service{repository: repository}
 }
 
-func (s *Service) GetUserDashboard(ctx context.Context, userID uint32) (Dashboard, error) {
-	return s.repository.GetUserDashboard(ctx, userID)
+func (s *Service) GetUserDashboard(ctx context.Context, userID uint32, pgn pagination.Pagination) (Dashboard, error) {
+	return s.repository.GetUserDashboard(ctx, userID, pgn)
 }
 
 func (s *Service) GetUserDashboardID(ctx context.Context, userID uint32) (uint32, error) {

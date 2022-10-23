@@ -6,6 +6,7 @@ import (
 
 	"platform-go-challenge/internal/app/assets"
 	"platform-go-challenge/internal/app/dashboards"
+	"platform-go-challenge/internal/pagination"
 
 	sq "github.com/Masterminds/squirrel"
 )
@@ -35,32 +36,22 @@ func (d *Dashboards) GetUserDashboardID(ctx context.Context, userID uint32) (uin
 }
 
 // GetUserDashboard returns a user's dashboard.
-func (d *Dashboards) GetUserDashboard(ctx context.Context, userID uint32) (dashboards.Dashboard, error) {
+func (d *Dashboards) GetUserDashboard(ctx context.Context, userID uint32, pgn pagination.Pagination) (dashboards.Dashboard, error) {
 	dashboard := dashboards.Dashboard{}
 
-	rows, err := sq.Select("d.id,d2a.asset_id,d2a.asset_type").
-		From(dashboardsTable + " AS d").
-		Join(dashboards2AssetsTable + " AS d2a ON d2a.dashboard_id = d.id").
-		Where(sq.Eq{"d.user_id": userID}).
-		RunWith(d.dbClient).QueryContext(ctx)
+	dashboardID, err := d.GetUserDashboardID(ctx, userID)
 	if err != nil {
 		return dashboards.Dashboard{}, err
 	}
-	defer rows.Close()
-	dashboardID, assetsMap, err := scanAssetIDs(rows)
+	starredCharts, err := d.getStarredCharts(ctx, dashboardID, pgn)
 	if err != nil {
 		return dashboards.Dashboard{}, err
 	}
-
-	starredCharts, err := d.getStarredCharts(ctx, dashboardID, assetsMap[assets.AssetTypeChart])
+	starredInsights, err := d.getStarredInsights(ctx, dashboardID, pgn)
 	if err != nil {
 		return dashboards.Dashboard{}, err
 	}
-	starredInsights, err := d.getStarredInsights(ctx, dashboardID, assetsMap[assets.AssetTypeInsight])
-	if err != nil {
-		return dashboards.Dashboard{}, err
-	}
-	starredAudiences, err := d.getStarredAudiences(ctx, dashboardID, assetsMap[assets.AssetTypeAudience])
+	starredAudiences, err := d.getStarredAudiences(ctx, dashboardID, pgn)
 	if err != nil {
 		return dashboards.Dashboard{}, err
 	}
@@ -73,11 +64,14 @@ func (d *Dashboards) GetUserDashboard(ctx context.Context, userID uint32) (dashb
 	return dashboard, nil
 }
 
-func (d *Dashboards) getStarredCharts(ctx context.Context, dashboardID uint32, chartIDs []uint32) (dashboards.StarredCharts, error) {
+func (d *Dashboards) getStarredCharts(ctx context.Context, dashboardID uint32, pgn pagination.Pagination) (dashboards.StarredCharts, error) {
 	rows, err := sq.Select("ch.id", "ch.title", "ch.x_axis", "ch.y_axis", "ch.data", "d2a.description").
 		From(chartsTable + " AS ch").
 		Join(dashboards2AssetsTable + " AS d2a ON d2a.asset_id = ch.id AND d2a.asset_type = '" + string(assets.AssetTypeChart) + "'").
-		Where(sq.Eq{"ch.id": chartIDs, "d2a.dashboard_id": dashboardID}).
+		Where(sq.Eq{"d2a.dashboard_id": dashboardID}).
+		OrderBy("ch.id ASC").
+		Offset(uint64(pgn.Offset())).
+		Limit(uint64(pgn.PerPage)).
 		RunWith(d.dbClient).QueryContext(ctx)
 	if err != nil {
 		return dashboards.StarredCharts{}, err
@@ -106,11 +100,14 @@ func scanStarredCharts(rows *sql.Rows) (dashboards.StarredCharts, error) {
 	return starredCharts, nil
 }
 
-func (d *Dashboards) getStarredInsights(ctx context.Context, dashboardID uint32, insightIDs []uint32) (dashboards.StarredInsights, error) {
+func (d *Dashboards) getStarredInsights(ctx context.Context, dashboardID uint32, pgn pagination.Pagination) (dashboards.StarredInsights, error) {
 	rows, err := sq.Select("ins.id", "ins.title", "d2a.description").
 		From(insightsTable + " AS ins").
 		Join(dashboards2AssetsTable + " AS d2a ON d2a.asset_id = ins.id AND d2a.asset_type = '" + string(assets.AssetTypeInsight) + "'").
-		Where(sq.Eq{"ins.id": insightIDs, "d2a.dashboard_id": dashboardID}).
+		Where(sq.Eq{"d2a.dashboard_id": dashboardID}).
+		OrderBy("ins.id ASC").
+		Offset(uint64(pgn.Offset())).
+		Limit(uint64(pgn.PerPage)).
 		RunWith(d.dbClient).QueryContext(ctx)
 	if err != nil {
 		return dashboards.StarredInsights{}, err
@@ -136,7 +133,7 @@ func scanStarredInsights(rows *sql.Rows) (dashboards.StarredInsights, error) {
 	return starredInsights, nil
 }
 
-func (d *Dashboards) getStarredAudiences(ctx context.Context, dashboardID uint32, audienceIDs []uint32) (dashboards.StarredAudiences, error) {
+func (d *Dashboards) getStarredAudiences(ctx context.Context, dashboardID uint32, pgn pagination.Pagination) (dashboards.StarredAudiences, error) {
 	rows, err := sq.Select(
 		"au.id",
 		"au.gender",
@@ -147,7 +144,10 @@ func (d *Dashboards) getStarredAudiences(ctx context.Context, dashboardID uint32
 		"d2a.description").
 		From(audiencesTable + " AS au").
 		Join(dashboards2AssetsTable + " AS d2a ON d2a.asset_id = au.id AND d2a.asset_type = '" + string(assets.AssetTypeAudience) + "'").
-		Where(sq.Eq{"au.id": audienceIDs, "d2a.dashboard_id": dashboardID}).
+		Where(sq.Eq{"d2a.dashboard_id": dashboardID}).
+		OrderBy("au.id ASC").
+		Offset(uint64(pgn.Offset())).
+		Limit(uint64(pgn.PerPage)).
 		RunWith(d.dbClient).QueryContext(ctx)
 	if err != nil {
 		return dashboards.StarredAudiences{}, err
@@ -175,37 +175,6 @@ func scanStarredAudiences(rows *sql.Rows) (dashboards.StarredAudiences, error) {
 		starredAudiences = append(starredAudiences, starredAudience)
 	}
 	return starredAudiences, nil
-}
-
-func scanAssetIDs(rows *sql.Rows) (uint32, map[assets.AssetType][]uint32, error) {
-	assetsMap := make(map[assets.AssetType][]uint32, 3)
-	chartsSlice := make([]uint32, 0, 5)
-	audiencesSlice := make([]uint32, 0, 5)
-	insightsSlice := make([]uint32, 0, 5)
-
-	dashboardID := uint32(0)
-	assetID := uint32(0)
-	assetType := assets.AssetType("")
-	var err error
-	for rows.Next() {
-		err = rows.Scan(&dashboardID, &assetID, &assetType)
-		if err != nil {
-			return 0, assetsMap, err
-		}
-		switch assetType {
-		case assets.AssetTypeChart:
-			chartsSlice = append(chartsSlice, assetID)
-		case assets.AssetTypeAudience:
-			audiencesSlice = append(audiencesSlice, assetID)
-		case assets.AssetTypeInsight:
-			insightsSlice = append(insightsSlice, assetID)
-		}
-	}
-	assetsMap[assets.AssetTypeAudience] = audiencesSlice
-	assetsMap[assets.AssetTypeChart] = chartsSlice
-	assetsMap[assets.AssetTypeInsight] = insightsSlice
-
-	return dashboardID, assetsMap, nil
 }
 
 // AddToDashboard adds a new asset to a user's dashboard.

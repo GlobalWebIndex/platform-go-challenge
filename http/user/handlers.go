@@ -56,8 +56,10 @@ func (h *Handler) GetDashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	params := r.URL.Query()
+	pn := pagination.NewPagination(params)
 	ctx := r.Context()
-	dashboard, err := h.service.GetDashboard(ctx, uint32(userID))
+	dashboard, err := h.service.GetDashboard(ctx, uint32(userID), *pn)
 	if err != nil {
 		log.Print(err.Error())
 		http.Error(w, "error", http.StatusInternalServerError)
