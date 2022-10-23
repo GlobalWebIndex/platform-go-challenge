@@ -8,7 +8,7 @@ import (
 
 type Config struct {
 	MySQL *MySQLConfig
-	// JWT   *JWTConfig
+	JWT   *JWTConfig
 }
 
 type MySQLConfig struct {
@@ -19,12 +19,15 @@ type MySQLConfig struct {
 	DB       string
 }
 
-// type JWTConfig struct {
-// 	JWTSecret string
-// }
+type JWTConfig struct {
+	JWTSecret string
+}
 
 func NewConfig() *Config {
-	return &Config{MySQL: NewMySQLConfig()}
+	return &Config{
+		MySQL: NewMySQLConfig(),
+		JWT:   NewJWTConfig(),
+	}
 }
 
 func NewMySQLConfig() *MySQLConfig {
@@ -53,7 +56,7 @@ func (m MySQLConfig) CDN() string {
 		m.DB)
 }
 
-// func NewJWTConfig() *JWTConfig {
-// 	s := os.Getenv("SECRET_KEY")
-// 	return &JWTConfig{JWTSecret: s}
-// }
+func NewJWTConfig() *JWTConfig {
+	s := os.Getenv("SECRET_KEY")
+	return &JWTConfig{JWTSecret: s}
+}

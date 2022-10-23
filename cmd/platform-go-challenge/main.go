@@ -27,7 +27,7 @@ func main() {
 	cfg := config.NewConfig()
 	conn := setupConnections(cfg)
 	services := setupServices(conn)
-	r := createRouter(services)
+	r := createRouter(services, *cfg)
 	for conn.mysql.Ping() != nil {
 		log.Print("waiting for db ...")
 		time.Sleep(2 * time.Second)
@@ -50,17 +50,23 @@ func main() {
 	_ = http.ListenAndServe(":5000", r)
 }
 
-func createRouter(services services) *mux.Router {
+func createRouter(services services, cfg config.Config) *mux.Router {
 	r := mux.NewRouter()
+	jwt := cfg.JWT
 
-	uh := http_user.NewUserHandler(services.userService)
+	uh := http_user.NewUserHandler(services.userService, jwt.JWTSecret)
 	ah := http_asset.NewAssetHandler(services.assetService)
 
-	r.HandleFunc("/user/dashboard/{user_id}", uh.GetDashboard).Methods(http.MethodGet)
-	r.HandleFunc("/user/dashboard/{user_id}/asset/add", uh.AddToDashboard).Methods(http.MethodPut)
-	r.HandleFunc("/user/dashboard/{user_id}/asset/remove", uh.RemoveFromDashboard).Methods(http.MethodPut)
-	r.HandleFunc("/user/dashboard/{user_id}/asset/edit", uh.EditDescription).Methods(http.MethodPatch)
+	// USER endpoints
+	r.HandleFunc("/user/{user_id}/dashboard/list", uh.GetDashboard).Methods(http.MethodGet)
+	r.HandleFunc("/user/{user_id}/token/get", uh.GetToken).Methods(http.MethodGet)
 
+	// USER endpoints with token
+	r.Handle("/user/{user_id}/dashboard/asset/add", uh.Middleware(http.HandlerFunc(uh.AddToDashboard))).Methods(http.MethodPut)
+	r.Handle("/user/{user_id}/dashboard/asset/remove", uh.Middleware(http.HandlerFunc(uh.RemoveFromDashboard))).Methods(http.MethodPut)
+	r.Handle("/user/{user_id}/dashboard/asset/edit", uh.Middleware(http.HandlerFunc(uh.EditDescription))).Methods(http.MethodPatch)
+
+	// ASSET endpoints
 	r.HandleFunc("/asset/list", ah.ListAssets).Methods(http.MethodGet)
 
 	return r
