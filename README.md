@@ -1,31 +1,96 @@
-# GlobalWebIndex Engineering Challenge
+Platform-Go-Challenge (GWI THA)
+==
 
-## Introduction
+# Overview
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+<b>Platform-Go-Challenge</b> is the microservice that owns the information about user favourite assets.
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+# Quick Start
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+Just execute `make serve` to serve the program via docker.
 
-## Challenge
+# Features
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+- List user favourite assets.
+- Add an asset to favourites.
+- Update a favourite asset's description.
+- Delete an asset from favourites.
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+# Glossary
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+| Term     | Description                                                                                                                                            |
+|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Asset    | an Asset is an entity that can be one of the following (Chart, Insight, Audience)                                                                      |
+| Chart    | Chart entity type                                                                                                                                      |
+| Insight  | A small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily"                   |
+| Audience | Ιs a series of characteristics Eg. gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month |
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+## Tech Stack
 
-It is appreciated, though not required, if a Dockerfile is included.
+| Type      | Item  | Version |
+|-----------|-------|---------|
+| Language  | Go    | 1.18    |
+| Framework | Echo  | v4      |
 
-## Submission
+## Infrastructure Services
 
-Just create a fork from the current repo and send it to us!
+| Type             | Provider | Version    | Purpose            |
+|------------------|----------|------------|--------------------|
+| Document Storage | Mongo    | 4.4.18-rc0 | Persistent Storage |
+| K/V store        | Redis    | 6.2-alpine | Handles Caching    |
 
-Good luck, potential colleague!
+# API
+
+## HTTP
+
+Postman Collection Location: _under doc/postman/_
+
+# Developers Handbook
+
+## Build and Run
+
+Please use `make <target>` where `<target>` is one of the following:
+
+```
+`serve`                          Serve the app with Docker Compose
+`ci`                             Run the CI pipeline
+`lint`                           Perform linting
+`stop`                           Stop the Docker Compose app
+`test`                           Run the unit tests
+```
+
+# Technical Details
+
+For guaranteed data consistency it is recommended disabling cache.
+
+## Technical Overview
+
+![technical overview](doc/diagrams/Platform-Go-Challenge.drawio.png)
+
+## What has been implemented
+
+- [x] Unit testing.
+- [ ] Integration testing.
+- [ ] E2E testing.
+- [ ] Benchmark testing.
+- [x] Caching layer using decorator pattern.
+- [x] Adapter pattern for handling the dynamic data types.
+- [ ] Use builder pattern for creating objects.
+- [ ] Add metrics.
+- [x] Docker implementation.
+- [x] Postman collection.
+
+## Future Improvements
+
+- In the current implementation Assets & Favourite assets are coupled into the same db. In order to decouple these, a
+  new
+  service should be created that aggregates assets & favourite assets along with users using the BFF pattern.
+- Repository favourite assets adapter should be thinner & and should separate the logic of transforming asset data types
+  into the service level.
+- Better configuration management system with multiple type conversions.
+- Add validators for validating user input.
+- User authentication for avoiding passing user_id to url, should get the user id from user session.
+- Avoid creating duplicate user favourite assets.
+- Avoid exposing real ids.
+- Improve testing code coverage (especially in main & Mongo)
+- Add pagination.
