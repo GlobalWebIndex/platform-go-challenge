@@ -41,6 +41,9 @@ func run(e *echo.Echo) error {
 
 	// set up Mongo.
 	mongoClient, err := setUpMongoDB(ctx, cfg)
+	if err != nil {
+		return err
+	}
 
 	// set up Redis.
 	var redisClient *redis.Client
@@ -53,6 +56,9 @@ func run(e *echo.Echo) error {
 
 	// Repo creation.
 	ar, err := getFavouriteAssetRepo(mongoClient, redisClient, cfg)
+	if err != nil {
+		return err
+	}
 
 	// Service creation.
 	assetSrv := favouriteasset.NewService(ar)
