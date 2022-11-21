@@ -1,0 +1,52 @@
+version: "3.3"
+
+services:
+
+  platform-go-challenge:
+    image: platform-go-challenge
+    build:
+      context: ./../../../
+      dockerfile: ./infra/deploy/build/Dockerfile
+    container_name: platform-go-challenge
+    restart: on-failure
+    ports:
+      - "1323:1323"
+    env_file:
+      - ./../../../.env.test
+    depends_on:
+      - mongo
+      - mongo-express
+      - redis
+
+  platform-go-challenge_ci:
+    image: platform-go-challenge_ci
+    build:
+      context: ./../../../
+      dockerfile: ./infra/deploy/ci/Dockerfile
+    container_name: platform-go-challenge_ci
+    env_file:
+      - ./../../../.env.test
+
+  mongo:
+    image: mongo:4.4.18-rc0
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --requirepass testpass

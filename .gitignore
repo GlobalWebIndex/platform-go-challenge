@@ -1,0 +1,20 @@
+# binary
+debug
+debug.test
+
+# configuration files
+.env
+
+# IDEs
+.vscode
+*.sublime-*
+.idea
+.editorconfig
+
+# OS files
+*.DS_Store
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes

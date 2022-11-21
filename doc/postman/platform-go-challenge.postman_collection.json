@@ -1,0 +1,156 @@
+{
+	"info": {
+		"_postman_id": "eb8bb51e-a974-4608-8cf6-c17434b421f0",
+		"name": "platform-go-challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5265508"
+	},
+	"item": [
+		{
+			"name": "List Favourite Assets",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:1323/users/{{user_id}}/favourites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1323",
+					"path": [
+						"users",
+						"{{user_id}}",
+						"favourites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Asset to Favourites",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:1323/users/{{user_id}}/favourites/{{asset_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1323",
+					"path": [
+						"users",
+						"{{user_id}}",
+						"favourites",
+						"{{asset_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Favourite Asset",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=UTF-8",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"test Description\"\n}"
+				},
+				"url": {
+					"raw": "http://{{url}}/users/{{user_id}}/favourites/{{favourite_asset_id}}",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users",
+						"{{user_id}}",
+						"favourites",
+						"{{favourite_asset_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Favourite Asset",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=UTF-8",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:1323/users/{{user_id}}/favourites/{{favourite_asset_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1323",
+					"path": [
+						"users",
+						"{{user_id}}",
+						"favourites",
+						"{{favourite_asset_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "user_id",
+			"value": "6377c9c68c9f75c3d2a8a5ba"
+		},
+		{
+			"key": "asset_id",
+			"value": "6377c7e58c9f75c3d2a8a5b2"
+		},
+		{
+			"key": "favourite_asset_id",
+			"value": "6377e8f46b76bbd2034ebf64"
+		}
+	]
+}

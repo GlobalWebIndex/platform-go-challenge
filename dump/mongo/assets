@@ -1,0 +1,30 @@
+[
+  {
+    "_id": ObjectID("6378a00d5893f7f7cc2770a3"),
+    "type": "Chart",
+    "data": {
+      "title": "chart title",
+      "x_title": "x title",
+      "y_title": "y title",
+      "data": "point 1, point 2"
+    }
+  },
+  {
+    "_id": ObjectID("6378a0475893f7f7cc2770a5"),
+    "type": "Insight",
+    "data": {
+      "text": "sample text"
+    }
+  },
+  {
+    "_id": ObjectID("6378a0505893f7f7cc2770a7"),
+    "type": "Audience",
+    "data": {
+      "gender": "female",
+      "birth_country": "Greece",
+      "age_groups": "18-24",
+      "hours_spent_daily_on_social_media": "100",
+      "number_of_purchases_last_month": "2"
+    }
+  }
+]

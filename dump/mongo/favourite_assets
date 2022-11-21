@@ -1,0 +1,8 @@
+[
+  {
+    "_id": ObjectID("6378a0ae5893f7f7cc2770a9"),
+    "user_id": ObjectID("6377c9c68c9f75c3d2a8a5ba"),
+    "asset_id": ObjectID("6378a00d5893f7f7cc2770a3")
+  }
+]
+
