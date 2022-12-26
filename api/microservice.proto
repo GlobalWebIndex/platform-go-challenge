@@ -1,0 +1,132 @@
+syntax = "proto3";
+
+package ownify_api.v1;
+
+option go_package = "/pkg";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+service Microservice {
+  rpc SignIn (SignInRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/signin"
+      body: "*"
+    };
+  }
+  rpc SignUp (SignUpRequest) returns (SignUpResponse) {
+    option (google.api.http) = {
+      post: "/signup"
+      body: "*"
+    };
+  }
+  rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/logout"
+      body: "*"
+    };
+  }
+  rpc GetUser (GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/user"
+    };
+  }
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      put: "/user"
+      body: "*"
+    };
+  }
+  rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/user"
+    };
+  }
+  
+  rpc EmailVerification (google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/email-verification"
+      body: "*"
+    };
+  }
+  rpc EmailVerificationCheckCode (EmailVerificationCheckCodeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/email-check-code"
+      body: "*"
+    };
+  }
+  
+}
+
+
+
+
+
+
+message EmailVerificationCheckCodeRequest {
+  int64 code = 1;
+}
+
+
+
+
+
+
+
+message SignInRequest {
+  string email = 1 [(validate.rules).string.email = true];
+  string password = 2  [(validate.rules).string = {min_len: 8, max_len: 20}];
+}
+
+message GetUserRequest {
+  int64 id = 1;
+}
+
+message GetUserResponse {
+  int64 id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string phone_number = 5;
+  string role = 6;
+  bool verified = 7;
+  int64 balance = 8;
+}
+
+
+
+message SignUpRequest {
+  string first_name = 1;
+  string last_name = 2;
+  string email = 3;
+  string password = 4  [(validate.rules).string = {min_len: 8, max_len: 20}];
+  string phone_number = 5;
+  string role = 6;
+}
+
+message SignUpResponse {
+  int64 id = 1;
+}
+
+message DeleteUserRequest {
+  int64 id = 1;
+}
+
+message UpdateUserRequest {
+  int64  id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string phone_number = 5;
+}
+
+message UpdateUserResponse {
+  int64  id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string phone_number = 5;
+}
+
