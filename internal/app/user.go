@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"ownify_api/internal/dto"
 	desc "ownify_api/pkg"
 
 	"google.golang.org/grpc"
@@ -15,7 +16,6 @@ import (
 func (m *MicroserviceServer[T]) Login(ctx context.Context, req *desc.SignInRequest) (*emptypb.Empty, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
 	fmt.Println(md.Get("test"))
-
 	token, err := m.authService.SignIn(req.GetEmail(), req.GetPassword())
 	if err != nil {
 		return nil, err
@@ -28,6 +28,40 @@ func (m *MicroserviceServer[T]) Login(ctx context.Context, req *desc.SignInReque
 		return nil, err
 	}
 
+	return &emptypb.Empty{}, nil
+}
+
+func (m *MicroserviceServer[T]) LoginWithPhone(ctx context.Context, req *desc.PhoneAuthRequest) (*emptypb.Empty, error) {
+	md, _ := metadata.FromIncomingContext(ctx)
+	fmt.Println(md.Get("test"))
+	firebaseToken, err := m.getUserIdFromToken(ctx)
+	if err != nil {
+		return nil, err
+	}
+	// token, err := m.authService.SignInWithPhone(firebaseToken, req.Wallet, req.Pincode)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	userId, err := m.userService.CreateUser(dto.BriefUser{
+		ChainId:    int(req.ChainId),
+		Wallet:     req.Wallet,
+		WalletType: req.WalleType,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	accessToken, err := m.tokenManager.NewFirebaseToken(firebaseToken, int(*userId))
+
+	if err != nil {
+		return nil, err
+	}
+	err = grpc.SendHeader(ctx, metadata.New(map[string]string{
+		"Token": accessToken,
+	}))
+	if err != nil {
+		return nil, err
+	}
 	return &emptypb.Empty{}, nil
 }
 

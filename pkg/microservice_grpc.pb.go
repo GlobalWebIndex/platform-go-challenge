@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MicroserviceClient interface {
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SignInWithPhone(ctx context.Context, in *PhoneAuthRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error)
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
@@ -44,6 +45,15 @@ func NewMicroserviceClient(cc grpc.ClientConnInterface) MicroserviceClient {
 func (c *microserviceClient) SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/SignIn", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) SignInWithPhone(ctx context.Context, in *PhoneAuthRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/SignInWithPhone", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +128,7 @@ func (c *microserviceClient) EmailVerificationCheckCode(ctx context.Context, in 
 // for forward compatibility
 type MicroserviceServer interface {
 	SignIn(context.Context, *SignInRequest) (*emptypb.Empty, error)
+	SignInWithPhone(context.Context, *PhoneAuthRequest) (*emptypb.Empty, error)
 	SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error)
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
@@ -134,6 +145,9 @@ type UnimplementedMicroserviceServer struct {
 
 func (UnimplementedMicroserviceServer) SignIn(context.Context, *SignInRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
+}
+func (UnimplementedMicroserviceServer) SignInWithPhone(context.Context, *PhoneAuthRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignInWithPhone not implemented")
 }
 func (UnimplementedMicroserviceServer) SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
@@ -183,6 +197,24 @@ func _Microservice_SignIn_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroserviceServer).SignIn(ctx, req.(*SignInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_SignInWithPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PhoneAuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).SignInWithPhone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/SignInWithPhone",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).SignInWithPhone(ctx, req.(*PhoneAuthRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -323,6 +355,10 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SignIn",
 			Handler:    _Microservice_SignIn_Handler,
+		},
+		{
+			MethodName: "SignInWithPhone",
+			Handler:    _Microservice_SignInWithPhone_Handler,
 		},
 		{
 			MethodName: "SignUp",

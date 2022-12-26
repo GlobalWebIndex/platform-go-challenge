@@ -4,14 +4,15 @@ import (
 	"strconv"
 
 	"ownify_api/internal/domain"
+	"ownify_api/internal/dto"
 	"ownify_api/internal/repository"
-
 	//"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService[T domain.Userable] interface {
 	SignUp(user T) (*int64, error)
 	SignIn(email, password string) (*string, error)
+	SignInWithPhone(firebaseToken, wallet, pinCode string) (*string, error)
 	Logout(userID int64) error
 }
 
@@ -30,7 +31,8 @@ func (a *authService[T]) SignUp(user T) (*int64, error) {
 	// 	return nil, err
 	// }
 	// user.Password = string(hashedPassword)
-	id, err := a.dao.NewUserQuery().CreateUser(user)
+	briefUser := dto.BriefUser{0, "", ""}
+	id, err := a.dao.NewUserQuery().CreateUser(briefUser)
 	if err != nil {
 		return nil, err
 	}
@@ -60,6 +62,14 @@ func (a *authService[T]) SignIn(email, reqPassword string) (*string, error) {
 	// 	return &jwt, nil
 	// }
 	return nil, nil
+}
+
+func (a *authService[T]) SignInWithPhone(firebaseToken, wallet, pinCode string) (*string, error) {
+	token, err := a.tokenManager.NewFirebaseToken(firebaseToken, 0)
+	if err != nil {
+		return nil, err
+	}
+	return &token, nil
 }
 
 func (a *authService[T]) Logout(userID int64) error {

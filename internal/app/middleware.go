@@ -43,7 +43,7 @@ func (m *MicroserviceServer[T]) getUserIdFromToken(ctx context.Context) (string,
 		return "", status.Errorf(codes.PermissionDenied, "user isn't authorized")
 	}
 
-	userID, err := m.tokenManager.Validate(token[0], "")
+	userID, err := m.tokenManager.ValidateFirebase(token[0])
 	if err != nil {
 		return "", err
 	}

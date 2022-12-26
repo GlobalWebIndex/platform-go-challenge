@@ -150,6 +150,39 @@
         ]
       }
     },
+    "/signin/phone": {
+      "post": {
+        "operationId": "Microservice_SignInWithPhone",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1PhoneAuthRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
     "/signup": {
       "post": {
         "operationId": "Microservice_SignUp",
@@ -339,6 +372,24 @@
         "balance": {
           "type": "string",
           "format": "int64"
+        }
+      }
+    },
+    "v1PhoneAuthRequest": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "wallet": {
+          "type": "string"
+        },
+        "pincode": {
+          "type": "string"
+        },
+        "walleType": {
+          "type": "string"
         }
       }
     },

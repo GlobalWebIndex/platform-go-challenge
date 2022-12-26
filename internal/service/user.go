@@ -1,7 +1,9 @@
 package service
 
 import (
+	"fmt"
 	"ownify_api/internal/domain"
+	"ownify_api/internal/dto"
 	"ownify_api/internal/repository"
 
 	"google.golang.org/grpc/codes"
@@ -9,59 +11,49 @@ import (
 )
 
 type UserService[T domain.Userable] interface {
+	CreateUser(
+		user dto.BriefUser,
+	) (*int64, error)
 	GetUser(requestedUserID int64, userID int64) (*T, error)
 	DeleteUser(id int64, userID int64) error
 	UpdateUser(user T) (*T, error)
 }
 
 type userService[T domain.Userable] struct {
-	dao repository.DBHandler[T]
+	dbHandler repository.DBHandler[T]
 }
 
-func NewUserService[T domain.Userable](dao repository.DBHandler[T]) UserService[T] {
-	return &userService[T]{dao: dao}
+func NewUserService[T domain.Userable](dbHandler repository.DBHandler[T]) UserService[T] {
+	return &userService[T]{dbHandler}
 }
 
-func (u *userService[T]) CreateUser(user T) error {
-	_, err := u.dao.NewUserQuery().GetUser(0)
+func (u *userService[T]) CreateUser(
+	user dto.BriefUser) (*int64, error) {
+
+	id, err := u.dbHandler.NewUserQuery().GetUserByBriefInfo(user)
+	if id != nil {
+		return nil, fmt.Errorf("[ERR] this user already exist: id%s", id)
+	}
+	id, err = u.dbHandler.NewUserQuery().CreateUser(
+		dto.BriefUser{
+			ChainId: 0, Wallet: "", WalletType: "",
+		},
+	)
+
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// if user.Role == domain.ADMIN || id == user.ID {
-	// 	err = u.dao.NewUserQuery().DeleteUser(id)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	return nil
-	// }
-	return status.Errorf(codes.PermissionDenied, "you have no access")
+	return id, nil
 }
 
 func (u *userService[T]) GetUser(requestedUserID int64, userID int64) (*T, error) {
-	// var userBySession *domain.Person
-	// var err error
 
-	// userBySession, err = u.dao.NewUserQuery().GetPerson(userID)
-	// if err != nil {
-	// 	log.Printf("user isn't authorized %v", err)
-	// }
-
-	// userByRequest, err := u.dao.NewUserQuery().GetUser(requestedUserID)
-	// if err != nil {
-	// 	return nil, status.Errorf(codes.NotFound, "requested user doesn't exist: %v", err)
-	// }
-
-	// if userByRequest.ID == userBySession.ID || userBySession.Role == domain.ADMIN {
-	// 	return userByRequest, nil
-	// } else {
-	// 	return &domain.Person{ID: userByRequest.ID, FirstName: userByRequest.FirstName, LastName: userByRequest.LastName}, nil
-	// }
 	return nil, nil
 }
 
 func (u *userService[T]) DeleteUser(id int64, userID int64) error {
-	_, err := u.dao.NewUserQuery().GetUser(userID)
+	_, err := u.dbHandler.NewUserQuery().GetUser(userID)
 	if err != nil {
 		return err
 	}

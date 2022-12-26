@@ -16,6 +16,12 @@ service Microservice {
       body: "*"
     };
   }
+  rpc SignInWithPhone(PhoneAuthRequest)returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/signin/phone"
+      body: "*"
+    };
+  }
   rpc SignUp (SignUpRequest) returns (SignUpResponse) {
     option (google.api.http) = {
       post: "/signup"
@@ -70,14 +76,16 @@ message EmailVerificationCheckCodeRequest {
 }
 
 
-
-
-
-
-
 message SignInRequest {
   string email = 1 [(validate.rules).string.email = true];
   string password = 2  [(validate.rules).string = {min_len: 8, max_len: 20}];
+}
+
+message PhoneAuthRequest {
+  int32 chainId = 1;
+  string wallet = 2 [(validate.rules).string = {min_len: 42, max_len: 58}];
+  string pincode = 3  [(validate.rules).string = {min_len: 4, max_len: 6}];
+  string walleType = 4;
 }
 
 message GetUserRequest {
