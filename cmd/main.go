@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc"
 
 	"ownify_api/internal/app"
+	"ownify_api/internal/domain"
 	"ownify_api/internal/repository"
 	"ownify_api/internal/service"
 	desc "ownify_api/pkg"
@@ -42,10 +43,11 @@ func main() {
 	tokenManager := service.NewTokenManager(signedKeyJWT)
 
 	// Register all services
-	dao := repository.NewDAO(db)
-	userService := service.NewUserService(dao)
-	authService := service.NewAuthService(dao, tokenManager)
-	emailVerificationService := service.NewEmailVerificationService(dao)
+	//dbHandler := repository.NewDBHandler(db)
+	dbHandler := repository.NewDBHandler(db,domain.Person{})
+	userService := service.NewUserService(dbHandler)
+	authService := service.NewAuthService(dbHandler, tokenManager)
+	
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
 	httpOpts := app.HttpInterceptor()
@@ -61,7 +63,6 @@ func main() {
 		desc.RegisterMicroserviceServer(grpcServer, app.NewMicroservice(
 			userService,
 			authService,
-			emailVerificationService,
 			tokenManager,
 		))
 
@@ -76,7 +77,6 @@ func main() {
 	err = desc.RegisterMicroserviceHandlerServer(context.Background(), mux, app.NewMicroservice(
 		userService,
 		authService,
-		emailVerificationService,
 		tokenManager))
 	if err != nil {
 		log.Println("cannot register this service")

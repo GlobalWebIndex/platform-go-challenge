@@ -1,4 +1,4 @@
-package datastruct
+package domain
 
 const CourseTableName = "course"
 

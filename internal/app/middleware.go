@@ -36,16 +36,16 @@ func HttpInterceptor() runtime.ServeMuxOption {
 	return httpServerOptions
 }
 
-func (m *MicroserviceServer) getUserIdFromToken(ctx context.Context) (int64, error) {
+func (m *MicroserviceServer[T]) getUserIdFromToken(ctx context.Context) (string, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
 	token := md.Get("Authorization")
 	if token == nil {
-		return 0, status.Errorf(codes.PermissionDenied, "user isn't authorized")
+		return "", status.Errorf(codes.PermissionDenied, "user isn't authorized")
 	}
 
-	userID, err := m.tokenManager.Parse(token[0])
+	userID, err := m.tokenManager.Validate(token[0], "")
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	return *userID, nil
 }

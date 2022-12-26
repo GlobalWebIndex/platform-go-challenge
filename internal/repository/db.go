@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"log"
+	"ownify_api/internal/domain"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -10,12 +11,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-type DAO interface {
-	NewUserQuery() UserQuery
-	NewTransactionQuery() TransactionQuery
+type DBHandler[T domain.Userable] interface {
+	NewUserQuery() UserQuery[T]
 }
 
-type dao struct {
+type dbHandler[T domain.Userable] struct {
 	db *sql.DB
 }
 
@@ -25,8 +25,8 @@ func pgQb() squirrel.StatementBuilderType {
 	return squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar).RunWith(DB)
 }
 
-func NewDAO(db *sql.DB) DAO {
-	return &dao{db}
+func NewDBHandler[T domain.Userable](db *sql.DB, userType T) DBHandler[T] {
+	return &dbHandler[T]{db}
 }
 
 func NewDB() (*sql.DB, error) {
@@ -51,10 +51,6 @@ func NewDB() (*sql.DB, error) {
 	return DB, nil
 }
 
-func (d *dao) NewTransactionQuery() TransactionQuery {
-	return &transactionQuery{}
-}
-
-func (d *dao) NewUserQuery() UserQuery {
-	return &userQuery{}
+func (d *dbHandler[T]) NewUserQuery() UserQuery[T] {
+	return &userQuery[T]{}
 }

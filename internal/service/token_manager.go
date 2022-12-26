@@ -1,11 +1,13 @@
 package service
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"strconv"
 	"time"
 
+	firebase "firebase.google.com/go"
 	"github.com/golang-jwt/jwt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -15,6 +17,7 @@ type TokenManager interface {
 	NewJWT(userID string) (string, error)
 	Parse(accessToken string) (*int64, error)
 	NewRefreshToken() (string, error)
+	Validate(accessToken string, wallet string) (*string, error)
 }
 
 type tokenManager struct {
@@ -67,4 +70,20 @@ func (t *tokenManager) NewRefreshToken() (string, error) {
 		return "", err
 	}
 	return fmt.Sprintf("%x", b), nil
+}
+
+func (t *tokenManager) Validate(accessToken string, wallet string) (*string, error) {
+	app, err := firebase.NewApp(context.Background(), nil)
+	if err != nil {
+		return nil, fmt.Errorf("[ERR] can't initialize firebase app: %s", err)
+	}
+	client, err := app.Auth(context.Background())
+	if err != nil {
+		return nil, fmt.Errorf("[ERR] can't initialize firebase app client : %s", err)
+	}
+	token, err := client.VerifyIDTokenAndCheckRevoked(context.Background(), accessToken)
+	if err != nil {
+		return nil, fmt.Errorf("invalid user", err)
+	}
+	return &token.UID, nil
 }
