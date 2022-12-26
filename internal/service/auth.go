@@ -3,43 +3,41 @@ package service
 import (
 	"strconv"
 
-	"ownify_api/internal/domain"
-	"ownify_api/internal/dto"
 	"ownify_api/internal/repository"
 	//"golang.org/x/crypto/bcrypt"
 )
 
-type AuthService[T domain.Userable] interface {
-	SignUp(user T) (*int64, error)
+type AuthService interface {
+	//SignUp(user T) (*int64, error)
 	SignIn(email, password string) (*string, error)
 	SignInWithPhone(firebaseToken, wallet, pinCode string) (*string, error)
 	Logout(userID int64) error
 }
 
-type authService[T domain.Userable] struct {
-	dao          repository.DBHandler[T]
+type authService struct {
+	dbHandler    repository.DBHandler
 	tokenManager TokenManager
 }
 
-func NewAuthService[T domain.Userable](dao repository.DBHandler[T], tokenManager TokenManager) AuthService[T] {
-	return &authService[T]{dao: dao, tokenManager: tokenManager}
+func NewAuthService(dbHandler repository.DBHandler, tokenManager TokenManager) AuthService {
+	return &authService{dbHandler: dbHandler, tokenManager: tokenManager}
 }
 
-func (a *authService[T]) SignUp(user T) (*int64, error) {
-	// hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.MinCost)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// user.Password = string(hashedPassword)
-	briefUser := dto.BriefUser{0, "", ""}
-	id, err := a.dao.NewUserQuery().CreateUser(briefUser)
-	if err != nil {
-		return nil, err
-	}
-	return id, nil
-}
+// func (a *authService[T]) SignUp(user T) (*int64, error) {
+// 	// hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.MinCost)
+// 	// if err != nil {
+// 	// 	return nil, err
+// 	// }
+// 	// user.Password = string(hashedPassword)
+// 	briefUser := dto.BriefUser{0, "", ""}
+// 	id, err := a.dao.NewUserQuery().CreateUser(briefUser)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return id, nil
+// }
 
-func (a *authService[T]) SignIn(email, reqPassword string) (*string, error) {
+func (a *authService) SignIn(email, reqPassword string) (*string, error) {
 	// password, err := a.dao.NewUserQuery().GetUserPasswordByEmail(email)
 	// if err != nil {
 	// 	return nil, err
@@ -64,7 +62,7 @@ func (a *authService[T]) SignIn(email, reqPassword string) (*string, error) {
 	return nil, nil
 }
 
-func (a *authService[T]) SignInWithPhone(firebaseToken, wallet, pinCode string) (*string, error) {
+func (a *authService) SignInWithPhone(firebaseToken, wallet, pinCode string) (*string, error) {
 	token, err := a.tokenManager.NewFirebaseToken(firebaseToken, 0)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (a *authService[T]) SignInWithPhone(firebaseToken, wallet, pinCode string) 
 	return &token, nil
 }
 
-func (a *authService[T]) Logout(userID int64) error {
+func (a *authService) Logout(userID int64) error {
 	_, err := a.tokenManager.NewJWT(strconv.Itoa(int(userID)))
 	if err != nil {
 		return err

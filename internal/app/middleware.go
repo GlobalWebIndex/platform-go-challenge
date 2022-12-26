@@ -36,7 +36,7 @@ func HttpInterceptor() runtime.ServeMuxOption {
 	return httpServerOptions
 }
 
-func (m *MicroserviceServer[T]) getUserIdFromToken(ctx context.Context) (string, error) {
+func (m *MicroserviceServer) getUserIdFromToken(ctx context.Context) (string, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
 	token := md.Get("Authorization")
 	if token == nil {

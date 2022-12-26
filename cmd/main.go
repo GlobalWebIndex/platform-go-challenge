@@ -12,7 +12,6 @@ import (
 	"google.golang.org/grpc"
 
 	"ownify_api/internal/app"
-	"ownify_api/internal/domain"
 	"ownify_api/internal/repository"
 	"ownify_api/internal/service"
 	desc "ownify_api/pkg"
@@ -44,10 +43,10 @@ func main() {
 
 	// Register all services
 	//dbHandler := repository.NewDBHandler(db)
-	dbHandler := repository.NewDBHandler(db,domain.Person{})
+	dbHandler := repository.NewDBHandler(db)
 	userService := service.NewUserService(dbHandler)
 	authService := service.NewAuthService(dbHandler, tokenManager)
-	
+
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
 	httpOpts := app.HttpInterceptor()

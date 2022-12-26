@@ -13,7 +13,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (m *MicroserviceServer[T]) Login(ctx context.Context, req *desc.SignInRequest) (*emptypb.Empty, error) {
+func (m *MicroserviceServer) Login(ctx context.Context, req *desc.SignInRequest) (*emptypb.Empty, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
 	fmt.Println(md.Get("test"))
 	token, err := m.authService.SignIn(req.GetEmail(), req.GetPassword())
@@ -31,7 +31,7 @@ func (m *MicroserviceServer[T]) Login(ctx context.Context, req *desc.SignInReque
 	return &emptypb.Empty{}, nil
 }
 
-func (m *MicroserviceServer[T]) LoginWithPhone(ctx context.Context, req *desc.PhoneAuthRequest) (*emptypb.Empty, error) {
+func (m *MicroserviceServer) LoginWithPhone(ctx context.Context, req *desc.PhoneAuthRequest) (*emptypb.Empty, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
 	fmt.Println(md.Get("test"))
 	firebaseToken, err := m.getUserIdFromToken(ctx)
@@ -65,7 +65,7 @@ func (m *MicroserviceServer[T]) LoginWithPhone(ctx context.Context, req *desc.Ph
 	return &emptypb.Empty{}, nil
 }
 
-func (m *MicroserviceServer[T]) CreateUser(ctx context.Context, req *desc.SignUpRequest) (*desc.SignUpResponse, error) {
+func (m *MicroserviceServer) CreateUser(ctx context.Context, req *desc.SignUpRequest) (*desc.SignUpResponse, error) {
 	// user := domain.Person{
 	// 	FirstName:   req.GetFirstName(),
 	// 	LastName:    req.GetLastName(),
@@ -83,7 +83,7 @@ func (m *MicroserviceServer[T]) CreateUser(ctx context.Context, req *desc.SignUp
 	return nil, nil
 }
 
-func (m *MicroserviceServer[T]) UpdateUser(ctx context.Context, req *desc.UpdateUserRequest) (*desc.UpdateUserResponse, error) {
+func (m *MicroserviceServer) UpdateUser(ctx context.Context, req *desc.UpdateUserRequest) (*desc.UpdateUserResponse, error) {
 	_, err := m.getUserIdFromToken(ctx)
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func (m *MicroserviceServer[T]) UpdateUser(ctx context.Context, req *desc.Update
 	// 	LastName: updatedUser.LastName, Email: updatedUser.Email, PhoneNumber: updatedUser.PhoneNumber}, nil
 }
 
-func (m *MicroserviceServer[T]) GetUser(ctx context.Context, req *desc.GetUserRequest) (*desc.GetUserResponse, error) {
+func (m *MicroserviceServer) GetUser(ctx context.Context, req *desc.GetUserRequest) (*desc.GetUserResponse, error) {
 	_, err := m.getUserIdFromToken(ctx)
 	if err != nil {
 		log.Println("user isn't authorized")
@@ -126,7 +126,7 @@ func (m *MicroserviceServer[T]) GetUser(ctx context.Context, req *desc.GetUserRe
 	// 	Balance:     user.Balance}, nil
 }
 
-func (m *MicroserviceServer[T]) DeleteUser(ctx context.Context, req *desc.DeleteUserRequest) (*emptypb.Empty, error) {
+func (m *MicroserviceServer) DeleteUser(ctx context.Context, req *desc.DeleteUserRequest) (*emptypb.Empty, error) {
 	//userID, err := m.getUserIdFromToken(ctx)
 	// if err != nil {
 	// 	return nil, err

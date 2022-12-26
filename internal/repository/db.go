@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"log"
-	"ownify_api/internal/domain"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -11,11 +10,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-type DBHandler[T domain.Userable] interface {
-	NewUserQuery() UserQuery[T]
+type DBHandler interface {
+	NewUserQuery() UserQuery
 }
 
-type dbHandler[T domain.Userable] struct {
+type dbHandler struct {
 	db *sql.DB
 }
 
@@ -25,8 +24,8 @@ func pgQb() squirrel.StatementBuilderType {
 	return squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar).RunWith(DB)
 }
 
-func NewDBHandler[T domain.Userable](db *sql.DB, userType T) DBHandler[T] {
-	return &dbHandler[T]{db}
+func NewDBHandler(db *sql.DB) DBHandler {
+	return &dbHandler{db}
 }
 
 func NewDB() (*sql.DB, error) {
@@ -51,6 +50,6 @@ func NewDB() (*sql.DB, error) {
 	return DB, nil
 }
 
-func (d *dbHandler[T]) NewUserQuery() UserQuery[T] {
-	return &userQuery[T]{}
+func (d *dbHandler) NewUserQuery() UserQuery {
+	return &userQuery{}
 }

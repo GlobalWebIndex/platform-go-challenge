@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/repository"
 
@@ -10,24 +9,23 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type UserService[T domain.Userable] interface {
+type UserService interface {
 	CreateUser(
 		user dto.BriefUser,
 	) (*int64, error)
-	GetUser(requestedUserID int64, userID int64) (*T, error)
-	DeleteUser(id int64, userID int64) error
-	UpdateUser(user T) (*T, error)
+	GetUser(userID int64, walletType string) (*interface{}, error)
+	DeleteUser(userID int64, walletType string) error
 }
 
-type userService[T domain.Userable] struct {
-	dbHandler repository.DBHandler[T]
+type userService struct {
+	dbHandler repository.DBHandler
 }
 
-func NewUserService[T domain.Userable](dbHandler repository.DBHandler[T]) UserService[T] {
-	return &userService[T]{dbHandler}
+func NewUserService(dbHandler repository.DBHandler) UserService {
+	return &userService{dbHandler}
 }
 
-func (u *userService[T]) CreateUser(
+func (u *userService) CreateUser(
 	user dto.BriefUser) (*int64, error) {
 
 	id, err := u.dbHandler.NewUserQuery().GetUserByBriefInfo(user)
@@ -47,13 +45,13 @@ func (u *userService[T]) CreateUser(
 	return id, nil
 }
 
-func (u *userService[T]) GetUser(requestedUserID int64, userID int64) (*T, error) {
+func (u *userService) GetUser(userID int64, walletType string) (*interface{}, error) {
 
 	return nil, nil
 }
 
-func (u *userService[T]) DeleteUser(id int64, userID int64) error {
-	_, err := u.dbHandler.NewUserQuery().GetUser(userID)
+func (u *userService) DeleteUser(userID int64, walletType string) error {
+	_, err := u.dbHandler.NewUserQuery().GetUser(userID, walletType)
 	if err != nil {
 		return err
 	}
@@ -68,20 +66,20 @@ func (u *userService[T]) DeleteUser(id int64, userID int64) error {
 	return status.Errorf(codes.PermissionDenied, "you have no access")
 }
 
-func (u *userService[T]) UpdateUser(user T) (*T, error) {
-	// email checking
-	// phone number checking
-	//_, err := u.dao.NewUserQuery().GetUser(person.ID)
-	// if err != nil {
-	// 	return nil, err
-	// }
+// func (u *userService) UpdateUser(user T) (*T, error) {
+// 	// email checking
+// 	// phone number checking
+// 	//_, err := u.dao.NewUserQuery().GetUser(person.ID)
+// 	// if err != nil {
+// 	// 	return nil, err
+// 	// }
 
-	// if user.Role == domain.ADMIN || user.ID == person.ID {
-	// 	updatedUser, err := u.dao.NewUserQuery().UpdateUser(person)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	return updatedUser, nil
-	// }
-	return nil, status.Errorf(codes.PermissionDenied, "you don't have access")
-}
+// 	// if user.Role == domain.ADMIN || user.ID == person.ID {
+// 	// 	updatedUser, err := u.dao.NewUserQuery().UpdateUser(person)
+// 	// 	if err != nil {
+// 	// 		return nil, err
+// 	// 	}
+// 	// 	return updatedUser, nil
+// 	// }
+// 	return nil, status.Errorf(codes.PermissionDenied, "you don't have access")
+// }
