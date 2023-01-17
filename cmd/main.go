@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -42,27 +42,30 @@ func main() {
 	tokenManager := service.NewTokenManager(signedKeyJWT)
 
 	// Register all services
-	dao := repository.NewDAO(db)
-	userService := service.NewUserService(dao)
-	authService := service.NewAuthService(dao, tokenManager)
-	emailVerificationService := service.NewEmailVerificationService(dao)
+	//dbHandler := repository.NewDBHandler(db)
+	dbHandler := repository.NewDBHandler(db)
+	userService := service.NewUserService(dbHandler)
+	authService := service.NewAuthService(dbHandler, tokenManager)
+	productService := service.NewProductService(dbHandler)
+
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
 	httpOpts := app.HttpInterceptor()
 
 	// Starting gRPC server
 	go func() {
-		listener, err := net.Listen("tcp", "localhost:8081")
+		listener, err := net.Listen("tcp", ":8081")
 		if err != nil {
 			log.Fatalln(err)
 		}
+		log.Println("start server")
 
 		grpcServer := grpc.NewServer(grpcOpts)
 		desc.RegisterMicroserviceServer(grpcServer, app.NewMicroservice(
 			userService,
 			authService,
-			emailVerificationService,
 			tokenManager,
+			productService,
 		))
 
 		err = grpcServer.Serve(listener)
@@ -76,8 +79,7 @@ func main() {
 	err = desc.RegisterMicroserviceHandlerServer(context.Background(), mux, app.NewMicroservice(
 		userService,
 		authService,
-		emailVerificationService,
-		tokenManager))
+		tokenManager, productService))
 	if err != nil {
 		log.Println("cannot register this service")
 	}

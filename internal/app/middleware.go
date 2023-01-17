@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -36,16 +36,11 @@ func HttpInterceptor() runtime.ServeMuxOption {
 	return httpServerOptions
 }
 
-func (m *MicroserviceServer) getUserIdFromToken(ctx context.Context) (int64, error) {
+func (m *MicroserviceServer) getUserIdFromToken(ctx context.Context) (string, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
 	token := md.Get("Authorization")
 	if token == nil {
-		return 0, status.Errorf(codes.PermissionDenied, "user isn't authorized")
+		return "", status.Errorf(codes.PermissionDenied, "user isn't authorized")
 	}
-
-	userID, err := m.tokenManager.Parse(token[0])
-	if err != nil {
-		return 0, err
-	}
-	return *userID, nil
+	return token[0], nil
 }

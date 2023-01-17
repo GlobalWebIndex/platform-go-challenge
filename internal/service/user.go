@@ -2,8 +2,6 @@ package service
 
 import (
 	"log"
-
-	"ownify_api/internal/datastruct"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/repository"
 
@@ -12,70 +10,68 @@ import (
 )
 
 type UserService interface {
-	GetUser(requestedUserID int64, userID int64) (*datastruct.Person, error)
-	DeleteUser(id int64, userID int64) error
-	UpdateUser(person dto.Person) (*datastruct.Person, error)
+	CreateUser(
+		user dto.BriefUser,
+	) (*int64, error)
+	GetUser(userID int64, walletType string) (*interface{}, error)
+	DeleteUser(userID int64, walletType string) error
+	GetLastUserId(walletType string) (*int64, error)
 }
 
 type userService struct {
-	dao repository.DAO
+	dbHandler repository.DBHandler
 }
 
-func NewUserService(dao repository.DAO) UserService {
-	return &userService{dao: dao}
+// GetUser implements UserService
+func (*userService) GetUser(userID int64, walletType string) (*interface{}, error) {
+	panic("unimplemented")
 }
 
-func (u *userService) GetUser(requestedUserID int64, userID int64) (*datastruct.Person, error) {
-	var userBySession *datastruct.Person
-	var err error
+func NewUserService(dbHandler repository.DBHandler) UserService {
+	return &userService{dbHandler}
+}
 
-	userBySession, err = u.dao.NewUserQuery().GetUser(userID)
+func (u *userService) CreateUser(
+	user dto.BriefUser) (*int64, error) {
+	id, err := u.dbHandler.NewUserQuery().GetUserByBriefInfo(user)
+	if id != nil {
+		log.Println("[Waring] Already exist: userId")
+		return id, nil
+	}
 	if err != nil {
-		log.Printf("user isn't authorized %v", err)
+		log.Println(err)
 	}
+	id, err = u.dbHandler.NewUserQuery().CreateUser(
+		user,
+	)
 
-	userByRequest, err := u.dao.NewUserQuery().GetUser(requestedUserID)
-	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "requested user doesn't exist: %v", err)
-	}
-
-	if userByRequest.ID == userBySession.ID || userBySession.Role == datastruct.ADMIN {
-		return userByRequest, nil
-	} else {
-		return &datastruct.Person{ID: userByRequest.ID, FirstName: userByRequest.FirstName, LastName: userByRequest.LastName}, nil
-	}
-}
-
-func (u *userService) DeleteUser(id int64, userID int64) error {
-	user, err := u.dao.NewUserQuery().GetUser(userID)
-	if err != nil {
-		return err
-	}
-
-	if user.Role == datastruct.ADMIN || id == user.ID {
-		err = u.dao.NewUserQuery().DeleteUser(id)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-	return status.Errorf(codes.PermissionDenied, "you have no access")
-}
-
-func (u *userService) UpdateUser(person dto.Person) (*datastruct.Person, error) {
-	// email checking
-	// phone number checking
-	user, err := u.dao.NewUserQuery().GetUser(person.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	if user.Role == datastruct.ADMIN || user.ID == person.ID {
-		updatedUser, err := u.dao.NewUserQuery().UpdateUser(person)
-		if err != nil {
-			return nil, err
-		}
-		return updatedUser, nil
+	return id, nil
+}
+
+func (u *userService) GetLastUserId(walletType string) (*int64, error) {
+	userId, err := u.dbHandler.NewUserQuery().GetLastUserId(walletType)
+	if err != nil {
+		return nil, err
 	}
-	return nil, status.Errorf(codes.PermissionDenied, "you don't have access")
+	return userId, nil
+}
+
+func (u *userService) DeleteUser(userID int64, walletType string) error {
+	_, err := u.dbHandler.NewUserQuery().GetUser(userID, walletType)
+	if err != nil {
+		return err
+	}
+
+	// if user.Role == domain.ADMIN || id == user.ID {
+	// 	err = u.dao.NewUserQuery().DeleteUser(id)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	return nil
+	// }
+	return status.Errorf(codes.PermissionDenied, "you have no access")
 }

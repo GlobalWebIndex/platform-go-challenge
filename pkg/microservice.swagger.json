@@ -16,73 +16,6 @@
     "application/json"
   ],
   "paths": {
-    "/email-check-code": {
-      "post": {
-        "operationId": "Microservice_EmailVerificationCheckCode",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "type": "object",
-              "properties": {}
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1EmailVerificationCheckCodeRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Microservice"
-        ]
-      }
-    },
-    "/email-verification": {
-      "post": {
-        "operationId": "Microservice_EmailVerification",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "type": "object",
-              "properties": {}
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {}
-            }
-          }
-        ],
-        "tags": [
-          "Microservice"
-        ]
-      }
-    },
     "/logout": {
       "post": {
         "operationId": "Microservice_Logout",
@@ -90,7 +23,6 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "type": "object",
               "properties": {}
             }
           },
@@ -107,7 +39,6 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
               "properties": {}
             }
           }
@@ -117,14 +48,36 @@
         ]
       }
     },
+    "/product/add": {
+      "post": {
+        "operationId": "Microservice_VerifyAsset",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
     "/signin": {
       "post": {
+        "summary": "user manage",
         "operationId": "Microservice_SignIn",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "type": "object",
               "properties": {}
             }
           },
@@ -182,6 +135,38 @@
         ]
       }
     },
+    "/sso/phone": {
+      "post": {
+        "operationId": "Microservice_SignInWithPhone",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1PhoneAuthResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1PhoneAuthRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
     "/user": {
       "get": {
         "operationId": "Microservice_GetUser",
@@ -218,7 +203,6 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "type": "object",
               "properties": {}
             }
           },
@@ -278,11 +262,14 @@
     "protobufAny": {
       "type": "object",
       "properties": {
-        "@type": {
+        "typeUrl": {
           "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
         }
-      },
-      "additionalProperties": {}
+      }
     },
     "rpcStatus": {
       "type": "object",
@@ -299,15 +286,6 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
-        }
-      }
-    },
-    "v1EmailVerificationCheckCodeRequest": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "string",
-          "format": "int64"
         }
       }
     },
@@ -339,6 +317,36 @@
         "balance": {
           "type": "string",
           "format": "int64"
+        }
+      }
+    },
+    "v1PhoneAuthRequest": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "wallet": {
+          "type": "string"
+        },
+        "pincode": {
+          "type": "string"
+        },
+        "walletType": {
+          "type": "string"
+        }
+      }
+    },
+    "v1PhoneAuthResponse": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "token": {
+          "type": "string"
         }
       }
     },

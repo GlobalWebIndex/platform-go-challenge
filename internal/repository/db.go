@@ -10,12 +10,12 @@ import (
 	"github.com/spf13/viper"
 )
 
-type DAO interface {
+type DBHandler interface {
 	NewUserQuery() UserQuery
-	NewTransactionQuery() TransactionQuery
+	NewProductQuery() ProductQuery
 }
 
-type dao struct {
+type dbHandler struct {
 	db *sql.DB
 }
 
@@ -25,8 +25,8 @@ func pgQb() squirrel.StatementBuilderType {
 	return squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar).RunWith(DB)
 }
 
-func NewDAO(db *sql.DB) DAO {
-	return &dao{db}
+func NewDBHandler(db *sql.DB) DBHandler {
+	return &dbHandler{db}
 }
 
 func NewDB() (*sql.DB, error) {
@@ -51,10 +51,10 @@ func NewDB() (*sql.DB, error) {
 	return DB, nil
 }
 
-func (d *dao) NewTransactionQuery() TransactionQuery {
-	return &transactionQuery{}
+func (d *dbHandler) NewUserQuery() UserQuery {
+	return &userQuery{}
 }
 
-func (d *dao) NewUserQuery() UserQuery {
-	return &userQuery{}
+func (d *dbHandler) NewProductQuery() ProductQuery {
+	return &productQuery{}
 }

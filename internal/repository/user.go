@@ -1,96 +1,80 @@
 package repository
 
 import (
-	"fmt"
+	//"fmt"
 
-	"ownify_api/internal/datastruct"
+	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
+	"strings"
+
+	//"ownify_api/internal/dto"
 
 	"github.com/Masterminds/squirrel"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	//"google.golang.org/grpc/codes"
+	//"google.golang.org/grpc/status"
 )
 
 type UserQuery interface {
-	CreateUser(user datastruct.Person) (*int64, error)
-	GetUser(id int64) (*datastruct.Person, error)
-	DeleteUser(userID int64) error
-	UpdateUser(person dto.Person) (*datastruct.Person, error)
-	GetUserPasswordByEmail(email string) (*string, error)
-	GetEmailByUserID(id int64) (string, error)
-	GetEmailCode(id int64) (*int64, error)
-	UpdateEmailCode(userID, code int64) error
-	VerifiedTrueEmailCodeZero(id int64) error
-	GetUserIdByEmail(email string) (*int64, error)
+	CreateUser(
+		user dto.BriefUser,
+	) (*int64, error)
+	GetUser(id int64, walletType string) (*interface{}, error)
+	GetUserByBriefInfo(user dto.BriefUser) (*int64, error)
+	DeleteUser(userID int64, walletType string) error
+	GetLastUserId(walletType string) (*int64, error)
 }
 
 type userQuery struct{}
 
-func (u *userQuery) GetUserIdByEmail(email string) (*int64, error) {
-	qb := pgQb().
-		Select("id").
-		From(datastruct.PersonTableName).
-		Where(squirrel.Eq{"email": email})
-
-	var id int64
-	err := qb.QueryRow().Scan(&id)
-	if err != nil {
-		return nil, fmt.Errorf("cannot get user id %v", err)
+func (u *userQuery) CreateUser(
+	user dto.BriefUser) (*int64, error) {
+	tableName := domain.PersonTableName
+	if user.WalletType == domain.BusinessWallet {
+		tableName = domain.BusinessTableName
 	}
-	return &id, nil
-}
 
-func (u *userQuery) CreateUser(user datastruct.Person) (*int64, error) {
-	qb := pgQb().
-		Insert(datastruct.PersonTableName).
-		Columns("first_name", "email", "password", "last_name",
-			"role", "verified", "email_code", "balance", "phone_number").
-		Values(user.FirstName, user.Email, user.Password, user.LastName,
-			user.Role, user.Verified, user.EmailCode, user.Balance, user.PhoneNumber).
-		Suffix("RETURNING id")
+	var user_id int64 = 0
+	err := pgQb().Select("user_id").OrderBy("user_id DESC").From(tableName).QueryRow().Scan(&user_id)
+	if !strings.Contains(err.Error(), domain.NoRows) {
+		return nil, err
+	}
+	cols := []string{"user_id", "chain_id", "wallet_address"}
+	values := []interface{}{user_id + 1, user.ChainId, user.Wallet}
+	sqlBuilder := NewSqlBuilder()
 
-	var id int64
-	err := qb.QueryRow().Scan(&id)
+	query, err := sqlBuilder.Insert(tableName, cols, values)
 	if err != nil {
 		return nil, err
 	}
-	return &id, nil
-}
-
-func (u *userQuery) GetUserPasswordByEmail(email string) (*string, error) {
-	qb := pgQb().
-		Select("password").
-		From(datastruct.PersonTableName).
-		Where(squirrel.Eq{"email": email})
-
-	var password string
-	err := qb.QueryRow().Scan(&password)
+	_, err = DB.Exec(*query)
 	if err != nil {
-		return nil, fmt.Errorf("email and password don't match %v", err)
+		return nil, err
 	}
-	return &password, nil
+	user_id += 1
+	return &user_id, nil
 }
 
-func (u *userQuery) GetUser(id int64) (*datastruct.Person, error) {
-	qb := pgQb().Select("id", "first_name", "last_name", "email",
-		"role", "verified", "balance", "phone_number", "email_code").
-		From(datastruct.PersonTableName).
-		Where(squirrel.Eq{"id": id})
+// func (u *userQuery) UpdateUser(user T) (*int64, error) {
+// 	qb := pgQb().
+// 		Insert(domain.PersonTableName).
+// 		Columns("first_name", "email", "password", "last_name",
+// 			"role", "verified", "email_code", "balance", "phone_number").
+// 		// Values(user.FirstName, user.Email, user.Password, user.LastName,
+// 		// 	user.Role, user.Verified, user.EmailCode, user.Balance, user.PhoneNumber).
+// 		Suffix("RETURNING id")
 
-	user := datastruct.Person{}
-	err := qb.QueryRow().Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email,
-		&user.Role, &user.Verified, &user.Balance, &user.PhoneNumber, &user.EmailCode)
-	if err != nil {
-		return &datastruct.Person{}, status.Errorf(codes.NotFound, "cannot scan user: %v", err)
-	}
+// 	var id int64
+// 	err := qb.QueryRow().Scan(&id)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return &id, nil
+// }
 
-	return &user, nil
-}
-
-func (u *userQuery) DeleteUser(userID int64) error {
+func (u *userQuery) DeleteUser(userID int64, walletType string) error {
 	qb := pgQb().
-		Delete(datastruct.PersonTableName).
-		From(datastruct.PersonTableName).
+		Delete(domain.PersonTableName).
+		From(domain.PersonTableName).
 		Where(squirrel.Eq{"id": userID})
 
 	_, err := qb.Exec()
@@ -100,77 +84,41 @@ func (u *userQuery) DeleteUser(userID int64) error {
 	return nil
 }
 
-func (u *userQuery) UpdateUser(person dto.Person) (*datastruct.Person, error) {
-	qb := pgQb().Update(datastruct.PersonTableName).SetMap(map[string]interface{}{
-		"first_name":   person.FirstName,
-		"last_name":    person.LastName,
-		"email":        person.Email,
-		"phone_number": person.PhoneNumber,
-	}).Where(squirrel.Eq{"id": person.ID}).Suffix("RETURNING id, first_name, last_name, email, phone_number")
+func (u *userQuery) GetUser(id int64, walletType string) (*interface{}, error) {
+	// qb := pgQb().
+	// 	Delete(domain.PersonTableName).
+	// 	From(domain.PersonTableName).
+	// 	Where(squirrel.Eq{"id": id})
 
-	var updatedPerson datastruct.Person
-	err := qb.QueryRow().Scan(&updatedPerson.ID, &updatedPerson.FirstName, &updatedPerson.LastName, &updatedPerson.Email, &updatedPerson.PhoneNumber)
+	// _, err := qb.Exec()
+	// if err != nil {
+	// 	return err
+	// }
+	return nil, nil
+}
+
+func (u *userQuery) GetUserByBriefInfo(user dto.BriefUser) (*int64, error) {
+	var user_id int64
+	err := pgQb().
+		Select("user_id").
+		From(domain.PersonTableName).
+		Where(squirrel.Eq{"chain_id": user.ChainId, "wallet_addres": user.Wallet}).QueryRow().Scan(&user_id)
+
 	if err != nil {
 		return nil, err
 	}
-
-	return &updatedPerson, nil
+	return &user_id, nil
 }
 
-func (u *userQuery) GetEmailByUserID(id int64) (string, error) {
-	qb := pgQb().
-		Select("email").
-		From(datastruct.PersonTableName).
-		Where(squirrel.Eq{"id": id})
-
-	var email string
-	err := qb.QueryRow().Scan(&email)
-	if err != nil {
-		return "", err
+func (u *userQuery) GetLastUserId(walletType string) (*int64, error) {
+	tableName := domain.PersonTableName
+	if walletType == domain.BusinessWallet {
+		tableName = domain.BusinessTableName
 	}
-	return email, nil
-}
-
-func (u *userQuery) GetEmailCode(id int64) (*int64, error) {
-	qb := pgQb().
-		Select("email_code").
-		From(datastruct.PersonTableName).
-		Where(squirrel.Eq{"id": id})
-
-	var code int64
-	err := qb.QueryRow().Scan(&code)
+	var user_id int64 = 0
+	err := pgQb().Select("user_id").OrderBy("user_id DESC").From(tableName).QueryRow().Scan(&user_id)
 	if err != nil {
-		return nil, fmt.Errorf("cannot get email code %v", err)
+		return nil, err
 	}
-
-	return &code, nil
-}
-
-func (u *userQuery) UpdateEmailCode(userID, code int64) error {
-	qb := pgQb().
-		Update(datastruct.PersonTableName).
-		Set("email_code", code).
-		Where(squirrel.Eq{"id": userID})
-
-	_, err := qb.Exec()
-	if err != nil {
-		return fmt.Errorf("cannot update email code %v", err)
-	}
-	return nil
-}
-
-func (u *userQuery) VerifiedTrueEmailCodeZero(id int64) error {
-	qb := pgQb().
-		Update(datastruct.PersonTableName).
-		SetMap(map[string]interface{}{
-			"verified":   true,
-			"email_code": 0,
-		}).
-		Where(squirrel.Eq{"id": id})
-
-	_, err := qb.Exec()
-	if err != nil {
-		return fmt.Errorf("cannot change verified to true %v", err)
-	}
-	return nil
+	return &user_id, nil
 }
