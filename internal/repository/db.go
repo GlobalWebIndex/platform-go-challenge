@@ -12,6 +12,7 @@ import (
 
 type DBHandler interface {
 	NewUserQuery() UserQuery
+	NewProductQuery() ProductQuery
 }
 
 type dbHandler struct {
@@ -52,4 +53,8 @@ func NewDB() (*sql.DB, error) {
 
 func (d *dbHandler) NewUserQuery() UserQuery {
 	return &userQuery{}
+}
+
+func (d *dbHandler) NewProductQuery() ProductQuery {
+	return &productQuery{}
 }

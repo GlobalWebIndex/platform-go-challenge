@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -42,10 +42,5 @@ func (m *MicroserviceServer) getUserIdFromToken(ctx context.Context) (string, er
 	if token == nil {
 		return "", status.Errorf(codes.PermissionDenied, "user isn't authorized")
 	}
-
-	userID, err := m.tokenManager.ValidateFirebase(token[0])
-	if err != nil {
-		return "", err
-	}
-	return *userID, nil
+	return token[0], nil
 }

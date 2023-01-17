@@ -10,15 +10,17 @@ import "validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 
 service Microservice {
+
+  //user manage
   rpc SignIn (SignInRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/signin"
       body: "*"
     };
   }
-  rpc SignInWithPhone(PhoneAuthRequest)returns (google.protobuf.Empty) {
+  rpc SignInWithPhone(PhoneAuthRequest)returns (PhoneAuthResponse) {
     option (google.api.http) = {
-      post: "/signin/phone"
+      post: "/sso/phone"
       body: "*"
     };
   }
@@ -51,28 +53,18 @@ service Microservice {
     };
   }
   
-  rpc EmailVerification (google.protobuf.Empty) returns (google.protobuf.Empty) {
+  //product manage
+  rpc AddProduct(AddProductRequest) returns (google.protobuf.Empty){
     option (google.api.http) = {
-      post: "/email-verification"
-      body: "*"
+      post: "/product/add"
     };
   }
-  rpc EmailVerificationCheckCode (EmailVerificationCheckCodeRequest) returns (google.protobuf.Empty) {
+
+  rpc VerifyAsset(VerifyAssetRequest) returns(google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/email-check-code"
-      body: "*"
+      post: "/product/add"
     };
   }
-  
-}
-
-
-
-
-
-
-message EmailVerificationCheckCodeRequest {
-  int64 code = 1;
 }
 
 
@@ -82,11 +74,17 @@ message SignInRequest {
 }
 
 message PhoneAuthRequest {
-  int32 chainId = 1;
+  int32  chainId = 1 [(validate.rules).int32 = {gt: 4}];
   string wallet = 2 [(validate.rules).string = {min_len: 42, max_len: 58}];
   string pincode = 3  [(validate.rules).string = {min_len: 4, max_len: 6}];
-  string walleType = 4;
+  string walletType = 4 [(validate.rules).string = {in: ["Business","Person"]}];
 }
+
+message PhoneAuthResponse {
+  int64  userId = 1 [(validate.rules).int64 = {gt: 0}];
+  string token = 2;
+}
+
 
 message GetUserRequest {
   int64 id = 1;
@@ -138,3 +136,19 @@ message UpdateUserResponse {
   string phone_number = 5;
 }
 
+message AddProductRequest {
+  int64 chain_id = 1;
+  int64 asset_id = 2;
+  string owner = 3;
+  string barcode = 4;
+  string item_name = 5;
+  string brand_name = 6;
+  string additional_data = 7;
+  string location = 8;
+  int32  issue_date = 9;
+  string  net = 10  [(validate.rules).string = {in: ["main","test"]}];
+}
+
+message VerifyAssetRequest {
+  string asset_id = 1;
+}

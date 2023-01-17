@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"ownify_api/internal/dto"
@@ -13,10 +12,40 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (m *MicroserviceServer) Login(ctx context.Context, req *desc.SignInRequest) (*emptypb.Empty, error) {
-	md, _ := metadata.FromIncomingContext(ctx)
-	fmt.Println(md.Get("test"))
-	token, err := m.authService.SignIn(req.GetEmail(), req.GetPassword())
+
+
+func (m *MicroserviceServer) SignInWithPhone(ctx context.Context, req *desc.PhoneAuthRequest) (*desc.PhoneAuthResponse, error) {
+
+	//Firebase token check
+	firebaseToken, err := m.getUserIdFromToken(ctx)
+	if err != nil {
+		return nil, err
+	}
+	_, err = m.tokenManager.ValidateFirebase(firebaseToken)
+	if err != nil {
+		return nil, err
+	}
+
+	//Generate New UserId
+	lastUserId, err := m.userService.GetLastUserId(req.WalletType)
+	if err != nil {
+		return nil, err
+	}
+
+	//Generate App Token for user
+	newId := *lastUserId + 1
+	token, err := m.authService.SignInWithPhone(firebaseToken, newId)
+	if err != nil {
+		return nil, err
+	}
+
+	//create user
+	userId, err := m.userService.CreateUser(dto.BriefUser{
+		ChainId:    int(req.ChainId),
+		Wallet:     req.Wallet,
+		WalletType: req.WalletType,
+	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -27,42 +56,10 @@ func (m *MicroserviceServer) Login(ctx context.Context, req *desc.SignInRequest)
 	if err != nil {
 		return nil, err
 	}
-
-	return &emptypb.Empty{}, nil
-}
-
-func (m *MicroserviceServer) LoginWithPhone(ctx context.Context, req *desc.PhoneAuthRequest) (*emptypb.Empty, error) {
-	md, _ := metadata.FromIncomingContext(ctx)
-	fmt.Println(md.Get("test"))
-	firebaseToken, err := m.getUserIdFromToken(ctx)
-	if err != nil {
-		return nil, err
-	}
-	// token, err := m.authService.SignInWithPhone(firebaseToken, req.Wallet, req.Pincode)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	userId, err := m.userService.CreateUser(dto.BriefUser{
-		ChainId:    int(req.ChainId),
-		Wallet:     req.Wallet,
-		WalletType: req.WalleType,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	accessToken, err := m.tokenManager.NewFirebaseToken(firebaseToken, int(*userId))
-
-	if err != nil {
-		return nil, err
-	}
-	err = grpc.SendHeader(ctx, metadata.New(map[string]string{
-		"Token": accessToken,
-	}))
-	if err != nil {
-		return nil, err
-	}
-	return &emptypb.Empty{}, nil
+	return &desc.PhoneAuthResponse{
+		UserId: *userId,
+		Token:  *token,
+	}, nil
 }
 
 func (m *MicroserviceServer) CreateUser(ctx context.Context, req *desc.SignUpRequest) (*desc.SignUpResponse, error) {
@@ -138,3 +135,4 @@ func (m *MicroserviceServer) DeleteUser(ctx context.Context, req *desc.DeleteUse
 	// }
 	return nil, nil
 }
+

@@ -10,7 +10,7 @@ import (
 type AuthService interface {
 	//SignUp(user T) (*int64, error)
 	SignIn(email, password string) (*string, error)
-	SignInWithPhone(firebaseToken, wallet, pinCode string) (*string, error)
+	SignInWithPhone(firebaseToken string, userId int64) (*string, error)
 	Logout(userID int64) error
 }
 
@@ -62,8 +62,8 @@ func (a *authService) SignIn(email, reqPassword string) (*string, error) {
 	return nil, nil
 }
 
-func (a *authService) SignInWithPhone(firebaseToken, wallet, pinCode string) (*string, error) {
-	token, err := a.tokenManager.NewFirebaseToken(firebaseToken, 0)
+func (a *authService) SignInWithPhone(firebaseToken string, userId int64) (*string, error) {
+	token, err := a.tokenManager.NewFirebaseToken(firebaseToken, userId)
 	if err != nil {
 		return nil, err
 	}

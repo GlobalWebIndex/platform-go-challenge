@@ -10,6 +10,7 @@ import (
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"github.com/golang-jwt/jwt"
+	"google.golang.org/api/option"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -19,7 +20,7 @@ type TokenManager interface {
 	Parse(accessToken string) (*int64, error)
 	ParseFirebaseToken(accessToken string) (*int64, error)
 	NewRefreshToken() (string, error)
-	NewFirebaseToken(accessToken string, userId int) (string, error)
+	NewFirebaseToken(accessToken string, userId int64) (string, error)
 	ValidateFirebase(accessToken string) (*string, error)
 }
 
@@ -39,7 +40,7 @@ func (t *tokenManager) NewJWT(userID string) (string, error) {
 	return token.SignedString([]byte(t.signingKey))
 }
 
-func (t *tokenManager) NewFirebaseToken(accessToken string, userId int) (string, error) {
+func (t *tokenManager) NewFirebaseToken(accessToken string, userId int64) (string, error) {
 	uid, err := t.ValidateFirebase(accessToken)
 	if err != nil {
 		return "", err
@@ -117,13 +118,14 @@ func (t *tokenManager) ValidateFirebase(accessToken string) (*string, error) {
 	}
 	token, err := client.VerifyIDToken(context.Background(), accessToken)
 	if err != nil {
-		return nil, fmt.Errorf("invalid user", err)
+		return nil, fmt.Errorf("invalid user: %s", err)
 	}
 	return &token.UID, nil
 }
 
 func getFirebaseAuthService() (*auth.Client, error) {
-	app, err := firebase.NewApp(context.Background(), nil)
+	opt := option.WithCredentialsFile("../config/ownify-wallet-service-account.json")
+	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		return nil, fmt.Errorf("[ERR] can't initialize firebase app: %s", err)
 	}
