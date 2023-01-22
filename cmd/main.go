@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc"
 
 	"ownify_api/internal/app"
+	"ownify_api/internal/domain"
 	"ownify_api/internal/repository"
 	"ownify_api/internal/service"
 	desc "ownify_api/pkg"
@@ -29,6 +30,17 @@ func main() {
 		log.Fatalf("cannot ping db: %v", err)
 	}
 
+	//prepare algorand client
+	algoClient, algoIndexer, err := repository.NewAlgoClient(domain.MainNet)
+	if err != nil {
+		log.Fatalf("cannot initialize algorand client: %v", err)
+	}
+
+	algoTestClient, algoTestIndexer, err := repository.NewAlgoClient(domain.TestNet)
+	if err != nil {
+		log.Fatalf("cannot initialize algorand client: %v", err)
+	}
+
 	// preparing config file
 	viper.AddConfigPath("../config")
 	viper.SetConfigName("config")
@@ -44,9 +56,12 @@ func main() {
 	// Register all services
 	//dbHandler := repository.NewDBHandler(db)
 	dbHandler := repository.NewDBHandler(db)
+	wallet := repository.NewAlgoHandler(algoClient, algoIndexer, algoTestClient, algoTestIndexer)
+
 	userService := service.NewUserService(dbHandler)
 	authService := service.NewAuthService(dbHandler, tokenManager)
 	productService := service.NewProductService(dbHandler)
+	walletService := service.NewWalletService(wallet)
 
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
@@ -66,6 +81,7 @@ func main() {
 			authService,
 			tokenManager,
 			productService,
+			walletService,
 		))
 
 		err = grpcServer.Serve(listener)
@@ -79,7 +95,7 @@ func main() {
 	err = desc.RegisterMicroserviceHandlerServer(context.Background(), mux, app.NewMicroservice(
 		userService,
 		authService,
-		tokenManager, productService))
+		tokenManager, productService, walletService))
 	if err != nil {
 		log.Println("cannot register this service")
 	}

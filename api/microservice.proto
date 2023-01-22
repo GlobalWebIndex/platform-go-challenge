@@ -65,6 +65,32 @@ service Microservice {
       post: "/product/add"
     };
   }
+
+
+  //algorand service
+  rpc CreateWallet (CreateWalletRequest) returns (CreateWalletResponse) {
+    option (google.api.http) = {
+      post: "/wallet/create"
+    };
+  }
+
+  rpc GetAccount (google.protobuf.Empty) returns (GetAccountResponse) {
+    option (google.api.http) = {
+      get: "/wallet/account"
+    };
+  }
+
+  rpc MintOwnify(MintOwnifyRequest) returns (MintOwnifyResponse) {
+    option (google.api.http) = {
+      post: "/wallet/mintownify"
+    };
+  }
+
+  rpc MakeTransaction (MakeTransactionRequest) returns (MakeTransactionResponse) {
+    option (google.api.http) = {
+      post: "/wallet/rawtx"
+    };
+  }
 }
 
 
@@ -104,10 +130,10 @@ message GetUserResponse {
 
 
 message SignUpRequest {
-  string first_name = 1;
-  string last_name = 2;
   string email = 3;
   string password = 4  [(validate.rules).string = {min_len: 8, max_len: 20}];
+  string first_name = 1;
+  string last_name = 2;
   string phone_number = 5;
   string role = 6;
 }
@@ -151,4 +177,58 @@ message AddProductRequest {
 
 message VerifyAssetRequest {
   string asset_id = 1;
+}
+
+//wallet 
+message CreateWalletRequest {
+  int32 chain_id = 1;
+  string role = 2 [(validate.rules).string = {in: ["person","business"]}];
+  string email = 3;
+}
+
+message CreateWalletResponse {
+  string wallet = 1;
+}
+
+message GetAccountRequest {
+  int32 chain_id = 1;
+  string email = 2;
+}
+
+message GetAccountResponse {
+  repeated string pub_keys = 2;
+}
+
+message MakeTransactionRequest {
+  string chain_id = 1;
+  string email = 2;
+  string role = 3;
+  string pub_key = 4;
+  bytes rawTx = 5;
+  string net = 6;
+}
+
+message MakeTransactionResponse {
+  string tx_id = 1;
+  string asset_id = 2;
+}
+
+message Product {
+  string barcode = 4;
+  string item_name = 5;
+  string brand_name = 6;
+  string additional_data = 7;
+  string location = 8;
+  int32  issue_date = 9;
+}
+message MintOwnifyRequest {
+  int64 chain_id = 1;
+  string email = 2;
+  string pub_key = 3;
+  repeated Product products = 4;
+  string  net = 5  [(validate.rules).string = {in: ["main","test"]}];
+}
+
+message MintOwnifyResponse {
+  repeated string asset_ids=1;
 }

@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -43,4 +45,21 @@ func (m *MicroserviceServer) getUserIdFromToken(ctx context.Context) (string, er
 		return "", status.Errorf(codes.PermissionDenied, "user isn't authorized")
 	}
 	return token[0], nil
+}
+
+func (m *MicroserviceServer) TokenInterceptor(ctx context.Context) error {
+	// validate token.
+	md, _ := metadata.FromIncomingContext(ctx)
+	fmt.Println(md.Get("test"))
+	token, err := m.getUserIdFromToken(ctx)
+	if err != nil {
+		log.Println("user isn't authorized")
+		return err
+	}
+	_, err = m.tokenManager.ValidateFirebase(token)
+	if err != nil {
+		log.Println("user isn't authorized")
+		return err
+	}
+	return nil
 }

@@ -5,6 +5,7 @@ import (
 
 	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
+	"ownify_api/internal/utils"
 	"strings"
 
 	//"ownify_api/internal/dto"
@@ -40,7 +41,7 @@ func (u *userQuery) CreateUser(
 	}
 	cols := []string{"user_id", "chain_id", "wallet_address"}
 	values := []interface{}{user_id + 1, user.ChainId, user.Wallet}
-	sqlBuilder := NewSqlBuilder()
+	sqlBuilder := utils.NewSqlBuilder()
 
 	query, err := sqlBuilder.Insert(tableName, cols, values)
 	if err != nil {

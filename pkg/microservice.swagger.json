@@ -256,6 +256,95 @@
           "Microservice"
         ]
       }
+    },
+    "/wallet/account": {
+      "get": {
+        "operationId": "Microservice_GetAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetAccountResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/wallet/create": {
+      "post": {
+        "summary": "algorand service",
+        "operationId": "Microservice_CreateWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateWalletResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/wallet/mintownify": {
+      "post": {
+        "operationId": "Microservice_MintOwnify",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1MintOwnifyResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/wallet/rawtx": {
+      "post": {
+        "operationId": "Microservice_MakeTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1MakeTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Microservice"
+        ]
+      }
     }
   },
   "definitions": {
@@ -285,6 +374,25 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1CreateWalletResponse": {
+      "type": "object",
+      "properties": {
+        "wallet": {
+          "type": "string"
+        }
+      }
+    },
+    "v1GetAccountResponse": {
+      "type": "object",
+      "properties": {
+        "pubKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       }
@@ -320,6 +428,28 @@
         }
       }
     },
+    "v1MakeTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "txId": {
+          "type": "string"
+        },
+        "assetId": {
+          "type": "string"
+        }
+      }
+    },
+    "v1MintOwnifyResponse": {
+      "type": "object",
+      "properties": {
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "v1PhoneAuthRequest": {
       "type": "object",
       "properties": {
@@ -350,6 +480,30 @@
         }
       }
     },
+    "v1Product": {
+      "type": "object",
+      "properties": {
+        "barcode": {
+          "type": "string"
+        },
+        "itemName": {
+          "type": "string"
+        },
+        "brandName": {
+          "type": "string"
+        },
+        "additionalData": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "issueDate": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "v1SignInRequest": {
       "type": "object",
       "properties": {
@@ -364,16 +518,16 @@
     "v1SignUpRequest": {
       "type": "object",
       "properties": {
-        "firstName": {
-          "type": "string"
-        },
-        "lastName": {
-          "type": "string"
-        },
         "email": {
           "type": "string"
         },
         "password": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
           "type": "string"
         },
         "phoneNumber": {

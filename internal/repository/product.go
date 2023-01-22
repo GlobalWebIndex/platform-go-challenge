@@ -5,6 +5,7 @@ import (
 
 	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
+	"ownify_api/internal/utils"
 	"reflect"
 
 	"github.com/Masterminds/squirrel"
@@ -40,7 +41,7 @@ func (u *productQuery) AddProduct(product dto.BriefProduct, net string) error {
 		values = append(values, value)
 	}
 
-	sqlBuilder := NewSqlBuilder()
+	sqlBuilder := utils.NewSqlBuilder()
 	query, err := sqlBuilder.Insert(tableName, cols, values)
 	if err != nil {
 		return err
