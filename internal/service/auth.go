@@ -12,6 +12,8 @@ type AuthService interface {
 	SignIn(email, password string) (*string, error)
 	SignInWithPhone(firebaseToken string, userId int64) (*string, error)
 	Logout(userID int64) error
+	CheckEmail(email string) bool
+	ValidBusiness(uid string, email string) bool
 }
 
 type authService struct {
@@ -76,4 +78,13 @@ func (a *authService) Logout(userID int64) error {
 		return err
 	}
 	return nil
+}
+func (a *authService) CheckEmail(email string) bool {
+	_, err := a.dbHandler.NewBusinessQuery().GetBusiness(email)
+	return err == nil
+}
+
+func (a *authService) ValidBusiness(uid string, email string) bool {
+	_, err := a.dbHandler.NewBusinessQuery().VerifyBusiness(uid, email)
+	return err == nil
 }

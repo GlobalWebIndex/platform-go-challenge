@@ -11,7 +11,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (m *MicroserviceServer) AddProduct(ctx context.Context, req *desc.AddProductRequest) (*emptypb.Empty, error) {
+func (m *MicroserviceServer) AddProduct(ctx context.Context, req *desc.AddProductRequest) (*desc.NetWorkResponse, error) {
 
 	// validate token.
 	md, _ := metadata.FromIncomingContext(ctx)
@@ -19,32 +19,35 @@ func (m *MicroserviceServer) AddProduct(ctx context.Context, req *desc.AddProduc
 	token, err := m.getUserIdFromToken(ctx)
 	if err != nil {
 		log.Println("user isn't authorized")
-		return &emptypb.Empty{}, err
+		return nil, err
 	}
 	_, err = m.tokenManager.ValidateFirebase(token)
 	if err != nil {
 		log.Println("user isn't authorized")
-		return &emptypb.Empty{}, err
+		return nil, err
 	}
 
 	// add product.
 	product := dto.BriefProduct{
 		ChainId:        int(req.ChainId),
-		AssetId:        int32(req.AssetId),
+		AssetId:        int64(req.AssetId),
 		Owner:          req.Owner,
 		Barcode:        req.Barcode,
 		ItemName:       req.ItemName,
 		BrandName:      req.BrandName,
 		AdditionalData: req.AdditionalData,
 		Location:       req.Location,
-		IssueDate:      fmt.Sprintf("%d", req.IssueDate),
+		IssueDate:      req.IssueDate,
 	}
 
 	err = m.productService.AddProduct(product, req.Net)
 	if err != nil {
-		return &emptypb.Empty{}, nil
+		return nil, err
 	}
-	return &emptypb.Empty{}, nil
+	return &desc.NetWorkResponse{
+		Msg:     "Successfully Added",
+		Success: true,
+	}, nil
 }
 
 func (m *MicroserviceServer) GetProduct(ctx context.Context, req *desc.SignInRequest) (*emptypb.Empty, error) {
@@ -63,5 +66,3 @@ func (m *MicroserviceServer) GetProduct(ctx context.Context, req *desc.SignInReq
 	// }
 	return &emptypb.Empty{}, nil
 }
-
-

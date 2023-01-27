@@ -3,10 +3,10 @@ package repository
 import (
 	//"fmt"
 
+	"fmt"
 	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
-	"reflect"
 
 	"github.com/Masterminds/squirrel"
 	//"ownify_api/internal/dto"
@@ -20,27 +20,24 @@ type ProductQuery interface {
 		product dto.BriefProduct,
 		net string,
 	) error
+	AddProducts(products []dto.BriefProduct, net string) error
 	GetProduct(chainId string, assetId string, net string) (domain.Product, error)
 }
 
-type productQuery struct {}
+type productQuery struct{}
 
 func (u *productQuery) AddProduct(product dto.BriefProduct, net string) error {
+	// product validation.
+	if !product.Valid() {
+		return fmt.Errorf("[ERR] invalid Info: %v", product)
+	}
 
+	// add to database.
 	tableName := domain.MainProductTableName
 	if net == domain.TestNet {
 		tableName = domain.TestProductTableName
 	}
-	entity := reflect.ValueOf(product).Elem()
-	cols := []string{}
-	values := []interface{}{}
-	for i := 0; i < entity.NumField(); i++ {
-		field := entity.Type().Field(i).Name
-		value := entity.FieldByName(field)
-		cols = append(cols, field)
-		values = append(values, value)
-	}
-
+	cols, values := utils.ConvertToEntity(&product)
 	sqlBuilder := utils.NewSqlBuilder()
 	query, err := sqlBuilder.Insert(tableName, cols, values)
 	if err != nil {
@@ -49,6 +46,35 @@ func (u *productQuery) AddProduct(product dto.BriefProduct, net string) error {
 	_, err = DB.Exec(*query)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (u *productQuery) AddProducts(products []dto.BriefProduct, net string) error {
+	// product validation
+	for _, product := range products {
+		if !product.Valid() {
+			return fmt.Errorf("[ERR] invalid Info: %v", product)
+		}
+	}
+
+	// add to database.
+	tableName := domain.MainProductTableName
+	if net == domain.TestNet {
+		tableName = domain.TestProductTableName
+	}
+	sqlBuilder := utils.NewSqlBuilder()
+	for _, product := range products {
+
+		cols, values := utils.ConvertToEntity(&product)
+		query, err := sqlBuilder.Insert(tableName, cols, values)
+		if err != nil {
+			return err
+		}
+		_, err = DB.Exec(*query)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

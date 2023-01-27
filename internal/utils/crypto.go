@@ -3,6 +3,8 @@ package utils
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/sha1"
+	"encoding/base32"
 	"encoding/base64"
 )
 
@@ -21,8 +23,8 @@ func Decode(s string) []byte {
 
 // Encrypt method is to encrypt or hide any classified text
 func Encrypt(text, key string) (string, error) {
-	encryptKey := key + "we have to use env file"
-	block, err := aes.NewCipher([]byte(encryptKey))
+	//encrypt data.
+	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
 		return "", err
 	}
@@ -33,8 +35,17 @@ func Encrypt(text, key string) (string, error) {
 	return Encode(cipherText), nil
 }
 
+func Hash(text string) string {
+	encryptKey := text + "wehavetouseenvfile"
+	hasher := sha1.New()
+	hasher.Write([]byte(encryptKey))
+	hashKey := base32.HexEncoding.EncodeToString(hasher.Sum(nil))
+	return hashKey
+}
+
 // Decrypt method is to extract back the encrypted text
 func Decrypt(text, key string) (string, error) {
+	//key is just 32bit hash key from database.
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
 		return "", err

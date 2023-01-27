@@ -47,19 +47,20 @@ func (m *MicroserviceServer) getUserIdFromToken(ctx context.Context) (string, er
 	return token[0], nil
 }
 
-func (m *MicroserviceServer) TokenInterceptor(ctx context.Context) error {
+func (m *MicroserviceServer) TokenInterceptor(ctx context.Context) (*string, error) {
 	// validate token.
 	md, _ := metadata.FromIncomingContext(ctx)
 	fmt.Println(md.Get("test"))
 	token, err := m.getUserIdFromToken(ctx)
 	if err != nil {
 		log.Println("user isn't authorized")
-		return err
+		return nil, err
 	}
-	_, err = m.tokenManager.ValidateFirebase(token)
+	uid, err := m.tokenManager.ValidateFirebase(token)
 	if err != nil {
 		log.Println("user isn't authorized")
-		return err
+		return nil, err
 	}
-	return nil
+
+	return uid, nil
 }

@@ -1481,6 +1481,476 @@ var _ interface {
 	ErrorName() string
 } = VerifyAssetRequestValidationError{}
 
+// Validate checks the field values on CreateBusinessRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateBusinessRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateBusinessRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateBusinessRequestMultiError, or nil if none found.
+func (m *CreateBusinessRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateBusinessRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Email
+
+	if l := utf8.RuneCountInString(m.GetPassword()); l < 8 || l > 20 {
+		err := CreateBusinessRequestValidationError{
+			field:  "Password",
+			reason: "value length must be between 8 and 20 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Business
+
+	// no validation rules for FirstName
+
+	// no validation rules for LastName
+
+	// no validation rules for Location
+
+	// no validation rules for PhoneNumber
+
+	if len(errors) > 0 {
+		return CreateBusinessRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateBusinessRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateBusinessRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateBusinessRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateBusinessRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateBusinessRequestMultiError) AllErrors() []error { return m }
+
+// CreateBusinessRequestValidationError is the validation error returned by
+// CreateBusinessRequest.Validate if the designated constraints aren't met.
+type CreateBusinessRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateBusinessRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateBusinessRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateBusinessRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateBusinessRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateBusinessRequestValidationError) ErrorName() string {
+	return "CreateBusinessRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateBusinessRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateBusinessRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateBusinessRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateBusinessRequestValidationError{}
+
+// Validate checks the field values on GetBusinessRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetBusinessRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetBusinessRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetBusinessRequestMultiError, or nil if none found.
+func (m *GetBusinessRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetBusinessRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Email
+
+	if len(errors) > 0 {
+		return GetBusinessRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetBusinessRequestMultiError is an error wrapping multiple validation errors
+// returned by GetBusinessRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetBusinessRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetBusinessRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetBusinessRequestMultiError) AllErrors() []error { return m }
+
+// GetBusinessRequestValidationError is the validation error returned by
+// GetBusinessRequest.Validate if the designated constraints aren't met.
+type GetBusinessRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetBusinessRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetBusinessRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetBusinessRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetBusinessRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetBusinessRequestValidationError) ErrorName() string {
+	return "GetBusinessRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetBusinessRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetBusinessRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetBusinessRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetBusinessRequestValidationError{}
+
+// Validate checks the field values on DeleteBusinessRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteBusinessRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteBusinessRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteBusinessRequestMultiError, or nil if none found.
+func (m *DeleteBusinessRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteBusinessRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Email
+
+	if len(errors) > 0 {
+		return DeleteBusinessRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteBusinessRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteBusinessRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteBusinessRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteBusinessRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteBusinessRequestMultiError) AllErrors() []error { return m }
+
+// DeleteBusinessRequestValidationError is the validation error returned by
+// DeleteBusinessRequest.Validate if the designated constraints aren't met.
+type DeleteBusinessRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteBusinessRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteBusinessRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteBusinessRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteBusinessRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteBusinessRequestValidationError) ErrorName() string {
+	return "DeleteBusinessRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteBusinessRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteBusinessRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteBusinessRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteBusinessRequestValidationError{}
+
+// Validate checks the field values on NetWorkResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *NetWorkResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on NetWorkResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// NetWorkResponseMultiError, or nil if none found.
+func (m *NetWorkResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *NetWorkResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Msg
+
+	// no validation rules for Success
+
+	if m.Data != nil {
+
+		if all {
+			switch v := interface{}(m.GetData()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, NetWorkResponseValidationError{
+						field:  "Data",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, NetWorkResponseValidationError{
+						field:  "Data",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return NetWorkResponseValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return NetWorkResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// NetWorkResponseMultiError is an error wrapping multiple validation errors
+// returned by NetWorkResponse.ValidateAll() if the designated constraints
+// aren't met.
+type NetWorkResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m NetWorkResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m NetWorkResponseMultiError) AllErrors() []error { return m }
+
+// NetWorkResponseValidationError is the validation error returned by
+// NetWorkResponse.Validate if the designated constraints aren't met.
+type NetWorkResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e NetWorkResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e NetWorkResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e NetWorkResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e NetWorkResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e NetWorkResponseValidationError) ErrorName() string { return "NetWorkResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e NetWorkResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sNetWorkResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = NetWorkResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = NetWorkResponseValidationError{}
+
 // Validate checks the field values on CreateWalletRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -1505,9 +1975,9 @@ func (m *CreateWalletRequest) validate(all bool) error {
 
 	// no validation rules for ChainId
 
-	if _, ok := _CreateWalletRequest_Role_InLookup[m.GetRole()]; !ok {
+	if _, ok := _CreateWalletRequest_UserRole_InLookup[m.GetUserRole()]; !ok {
 		err := CreateWalletRequestValidationError{
-			field:  "Role",
+			field:  "UserRole",
 			reason: "value must be in list [person business]",
 		}
 		if !all {
@@ -1598,7 +2068,7 @@ var _ interface {
 	ErrorName() string
 } = CreateWalletRequestValidationError{}
 
-var _CreateWalletRequest_Role_InLookup = map[string]struct{}{
+var _CreateWalletRequest_UserRole_InLookup = map[string]struct{}{
 	"person":   {},
 	"business": {},
 }
@@ -2310,7 +2780,7 @@ func (m *MintOwnifyRequest) validate(all bool) error {
 	if _, ok := _MintOwnifyRequest_Net_InLookup[m.GetNet()]; !ok {
 		err := MintOwnifyRequestValidationError{
 			field:  "Net",
-			reason: "value must be in list [main test]",
+			reason: "value must be in list [MainNet TestNet]",
 		}
 		if !all {
 			return err
@@ -2399,8 +2869,8 @@ var _ interface {
 } = MintOwnifyRequestValidationError{}
 
 var _MintOwnifyRequest_Net_InLookup = map[string]struct{}{
-	"main": {},
-	"test": {},
+	"MainNet": {},
+	"TestNet": {},
 }
 
 // Validate checks the field values on MintOwnifyResponse with the rules

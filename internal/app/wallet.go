@@ -4,41 +4,51 @@ import (
 	"context"
 	"fmt"
 	"ownify_api/internal/dto"
+	"ownify_api/internal/utils"
 	desc "ownify_api/pkg"
 
+	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
-func (m *MicroserviceServer) CreateWallet(ctx context.Context, req *desc.CreateWalletRequest) (*desc.CreateWalletResponse, error) {
+func (m *MicroserviceServer) CreateWallet(ctx context.Context, req *desc.CreateWalletRequest) (*desc.NetWorkResponse, error) {
 
 	// validate token.
-	err := m.TokenInterceptor(ctx)
+	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return &desc.CreateWalletResponse{}, err
+		return nil, err
 	}
-
+	if utils.IsEmpty(req.Email) {
+		return nil, fmt.Errorf("[ERR] invalid request: %v", req)
+	}
+	if !m.authService.ValidBusiness(*uid, req.Email) {
+		return nil, err
+	}
 	// create new wallet.
 	pubKey, err := m.walletService.AddNewAccount(
-		req.Role,
+		req.UserRole,
 		req.Email,
 	)
 	if err != nil {
-		return &desc.CreateWalletResponse{}, nil
+		return nil, err
 	}
-	return &desc.CreateWalletResponse{Wallet: *pubKey}, nil
+	strWrapper := wrapperspb.String(*pubKey)
+	strAny, _ := anypb.New(strWrapper)
+	return &desc.NetWorkResponse{
+		Msg:     "Successfully created",
+		Success: true,
+		Data:    strAny,
+	}, nil
 }
 
 func (m *MicroserviceServer) GetMyAccounts(ctx context.Context, req *desc.SignInRequest) (*emptypb.Empty, error) {
-	// md, _ := metadata.FromIncomingContext(ctx)
-	// fmt.Println(md.Get("test"))
-	// token, err := m.authService.SignIn(req.GetEmail(), req.GetPassword())
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// err = grpc.SendHeader(ctx, metadata.New(map[string]string{
-	// 	"Token": *token,
-	// }))
-
+	// validate token.
+	_, err := m.TokenInterceptor(ctx)
+	if err != nil {
+		return nil, err
+	}
+	//m.walletService.GetMyAccounts(req.Email)
 	// if err != nil {
 	// 	return nil, err
 	// }
@@ -47,25 +57,29 @@ func (m *MicroserviceServer) GetMyAccounts(ctx context.Context, req *desc.SignIn
 
 func (m *MicroserviceServer) MintOwnify(ctx context.Context, req *desc.MintOwnifyRequest) (*desc.MintOwnifyResponse, error) {
 	// validate token.
-	err := m.TokenInterceptor(ctx)
+	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
+		return &desc.MintOwnifyResponse{}, err
+	}
+	if !m.authService.ValidBusiness(*uid, req.Email) {
 		return &desc.MintOwnifyResponse{}, err
 	}
 
 	ownifyProducts := []dto.BriefProduct{}
 	for _, item := range req.Products {
 		product := dto.BriefProduct{
+			Barcode:        item.Barcode,
 			BrandName:      item.BrandName,
 			ItemName:       item.ItemName,
 			AdditionalData: item.AdditionalData,
 			Location:       item.Location,
-			IssueDate:      fmt.Sprintf("%v", item.IssueDate),
+			IssueDate:      item.IssueDate,
 		}
 		ownifyProducts = append(ownifyProducts, product)
 	}
 
 	// mint ownify assets.
-	assetIds, err := m.walletService.MintOwnify(req.PubKey, ownifyProducts, req.Net)
+	assetIds, err := m.walletService.MintOwnify(req.Email, req.PubKey, ownifyProducts, req.Net)
 	if err != nil {
 		return &desc.MintOwnifyResponse{}, nil
 	}
@@ -74,8 +88,12 @@ func (m *MicroserviceServer) MintOwnify(ctx context.Context, req *desc.MintOwnif
 
 func (m *MicroserviceServer) MakeTransaction(ctx context.Context, req *desc.MakeTransactionRequest) (*desc.MakeTransactionResponse, error) {
 	// validate token.
-	err := m.TokenInterceptor(ctx)
+	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
+		return &desc.MakeTransactionResponse{}, err
+	}
+
+	if !m.authService.ValidBusiness(*uid, req.Email) {
 		return &desc.MakeTransactionResponse{}, err
 	}
 

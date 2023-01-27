@@ -17,6 +17,12 @@ const (
 
 const (
 	PersonTableName   = "ownify.personal_users"
-	BusinessTableName = "ownify.business_users"
-	WalletTableName = "ownify.wallets"
+	BusinessTableName = "ownify.business"
+	WalletTableName   = "ownify.wallets"
+)
+
+const (
+	OwnifyAssetName    = "Ownify"
+	OwnifyAssetUnit    = "OWNIFY"
+	OwnifyAssetMetaUrl = "https://did.ownify.org"
 )

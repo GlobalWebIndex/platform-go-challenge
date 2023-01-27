@@ -4,8 +4,9 @@ import (
 	"log"
 	"ownify_api/internal/domain"
 
-	"github.com/algorand/go-algorand-sdk/client/v2/algod"
-	"github.com/algorand/go-algorand-sdk/client/v2/indexer"
+	"github.com/algorand/go-algorand-sdk/v2/client/v2/algod"
+	"github.com/algorand/go-algorand-sdk/v2/client/v2/common"
+	"github.com/algorand/go-algorand-sdk/v2/client/v2/indexer"
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/spf13/viper"
@@ -13,28 +14,15 @@ import (
 
 type AlgoHandler interface {
 	NewWalletQuery() WalletQuery
+	NewProductQuery() ProductQuery
 }
 
-type algoHandler struct {
-	client      *algod.Client
-	Indexer     *indexer.Client
-	testClient  *algod.Client
-	testIndexer *indexer.Client
+type algoHandler struct{}
+
+func NewAlgoHandler() AlgoHandler {
+	return &algoHandler{}
 }
-
-// NewWalletQuery implements AlgoHandler
-func (*algoHandler) NewWalletQuery() WalletQuery {
-	return &walletQuery{}
-}
-
-var Client *algod.Client
-
-func NewAlgoHandler(client *algod.Client, indexer *indexer.Client, testClient *algod.Client, testIndexer *indexer.Client) AlgoHandler {
-	return &algoHandler{client, indexer, testClient, testIndexer}
-}
-
-func NewAlgoClient(net string) (*algod.Client, *indexer.Client, error) {
-
+func NewClient(net string) (*algod.Client, *indexer.Client, error) {
 	viper.AddConfigPath("../config")
 	viper.SetConfigName("config")
 	err := viper.ReadInConfig()
@@ -43,24 +31,32 @@ func NewAlgoClient(net string) (*algod.Client, *indexer.Client, error) {
 	}
 	algodAddress := viper.Get("algod.client").(string)
 	indexerAddress := viper.Get("algod.indexer").(string)
+	const algodToken = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
 	if net == domain.TestNet {
 		algodAddress = viper.Get("algod.client.test").(string)
 		indexerAddress = viper.Get("algod.indexer.test").(string)
 	}
 
 	// create algorand client
-	algodClient, err := algod.MakeClient(algodAddress, "")
+	commonClient, err := common.MakeClient(algodAddress, "X-API-Key", "") //algod.MakeClient(algodAddress, algodToken)
+	algodClient := (*algod.Client)(commonClient)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	algodIndexer, err := indexer.MakeClient(indexerAddress, "")
+	algodIndexer, err := indexer.MakeClient(indexerAddress, algodToken)
 	if err != nil {
 		return nil, nil, err
 	}
+
 	return algodClient, algodIndexer, nil
 }
 
-func (d *dbHandler) NewWalletQuery() WalletQuery {
+func (a *algoHandler) NewWalletQuery() WalletQuery {
 	return &walletQuery{}
+}
+
+func (a *algoHandler) NewProductQuery() ProductQuery {
+	return &productQuery{}
 }

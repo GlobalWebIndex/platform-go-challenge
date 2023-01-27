@@ -11,6 +11,7 @@ import (
 	//"ownify_api/internal/dto"
 
 	"github.com/Masterminds/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	//"google.golang.org/grpc/codes"
 	//"google.golang.org/grpc/status"
 )
@@ -40,7 +41,7 @@ func (u *userQuery) CreateUser(
 		return nil, err
 	}
 	cols := []string{"user_id", "chain_id", "wallet_address"}
-	values := []interface{}{user_id + 1, user.ChainId, user.Wallet}
+	values := []interface{}{user_id + 1, user.ChainId, user.PubKey}
 	sqlBuilder := utils.NewSqlBuilder()
 
 	query, err := sqlBuilder.Insert(tableName, cols, values)
@@ -54,6 +55,8 @@ func (u *userQuery) CreateUser(
 	user_id += 1
 	return &user_id, nil
 }
+
+
 
 // func (u *userQuery) UpdateUser(user T) (*int64, error) {
 // 	qb := pgQb().
@@ -86,16 +89,27 @@ func (u *userQuery) DeleteUser(userID int64, walletType string) error {
 }
 
 func (u *userQuery) GetUser(id int64, walletType string) (*interface{}, error) {
-	// qb := pgQb().
-	// 	Delete(domain.PersonTableName).
-	// 	From(domain.PersonTableName).
-	// 	Where(squirrel.Eq{"id": id})
+	tableName := domain.PersonTableName
+	if walletType == domain.BusinessWallet {
+		tableName = domain.BusinessTableName
+	}
 
-	// _, err := qb.Exec()
-	// if err != nil {
-	// 	return err
-	// }
-	return nil, nil
+	var user interface{}
+	err := pgQb().Select("*").Where(sq.Eq{"id": id}).From(tableName).QueryRow().Scan(&user)
+	if err != nil {
+		return nil, err
+	}
+	return &user, err
+}
+
+func (u *userQuery) GetBusiness(email string) (*interface{}, error) {
+
+	var business interface{}
+	err := pgQb().Select("*").Where(sq.Eq{"email": email}).From(domain.BusinessTableName).QueryRow().Scan(&business)
+	if err != nil {
+		return nil, err
+	}
+	return &business, err
 }
 
 func (u *userQuery) GetUserByBriefInfo(user dto.BriefUser) (*int64, error) {
@@ -103,7 +117,7 @@ func (u *userQuery) GetUserByBriefInfo(user dto.BriefUser) (*int64, error) {
 	err := pgQb().
 		Select("user_id").
 		From(domain.PersonTableName).
-		Where(squirrel.Eq{"chain_id": user.ChainId, "wallet_addres": user.Wallet}).QueryRow().Scan(&user_id)
+		Where(squirrel.Eq{"chain_id": user.ChainId, "wallet_addres": user.PubKey}).QueryRow().Scan(&user_id)
 
 	if err != nil {
 		return nil, err

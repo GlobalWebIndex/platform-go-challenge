@@ -6,6 +6,8 @@ option go_package = "/pkg";
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/wrappers.proto";
 import "validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -26,10 +28,31 @@ service Microservice {
   }
   rpc SignUp (SignUpRequest) returns (SignUpResponse) {
     option (google.api.http) = {
-      post: "/signup"
+      post: "/signup/user"
       body: "*"
     };
   }
+
+  //business
+  rpc CreateBusiness(CreateBusinessRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/business/create"
+      body: "*"
+    };
+  }
+  rpc GetBusiness(GetBusinessRequest) returns (NetWorkResponse) {
+      option (google.api.http) = {
+        get: "/business/{email}"
+      };
+    }
+  
+  rpc DeleteBusiness(DeleteBusinessRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/business/delete"
+      body: "*"
+    };
+  }
+
   rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/logout"
@@ -54,35 +77,38 @@ service Microservice {
   }
   
   //product manage
-  rpc AddProduct(AddProductRequest) returns (google.protobuf.Empty){
+  rpc AddProduct(AddProductRequest) returns (NetWorkResponse){
     option (google.api.http) = {
       post: "/product/add"
+      body: "*"
     };
   }
 
-  rpc VerifyAsset(VerifyAssetRequest) returns(google.protobuf.Empty) {
+  rpc VerifyProduct(google.protobuf.Empty) returns(google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/product/add"
+      post: "/product/verify"
     };
   }
 
 
   //algorand service
-  rpc CreateWallet (CreateWalletRequest) returns (CreateWalletResponse) {
+  rpc CreateWallet (CreateWalletRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
       post: "/wallet/create"
+      body: "*"
     };
   }
 
-  rpc GetAccount (google.protobuf.Empty) returns (GetAccountResponse) {
+  rpc GetAccounts (google.protobuf.Empty) returns (GetAccountResponse) {
     option (google.api.http) = {
-      get: "/wallet/account"
+      get: "/wallet/accounts"
     };
   }
 
   rpc MintOwnify(MintOwnifyRequest) returns (MintOwnifyResponse) {
     option (google.api.http) = {
-      post: "/wallet/mintownify"
+      post: "/wallet/mint"
+      body: "*"
     };
   }
 
@@ -171,18 +197,42 @@ message AddProductRequest {
   string brand_name = 6;
   string additional_data = 7;
   string location = 8;
-  int32  issue_date = 9;
-  string  net = 10  [(validate.rules).string = {in: ["main","test"]}];
+  int32 issue_date = 9;
+  string net = 10  [(validate.rules).string = {in: ["main","test"]}];
 }
 
 message VerifyAssetRequest {
   string asset_id = 1;
 }
 
+//business
+message CreateBusinessRequest {
+  string email = 1;
+  string password = 2  [(validate.rules).string = {min_len: 8, max_len: 20}];
+  string business = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string location = 6;
+  string phone_number = 7;
+}
+message GetBusinessRequest {
+  string email = 1;
+}
+
+message DeleteBusinessRequest {
+  string email = 1;
+}
+
+message NetWorkResponse {
+  string msg = 1;
+  bool success = 2;
+  optional google.protobuf.Any data = 3;
+}
+
 //wallet 
 message CreateWalletRequest {
   int32 chain_id = 1;
-  string role = 2 [(validate.rules).string = {in: ["person","business"]}];
+  string user_role = 2 [(validate.rules).string = {in: ["person","business"]}];
   string email = 3;
 }
 
@@ -226,9 +276,9 @@ message MintOwnifyRequest {
   string email = 2;
   string pub_key = 3;
   repeated Product products = 4;
-  string  net = 5  [(validate.rules).string = {in: ["main","test"]}];
+  string  net = 5  [(validate.rules).string = {in: ["MainNet","TestNet"]}];
 }
 
 message MintOwnifyResponse {
-  repeated string asset_ids=1;
+  repeated uint64 asset_ids=1;
 }
