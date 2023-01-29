@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/mail"
 	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
@@ -29,6 +30,10 @@ func (w *walletQuery) AddNewAccount(
 	role string,
 	email string,
 ) (*string, error) {
+	_, err := mail.ParseAddress(email)
+	if err != nil {
+		return nil, err
+	}
 	tableName := domain.BusinessTableName
 	if role == domain.PersonalWallet {
 		tableName = domain.PersonTableName
@@ -223,7 +228,6 @@ func (w *walletQuery) MintOwnify(
 	endIndex := confirmedTx.AssetIndex + uint64(len(products))
 
 	//add product to db.
-	
 
 	return utils.MakeRange(confirmedTx.AssetIndex, endIndex), nil
 }

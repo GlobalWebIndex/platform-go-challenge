@@ -33,7 +33,8 @@ type MicroserviceClient interface {
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// product manage
 	AddProduct(ctx context.Context, in *AddProductRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
-	VerifyProduct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	VerifyProduct(ctx context.Context, in *VerifyAssetRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	// algorand service
 	CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	GetAccounts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAccountResponse, error)
@@ -148,9 +149,18 @@ func (c *microserviceClient) AddProduct(ctx context.Context, in *AddProductReque
 	return out, nil
 }
 
-func (c *microserviceClient) VerifyProduct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *microserviceClient) VerifyProduct(ctx context.Context, in *VerifyAssetRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/VerifyProduct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetProducts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -211,7 +221,8 @@ type MicroserviceServer interface {
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
 	// product manage
 	AddProduct(context.Context, *AddProductRequest) (*NetWorkResponse, error)
-	VerifyProduct(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	VerifyProduct(context.Context, *VerifyAssetRequest) (*NetWorkResponse, error)
+	GetProducts(context.Context, *GetProductsRequest) (*NetWorkResponse, error)
 	// algorand service
 	CreateWallet(context.Context, *CreateWalletRequest) (*NetWorkResponse, error)
 	GetAccounts(context.Context, *emptypb.Empty) (*GetAccountResponse, error)
@@ -257,8 +268,11 @@ func (UnimplementedMicroserviceServer) DeleteUser(context.Context, *DeleteUserRe
 func (UnimplementedMicroserviceServer) AddProduct(context.Context, *AddProductRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddProduct not implemented")
 }
-func (UnimplementedMicroserviceServer) VerifyProduct(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedMicroserviceServer) VerifyProduct(context.Context, *VerifyAssetRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyProduct not implemented")
+}
+func (UnimplementedMicroserviceServer) GetProducts(context.Context, *GetProductsRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProducts not implemented")
 }
 func (UnimplementedMicroserviceServer) CreateWallet(context.Context, *CreateWalletRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateWallet not implemented")
@@ -484,7 +498,7 @@ func _Microservice_AddProduct_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _Microservice_VerifyProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(VerifyAssetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -496,7 +510,25 @@ func _Microservice_VerifyProduct_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/ownify_api.v1.Microservice/VerifyProduct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroserviceServer).VerifyProduct(ctx, req.(*emptypb.Empty))
+		return srv.(MicroserviceServer).VerifyProduct(ctx, req.(*VerifyAssetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_GetProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProductsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).GetProducts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/GetProducts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).GetProducts(ctx, req.(*GetProductsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -627,6 +659,10 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyProduct",
 			Handler:    _Microservice_VerifyProduct_Handler,
+		},
+		{
+			MethodName: "GetProducts",
+			Handler:    _Microservice_GetProducts_Handler,
 		},
 		{
 			MethodName: "CreateWallet",

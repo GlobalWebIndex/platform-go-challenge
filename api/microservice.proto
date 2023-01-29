@@ -10,6 +10,7 @@ import "google/protobuf/any.proto";
 import "google/protobuf/wrappers.proto";
 import "validate/validate.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
 
 service Microservice {
 
@@ -41,9 +42,7 @@ service Microservice {
     };
   }
   rpc GetBusiness(GetBusinessRequest) returns (NetWorkResponse) {
-      option (google.api.http) = {
-        get: "/business/{email}"
-      };
+    option (google.api.http).get = "/business/{email}";
     }
   
   rpc DeleteBusiness(DeleteBusinessRequest) returns (NetWorkResponse) {
@@ -84,9 +83,15 @@ service Microservice {
     };
   }
 
-  rpc VerifyProduct(google.protobuf.Empty) returns(google.protobuf.Empty) {
+  rpc VerifyProduct(VerifyAssetRequest) returns(NetWorkResponse) {
     option (google.api.http) = {
-      post: "/product/verify"
+      get: "/product/verify/{chain_id}/{net}/{asset_id}"
+    };
+  }
+
+  rpc GetProducts(GetProductsRequest) returns(NetWorkResponse) {
+    option (google.api.http) = {
+      get: "/product/list/{net}/{page}/{per_page}"
     };
   }
 
@@ -146,7 +151,7 @@ message GetUserResponse {
   int64 id = 1;
   string first_name = 2;
   string last_name = 3;
-  string email = 4;
+  string email = 4 [(validate.rules).string.email = true];
   string phone_number = 5;
   string role = 6;
   bool verified = 7;
@@ -156,7 +161,7 @@ message GetUserResponse {
 
 
 message SignUpRequest {
-  string email = 3;
+  string email = 3 [(validate.rules).string.email = true];
   string password = 4  [(validate.rules).string = {min_len: 8, max_len: 20}];
   string first_name = 1;
   string last_name = 2;
@@ -176,7 +181,7 @@ message UpdateUserRequest {
   int64  id = 1;
   string first_name = 2;
   string last_name = 3;
-  string email = 4;
+  string email = 4 [(validate.rules).string.email = true];
   string phone_number = 5;
 }
 
@@ -184,7 +189,7 @@ message UpdateUserResponse {
   int64  id = 1;
   string first_name = 2;
   string last_name = 3;
-  string email = 4;
+  string email = 4 [(validate.rules).string.email = true];
   string phone_number = 5;
 }
 
@@ -202,12 +207,21 @@ message AddProductRequest {
 }
 
 message VerifyAssetRequest {
-  string asset_id = 1;
+  int32 chain_id = 1;
+  int64 asset_id = 2;
+  string net = 3  [(validate.rules).string = {in: ["main","test"]}];
 }
+
+message GetProductsRequest {
+  string  net = 1  [(validate.rules).string = {in: ["main","test"]}];
+  int32 page = 2;
+  int32 per_page = 3;
+}
+
 
 //business
 message CreateBusinessRequest {
-  string email = 1;
+  string email = 1 [(validate.rules).string.email = true];
   string password = 2  [(validate.rules).string = {min_len: 8, max_len: 20}];
   string business = 3;
   string first_name = 4;
@@ -216,34 +230,31 @@ message CreateBusinessRequest {
   string phone_number = 7;
 }
 message GetBusinessRequest {
-  string email = 1;
+  string email = 1 [(validate.rules).string.email = true];
 }
 
 message DeleteBusinessRequest {
-  string email = 1;
+  string email = 1 [(validate.rules).string.email = true];
 }
 
 message NetWorkResponse {
   string msg = 1;
   bool success = 2;
-  optional google.protobuf.Any data = 3;
+  optional google.protobuf.Struct data = 3;
 }
 
 //wallet 
 message CreateWalletRequest {
   int32 chain_id = 1;
   string user_role = 2 [(validate.rules).string = {in: ["person","business"]}];
-  string email = 3;
+  string email = 3 [(validate.rules).string.email = true];
 }
 
 message CreateWalletResponse {
   string wallet = 1;
 }
 
-message GetAccountRequest {
-  int32 chain_id = 1;
-  string email = 2;
-}
+
 
 message GetAccountResponse {
   repeated string pub_keys = 2;
@@ -251,7 +262,7 @@ message GetAccountResponse {
 
 message MakeTransactionRequest {
   string chain_id = 1;
-  string email = 2;
+  string email = 2 [(validate.rules).string.email = true];
   string role = 3;
   string pub_key = 4;
   bytes rawTx = 5;
@@ -273,10 +284,10 @@ message Product {
 }
 message MintOwnifyRequest {
   int64 chain_id = 1;
-  string email = 2;
+  string email = 2 [(validate.rules).string.email = true];
   string pub_key = 3;
   repeated Product products = 4;
-  string  net = 5  [(validate.rules).string = {in: ["MainNet","TestNet"]}];
+  string  net = 5  [(validate.rules).string = {in: ["main","test"]}];
 }
 
 message MintOwnifyResponse {

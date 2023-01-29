@@ -1,7 +1,6 @@
 package service
 
 import (
-	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/repository"
 )
@@ -12,9 +11,10 @@ type ProductService interface {
 		net string,
 	) error
 	GetProduct(
-		chainId string, assetId string,
+		chainId int, assetId int64,
 		net string,
-	) (*domain.Product, error)
+	) (*dto.BriefProduct, error)
+	GetProducts(net string, page int, per_page int) ([]dto.BriefProduct, error)
 }
 
 type productService struct {
@@ -35,12 +35,17 @@ func (p *productService) AddProduct(
 }
 
 func (p *productService) GetProduct(
-	chainId string, assetId string,
+	chainId int, assetId int64,
 	net string,
-) (*domain.Product, error) {
+) (*dto.BriefProduct, error) {
 	product, err := p.dbHandler.NewProductQuery().GetProduct(chainId, assetId, net)
 	if err != nil {
-		return &domain.Product{}, nil
+		return nil, err
 	}
-	return &product, nil
+	return product, nil
+}
+func (p *productService) GetProducts(net string, page int, per_page int) ([]dto.BriefProduct, error) {
+	return p.dbHandler.NewProductQuery().GetProducts(
+		net, page, per_page,
+	)
 }

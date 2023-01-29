@@ -66,3 +66,33 @@ func (m *MicroserviceServer) GetProduct(ctx context.Context, req *desc.SignInReq
 	// }
 	return &emptypb.Empty{}, nil
 }
+
+func (m *MicroserviceServer) VerifyProduct(ctx context.Context, req *desc.VerifyAssetRequest) (*desc.NetWorkResponse, error) {
+	product, err := m.productService.GetProduct(
+		int(req.ChainId),
+		req.AssetId,
+		req.Net,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	return BuildRes(product, "successfully verified", true)
+}
+
+func (m *MicroserviceServer) GetProducts(ctx context.Context, req *desc.GetProductsRequest) (*desc.NetWorkResponse, error) {
+	products, err := m.productService.GetProducts(
+		req.Net,
+		int(req.Page),
+		int(req.PerPage),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	type data struct {
+		Products []dto.BriefProduct `json:"products"`
+	}
+
+	return BuildRes(data{Products: products}, "there are your products", true)
+}

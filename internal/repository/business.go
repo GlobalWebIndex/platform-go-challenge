@@ -7,10 +7,7 @@ import (
 	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
-
 	//"ownify_api/internal/dto"
-
-	sq "github.com/Masterminds/squirrel"
 	//"google.golang.org/grpc/codes"
 	//"google.golang.org/grpc/status"
 )
@@ -19,7 +16,7 @@ type BusinessQuery interface {
 	CreateBusiness(
 		business *dto.BriefBusiness,
 	) error
-	GetBusiness(email string) (*interface{}, error)
+	GetBusiness(email string) (*dto.BriefBusiness, error)
 	DeleteBusiness(email string, userId string) error
 
 	VerifyBusiness(userId string, email string) (*interface{}, error)
@@ -58,9 +55,30 @@ func (u *businessQuery) CreateBusiness(
 	return nil
 }
 
-func (b *businessQuery) GetBusiness(email string) (*interface{}, error) {
-	var user interface{}
-	err := pgQb().Select("*").Where(sq.Eq{"email": email}).From(domain.BusinessTableName).QueryRow().Scan(&user)
+func (b *businessQuery) GetBusiness(email string) (*dto.BriefBusiness, error) {
+	var user dto.BriefBusiness
+
+	sqlBuilder := utils.NewSqlBuilder()
+	sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{
+		"business",
+		"first_name",
+		"last_name",
+		"location",
+		"phone_number",
+		"user_id",
+	}, []utils.Tuple{{Key: "email", Val: email}}, "And")
+	if err != nil {
+		return nil, err
+	}
+	err = DB.QueryRow(*sql).Scan(
+		&user.Business,
+		&user.FirstName,
+		&user.LastName,
+		&user.Location,
+		&user.PhoneNumber,
+		&user.UserId,
+	)
+	user.Email = email
 	if err != nil {
 		return nil, err
 	}

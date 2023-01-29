@@ -66,10 +66,10 @@ func (m *MicroserviceServer) GetBusiness(ctx context.Context, req *desc.GetBusin
 		return &desc.NetWorkResponse{Success: false, Msg: "Access denied."}, err
 	}
 
-	data, err := m.businessService.GetBusiness(req.Email)
+	data, err := m.businessService.GetBusiness(req.GetEmail())
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("%v", *data)
-	return &desc.NetWorkResponse{Success: true, Msg: "Successfully deleted."}, nil
+
+	return BuildRes(data, "Here is your business info", true)
 }

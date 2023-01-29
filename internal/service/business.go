@@ -8,7 +8,7 @@ import (
 type BusinessService interface {
 	CreateBusiness(business *dto.BriefBusiness) error
 
-	GetBusiness(email string) (*interface{}, error)
+	GetBusiness(email string) (*dto.BriefBusiness, error)
 	DeleteBusiness(email string, userId string) error
 }
 
@@ -29,7 +29,7 @@ func (b *businessService) CreateBusiness(
 	return nil
 }
 
-func (b *businessService) GetBusiness(email string) (*interface{}, error) {
+func (b *businessService) GetBusiness(email string) (*dto.BriefBusiness, error) {
 	business, err := b.dbHandler.NewBusinessQuery().GetBusiness(email)
 	if err != nil {
 		return nil, err

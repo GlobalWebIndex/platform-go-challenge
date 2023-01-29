@@ -24,3 +24,5 @@ func ConvertToEntity[T dto.SQLable](data *T) ([]string, []interface{}) {
 func IsZeroOfUnderlyingType(v reflect.Value) bool {
 	return !v.IsValid() || reflect.DeepEqual(v.Interface(), reflect.Zero(v.Type()).Interface())
 }
+
+

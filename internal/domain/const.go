@@ -6,8 +6,8 @@ const (
 )
 
 const (
-	TestNet string = "TestNet"
-	MainNet string = "MainNet"
+	TestNet string = "test"
+	MainNet string = "main"
 )
 
 const (

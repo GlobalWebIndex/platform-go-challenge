@@ -7,12 +7,8 @@ import (
 	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
-
-	"github.com/Masterminds/squirrel"
-	//"ownify_api/internal/dto"
-	//"github.com/Masterminds/squirrel"
-	//"google.golang.org/grpc/codes"
-	//"google.golang.org/grpc/status"
+	"strings"
+	"time"
 )
 
 type ProductQuery interface {
@@ -21,7 +17,9 @@ type ProductQuery interface {
 		net string,
 	) error
 	AddProducts(products []dto.BriefProduct, net string) error
-	GetProduct(chainId string, assetId string, net string) (domain.Product, error)
+	GetProduct(chainId int, assetId int64, net string) (*dto.BriefProduct, error)
+
+	GetProducts(net string, page int, per_page int) ([]dto.BriefProduct, error)
 }
 
 type productQuery struct{}
@@ -79,18 +77,101 @@ func (u *productQuery) AddProducts(products []dto.BriefProduct, net string) erro
 	return nil
 }
 
-func (u *productQuery) GetProduct(chainId string, assetId string, net string) (domain.Product, error) {
+func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.BriefProduct, error) {
 	tableName := domain.MainProductTableName
-	if net == domain.TestNet {
+	if net == strings.ToLower(domain.TestNet) {
 		tableName = domain.TestProductTableName
 	}
-	var result domain.Product
-	err := pgQb().
-		Select("*").
-		From(tableName).
-		Where(squirrel.Eq{"chain_id": chainId, "asset_id": assetId}).Limit(1).Scan(&result)
+
+	sqlBuilder := utils.NewSqlBuilder()
+
+	var issue_date time.Time
+
+	var product dto.BriefProduct
+	sql, err := sqlBuilder.Select(tableName, []string{
+		"owner",
+		"barcode",
+		"item_name",
+		"brand_name",
+		"additional_data",
+		"issue_date",
+		"location",
+	}, []utils.Tuple{{
+		Key: "asset_id",
+		Val: assetId,
+	}, {Key: "chain_id", Val: chainId}}, "AND")
+
 	if err != nil {
-		return domain.Product{}, err
+		return nil, err
 	}
-	return result, nil
+	err = DB.QueryRow(*sql).Scan(
+		&product.Owner,
+		&product.Barcode,
+		&product.ItemName,
+		&product.BrandName,
+		&product.AdditionalData,
+		&issue_date,
+		&product.Location,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	product.ChainId = chainId
+	product.AssetId = assetId
+	product.IssueDate = int32(issue_date.UnixMilli())
+
+	return &product, nil
+}
+
+func (u *productQuery) GetProducts(net string, page int, per_page int) ([]dto.BriefProduct, error) {
+	tableName := domain.MainProductTableName
+	if net == strings.ToLower(domain.TestNet) {
+		tableName = domain.TestProductTableName
+	}
+
+	sqlBuilder := utils.NewSqlBuilder()
+
+	var issue_date time.Time
+
+	var products []dto.BriefProduct
+	preSql, err := sqlBuilder.Select(tableName, []string{
+		"chain_id",
+		"asset_id",
+		"owner",
+		"barcode",
+		"item_name",
+		"brand_name",
+		"additional_data",
+		"issue_date",
+		"location",
+	}, []utils.Tuple{}, "AND")
+
+	if err != nil {
+		return nil, err
+	}
+	//SELECT * FROM products_test ORDER BY create_time  LIMIT 4 OFFSET 1;
+	sql := *preSql + fmt.Sprintf(" ORDER BY create_time LIMIT %d OFFSET %d", per_page, page)
+	rows, err := DB.Query(sql)
+
+	for rows.Next() {
+		var product dto.BriefProduct
+		err := rows.Scan(
+			&product.ChainId,
+			&product.AssetId,
+			&product.Owner,
+			&product.Barcode,
+			&product.ItemName,
+			&product.BrandName,
+			&product.AdditionalData,
+			&issue_date,
+			&product.Location,
+		)
+		if err != nil {
+			continue
+		}
+		product.IssueDate = int32(issue_date.UnixMilli())
+		products = append(products, product)
+	}
+	return products, nil
 }

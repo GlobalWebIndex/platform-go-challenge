@@ -2,15 +2,20 @@ package app
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+
+	desc "ownify_api/pkg"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type validatable interface {
@@ -63,4 +68,18 @@ func (m *MicroserviceServer) TokenInterceptor(ctx context.Context) (*string, err
 	}
 
 	return uid, nil
+}
+
+func BuildRes[T any](data T, message string, isSuccess bool) (*desc.NetWorkResponse, error) {
+	rawData, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	s := &structpb.Struct{}
+	_ = protojson.Unmarshal(rawData, s)
+	return &desc.NetWorkResponse{
+		Msg:     message,
+		Success: isSuccess,
+		Data:    s,
+	}, nil
 }

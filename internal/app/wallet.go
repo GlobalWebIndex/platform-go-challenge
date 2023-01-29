@@ -7,9 +7,7 @@ import (
 	"ownify_api/internal/utils"
 	desc "ownify_api/pkg"
 
-	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func (m *MicroserviceServer) CreateWallet(ctx context.Context, req *desc.CreateWalletRequest) (*desc.NetWorkResponse, error) {
@@ -33,25 +31,28 @@ func (m *MicroserviceServer) CreateWallet(ctx context.Context, req *desc.CreateW
 	if err != nil {
 		return nil, err
 	}
-	strWrapper := wrapperspb.String(*pubKey)
-	strAny, _ := anypb.New(strWrapper)
-	return &desc.NetWorkResponse{
-		Msg:     "Successfully created",
-		Success: true,
-		Data:    strAny,
-	}, nil
+
+	return BuildRes(dto.Wallet{
+		UserRole: req.UserRole,
+		Email:    req.Email,
+		PubKey:   *pubKey,
+	}, "Successfully created", true)
+
 }
 
 func (m *MicroserviceServer) GetMyAccounts(ctx context.Context, req *desc.SignInRequest) (*emptypb.Empty, error) {
 	// validate token.
-	_, err := m.TokenInterceptor(ctx)
+	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
 		return nil, err
 	}
-	//m.walletService.GetMyAccounts(req.Email)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	if utils.IsEmpty(req.Email) {
+		return nil, fmt.Errorf("[ERR] invalid request: %v", req)
+	}
+	if !m.authService.ValidBusiness(*uid, req.Email) {
+		return nil, err
+	}
+
 	return &emptypb.Empty{}, nil
 }
 

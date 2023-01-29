@@ -1,6 +1,9 @@
 package dto
 
-import "strings"
+import (
+	"net/mail"
+	"strings"
+)
 
 type BriefBusiness struct {
 	UserId      string `json:"user_id"`
@@ -16,5 +19,6 @@ type BriefBusiness struct {
 }
 
 func (b *BriefBusiness) Valid() bool {
-	return !(strings.TrimSpace(b.UserId) == "" || strings.TrimSpace(b.Email) == "" || strings.TrimSpace(b.Pin) == "" || strings.TrimSpace(b.Business) == "")
+	_, err := mail.ParseAddress(b.Email)
+	return !(err != nil || strings.TrimSpace(b.UserId) == "" || strings.TrimSpace(b.Email) == "" || strings.TrimSpace(b.Pin) == "" || strings.TrimSpace(b.Business) == "")
 }

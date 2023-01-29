@@ -45,6 +45,10 @@ func (builder sqlBuilder) Select(tableName string, targets []string, conditions 
 	if len(targets) != 0 {
 		targetStr = strings.Join(targets, ",")
 	}
+	if len(conditions) == 0 {
+		sql := fmt.Sprintf("SELECT %s FROM %s", targetStr, tableName)
+		return &sql, nil
+	}
 	condStr := *conditionBuilder(conditions, joinKey)
 	sql := fmt.Sprintf("SELECT %s FROM %s WHERE %s", targetStr, tableName, condStr)
 	return &sql, nil
