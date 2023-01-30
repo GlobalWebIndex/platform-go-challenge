@@ -44,9 +44,13 @@ func main() {
 	// Register all services
 	//dbHandler := repository.NewDBHandler(db)
 	dbHandler := repository.NewDBHandler(db)
+	wallet := repository.NewAlgoHandler()
+
 	userService := service.NewUserService(dbHandler)
+	businessService := service.NewBusinessService(dbHandler)
 	authService := service.NewAuthService(dbHandler, tokenManager)
 	productService := service.NewProductService(dbHandler)
+	walletService := service.NewWalletService(wallet)
 
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
@@ -63,9 +67,11 @@ func main() {
 		grpcServer := grpc.NewServer(grpcOpts)
 		desc.RegisterMicroserviceServer(grpcServer, app.NewMicroservice(
 			userService,
+			businessService,
 			authService,
 			tokenManager,
 			productService,
+			walletService,
 		))
 
 		err = grpcServer.Serve(listener)
@@ -78,8 +84,9 @@ func main() {
 	mux := runtime.NewServeMux(httpOpts)
 	err = desc.RegisterMicroserviceHandlerServer(context.Background(), mux, app.NewMicroservice(
 		userService,
+		businessService,
 		authService,
-		tokenManager, productService))
+		tokenManager, productService, walletService))
 	if err != nil {
 		log.Println("cannot register this service")
 	}

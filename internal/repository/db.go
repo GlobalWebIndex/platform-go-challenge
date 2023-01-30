@@ -12,6 +12,7 @@ import (
 
 type DBHandler interface {
 	NewUserQuery() UserQuery
+	NewBusinessQuery() BusinessQuery
 	NewProductQuery() ProductQuery
 }
 
@@ -53,6 +54,10 @@ func NewDB() (*sql.DB, error) {
 
 func (d *dbHandler) NewUserQuery() UserQuery {
 	return &userQuery{}
+}
+
+func (d *dbHandler) NewBusinessQuery() BusinessQuery {
+	return &businessQuery{}
 }
 
 func (d *dbHandler) NewProductQuery() ProductQuery {

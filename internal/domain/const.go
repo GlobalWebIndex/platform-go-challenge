@@ -6,8 +6,8 @@ const (
 )
 
 const (
-	TestNet string = "TestNet"
-	MainNet string = "MainNet"
+	TestNet string = "test"
+	MainNet string = "main"
 )
 
 const (
@@ -17,5 +17,12 @@ const (
 
 const (
 	PersonTableName   = "ownify.personal_users"
-	BusinessTableName = "ownify.business_users"
+	BusinessTableName = "ownify.business"
+	WalletTableName   = "ownify.wallets"
+)
+
+const (
+	OwnifyAssetName    = "Ownify"
+	OwnifyAssetUnit    = "OWNIFY"
+	OwnifyAssetMetaUrl = "https://did.ownify.org"
 )

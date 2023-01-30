@@ -2,8 +2,10 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"log"
 
+	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	desc "ownify_api/pkg"
 
@@ -11,8 +13,6 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
-
-
 
 func (m *MicroserviceServer) SignInWithPhone(ctx context.Context, req *desc.PhoneAuthRequest) (*desc.PhoneAuthResponse, error) {
 
@@ -41,8 +41,13 @@ func (m *MicroserviceServer) SignInWithPhone(ctx context.Context, req *desc.Phon
 
 	//create user
 	userId, err := m.userService.CreateUser(dto.BriefUser{
-		ChainId:    int(req.ChainId),
-		Wallet:     req.Wallet,
+		ChainId: int(req.ChainId),
+		// Email:       "",
+		// FirstName:   "",
+		// LastName:    "",
+		// PhoneNumber: "",
+		// UserRole:    "",
+		// PubKey:      "",
 		WalletType: req.WalletType,
 	})
 
@@ -63,18 +68,26 @@ func (m *MicroserviceServer) SignInWithPhone(ctx context.Context, req *desc.Phon
 }
 
 func (m *MicroserviceServer) CreateUser(ctx context.Context, req *desc.SignUpRequest) (*desc.SignUpResponse, error) {
-	// user := domain.Person{
-	// 	FirstName:   req.GetFirstName(),
-	// 	LastName:    req.GetLastName(),
-	// 	Email:       req.GetEmail(),
-	// 	Password:    req.GetPassword(),
-	// 	PhoneNumber: req.GetPhoneNumber(),
-	// 	Role:        "user",
-	// }
-	// id, err := m.authService.SignUp(user)
-	// if err != nil {
-	// 	return nil, err
-	// }
+
+	// validate token.
+	_, err := m.TokenInterceptor(ctx)
+	if err != nil {
+		return &desc.SignUpResponse{}, err
+	}
+
+	isRegistered := m.authService.CheckEmail(req.Email)
+	if isRegistered {
+		return nil, fmt.Errorf("Already registered!")
+	}
+
+	user := dto.BriefUser{
+		FirstName:   req.GetFirstName(),
+		LastName:    req.GetLastName(),
+		Email:       req.GetEmail(),
+		PhoneNumber: req.GetPhoneNumber(),
+		UserRole:    string(domain.BUSINESS),
+	}
+	_, err = m.userService.CreateUser(user)
 
 	// return &desc.SignUpResponse{Id: *id}, nil
 	return nil, nil
@@ -135,4 +148,3 @@ func (m *MicroserviceServer) DeleteUser(ctx context.Context, req *desc.DeleteUse
 	// }
 	return nil, nil
 }
-

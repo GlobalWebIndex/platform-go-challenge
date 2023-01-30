@@ -13,6 +13,7 @@ type UserService interface {
 	CreateUser(
 		user dto.BriefUser,
 	) (*int64, error)
+
 	GetUser(userID int64, walletType string) (*interface{}, error)
 	DeleteUser(userID int64, walletType string) error
 	GetLastUserId(walletType string) (*int64, error)
@@ -51,6 +52,8 @@ func (u *userService) CreateUser(
 
 	return id, nil
 }
+
+
 
 func (u *userService) GetLastUserId(walletType string) (*int64, error) {
 	userId, err := u.dbHandler.NewUserQuery().GetLastUserId(walletType)
