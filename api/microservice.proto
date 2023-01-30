@@ -17,19 +17,19 @@ service Microservice {
   //user manage
   rpc SignIn (SignInRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/signin"
+      post: "/v1/signin"
       body: "*"
     };
   }
   rpc SignInWithPhone(PhoneAuthRequest)returns (PhoneAuthResponse) {
     option (google.api.http) = {
-      post: "/sso/phone"
+      post: "/v1/sso/phone"
       body: "*"
     };
   }
   rpc SignUp (SignUpRequest) returns (SignUpResponse) {
     option (google.api.http) = {
-      post: "/signup/user"
+      post: "/v1/signup/user"
       body: "*"
     };
   }
@@ -37,61 +37,61 @@ service Microservice {
   //business
   rpc CreateBusiness(CreateBusinessRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
-      post: "/business/create"
+      post: "/v1/business/create"
       body: "*"
     };
   }
   rpc GetBusiness(GetBusinessRequest) returns (NetWorkResponse) {
-    option (google.api.http).get = "/business/{email}";
+    option (google.api.http).get = "/v1/business/{email}";
     }
   
   rpc DeleteBusiness(DeleteBusinessRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
-      post: "/business/delete"
+      post: "/v1/business/delete"
       body: "*"
     };
   }
 
   rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/logout"
+      post: "/v1/logout"
       body: "*"
     };
   }
   rpc GetUser (GetUserRequest) returns (GetUserResponse) {
     option (google.api.http) = {
-      get: "/user"
+      get: "/v1/user"
     };
   }
   rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
     option (google.api.http) = {
-      put: "/user"
+      put: "/v1/user"
       body: "*"
     };
   }
   rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      delete: "/user"
+      delete: "/v1/user"
     };
   }
   
   //product manage
   rpc AddProduct(AddProductRequest) returns (NetWorkResponse){
     option (google.api.http) = {
-      post: "/product/add"
+      post: "/v1/product/add"
       body: "*"
     };
   }
 
   rpc VerifyProduct(VerifyAssetRequest) returns(NetWorkResponse) {
     option (google.api.http) = {
-      get: "/product/verify/{chain_id}/{net}/{asset_id}"
+      get: "/v1/product/verify/{chain_id}/{net}/{asset_id}"
     };
   }
 
   rpc GetProducts(GetProductsRequest) returns(NetWorkResponse) {
     option (google.api.http) = {
-      get: "/product/list/{net}/{page}/{per_page}"
+      get: "/v1/product/list/{net}/{page}/{per_page}"
     };
   }
 
@@ -99,27 +99,27 @@ service Microservice {
   //algorand service
   rpc CreateWallet (CreateWalletRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
-      post: "/wallet/create"
+      post: "/v1/wallet/create"
       body: "*"
     };
   }
 
   rpc GetAccounts (google.protobuf.Empty) returns (GetAccountResponse) {
     option (google.api.http) = {
-      get: "/wallet/accounts"
+      get: "/v1/wallet/accounts"
     };
   }
 
   rpc MintOwnify(MintOwnifyRequest) returns (MintOwnifyResponse) {
     option (google.api.http) = {
-      post: "/wallet/mint"
+      post: "/v1/wallet/mint"
       body: "*"
     };
   }
 
   rpc MakeTransaction (MakeTransactionRequest) returns (MakeTransactionResponse) {
     option (google.api.http) = {
-      post: "/wallet/rawtx"
+      post: "/v1/wallet/rawtx"
     };
   }
 }

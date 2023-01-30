@@ -746,7 +746,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignIn", runtime.WithHTTPPathPattern("/signin"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignIn", runtime.WithHTTPPathPattern("/v1/signin"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -769,7 +769,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignInWithPhone", runtime.WithHTTPPathPattern("/sso/phone"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignInWithPhone", runtime.WithHTTPPathPattern("/v1/sso/phone"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -792,7 +792,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignUp", runtime.WithHTTPPathPattern("/signup/user"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignUp", runtime.WithHTTPPathPattern("/v1/signup/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -815,7 +815,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/CreateBusiness", runtime.WithHTTPPathPattern("/business/create"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/CreateBusiness", runtime.WithHTTPPathPattern("/v1/business/create"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -838,7 +838,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetBusiness", runtime.WithHTTPPathPattern("/business/{email}"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetBusiness", runtime.WithHTTPPathPattern("/v1/business/{email}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -861,7 +861,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/DeleteBusiness", runtime.WithHTTPPathPattern("/business/delete"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/DeleteBusiness", runtime.WithHTTPPathPattern("/v1/business/delete"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -884,7 +884,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/Logout", runtime.WithHTTPPathPattern("/logout"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/Logout", runtime.WithHTTPPathPattern("/v1/logout"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -907,7 +907,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetUser", runtime.WithHTTPPathPattern("/user"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetUser", runtime.WithHTTPPathPattern("/v1/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -930,7 +930,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/UpdateUser", runtime.WithHTTPPathPattern("/user"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/UpdateUser", runtime.WithHTTPPathPattern("/v1/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -953,7 +953,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/DeleteUser", runtime.WithHTTPPathPattern("/user"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/DeleteUser", runtime.WithHTTPPathPattern("/v1/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -976,7 +976,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/AddProduct", runtime.WithHTTPPathPattern("/product/add"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/AddProduct", runtime.WithHTTPPathPattern("/v1/product/add"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -999,7 +999,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/VerifyProduct", runtime.WithHTTPPathPattern("/product/verify/{chain_id}/{net}/{asset_id}"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/VerifyProduct", runtime.WithHTTPPathPattern("/v1/product/verify/{chain_id}/{net}/{asset_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1022,7 +1022,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetProducts", runtime.WithHTTPPathPattern("/product/list/{net}/{page}/{per_page}"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetProducts", runtime.WithHTTPPathPattern("/v1/product/list/{net}/{page}/{per_page}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1045,7 +1045,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/CreateWallet", runtime.WithHTTPPathPattern("/wallet/create"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/CreateWallet", runtime.WithHTTPPathPattern("/v1/wallet/create"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1068,7 +1068,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetAccounts", runtime.WithHTTPPathPattern("/wallet/accounts"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetAccounts", runtime.WithHTTPPathPattern("/v1/wallet/accounts"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1091,7 +1091,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/MintOwnify", runtime.WithHTTPPathPattern("/wallet/mint"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/MintOwnify", runtime.WithHTTPPathPattern("/v1/wallet/mint"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1114,7 +1114,7 @@ func RegisterMicroserviceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/MakeTransaction", runtime.WithHTTPPathPattern("/wallet/rawtx"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/ownify_api.v1.Microservice/MakeTransaction", runtime.WithHTTPPathPattern("/v1/wallet/rawtx"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1176,7 +1176,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignIn", runtime.WithHTTPPathPattern("/signin"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignIn", runtime.WithHTTPPathPattern("/v1/signin"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1196,7 +1196,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignInWithPhone", runtime.WithHTTPPathPattern("/sso/phone"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignInWithPhone", runtime.WithHTTPPathPattern("/v1/sso/phone"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1216,7 +1216,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignUp", runtime.WithHTTPPathPattern("/signup/user"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/SignUp", runtime.WithHTTPPathPattern("/v1/signup/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1236,7 +1236,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/CreateBusiness", runtime.WithHTTPPathPattern("/business/create"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/CreateBusiness", runtime.WithHTTPPathPattern("/v1/business/create"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1256,7 +1256,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetBusiness", runtime.WithHTTPPathPattern("/business/{email}"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetBusiness", runtime.WithHTTPPathPattern("/v1/business/{email}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1276,7 +1276,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/DeleteBusiness", runtime.WithHTTPPathPattern("/business/delete"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/DeleteBusiness", runtime.WithHTTPPathPattern("/v1/business/delete"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1296,7 +1296,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/Logout", runtime.WithHTTPPathPattern("/logout"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/Logout", runtime.WithHTTPPathPattern("/v1/logout"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1316,7 +1316,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetUser", runtime.WithHTTPPathPattern("/user"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetUser", runtime.WithHTTPPathPattern("/v1/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1336,7 +1336,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/UpdateUser", runtime.WithHTTPPathPattern("/user"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/UpdateUser", runtime.WithHTTPPathPattern("/v1/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1356,7 +1356,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/DeleteUser", runtime.WithHTTPPathPattern("/user"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/DeleteUser", runtime.WithHTTPPathPattern("/v1/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1376,7 +1376,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/AddProduct", runtime.WithHTTPPathPattern("/product/add"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/AddProduct", runtime.WithHTTPPathPattern("/v1/product/add"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1396,7 +1396,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/VerifyProduct", runtime.WithHTTPPathPattern("/product/verify/{chain_id}/{net}/{asset_id}"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/VerifyProduct", runtime.WithHTTPPathPattern("/v1/product/verify/{chain_id}/{net}/{asset_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1416,7 +1416,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetProducts", runtime.WithHTTPPathPattern("/product/list/{net}/{page}/{per_page}"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetProducts", runtime.WithHTTPPathPattern("/v1/product/list/{net}/{page}/{per_page}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1436,7 +1436,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/CreateWallet", runtime.WithHTTPPathPattern("/wallet/create"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/CreateWallet", runtime.WithHTTPPathPattern("/v1/wallet/create"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1456,7 +1456,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetAccounts", runtime.WithHTTPPathPattern("/wallet/accounts"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/GetAccounts", runtime.WithHTTPPathPattern("/v1/wallet/accounts"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1476,7 +1476,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/MintOwnify", runtime.WithHTTPPathPattern("/wallet/mint"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/MintOwnify", runtime.WithHTTPPathPattern("/v1/wallet/mint"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1496,7 +1496,7 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/MakeTransaction", runtime.WithHTTPPathPattern("/wallet/rawtx"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/ownify_api.v1.Microservice/MakeTransaction", runtime.WithHTTPPathPattern("/v1/wallet/rawtx"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1516,39 +1516,39 @@ func RegisterMicroserviceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 }
 
 var (
-	pattern_Microservice_SignIn_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"signin"}, ""))
+	pattern_Microservice_SignIn_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "signin"}, ""))
 
-	pattern_Microservice_SignInWithPhone_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"sso", "phone"}, ""))
+	pattern_Microservice_SignInWithPhone_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "sso", "phone"}, ""))
 
-	pattern_Microservice_SignUp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"signup", "user"}, ""))
+	pattern_Microservice_SignUp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "signup", "user"}, ""))
 
-	pattern_Microservice_CreateBusiness_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"business", "create"}, ""))
+	pattern_Microservice_CreateBusiness_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "business", "create"}, ""))
 
-	pattern_Microservice_GetBusiness_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"business", "email"}, ""))
+	pattern_Microservice_GetBusiness_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "business", "email"}, ""))
 
-	pattern_Microservice_DeleteBusiness_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"business", "delete"}, ""))
+	pattern_Microservice_DeleteBusiness_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "business", "delete"}, ""))
 
-	pattern_Microservice_Logout_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"logout"}, ""))
+	pattern_Microservice_Logout_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "logout"}, ""))
 
-	pattern_Microservice_GetUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"user"}, ""))
+	pattern_Microservice_GetUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "user"}, ""))
 
-	pattern_Microservice_UpdateUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"user"}, ""))
+	pattern_Microservice_UpdateUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "user"}, ""))
 
-	pattern_Microservice_DeleteUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"user"}, ""))
+	pattern_Microservice_DeleteUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "user"}, ""))
 
-	pattern_Microservice_AddProduct_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"product", "add"}, ""))
+	pattern_Microservice_AddProduct_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "product", "add"}, ""))
 
-	pattern_Microservice_VerifyProduct_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"product", "verify", "chain_id", "net", "asset_id"}, ""))
+	pattern_Microservice_VerifyProduct_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"v1", "product", "verify", "chain_id", "net", "asset_id"}, ""))
 
-	pattern_Microservice_GetProducts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"product", "list", "net", "page", "per_page"}, ""))
+	pattern_Microservice_GetProducts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"v1", "product", "list", "net", "page", "per_page"}, ""))
 
-	pattern_Microservice_CreateWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"wallet", "create"}, ""))
+	pattern_Microservice_CreateWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "wallet", "create"}, ""))
 
-	pattern_Microservice_GetAccounts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"wallet", "accounts"}, ""))
+	pattern_Microservice_GetAccounts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "wallet", "accounts"}, ""))
 
-	pattern_Microservice_MintOwnify_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"wallet", "mint"}, ""))
+	pattern_Microservice_MintOwnify_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "wallet", "mint"}, ""))
 
-	pattern_Microservice_MakeTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"wallet", "rawtx"}, ""))
+	pattern_Microservice_MakeTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "wallet", "rawtx"}, ""))
 )
 
 var (

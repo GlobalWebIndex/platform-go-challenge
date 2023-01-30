@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/business/create": {
+    "/v1/business/create": {
       "post": {
         "summary": "business",
         "operationId": "Microservice_CreateBusiness",
@@ -49,7 +49,7 @@
         ]
       }
     },
-    "/business/delete": {
+    "/v1/business/delete": {
       "post": {
         "operationId": "Microservice_DeleteBusiness",
         "responses": {
@@ -81,7 +81,7 @@
         ]
       }
     },
-    "/business/{email}": {
+    "/v1/business/{email}": {
       "get": {
         "operationId": "Microservice_GetBusiness",
         "responses": {
@@ -111,7 +111,7 @@
         ]
       }
     },
-    "/logout": {
+    "/v1/logout": {
       "post": {
         "operationId": "Microservice_Logout",
         "responses": {
@@ -143,7 +143,7 @@
         ]
       }
     },
-    "/product/add": {
+    "/v1/product/add": {
       "post": {
         "summary": "product manage",
         "operationId": "Microservice_AddProduct",
@@ -176,7 +176,7 @@
         ]
       }
     },
-    "/product/list/{net}/{page}/{perPage}": {
+    "/v1/product/list/{net}/{page}/{perPage}": {
       "get": {
         "operationId": "Microservice_GetProducts",
         "responses": {
@@ -220,7 +220,7 @@
         ]
       }
     },
-    "/product/verify/{chainId}/{net}/{assetId}": {
+    "/v1/product/verify/{chainId}/{net}/{assetId}": {
       "get": {
         "operationId": "Microservice_VerifyProduct",
         "responses": {
@@ -264,7 +264,7 @@
         ]
       }
     },
-    "/signin": {
+    "/v1/signin": {
       "post": {
         "summary": "user manage",
         "operationId": "Microservice_SignIn",
@@ -297,7 +297,7 @@
         ]
       }
     },
-    "/signup/user": {
+    "/v1/signup/user": {
       "post": {
         "operationId": "Microservice_SignUp",
         "responses": {
@@ -329,7 +329,7 @@
         ]
       }
     },
-    "/sso/phone": {
+    "/v1/sso/phone": {
       "post": {
         "operationId": "Microservice_SignInWithPhone",
         "responses": {
@@ -361,7 +361,7 @@
         ]
       }
     },
-    "/user": {
+    "/v1/user": {
       "get": {
         "operationId": "Microservice_GetUser",
         "responses": {
@@ -451,7 +451,7 @@
         ]
       }
     },
-    "/wallet/accounts": {
+    "/v1/wallet/accounts": {
       "get": {
         "operationId": "Microservice_GetAccounts",
         "responses": {
@@ -473,7 +473,7 @@
         ]
       }
     },
-    "/wallet/create": {
+    "/v1/wallet/create": {
       "post": {
         "summary": "algorand service",
         "operationId": "Microservice_CreateWallet",
@@ -506,7 +506,7 @@
         ]
       }
     },
-    "/wallet/mint": {
+    "/v1/wallet/mint": {
       "post": {
         "operationId": "Microservice_MintOwnify",
         "responses": {
@@ -538,7 +538,7 @@
         ]
       }
     },
-    "/wallet/rawtx": {
+    "/v1/wallet/rawtx": {
       "post": {
         "operationId": "Microservice_MakeTransaction",
         "responses": {
