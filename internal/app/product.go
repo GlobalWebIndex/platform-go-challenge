@@ -96,3 +96,26 @@ func (m *MicroserviceServer) GetProducts(ctx context.Context, req *desc.GetProdu
 
 	return BuildRes(data{Products: products}, "there are your products", true)
 }
+
+func (m *MicroserviceServer) SearchProducts(ctx context.Context, req *desc.SearchProductsRequest) (*desc.NetWorkResponse, error) {
+
+	filter := dto.BriefProduct{
+		AssetId:   req.Filter.AssetId,
+		Owner:     req.Filter.Owner,
+		Barcode:   req.Filter.Barcode,
+		ItemName:  req.Filter.ItemName,
+		BrandName: req.Filter.BrandName,
+		IssueDate: req.Filter.IssueDate,
+	}
+	products, err := m.productService.SearchProducts(filter, req.Net, req.Page, req.PerPage)
+
+	if err != nil {
+		return nil, err
+	}
+
+	type data struct {
+		Products []dto.BriefProduct `json:"products"`
+	}
+
+	return BuildRes(data{Products: products}, "there are your products", true)
+}

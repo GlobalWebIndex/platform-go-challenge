@@ -17,3 +17,4 @@ type BriefProduct struct {
 func (p *BriefProduct) Valid() bool {
 	return !(p.AssetId == 0 || strings.TrimSpace(p.Owner) == "" || strings.TrimSpace(p.Barcode) == "")
 }
+

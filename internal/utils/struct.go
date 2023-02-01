@@ -16,7 +16,13 @@ func ConvertToEntity[T dto.SQLable](data *T) ([]string, []interface{}) {
 			continue
 		}
 		cols = append(cols, ToSnakeCase(field))
-		values = append(values, value)
+		str, ok := value.Interface().(string)
+		if ok {
+			values = append(values, str)
+		} else {
+			values = append(values, value)
+		}
+
 	}
 	return cols, values
 }
@@ -24,5 +30,3 @@ func ConvertToEntity[T dto.SQLable](data *T) ([]string, []interface{}) {
 func IsZeroOfUnderlyingType(v reflect.Value) bool {
 	return !v.IsValid() || reflect.DeepEqual(v.Interface(), reflect.Zero(v.Type()).Interface())
 }
-
-

@@ -41,7 +41,7 @@ func (w *walletQuery) AddNewAccount(
 	//get user pin code hash from wallets table
 	var pin string
 	sqlBuilder := utils.NewSqlBuilder()
-	sql, err := sqlBuilder.Select(tableName, []string{"pin"}, []utils.Tuple{{Key: "email", Val: email}}, "OR")
+	sql, err := sqlBuilder.Select(tableName, []string{"pin"}, []utils.Tuple{{Key: "email", Val: email}}, "=", "OR")
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (w *walletQuery) GetMyAccounts(
 	sqlBuilder := utils.NewSqlBuilder()
 	sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{
 		"pub_addr",
-	}, []utils.Tuple{{Key: "email", Val: email}}, "OR")
+	}, []utils.Tuple{{Key: "email", Val: email}}, "=", "OR")
 	if err != nil {
 		return []string{}, err
 	}
@@ -113,7 +113,7 @@ func (w *walletQuery) MintOwnify(
 		sqlBuilder := utils.NewSqlBuilder()
 		sql, err := sqlBuilder.Select(domain.WalletTableName, []string{
 			"seed_cipher",
-		}, []utils.Tuple{{Key: "email", Val: email}, {Key: "pub_addr", Val: pubKey}}, "AND")
+		}, []utils.Tuple{{Key: "email", Val: email}, {Key: "pub_addr", Val: pubKey}}, "=", "AND")
 		if err != nil {
 			cipherR <- domain.Result[string]{Err: err}
 			return
@@ -138,7 +138,7 @@ func (w *walletQuery) MintOwnify(
 		sqlBuilder := utils.NewSqlBuilder()
 		sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{
 			"pin",
-		}, []utils.Tuple{{Key: "email", Val: email}}, "AND")
+		}, []utils.Tuple{{Key: "email", Val: email}}, "=", "AND")
 		if err != nil {
 			pinR <- domain.Result[string]{Err: err}
 			return

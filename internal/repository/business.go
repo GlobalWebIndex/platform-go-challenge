@@ -66,7 +66,7 @@ func (b *businessQuery) GetBusiness(email string) (*dto.BriefBusiness, error) {
 		"location",
 		"phone_number",
 		"user_id",
-	}, []utils.Tuple{{Key: "email", Val: email}}, "And")
+	}, []utils.Tuple{{Key: "email", Val: email}}, "=", "And")
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func (b *businessQuery) VerifyBusiness(userId string, email string) (*interface{
 	var user interface{}
 	sqlBuilder := utils.NewSqlBuilder()
 	conditions := []utils.Tuple{{Key: "user_id", Val: userId}, {Key: "email", Val: email}}
-	sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{}, conditions, "AND")
+	sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{}, conditions, "=", "AND")
 	fmt.Println(*sql)
 	if err != nil {
 		return nil, err

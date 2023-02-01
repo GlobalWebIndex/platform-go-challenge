@@ -1861,6 +1861,271 @@ var _GetProductsRequest_Net_InLookup = map[string]struct{}{
 	"test": {},
 }
 
+// Validate checks the field values on SearchProductsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SearchProductsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchProductsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchProductsRequestMultiError, or nil if none found.
+func (m *SearchProductsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchProductsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if _, ok := _SearchProductsRequest_Net_InLookup[m.GetNet()]; !ok {
+		err := SearchProductsRequestValidationError{
+			field:  "Net",
+			reason: "value must be in list [main test]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetFilter()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SearchProductsRequestValidationError{
+					field:  "Filter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SearchProductsRequestValidationError{
+					field:  "Filter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SearchProductsRequestValidationError{
+				field:  "Filter",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Page
+
+	// no validation rules for PerPage
+
+	if len(errors) > 0 {
+		return SearchProductsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchProductsRequestMultiError is an error wrapping multiple validation
+// errors returned by SearchProductsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SearchProductsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchProductsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchProductsRequestMultiError) AllErrors() []error { return m }
+
+// SearchProductsRequestValidationError is the validation error returned by
+// SearchProductsRequest.Validate if the designated constraints aren't met.
+type SearchProductsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchProductsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchProductsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchProductsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchProductsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchProductsRequestValidationError) ErrorName() string {
+	return "SearchProductsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchProductsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchProductsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchProductsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchProductsRequestValidationError{}
+
+var _SearchProductsRequest_Net_InLookup = map[string]struct{}{
+	"main": {},
+	"test": {},
+}
+
+// Validate checks the field values on FilterOptions with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *FilterOptions) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FilterOptions with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in FilterOptionsMultiError, or
+// nil if none found.
+func (m *FilterOptions) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FilterOptions) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Owner
+
+	// no validation rules for Barcode
+
+	// no validation rules for AssetId
+
+	// no validation rules for ItemName
+
+	// no validation rules for BrandName
+
+	// no validation rules for Location
+
+	// no validation rules for IssueDate
+
+	if len(errors) > 0 {
+		return FilterOptionsMultiError(errors)
+	}
+
+	return nil
+}
+
+// FilterOptionsMultiError is an error wrapping multiple validation errors
+// returned by FilterOptions.ValidateAll() if the designated constraints
+// aren't met.
+type FilterOptionsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FilterOptionsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FilterOptionsMultiError) AllErrors() []error { return m }
+
+// FilterOptionsValidationError is the validation error returned by
+// FilterOptions.Validate if the designated constraints aren't met.
+type FilterOptionsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FilterOptionsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FilterOptionsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FilterOptionsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FilterOptionsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FilterOptionsValidationError) ErrorName() string { return "FilterOptionsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e FilterOptionsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFilterOptions.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FilterOptionsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FilterOptionsValidationError{}
+
 // Validate checks the field values on CreateBusinessRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
