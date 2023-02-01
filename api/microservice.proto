@@ -96,6 +96,14 @@ service Microservice {
   }
 
 
+  rpc SearchProducts(SearchProductsRequest) returns(NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/product/list/search"
+      body: "*"
+    };
+  }
+
+
   //algorand service
   rpc CreateWallet (CreateWalletRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
@@ -113,6 +121,13 @@ service Microservice {
   rpc MintOwnify(MintOwnifyRequest) returns (MintOwnifyResponse) {
     option (google.api.http) = {
       post: "/v1/wallet/mint"
+      body: "*"
+    };
+  }
+
+  rpc MintOwnifyWithCSV(MintOwnifyRequest) returns (MintOwnifyResponse) {
+    option (google.api.http) = {
+      post: "/v1/wallet/mint/file"
       body: "*"
     };
   }
@@ -217,6 +232,25 @@ message GetProductsRequest {
   int32 page = 2;
   int32 per_page = 3;
 }
+
+
+message SearchProductsRequest {
+  string  net = 1  [(validate.rules).string = {in: ["main","test"]}];
+  FilterOptions filter=2;
+  int32 page = 3;
+  int32 per_page = 4;
+}
+
+message FilterOptions {
+  string owner = 1;
+  string barcode = 2;
+  int64 asset_id = 3;
+  string item_name = 4;
+  string brand_name = 5;
+  string location = 6;
+  int32 issue_date = 7;
+}
+
 
 
 //business

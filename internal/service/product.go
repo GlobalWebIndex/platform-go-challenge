@@ -15,6 +15,7 @@ type ProductService interface {
 		net string,
 	) (*dto.BriefProduct, error)
 	GetProducts(net string, page int, per_page int) ([]dto.BriefProduct, error)
+	SearchProducts(filter dto.BriefProduct, net string, page int32, perPage int32) ([]dto.BriefProduct, error)
 }
 
 type productService struct {
@@ -48,4 +49,8 @@ func (p *productService) GetProducts(net string, page int, per_page int) ([]dto.
 	return p.dbHandler.NewProductQuery().GetProducts(
 		net, page, per_page,
 	)
+}
+
+func (p *productService) SearchProducts(filter dto.BriefProduct, net string, page int32, perPage int32) ([]dto.BriefProduct, error) {
+	return p.dbHandler.NewProductQuery().SearchProducts(filter, net, page, perPage)
 }

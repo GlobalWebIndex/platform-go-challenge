@@ -176,6 +176,38 @@
         ]
       }
     },
+    "/v1/product/list/search": {
+      "post": {
+        "operationId": "Microservice_SearchProducts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SearchProductsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
     "/v1/product/list/{net}/{page}/{perPage}": {
       "get": {
         "operationId": "Microservice_GetProducts",
@@ -692,6 +724,34 @@
         }
       }
     },
+    "v1FilterOptions": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "barcode": {
+          "type": "string"
+        },
+        "assetId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "itemName": {
+          "type": "string"
+        },
+        "brandName": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "issueDate": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "v1GetAccountResponse": {
       "type": "object",
       "properties": {
@@ -844,6 +904,25 @@
           "type": "string"
         },
         "issueDate": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1SearchProductsRequest": {
+      "type": "object",
+      "properties": {
+        "net": {
+          "type": "string"
+        },
+        "filter": {
+          "$ref": "#/definitions/v1FilterOptions"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "perPage": {
           "type": "integer",
           "format": "int32"
         }
