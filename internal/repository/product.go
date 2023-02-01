@@ -3,6 +3,7 @@ package repository
 import (
 	//"fmt"
 
+	"context"
 	"fmt"
 	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
@@ -15,8 +16,10 @@ type ProductQuery interface {
 	AddProduct(
 		product dto.BriefProduct,
 		net string,
+		verify bool,
 	) error
-	AddProducts(products []dto.BriefProduct, net string) error
+
+	AddProducts(products []dto.BriefProduct, net string, verify bool) error
 	GetProduct(chainId int, assetId int64, net string) (*dto.BriefProduct, error)
 
 	GetProducts(net string, page int, per_page int) ([]dto.BriefProduct, error)
@@ -26,10 +29,13 @@ type ProductQuery interface {
 
 type productQuery struct{}
 
-func (u *productQuery) AddProduct(product dto.BriefProduct, net string) error {
+func (u *productQuery) AddProduct(product dto.BriefProduct, net string, verify bool) error {
 	// product validation.
-	if !product.Valid() {
-		return fmt.Errorf("[ERR] invalid Info: %v", product)
+	if verify {
+		isProductsValid := validProducts([]dto.BriefProduct{product}, net)
+		if !isProductsValid.Ok() {
+			return isProductsValid.Err
+		}
 	}
 
 	// add to database.
@@ -50,11 +56,12 @@ func (u *productQuery) AddProduct(product dto.BriefProduct, net string) error {
 	return nil
 }
 
-func (u *productQuery) AddProducts(products []dto.BriefProduct, net string) error {
-	// product validation
-	for _, product := range products {
-		if !product.Valid() {
-			return fmt.Errorf("[ERR] invalid Info: %v", product)
+func (u *productQuery) AddProducts(products []dto.BriefProduct, net string, verify bool) error {
+
+	if verify {
+		isProductsValid := validProducts(products, net)
+		if !isProductsValid.Ok() {
+			return isProductsValid.Err
 		}
 	}
 
@@ -232,4 +239,29 @@ func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page 
 		products = append(products, product)
 	}
 	return products, nil
+}
+
+func validProducts(products []dto.BriefProduct, net string) domain.Result[string] {
+	client, _, _ := NewClient(net)
+	// product validation
+	validChan := make(chan domain.Result[string])
+	for index, product := range products {
+		go func(product dto.BriefProduct, index int) {
+			act, err := client.AccountInformation(product.Owner).Do(context.Background())
+			if !product.Valid() || err != nil {
+				validChan <- domain.Result[string]{
+					Err: fmt.Errorf("invalid information at %d", index),
+				}
+			}
+			for _, assetholding := range act.Assets {
+				if uint64(product.AssetId) != assetholding.AssetId {
+					validChan <- domain.Result[string]{
+						Err: fmt.Errorf("include other's asset at %d", index),
+					}
+				}
+			}
+		}(product, index)
+	}
+
+	return <-validChan
 }

@@ -83,6 +83,13 @@ service Microservice {
     };
   }
 
+  rpc AddProducts(AddProductsRequest) returns (NetWorkResponse){
+    option (google.api.http) = {
+      post: "/v1/product/addlist"
+      body: "*"
+    };
+  }
+
   rpc VerifyProduct(VerifyAssetRequest) returns(NetWorkResponse) {
     option (google.api.http) = {
       get: "/v1/product/verify/{chain_id}/{net}/{asset_id}"
@@ -221,6 +228,12 @@ message AddProductRequest {
   string net = 10  [(validate.rules).string = {in: ["main","test"]}];
 }
 
+message AddProductsRequest {
+  int64 chain_id = 1;
+  repeated Product products = 2;
+  string net = 3  [(validate.rules).string = {in: ["main","test"]}];
+}
+
 message VerifyAssetRequest {
   int32 chain_id = 1;
   int64 asset_id = 2;
@@ -309,13 +322,17 @@ message MakeTransactionResponse {
 }
 
 message Product {
+  int64 chain_id = 1;
+  int64 asset_id = 2;
   string barcode = 4;
+  string owner = 3;
   string item_name = 5;
   string brand_name = 6;
   string additional_data = 7;
   string location = 8;
   int32  issue_date = 9;
 }
+
 message MintOwnifyRequest {
   int64 chain_id = 1;
   string email = 2 [(validate.rules).string.email = true];

@@ -176,6 +176,38 @@
         ]
       }
     },
+    "/v1/product/addlist": {
+      "post": {
+        "operationId": "Microservice_AddProducts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AddProductsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
     "/v1/product/list/search": {
       "post": {
         "operationId": "Microservice_SearchProducts",
@@ -570,6 +602,38 @@
         ]
       }
     },
+    "/v1/wallet/mint/file": {
+      "post": {
+        "operationId": "Microservice_MintOwnifyWithCSV",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1MintOwnifyResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1MintOwnifyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
     "/v1/wallet/rawtx": {
       "post": {
         "operationId": "Microservice_MakeTransaction",
@@ -667,6 +731,24 @@
         "issueDate": {
           "type": "integer",
           "format": "int32"
+        },
+        "net": {
+          "type": "string"
+        }
+      }
+    },
+    "v1AddProductsRequest": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Product"
+          }
         },
         "net": {
           "type": "string"
@@ -888,7 +970,18 @@
     "v1Product": {
       "type": "object",
       "properties": {
+        "chainId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "assetId": {
+          "type": "string",
+          "format": "int64"
+        },
         "barcode": {
+          "type": "string"
+        },
+        "owner": {
           "type": "string"
         },
         "itemName": {

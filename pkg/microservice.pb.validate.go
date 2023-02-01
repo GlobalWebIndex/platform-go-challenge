@@ -1617,6 +1617,160 @@ var _AddProductRequest_Net_InLookup = map[string]struct{}{
 	"test": {},
 }
 
+// Validate checks the field values on AddProductsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AddProductsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AddProductsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AddProductsRequestMultiError, or nil if none found.
+func (m *AddProductsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AddProductsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ChainId
+
+	for idx, item := range m.GetProducts() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AddProductsRequestValidationError{
+						field:  fmt.Sprintf("Products[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AddProductsRequestValidationError{
+						field:  fmt.Sprintf("Products[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AddProductsRequestValidationError{
+					field:  fmt.Sprintf("Products[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if _, ok := _AddProductsRequest_Net_InLookup[m.GetNet()]; !ok {
+		err := AddProductsRequestValidationError{
+			field:  "Net",
+			reason: "value must be in list [main test]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return AddProductsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AddProductsRequestMultiError is an error wrapping multiple validation errors
+// returned by AddProductsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type AddProductsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AddProductsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AddProductsRequestMultiError) AllErrors() []error { return m }
+
+// AddProductsRequestValidationError is the validation error returned by
+// AddProductsRequest.Validate if the designated constraints aren't met.
+type AddProductsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AddProductsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AddProductsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AddProductsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AddProductsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AddProductsRequestValidationError) ErrorName() string {
+	return "AddProductsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AddProductsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAddProductsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AddProductsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AddProductsRequestValidationError{}
+
+var _AddProductsRequest_Net_InLookup = map[string]struct{}{
+	"main": {},
+	"test": {},
+}
+
 // Validate checks the field values on VerifyAssetRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -3465,7 +3619,13 @@ func (m *Product) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for ChainId
+
+	// no validation rules for AssetId
+
 	// no validation rules for Barcode
+
+	// no validation rules for Owner
 
 	// no validation rules for ItemName
 

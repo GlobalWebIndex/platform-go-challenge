@@ -50,6 +50,7 @@ func (w *walletQuery) AddNewAccount(
 	if err != nil {
 		return nil, err
 	}
+	
 	//create new EOA in algorand.
 	newAcc := crypto.GenerateAccount()
 	mnemonic, err := mnemonic.FromPrivateKey(newAcc.PrivateKey)

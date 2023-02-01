@@ -1,6 +1,10 @@
 package dto
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/algorand/go-algorand-sdk/v2/types"
+)
 
 type BriefProduct struct {
 	ChainId        int    `json:"chain_id"`
@@ -15,6 +19,6 @@ type BriefProduct struct {
 }
 
 func (p *BriefProduct) Valid() bool {
-	return !(p.AssetId == 0 || strings.TrimSpace(p.Owner) == "" || strings.TrimSpace(p.Barcode) == "")
+	_, err := types.DecodeAddress(p.Owner)
+	return !(p.AssetId == 0 || strings.TrimSpace(p.Owner) == "" || strings.TrimSpace(p.Barcode) == "" || err != nil)
 }
-

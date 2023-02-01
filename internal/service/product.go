@@ -9,6 +9,12 @@ type ProductService interface {
 	AddProduct(
 		product dto.BriefProduct,
 		net string,
+		verify bool,
+	) error
+	AddProducts(
+		products []dto.BriefProduct,
+		net string,
+		verify bool,
 	) error
 	GetProduct(
 		chainId int, assetId int64,
@@ -30,8 +36,18 @@ func NewProductService(dbHandler repository.DBHandler) ProductService {
 func (p *productService) AddProduct(
 	product dto.BriefProduct,
 	net string,
+	verify bool,
 ) error {
-	err := p.dbHandler.NewProductQuery().AddProduct(product, net)
+	err := p.dbHandler.NewProductQuery().AddProduct(product, net, verify)
+	return err
+}
+
+func (p *productService) AddProducts(
+	products []dto.BriefProduct,
+	net string,
+	verify bool,
+) error {
+	err := p.dbHandler.NewProductQuery().AddProducts(products, net, verify)
 	return err
 }
 

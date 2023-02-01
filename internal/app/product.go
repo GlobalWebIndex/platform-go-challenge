@@ -40,10 +40,63 @@ func (m *MicroserviceServer) AddProduct(ctx context.Context, req *desc.AddProduc
 		IssueDate:      req.IssueDate,
 	}
 
-	err = m.productService.AddProduct(product, req.Net)
+	err = m.productService.AddProduct(product, req.Net, true)
 	if err != nil {
 		return nil, err
 	}
+	return &desc.NetWorkResponse{
+		Msg:     "Successfully Added",
+		Success: true,
+	}, nil
+}
+
+func (m *MicroserviceServer) AddProducts(ctx context.Context, req *desc.AddProductsRequest) (*desc.NetWorkResponse, error) {
+
+	// // validate token.
+	// md, _ := metadata.FromIncomingContext(ctx)
+	// fmt.Println(md.Get("test"))
+	// token, err := m.getUserIdFromToken(ctx)
+	// if err != nil {
+	// 	log.Println("user isn't authorized")
+	// 	return nil, err
+	// }
+	// _, err = m.tokenManager.ValidateFirebase(token)
+	// if err != nil {
+	// 	log.Println("user isn't authorized")
+	// 	return nil, err
+	// }
+
+	products := []dto.BriefProduct{}
+	dupRemover := make(map[int64]int)
+	for index, product := range req.Products {
+		if _, ok := dupRemover[product.AssetId]; ok {
+			return nil, fmt.Errorf("[ERR] include duplicated product information at %d", index)
+		}
+
+		dupRemover[product.AssetId] = 1
+		product := dto.BriefProduct{
+			ChainId:        int(req.ChainId),
+			AssetId:        int64(product.AssetId),
+			Owner:          product.Owner,
+			Barcode:        product.Barcode,
+			ItemName:       product.ItemName,
+			BrandName:      product.BrandName,
+			AdditionalData: product.AdditionalData,
+			Location:       product.Location,
+			IssueDate:      product.IssueDate,
+		}
+
+		if !product.Valid() {
+			return nil, fmt.Errorf("[ERR] include invalid product information at %d", index)
+		}
+		products = append(products, product)
+	}
+	// add product.
+	err := m.productService.AddProducts(products, req.Net, true)
+	if err != nil {
+		return nil, err
+	}
+
 	return &desc.NetWorkResponse{
 		Msg:     "Successfully Added",
 		Success: true,
