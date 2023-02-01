@@ -2,15 +2,17 @@ package repository
 
 import (
 	//"fmt"
-
 	"context"
 	"fmt"
 	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
 	"strings"
+	"sync"
 	"time"
 )
+
+var wg sync.WaitGroup
 
 type ProductQuery interface {
 	AddProduct(
@@ -32,9 +34,9 @@ type productQuery struct{}
 func (u *productQuery) AddProduct(product dto.BriefProduct, net string, verify bool) error {
 	// product validation.
 	if verify {
-		isProductsValid := validProducts([]dto.BriefProduct{product}, net)
-		if !isProductsValid.Ok() {
-			return isProductsValid.Err
+		err := validProducts([]dto.BriefProduct{product}, net)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -59,9 +61,9 @@ func (u *productQuery) AddProduct(product dto.BriefProduct, net string, verify b
 func (u *productQuery) AddProducts(products []dto.BriefProduct, net string, verify bool) error {
 
 	if verify {
-		isProductsValid := validProducts(products, net)
-		if !isProductsValid.Ok() {
-			return isProductsValid.Err
+		err := validProducts(products, net)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -241,27 +243,45 @@ func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page 
 	return products, nil
 }
 
-func validProducts(products []dto.BriefProduct, net string) domain.Result[string] {
+func validProducts(products []dto.BriefProduct, net string) error {
 	client, _, _ := NewClient(net)
+	counter := len(products)
 	// product validation
-	validChan := make(chan domain.Result[string])
+	validChan := make(chan domain.Result[int])
 	for index, product := range products {
-		go func(product dto.BriefProduct, index int) {
+		go func(
+			product dto.BriefProduct,
+			index int,
+		) {
 			act, err := client.AccountInformation(product.Owner).Do(context.Background())
 			if !product.Valid() || err != nil {
-				validChan <- domain.Result[string]{
+				validChan <- domain.Result[int]{
 					Err: fmt.Errorf("invalid information at %d", index),
 				}
 			}
+			isInclude := false
 			for _, assetholding := range act.Assets {
-				if uint64(product.AssetId) != assetholding.AssetId {
-					validChan <- domain.Result[string]{
-						Err: fmt.Errorf("include other's asset at %d", index),
-					}
+				if uint64(product.AssetId) == assetholding.AssetId {
+					isInclude = true
+					break
+				}
+			}
+			if !isInclude {
+				validChan <- domain.Result[int]{
+					Err: fmt.Errorf("invalid information at %d", index),
+				}
+			}
+			counter -= 1
+			if counter == 0 {
+				validChan <- domain.Result[int]{
+					Val: counter,
 				}
 			}
 		}(product, index)
 	}
-
-	return <-validChan
+	valid := <-validChan
+	if valid.Err != nil {
+		return valid.Err
+	}
+	return nil
 }

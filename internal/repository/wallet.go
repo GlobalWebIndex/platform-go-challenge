@@ -50,7 +50,7 @@ func (w *walletQuery) AddNewAccount(
 	if err != nil {
 		return nil, err
 	}
-	
+
 	//create new EOA in algorand.
 	newAcc := crypto.GenerateAccount()
 	mnemonic, err := mnemonic.FromPrivateKey(newAcc.PrivateKey)
@@ -109,6 +109,8 @@ func (w *walletQuery) MintOwnify(
 	//get seed from wallet table.
 	cipherR := make(chan domain.Result[string])
 	pinR := make(chan domain.Result[string])
+	defer close(pinR)
+	defer close(cipherR)
 	go func() {
 		var cipher string
 		sqlBuilder := utils.NewSqlBuilder()

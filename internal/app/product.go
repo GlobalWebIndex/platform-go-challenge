@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	desc "ownify_api/pkg"
 
@@ -66,6 +67,10 @@ func (m *MicroserviceServer) AddProducts(ctx context.Context, req *desc.AddProdu
 	// 	return nil, err
 	// }
 
+	if req.Net != domain.TestNet || req.Net == domain.MainNet {
+		return nil, fmt.Errorf("invalid network: %s", req.Net)
+	}
+	
 	products := []dto.BriefProduct{}
 	dupRemover := make(map[int64]int)
 	for index, product := range req.Products {
