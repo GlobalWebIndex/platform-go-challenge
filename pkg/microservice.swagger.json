@@ -361,38 +361,6 @@
         ]
       }
     },
-    "/v1/signup/user": {
-      "post": {
-        "operationId": "Microservice_SignUp",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1SignUpResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1SignUpRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Microservice"
-        ]
-      }
-    },
     "/v1/sso/phone": {
       "post": {
         "operationId": "Microservice_SignInWithPhone",
@@ -426,64 +394,6 @@
       }
     },
     "/v1/user": {
-      "get": {
-        "operationId": "Microservice_GetUser",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1GetUserResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "Microservice"
-        ]
-      },
-      "delete": {
-        "operationId": "Microservice_DeleteUser",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "properties": {}
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "Microservice"
-        ]
-      },
       "put": {
         "operationId": "Microservice_UpdateUser",
         "responses": {
@@ -508,6 +418,100 @@
             "schema": {
               "$ref": "#/definitions/v1UpdateUserRequest"
             }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/user/delete": {
+      "delete": {
+        "operationId": "Microservice_DeleteUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DeleteUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/user/verify": {
+      "post": {
+        "operationId": "Microservice_VerifyUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1VerifyUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/user/{walletAddress}": {
+      "get": {
+        "operationId": "Microservice_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletAddress",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
         ],
         "tags": [
@@ -806,6 +810,14 @@
         }
       }
     },
+    "v1DeleteUserRequest": {
+      "type": "object",
+      "properties": {
+        "walletAddress": {
+          "type": "string"
+        }
+      }
+    },
     "v1FilterOptions": {
       "type": "object",
       "properties": {
@@ -842,37 +854,6 @@
           "items": {
             "type": "string"
           }
-        }
-      }
-    },
-    "v1GetUserResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64"
-        },
-        "firstName": {
-          "type": "string"
-        },
-        "lastName": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "phoneNumber": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string"
-        },
-        "verified": {
-          "type": "boolean"
-        },
-        "balance": {
-          "type": "string",
-          "format": "int64"
         }
       }
     },
@@ -1032,38 +1013,6 @@
         }
       }
     },
-    "v1SignUpRequest": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "firstName": {
-          "type": "string"
-        },
-        "lastName": {
-          "type": "string"
-        },
-        "phoneNumber": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string"
-        }
-      }
-    },
-    "v1SignUpResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
     "v1UpdateUserRequest": {
       "type": "object",
       "properties": {
@@ -1102,6 +1051,32 @@
           "type": "string"
         },
         "phoneNumber": {
+          "type": "string"
+        }
+      }
+    },
+    "v1VerifyUserRequest": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "birthDay": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "nationality": {
+          "type": "string"
+        },
+        "idFingerprint": {
+          "type": "string"
+        },
+        "walletAddress": {
           "type": "string"
         }
       }

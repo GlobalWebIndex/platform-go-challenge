@@ -22,15 +22,15 @@ type MicroserviceClient interface {
 	// user manage
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignInWithPhone(ctx context.Context, in *PhoneAuthRequest, opts ...grpc.CallOption) (*PhoneAuthResponse, error)
-	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error)
+	VerifyUser(ctx context.Context, in *VerifyUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	// business
 	CreateBusiness(ctx context.Context, in *CreateBusinessRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	GetBusiness(ctx context.Context, in *GetBusinessRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	DeleteBusiness(ctx context.Context, in *DeleteBusinessRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
-	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	// product manage
 	AddProduct(ctx context.Context, in *AddProductRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	AddProducts(ctx context.Context, in *AddProductsRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
@@ -71,9 +71,9 @@ func (c *microserviceClient) SignInWithPhone(ctx context.Context, in *PhoneAuthR
 	return out, nil
 }
 
-func (c *microserviceClient) SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error) {
-	out := new(SignUpResponse)
-	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/SignUp", in, out, opts...)
+func (c *microserviceClient) VerifyUser(ctx context.Context, in *VerifyUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/VerifyUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -116,8 +116,8 @@ func (c *microserviceClient) Logout(ctx context.Context, in *emptypb.Empty, opts
 	return out, nil
 }
 
-func (c *microserviceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
-	out := new(GetUserResponse)
+func (c *microserviceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -134,8 +134,8 @@ func (c *microserviceClient) UpdateUser(ctx context.Context, in *UpdateUserReque
 	return out, nil
 }
 
-func (c *microserviceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *microserviceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/DeleteUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -240,15 +240,15 @@ type MicroserviceServer interface {
 	// user manage
 	SignIn(context.Context, *SignInRequest) (*emptypb.Empty, error)
 	SignInWithPhone(context.Context, *PhoneAuthRequest) (*PhoneAuthResponse, error)
-	SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error)
+	VerifyUser(context.Context, *VerifyUserRequest) (*NetWorkResponse, error)
 	// business
 	CreateBusiness(context.Context, *CreateBusinessRequest) (*NetWorkResponse, error)
 	GetBusiness(context.Context, *GetBusinessRequest) (*NetWorkResponse, error)
 	DeleteBusiness(context.Context, *DeleteBusinessRequest) (*NetWorkResponse, error)
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	GetUser(context.Context, *GetUserRequest) (*NetWorkResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
-	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
+	DeleteUser(context.Context, *DeleteUserRequest) (*NetWorkResponse, error)
 	// product manage
 	AddProduct(context.Context, *AddProductRequest) (*NetWorkResponse, error)
 	AddProducts(context.Context, *AddProductsRequest) (*NetWorkResponse, error)
@@ -274,8 +274,8 @@ func (UnimplementedMicroserviceServer) SignIn(context.Context, *SignInRequest) (
 func (UnimplementedMicroserviceServer) SignInWithPhone(context.Context, *PhoneAuthRequest) (*PhoneAuthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignInWithPhone not implemented")
 }
-func (UnimplementedMicroserviceServer) SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
+func (UnimplementedMicroserviceServer) VerifyUser(context.Context, *VerifyUserRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyUser not implemented")
 }
 func (UnimplementedMicroserviceServer) CreateBusiness(context.Context, *CreateBusinessRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBusiness not implemented")
@@ -289,13 +289,13 @@ func (UnimplementedMicroserviceServer) DeleteBusiness(context.Context, *DeleteBu
 func (UnimplementedMicroserviceServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedMicroserviceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
+func (UnimplementedMicroserviceServer) GetUser(context.Context, *GetUserRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedMicroserviceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
-func (UnimplementedMicroserviceServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
+func (UnimplementedMicroserviceServer) DeleteUser(context.Context, *DeleteUserRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedMicroserviceServer) AddProduct(context.Context, *AddProductRequest) (*NetWorkResponse, error) {
@@ -377,20 +377,20 @@ func _Microservice_SignInWithPhone_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Microservice_SignUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SignUpRequest)
+func _Microservice_VerifyUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MicroserviceServer).SignUp(ctx, in)
+		return srv.(MicroserviceServer).VerifyUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ownify_api.v1.Microservice/SignUp",
+		FullMethod: "/ownify_api.v1.Microservice/VerifyUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroserviceServer).SignUp(ctx, req.(*SignUpRequest))
+		return srv.(MicroserviceServer).VerifyUser(ctx, req.(*VerifyUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -717,8 +717,8 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Microservice_SignInWithPhone_Handler,
 		},
 		{
-			MethodName: "SignUp",
-			Handler:    _Microservice_SignUp_Handler,
+			MethodName: "VerifyUser",
+			Handler:    _Microservice_VerifyUser_Handler,
 		},
 		{
 			MethodName: "CreateBusiness",

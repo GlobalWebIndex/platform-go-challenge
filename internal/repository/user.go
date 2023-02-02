@@ -3,60 +3,59 @@ package repository
 import (
 	//"fmt"
 
+	"fmt"
 	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
-	"strings"
 
 	//"ownify_api/internal/dto"
 
-	"github.com/Masterminds/squirrel"
 	sq "github.com/Masterminds/squirrel"
-	//"google.golang.org/grpc/codes"
-	//"google.golang.org/grpc/status"
 )
 
 type UserQuery interface {
 	CreateUser(
 		user dto.BriefUser,
-	) (*int64, error)
-	GetUser(id int64, walletType string) (*interface{}, error)
-	GetUserByBriefInfo(user dto.BriefUser) (*int64, error)
-	DeleteUser(userID int64, walletType string) error
+	) error
+	GetUser(pubKey string, idFingerprint string) (*dto.BriefUser, error)
+	DeleteUser(pubKey string) error
 	GetLastUserId(walletType string) (*int64, error)
+	VerifyUser(userId string, pubKey string) (*interface{}, error)
 }
 
 type userQuery struct{}
 
+// VerifyUser implements UserQuery
+func (*userQuery) VerifyUser(userId string, pubKey string) (*interface{}, error) {
+	panic("unimplemented")
+}
+
+// GetLastUserId implements UserQuery
+func (*userQuery) GetLastUserId(walletType string) (*int64, error) {
+	panic("unimplemented")
+}
+
 func (u *userQuery) CreateUser(
-	user dto.BriefUser) (*int64, error) {
-	tableName := domain.PersonTableName
-	if user.WalletType == domain.BusinessWallet {
-		tableName = domain.BusinessTableName
+	user dto.BriefUser) error {
+	if !user.Valid() {
+		return fmt.Errorf("[ERR] invalid Info: %v", user.PubKey)
 	}
 
-	var user_id int64 = 0
-	err := pgQb().Select("user_id").OrderBy("user_id DESC").From(tableName).QueryRow().Scan(&user_id)
-	if !strings.Contains(err.Error(), domain.NoRows) {
-		return nil, err
-	}
-	cols := []string{"user_id", "chain_id", "wallet_address"}
-	values := []interface{}{user_id + 1, user.ChainId, user.PubKey}
+	cols, values := utils.ConvertToEntity(&user)
 	sqlBuilder := utils.NewSqlBuilder()
 
-	query, err := sqlBuilder.Insert(tableName, cols, values)
+	query, err := sqlBuilder.Insert(domain.UserTableName, cols, values)
+	fmt.Println(query)
+
 	if err != nil {
-		return nil, err
+		return err
 	}
 	_, err = DB.Exec(*query)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	user_id += 1
-	return &user_id, nil
+	return nil
 }
-
-
 
 // func (u *userQuery) UpdateUser(user T) (*int64, error) {
 // 	qb := pgQb().
@@ -75,31 +74,46 @@ func (u *userQuery) CreateUser(
 // 	return &id, nil
 // }
 
-func (u *userQuery) DeleteUser(userID int64, walletType string) error {
-	qb := pgQb().
-		Delete(domain.PersonTableName).
-		From(domain.PersonTableName).
-		Where(squirrel.Eq{"id": userID})
-
-	_, err := qb.Exec()
+func (u *userQuery) DeleteUser(pubKey string) error {
+	sqlBuilder := utils.NewSqlBuilder()
+	sql, err := sqlBuilder.Select(domain.UserTableName, []string{}, []utils.Tuple{{Key: "pub_addr", Val: pubKey}}, "=", "OR")
+	if err != nil {
+		return err
+	}
+	_, err = DB.Exec(*sql)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *userQuery) GetUser(id int64, walletType string) (*interface{}, error) {
-	tableName := domain.PersonTableName
-	if walletType == domain.BusinessWallet {
-		tableName = domain.BusinessTableName
-	}
-
-	var user interface{}
-	err := pgQb().Select("*").Where(sq.Eq{"id": id}).From(tableName).QueryRow().Scan(&user)
+func (u *userQuery) GetUser(pubKey string, idFingerprint string) (*dto.BriefUser, error) {
+	var user dto.BriefUser
+	sqlBuilder := utils.NewSqlBuilder()
+	sql, err := sqlBuilder.Select(domain.UserTableName, []string{
+		"first_name",
+		"last_name",
+		"birth_day",
+		"gender",
+		"nationality",
+		"created_time",
+	}, []utils.Tuple{{Key: "pub_addr", Val: pubKey}, {Key: "id_fingerprint", Val: idFingerprint}}, "=", "OR")
 	if err != nil {
 		return nil, err
 	}
-	return &user, err
+	err = DB.QueryRow(*sql).Scan(
+		&user.FirstName,
+		&user.LastName,
+		&user.BirthDay,
+		&user.Gender,
+		&user.BirthDay,
+		&user.UserId,
+	)
+	if err != nil {
+		return nil, err
+	}
+	user.PubKey = pubKey
+	return &user, nil
 }
 
 func (u *userQuery) GetBusiness(email string) (*interface{}, error) {
@@ -112,28 +126,19 @@ func (u *userQuery) GetBusiness(email string) (*interface{}, error) {
 	return &business, err
 }
 
-func (u *userQuery) GetUserByBriefInfo(user dto.BriefUser) (*int64, error) {
-	var user_id int64
-	err := pgQb().
-		Select("user_id").
-		From(domain.PersonTableName).
-		Where(squirrel.Eq{"chain_id": user.ChainId, "wallet_addres": user.PubKey}).QueryRow().Scan(&user_id)
-
+func (b *businessQuery) VerifyUser(userId string, pubKey string) (*interface{}, error) {
+	var user interface{}
+	sqlBuilder := utils.NewSqlBuilder()
+	conditions := []utils.Tuple{{Key: "user_id", Val: userId}, {Key: "pub_addr", Val: pubKey}}
+	sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{}, conditions, "=", "AND")
+	fmt.Println(*sql)
 	if err != nil {
 		return nil, err
 	}
-	return &user_id, nil
-}
 
-func (u *userQuery) GetLastUserId(walletType string) (*int64, error) {
-	tableName := domain.PersonTableName
-	if walletType == domain.BusinessWallet {
-		tableName = domain.BusinessTableName
-	}
-	var user_id int64 = 0
-	err := pgQb().Select("user_id").OrderBy("user_id DESC").From(tableName).QueryRow().Scan(&user_id)
+	user, err = DB.Exec(*sql)
 	if err != nil {
 		return nil, err
 	}
-	return &user_id, nil
+	return &user, nil
 }

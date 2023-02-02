@@ -27,9 +27,9 @@ service Microservice {
       body: "*"
     };
   }
-  rpc SignUp (SignUpRequest) returns (SignUpResponse) {
+  rpc VerifyUser (VerifyUserRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
-      post: "/v1/signup/user"
+      post: "/v1/user/verify"
       body: "*"
     };
   }
@@ -58,9 +58,9 @@ service Microservice {
       body: "*"
     };
   }
-  rpc GetUser (GetUserRequest) returns (GetUserResponse) {
+  rpc GetUser (GetUserRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
-      get: "/v1/user"
+      get: "/v1/user/{wallet_address}"
     };
   }
   rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
@@ -69,9 +69,10 @@ service Microservice {
       body: "*"
     };
   }
-  rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty) {
+  rpc DeleteUser (DeleteUserRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
-      delete: "/v1/user"
+      delete: "/v1/user/delete"
+      body: "*"
     };
   }
   
@@ -166,7 +167,7 @@ message PhoneAuthResponse {
 
 
 message GetUserRequest {
-  int64 id = 1;
+  string wallet_address = 1;
 }
 
 message GetUserResponse {
@@ -182,13 +183,14 @@ message GetUserResponse {
 
 
 
-message SignUpRequest {
-  string email = 3 [(validate.rules).string.email = true];
-  string password = 4  [(validate.rules).string = {min_len: 8, max_len: 20}];
+message VerifyUserRequest {
   string first_name = 1;
   string last_name = 2;
-  string phone_number = 5;
-  string role = 6;
+  string birth_day = 3;
+  string gender = 4;
+  string nationality = 5;
+  string id_fingerprint = 6;
+  string wallet_address = 7;
 }
 
 message SignUpResponse {
@@ -196,7 +198,7 @@ message SignUpResponse {
 }
 
 message DeleteUserRequest {
-  int64 id = 1;
+  string wallet_address  = 1;
 }
 
 message UpdateUserRequest {

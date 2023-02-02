@@ -36,7 +36,7 @@ func (w *walletQuery) AddNewAccount(
 	}
 	tableName := domain.BusinessTableName
 	if role == domain.PersonalWallet {
-		tableName = domain.PersonTableName
+		tableName = domain.UserTableName
 	}
 	//get user pin code hash from wallets table
 	var pin string
