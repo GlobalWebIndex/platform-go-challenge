@@ -74,7 +74,7 @@ func (m *MicroserviceServer) MintOwnify(ctx context.Context, req *desc.MintOwnif
 			ItemName:       item.ItemName,
 			AdditionalData: item.AdditionalData,
 			Location:       item.Location,
-			IssueDate:      item.IssueDate,
+			IssuedDate:     item.IssuedDate,
 		}
 		ownifyProducts = append(ownifyProducts, product)
 	}

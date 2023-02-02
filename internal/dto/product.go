@@ -15,7 +15,7 @@ type BriefProduct struct {
 	BrandName      string `json:"brand_name"`
 	AdditionalData string `json:"additional_data"`
 	Location       string `json:"location"`
-	IssueDate      int32  `json:"issue_date"`
+	IssuedDate     int32  `json:"issued_date"`
 }
 
 func (p *BriefProduct) Valid() bool {

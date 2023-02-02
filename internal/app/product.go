@@ -38,7 +38,7 @@ func (m *MicroserviceServer) AddProduct(ctx context.Context, req *desc.AddProduc
 		BrandName:      req.BrandName,
 		AdditionalData: req.AdditionalData,
 		Location:       req.Location,
-		IssueDate:      req.IssueDate,
+		IssuedDate:     req.IssuedDate,
 	}
 
 	err = m.productService.AddProduct(product, req.Net, true)
@@ -88,7 +88,7 @@ func (m *MicroserviceServer) AddProducts(ctx context.Context, req *desc.AddProdu
 			BrandName:      product.BrandName,
 			AdditionalData: product.AdditionalData,
 			Location:       product.Location,
-			IssueDate:      product.IssueDate,
+			IssuedDate:     product.IssuedDate,
 		}
 
 		if !product.Valid() {
@@ -158,12 +158,12 @@ func (m *MicroserviceServer) GetProducts(ctx context.Context, req *desc.GetProdu
 func (m *MicroserviceServer) SearchProducts(ctx context.Context, req *desc.SearchProductsRequest) (*desc.NetWorkResponse, error) {
 
 	filter := dto.BriefProduct{
-		AssetId:   req.Filter.AssetId,
-		Owner:     req.Filter.Owner,
-		Barcode:   req.Filter.Barcode,
-		ItemName:  req.Filter.ItemName,
-		BrandName: req.Filter.BrandName,
-		IssueDate: req.Filter.IssueDate,
+		AssetId:    req.Filter.AssetId,
+		Owner:      req.Filter.Owner,
+		Barcode:    req.Filter.Barcode,
+		ItemName:   req.Filter.ItemName,
+		BrandName:  req.Filter.BrandName,
+		IssuedDate: req.Filter.IssuedDate,
 	}
 	products, err := m.productService.SearchProducts(filter, req.Net, req.Page, req.PerPage)
 

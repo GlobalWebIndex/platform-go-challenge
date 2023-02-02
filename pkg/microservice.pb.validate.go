@@ -1519,7 +1519,7 @@ func (m *AddProductRequest) validate(all bool) error {
 
 	// no validation rules for Location
 
-	// no validation rules for IssueDate
+	// no validation rules for IssuedDate
 
 	if _, ok := _AddProductRequest_Net_InLookup[m.GetNet()]; !ok {
 		err := AddProductRequestValidationError{
@@ -2200,7 +2200,7 @@ func (m *FilterOptions) validate(all bool) error {
 
 	// no validation rules for Location
 
-	// no validation rules for IssueDate
+	// no validation rules for IssuedDate
 
 	if len(errors) > 0 {
 		return FilterOptionsMultiError(errors)
@@ -3635,7 +3635,7 @@ func (m *Product) validate(all bool) error {
 
 	// no validation rules for Location
 
-	// no validation rules for IssueDate
+	// no validation rules for IssuedDate
 
 	if len(errors) > 0 {
 		return ProductMultiError(errors)

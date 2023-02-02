@@ -224,7 +224,7 @@ message AddProductRequest {
   string brand_name = 6;
   string additional_data = 7;
   string location = 8;
-  int32 issue_date = 9;
+  int32 issued_date = 9;
   string net = 10  [(validate.rules).string = {in: ["main","test"]}];
 }
 
@@ -261,7 +261,7 @@ message FilterOptions {
   string item_name = 4;
   string brand_name = 5;
   string location = 6;
-  int32 issue_date = 7;
+  int32 issued_date = 7;
 }
 
 
@@ -330,7 +330,7 @@ message Product {
   string brand_name = 6;
   string additional_data = 7;
   string location = 8;
-  int32  issue_date = 9;
+  int32  issued_date = 9;
 }
 
 message MintOwnifyRequest {

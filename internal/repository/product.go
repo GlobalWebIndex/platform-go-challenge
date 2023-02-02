@@ -130,7 +130,7 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 	}
 	product.ChainId = chainId
 	product.AssetId = assetId
-	product.IssueDate = int32(issue_date.UnixMilli())
+	product.IssuedDate = int32(issue_date.UnixMilli())
 
 	return &product, nil
 }
@@ -181,7 +181,7 @@ func (u *productQuery) GetProducts(net string, page int, per_page int) ([]dto.Br
 		if err != nil {
 			continue
 		}
-		product.IssueDate = int32(issue_date.UnixMilli())
+		product.IssuedDate = int32(issue_date.UnixMilli())
 		products = append(products, product)
 	}
 	return products, nil
@@ -237,7 +237,7 @@ func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page 
 		if err != nil {
 			continue
 		}
-		product.IssueDate = int32(issue_date.UnixMilli())
+		product.IssuedDate = int32(issue_date.UnixMilli())
 		products = append(products, product)
 	}
 	return products, nil
