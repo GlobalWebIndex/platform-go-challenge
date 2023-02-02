@@ -54,18 +54,18 @@ func (m *MicroserviceServer) AddProduct(ctx context.Context, req *desc.AddProduc
 func (m *MicroserviceServer) AddProducts(ctx context.Context, req *desc.AddProductsRequest) (*desc.NetWorkResponse, error) {
 
 	// validate token.
-	md, _ := metadata.FromIncomingContext(ctx)
-	fmt.Println(md.Get("test"))
-	token, err := m.getUserIdFromToken(ctx)
-	if err != nil {
-		log.Println("user isn't authorized")
-		return nil, err
-	}
-	_, err = m.tokenManager.ValidateFirebase(token)
-	if err != nil {
-		log.Println("user isn't authorized")
-		return nil, err
-	}
+	// md, _ := metadata.FromIncomingContext(ctx)
+	// fmt.Println(md.Get("test"))
+	// token, err := m.getUserIdFromToken(ctx)
+	// if err != nil {
+	// 	log.Println("user isn't authorized")
+	// 	return nil, err
+	// }
+	// _, err = m.tokenManager.ValidateFirebase(token)
+	// if err != nil {
+	// 	log.Println("user isn't authorized")
+	// 	return nil, err
+	// }
 
 	if req.Net != domain.TestNet || req.Net == domain.MainNet {
 		return nil, fmt.Errorf("invalid network: %s", req.Net)
@@ -97,7 +97,7 @@ func (m *MicroserviceServer) AddProducts(ctx context.Context, req *desc.AddProdu
 		products = append(products, product)
 	}
 	// add product.
-	err = m.productService.AddProducts(products, req.Net, true)
+	err := m.productService.AddProducts(products, req.Net, true)
 	if err != nil {
 		return nil, err
 	}

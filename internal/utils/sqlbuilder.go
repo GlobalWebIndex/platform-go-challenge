@@ -43,9 +43,8 @@ func (builder sqlBuilder) Insert(tableName string, cols []string, values []inter
 	}
 	valueS := []string{}
 	for _, val := range values {
-		fmt.Println(reflect.ValueOf(val).Kind())
 		if reflect.ValueOf(val).Kind() == reflect.Struct || reflect.ValueOf(val).Kind() == reflect.String {
-			valueS = append(valueS, strings.TrimSpace(fmt.Sprintf("'%v'", val)))
+			valueS = append(valueS, strings.TrimSpace(fmt.Sprintf("\"%v\"", val)))
 			continue
 		}
 		valueS = append(valueS, fmt.Sprintf("%v", val))
@@ -91,9 +90,10 @@ func conditionBuilder(conditions []Tuple, operator CondOperator, joinKey string)
 		suffix = "%"
 	}
 	for index, pair := range conditions {
-		_, ok := pair.Val.(string)
+		val, ok := pair.Val.(string)
+		//str = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(val, "")
 		if ok {
-			condStr += pair.Key + fmt.Sprintf(" %s '%s%v%s'", operator, prefix, pair.Val, suffix)
+			condStr += pair.Key + fmt.Sprintf(" %s \"%s%v%s\"", operator, prefix, val, suffix)
 		} else {
 			condStr += pair.Key + fmt.Sprintf(" %s %s%v%s", operator, prefix, pair.Val, suffix)
 		}
