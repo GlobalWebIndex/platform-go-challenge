@@ -17,6 +17,7 @@ type BusinessQuery interface {
 		business *dto.BriefBusiness,
 	) error
 	GetBusiness(email string) (*dto.BriefBusiness, error)
+	GetBusinessByWalletAddress(pubKey string) (*dto.BriefBusiness, error)
 	DeleteBusiness(email string, userId string) error
 
 	VerifyBusiness(userId string, email string) (*interface{}, error)
@@ -79,6 +80,22 @@ func (b *businessQuery) GetBusiness(email string) (*dto.BriefBusiness, error) {
 		&user.UserId,
 	)
 	user.Email = email
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (b *businessQuery) GetBusinessByWalletAddress(pubKey string) (*dto.BriefBusiness, error) {
+	var user dto.BriefBusiness
+	sql := fmt.Sprintf("SELECT b.email b.business b.first_name b.last_name b.location FROM %s w LEFT JOIN %s b ON w.email = b.email WHERE w.pub_addr = \"%s\"", domain.WalletTableName, domain.BusinessTableName, pubKey)
+	err := DB.QueryRow(sql).Scan(
+		&user.Email,
+		&user.Business,
+		&user.FirstName,
+		&user.LastName,
+		&user.Location,
+	)
 	if err != nil {
 		return nil, err
 	}

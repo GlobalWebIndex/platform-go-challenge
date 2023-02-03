@@ -16,7 +16,7 @@ const (
 )
 
 const (
-	UserTableName     = "ownify.users"
+	UserTableName     = "ownify.user"
 	BusinessTableName = "ownify.business"
 	WalletTableName   = "ownify.wallets"
 )

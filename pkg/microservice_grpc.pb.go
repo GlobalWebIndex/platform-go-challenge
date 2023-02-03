@@ -22,13 +22,14 @@ type MicroserviceClient interface {
 	// user manage
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignInWithPhone(ctx context.Context, in *PhoneAuthRequest, opts ...grpc.CallOption) (*PhoneAuthResponse, error)
-	VerifyUser(ctx context.Context, in *VerifyUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	// business
 	CreateBusiness(ctx context.Context, in *CreateBusinessRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	GetBusiness(ctx context.Context, in *GetBusinessRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	DeleteBusiness(ctx context.Context, in *DeleteBusinessRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	GetOwnership(ctx context.Context, in *GetOwnershipRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	// product manage
@@ -71,9 +72,9 @@ func (c *microserviceClient) SignInWithPhone(ctx context.Context, in *PhoneAuthR
 	return out, nil
 }
 
-func (c *microserviceClient) VerifyUser(ctx context.Context, in *VerifyUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+func (c *microserviceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
 	out := new(NetWorkResponse)
-	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/VerifyUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/CreateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,6 +120,15 @@ func (c *microserviceClient) Logout(ctx context.Context, in *emptypb.Empty, opts
 func (c *microserviceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
 	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) GetOwnership(ctx context.Context, in *GetOwnershipRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetOwnership", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -240,13 +250,14 @@ type MicroserviceServer interface {
 	// user manage
 	SignIn(context.Context, *SignInRequest) (*emptypb.Empty, error)
 	SignInWithPhone(context.Context, *PhoneAuthRequest) (*PhoneAuthResponse, error)
-	VerifyUser(context.Context, *VerifyUserRequest) (*NetWorkResponse, error)
+	CreateUser(context.Context, *CreateUserRequest) (*NetWorkResponse, error)
 	// business
 	CreateBusiness(context.Context, *CreateBusinessRequest) (*NetWorkResponse, error)
 	GetBusiness(context.Context, *GetBusinessRequest) (*NetWorkResponse, error)
 	DeleteBusiness(context.Context, *DeleteBusinessRequest) (*NetWorkResponse, error)
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	GetUser(context.Context, *GetUserRequest) (*NetWorkResponse, error)
+	GetOwnership(context.Context, *GetOwnershipRequest) (*NetWorkResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*NetWorkResponse, error)
 	// product manage
@@ -274,8 +285,8 @@ func (UnimplementedMicroserviceServer) SignIn(context.Context, *SignInRequest) (
 func (UnimplementedMicroserviceServer) SignInWithPhone(context.Context, *PhoneAuthRequest) (*PhoneAuthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignInWithPhone not implemented")
 }
-func (UnimplementedMicroserviceServer) VerifyUser(context.Context, *VerifyUserRequest) (*NetWorkResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method VerifyUser not implemented")
+func (UnimplementedMicroserviceServer) CreateUser(context.Context, *CreateUserRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
 func (UnimplementedMicroserviceServer) CreateBusiness(context.Context, *CreateBusinessRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBusiness not implemented")
@@ -291,6 +302,9 @@ func (UnimplementedMicroserviceServer) Logout(context.Context, *emptypb.Empty) (
 }
 func (UnimplementedMicroserviceServer) GetUser(context.Context, *GetUserRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedMicroserviceServer) GetOwnership(context.Context, *GetOwnershipRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOwnership not implemented")
 }
 func (UnimplementedMicroserviceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
@@ -377,20 +391,20 @@ func _Microservice_SignInWithPhone_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Microservice_VerifyUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VerifyUserRequest)
+func _Microservice_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MicroserviceServer).VerifyUser(ctx, in)
+		return srv.(MicroserviceServer).CreateUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ownify_api.v1.Microservice/VerifyUser",
+		FullMethod: "/ownify_api.v1.Microservice/CreateUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroserviceServer).VerifyUser(ctx, req.(*VerifyUserRequest))
+		return srv.(MicroserviceServer).CreateUser(ctx, req.(*CreateUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -481,6 +495,24 @@ func _Microservice_GetUser_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroserviceServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_GetOwnership_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOwnershipRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).GetOwnership(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/GetOwnership",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).GetOwnership(ctx, req.(*GetOwnershipRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -717,8 +749,8 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Microservice_SignInWithPhone_Handler,
 		},
 		{
-			MethodName: "VerifyUser",
-			Handler:    _Microservice_VerifyUser_Handler,
+			MethodName: "CreateUser",
+			Handler:    _Microservice_CreateUser_Handler,
 		},
 		{
 			MethodName: "CreateBusiness",
@@ -739,6 +771,10 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUser",
 			Handler:    _Microservice_GetUser_Handler,
+		},
+		{
+			MethodName: "GetOwnership",
+			Handler:    _Microservice_GetOwnership_Handler,
 		},
 		{
 			MethodName: "UpdateUser",

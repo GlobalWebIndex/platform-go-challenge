@@ -11,7 +11,6 @@ type AuthService interface {
 	CheckEmail(email string) bool
 	ValidUser(pubKey string, idFingerprint string) bool
 	ValidBusiness(uid string, email string) bool
-	ValidUserWithId(userId string, pubKey string) bool
 }
 
 type authService struct {
@@ -45,12 +44,7 @@ func (a *authService) CheckEmail(email string) bool {
 
 // ValidUser implements AuthService
 func (a *authService) ValidUser(pubKey string, idFingerprint string) bool {
-	_, err := a.dbHandler.NewUserQuery().GetUser(pubKey, idFingerprint)
-	return err == nil
-}
-
-func (a *authService) ValidUserWithId(userId string, pubKey string) bool {
-	_, err := a.dbHandler.NewUserQuery().VerifyUser(userId, pubKey)
+	_, err := a.dbHandler.NewUserQuery().ValidUser(pubKey, idFingerprint)
 	return err == nil
 }
 
