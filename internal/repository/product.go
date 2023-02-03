@@ -9,7 +9,6 @@ import (
 	"ownify_api/internal/utils"
 	"strings"
 	"sync"
-	"time"
 )
 
 var wg sync.WaitGroup
@@ -96,8 +95,6 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 
 	sqlBuilder := utils.NewSqlBuilder()
 
-	var issue_date time.Time
-
 	var product dto.BriefProduct
 	sql, err := sqlBuilder.Select(tableName, []string{
 		"owner",
@@ -105,7 +102,7 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 		"item_name",
 		"brand_name",
 		"additional_data",
-		"issue_date",
+		"issued_date",
 		"location",
 	}, []utils.Tuple{{
 		Key: "asset_id",
@@ -121,7 +118,7 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 		&product.ItemName,
 		&product.BrandName,
 		&product.AdditionalData,
-		&issue_date,
+		&product.IssuedDate,
 		&product.Location,
 	)
 
@@ -130,7 +127,6 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 	}
 	product.ChainId = chainId
 	product.AssetId = assetId
-	product.IssuedDate = int32(issue_date.UnixMilli())
 
 	return &product, nil
 }
@@ -142,8 +138,6 @@ func (u *productQuery) GetProducts(net string, page int, per_page int) ([]dto.Br
 	}
 
 	sqlBuilder := utils.NewSqlBuilder()
-
-	var issue_date time.Time
 
 	var products []dto.BriefProduct
 	preSql, err := sqlBuilder.Select(tableName, []string{
@@ -162,7 +156,7 @@ func (u *productQuery) GetProducts(net string, page int, per_page int) ([]dto.Br
 		return nil, err
 	}
 	//SELECT * FROM products_test ORDER BY create_time  LIMIT 4 OFFSET 1;
-	sql := *preSql + fmt.Sprintf(" ORDER BY create_time LIMIT %d OFFSET %d", per_page, page)
+	sql := *preSql + fmt.Sprintf(" ORDER BY created_time LIMIT %d OFFSET %d", per_page, page)
 	rows, err := DB.Query(sql)
 
 	if err != nil {
@@ -179,13 +173,12 @@ func (u *productQuery) GetProducts(net string, page int, per_page int) ([]dto.Br
 			&product.ItemName,
 			&product.BrandName,
 			&product.AdditionalData,
-			&issue_date,
+			&product.IssuedDate,
 			&product.Location,
 		)
 		if err != nil {
 			continue
 		}
-		product.IssuedDate = int32(issue_date.UnixMilli())
 		products = append(products, product)
 	}
 	return products, nil
@@ -199,7 +192,6 @@ func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page 
 
 	sqlBuilder := utils.NewSqlBuilder()
 
-	var issue_date time.Time
 	var products []dto.BriefProduct
 	cons, values := utils.ConvertToEntity(&filter)
 	conds := utils.GenerateCond(cons, values)
@@ -211,7 +203,7 @@ func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page 
 		"item_name",
 		"brand_name",
 		"additional_data",
-		"issue_date",
+		"issued_date",
 		"location",
 	}, conds, "LIKE", "OR")
 
@@ -219,7 +211,7 @@ func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page 
 		return nil, err
 	}
 	//SELECT * FROM products_test ORDER BY create_time  LIMIT 4 OFFSET 1;
-	sql := *preSql + fmt.Sprintf(" ORDER BY create_time LIMIT %d OFFSET %d", perPage, page)
+	sql := *preSql + fmt.Sprintf(" ORDER BY created_time LIMIT %d OFFSET %d", perPage, page)
 	rows, err := DB.Query(sql)
 	if err != nil {
 		return nil, err
@@ -235,13 +227,13 @@ func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page 
 			&product.ItemName,
 			&product.BrandName,
 			&product.AdditionalData,
-			&issue_date,
+			&product.IssuedDate,
 			&product.Location,
 		)
 		if err != nil {
 			continue
 		}
-		product.IssuedDate = int32(issue_date.UnixMilli())
+
 		products = append(products, product)
 	}
 	return products, nil
