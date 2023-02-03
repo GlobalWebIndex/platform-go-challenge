@@ -52,6 +52,7 @@ func (u *userQuery) DeleteUser(pubKey string) error {
 }
 
 func (u *userQuery) ValidUser(pubKey string, idFingerprint string) (*dto.BriefUser, error) {
+
 	var user dto.BriefUser
 	sqlBuilder := utils.NewSqlBuilder()
 	sql, err := sqlBuilder.Select(domain.UserTableName, []string{
