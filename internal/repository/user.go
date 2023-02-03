@@ -43,10 +43,7 @@ func (u *userQuery) CreateUser(
 
 	cols, values := utils.ConvertToEntity(&user)
 	sqlBuilder := utils.NewSqlBuilder()
-
 	query, err := sqlBuilder.Insert(domain.UserTableName, cols, values)
-	fmt.Println(query)
-
 	if err != nil {
 		return err
 	}

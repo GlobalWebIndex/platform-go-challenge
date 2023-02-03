@@ -3,6 +3,8 @@ package dto
 import (
 	"net/mail"
 	"strings"
+
+	"github.com/algorand/go-algorand-sdk/v2/types"
 )
 
 type Wallet struct {
@@ -14,5 +16,6 @@ type Wallet struct {
 
 func (b *Wallet) Valid() bool {
 	_, err := mail.ParseAddress(b.Email)
-	return !(err != nil || strings.TrimSpace(b.PubKey) == "")
+	_, addressErr := types.DecodeAddress(b.PubKey)
+	return !(err != nil || strings.TrimSpace(b.PubKey) == "" || addressErr != nil)
 }

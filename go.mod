@@ -7,6 +7,7 @@ require (
 	github.com/Masterminds/squirrel v1.5.0
 	github.com/algorand/go-algorand-sdk/v2 v2.0.0
 	github.com/envoyproxy/protoc-gen-validate v0.6.1
+	github.com/go-playground/validator/v10 v10.11.2
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.0
@@ -31,6 +32,8 @@ require (
 	github.com/algorand/avm-abi v0.1.1 // indirect
 	github.com/algorand/go-codec/codec v1.1.9 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
+	github.com/go-playground/locales v0.14.1 // indirect
+	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -42,6 +45,7 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
+	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
@@ -65,4 +69,5 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+
 )

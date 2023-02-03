@@ -7,7 +7,7 @@ import (
 
 type BriefBusiness struct {
 	UserId      string `json:"user_id"`
-	Email       string `json:"email"`
+	Email       string `json:"email" validate:"required,email"`
 	Pin         string `json:"pin"`
 	Recover     string `json:"recover"`
 	Business    string `json:"business"`

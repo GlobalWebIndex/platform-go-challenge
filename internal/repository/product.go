@@ -154,7 +154,7 @@ func (u *productQuery) GetProducts(net string, page int, per_page int) ([]dto.Br
 		"item_name",
 		"brand_name",
 		"additional_data",
-		"issue_date",
+		"issued_date",
 		"location",
 	}, []utils.Tuple{}, "=", "AND")
 
@@ -164,6 +164,10 @@ func (u *productQuery) GetProducts(net string, page int, per_page int) ([]dto.Br
 	//SELECT * FROM products_test ORDER BY create_time  LIMIT 4 OFFSET 1;
 	sql := *preSql + fmt.Sprintf(" ORDER BY create_time LIMIT %d OFFSET %d", per_page, page)
 	rows, err := DB.Query(sql)
+
+	if err != nil {
+		return nil, err
+	}
 
 	for rows.Next() {
 		var product dto.BriefProduct
