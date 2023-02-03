@@ -1,8 +1,11 @@
 package utils
 
 import (
+	"net/mail"
 	"regexp"
 	"strings"
+
+	"github.com/algorand/go-algorand-sdk/v2/types"
 )
 
 var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
@@ -16,4 +19,14 @@ func ToSnakeCase(str string) string {
 
 func IsEmpty(str string) bool {
 	return strings.TrimSpace(str) == ""
+}
+
+func IsPubKey(pubKey string) error {
+	_, err := types.DecodeAddress(pubKey)
+	return err
+}
+
+func IsEmail(email string) error {
+	_, err := mail.ParseAddress(email)
+	return err
 }

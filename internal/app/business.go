@@ -66,7 +66,12 @@ func (m *MicroserviceServer) GetBusiness(ctx context.Context, req *desc.GetBusin
 		return &desc.NetWorkResponse{Success: false, Msg: "Access denied."}, err
 	}
 
-	data, err := m.businessService.GetBusiness(req.GetEmail())
+	err = utils.IsEmail(req.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := m.businessService.GetBusiness(req.Email)
 	if err != nil {
 		return nil, err
 	}

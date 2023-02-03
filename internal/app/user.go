@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"ownify_api/internal/dto"
+	"ownify_api/internal/utils"
 	desc "ownify_api/pkg"
 )
 
@@ -67,6 +68,11 @@ func (m *MicroserviceServer) UpdateUser(ctx context.Context, req *desc.UpdateUse
 
 func (m *MicroserviceServer) GetUser(ctx context.Context, req *desc.GetUserRequest) (*desc.NetWorkResponse, error) {
 	uid, err := m.TokenInterceptor(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = utils.IsPubKey(req.WalletAddress)
 	if err != nil {
 		return nil, err
 	}
