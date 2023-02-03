@@ -20,5 +20,5 @@ type BriefBusiness struct {
 
 func (b *BriefBusiness) Valid() bool {
 	_, err := mail.ParseAddress(b.Email)
-	return !(err != nil || strings.TrimSpace(b.UserId) == "" || strings.TrimSpace(b.Email) == "" || strings.TrimSpace(b.Pin) == "" || strings.TrimSpace(b.Business) == "")
+	return !(err == nil || strings.TrimSpace(b.UserId) == "" || strings.TrimSpace(b.Email) == "" || strings.TrimSpace(b.Pin) == "" || strings.TrimSpace(b.Business) == "")
 }

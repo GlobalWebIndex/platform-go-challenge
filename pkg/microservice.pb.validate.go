@@ -574,6 +574,110 @@ var _ interface {
 	ErrorName() string
 } = GetUserRequestValidationError{}
 
+// Validate checks the field values on GetOwnershipRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetOwnershipRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetOwnershipRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetOwnershipRequestMultiError, or nil if none found.
+func (m *GetOwnershipRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetOwnershipRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for WalletAddress
+
+	if len(errors) > 0 {
+		return GetOwnershipRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetOwnershipRequestMultiError is an error wrapping multiple validation
+// errors returned by GetOwnershipRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetOwnershipRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetOwnershipRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetOwnershipRequestMultiError) AllErrors() []error { return m }
+
+// GetOwnershipRequestValidationError is the validation error returned by
+// GetOwnershipRequest.Validate if the designated constraints aren't met.
+type GetOwnershipRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetOwnershipRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetOwnershipRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetOwnershipRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetOwnershipRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetOwnershipRequestValidationError) ErrorName() string {
+	return "GetOwnershipRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetOwnershipRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetOwnershipRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetOwnershipRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetOwnershipRequestValidationError{}
+
 // Validate checks the field values on GetUserResponse with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -750,22 +854,22 @@ var _ interface {
 	ErrorName() string
 } = GetUserResponseValidationError{}
 
-// Validate checks the field values on VerifyUserRequest with the rules defined
+// Validate checks the field values on CreateUserRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
-func (m *VerifyUserRequest) Validate() error {
+func (m *CreateUserRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on VerifyUserRequest with the rules
+// ValidateAll checks the field values on CreateUserRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// VerifyUserRequestMultiError, or nil if none found.
-func (m *VerifyUserRequest) ValidateAll() error {
+// CreateUserRequestMultiError, or nil if none found.
+func (m *CreateUserRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *VerifyUserRequest) validate(all bool) error {
+func (m *CreateUserRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -787,19 +891,19 @@ func (m *VerifyUserRequest) validate(all bool) error {
 	// no validation rules for WalletAddress
 
 	if len(errors) > 0 {
-		return VerifyUserRequestMultiError(errors)
+		return CreateUserRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// VerifyUserRequestMultiError is an error wrapping multiple validation errors
-// returned by VerifyUserRequest.ValidateAll() if the designated constraints
+// CreateUserRequestMultiError is an error wrapping multiple validation errors
+// returned by CreateUserRequest.ValidateAll() if the designated constraints
 // aren't met.
-type VerifyUserRequestMultiError []error
+type CreateUserRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m VerifyUserRequestMultiError) Error() string {
+func (m CreateUserRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -808,11 +912,11 @@ func (m VerifyUserRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m VerifyUserRequestMultiError) AllErrors() []error { return m }
+func (m CreateUserRequestMultiError) AllErrors() []error { return m }
 
-// VerifyUserRequestValidationError is the validation error returned by
-// VerifyUserRequest.Validate if the designated constraints aren't met.
-type VerifyUserRequestValidationError struct {
+// CreateUserRequestValidationError is the validation error returned by
+// CreateUserRequest.Validate if the designated constraints aren't met.
+type CreateUserRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -820,24 +924,24 @@ type VerifyUserRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e VerifyUserRequestValidationError) Field() string { return e.field }
+func (e CreateUserRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e VerifyUserRequestValidationError) Reason() string { return e.reason }
+func (e CreateUserRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e VerifyUserRequestValidationError) Cause() error { return e.cause }
+func (e CreateUserRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e VerifyUserRequestValidationError) Key() bool { return e.key }
+func (e CreateUserRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e VerifyUserRequestValidationError) ErrorName() string {
-	return "VerifyUserRequestValidationError"
+func (e CreateUserRequestValidationError) ErrorName() string {
+	return "CreateUserRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e VerifyUserRequestValidationError) Error() string {
+func (e CreateUserRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -849,14 +953,14 @@ func (e VerifyUserRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sVerifyUserRequest.%s: %s%s",
+		"invalid %sCreateUserRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = VerifyUserRequestValidationError{}
+var _ error = CreateUserRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -864,7 +968,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = VerifyUserRequestValidationError{}
+} = CreateUserRequestValidationError{}
 
 // Validate checks the field values on SignUpResponse with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

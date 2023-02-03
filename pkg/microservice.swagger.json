@@ -143,6 +143,36 @@
         ]
       }
     },
+    "/v1/ownership/{walletAddress}": {
+      "get": {
+        "operationId": "Microservice_GetOwnership",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletAddress",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
     "/v1/product/add": {
       "post": {
         "summary": "product manage",
@@ -425,6 +455,38 @@
         ]
       }
     },
+    "/v1/user/create": {
+      "post": {
+        "operationId": "Microservice_CreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
     "/v1/user/delete": {
       "delete": {
         "operationId": "Microservice_DeleteUser",
@@ -449,38 +511,6 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/v1DeleteUserRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Microservice"
-        ]
-      }
-    },
-    "/v1/user/verify": {
-      "post": {
-        "operationId": "Microservice_VerifyUser",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1NetWorkResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1VerifyUserRequest"
             }
           }
         ],
@@ -786,6 +816,32 @@
       },
       "title": "business"
     },
+    "v1CreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "birthDay": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "nationality": {
+          "type": "string"
+        },
+        "idFingerprint": {
+          "type": "string"
+        },
+        "walletAddress": {
+          "type": "string"
+        }
+      }
+    },
     "v1CreateWalletRequest": {
       "type": "object",
       "properties": {
@@ -1051,32 +1107,6 @@
           "type": "string"
         },
         "phoneNumber": {
-          "type": "string"
-        }
-      }
-    },
-    "v1VerifyUserRequest": {
-      "type": "object",
-      "properties": {
-        "firstName": {
-          "type": "string"
-        },
-        "lastName": {
-          "type": "string"
-        },
-        "birthDay": {
-          "type": "string"
-        },
-        "gender": {
-          "type": "string"
-        },
-        "nationality": {
-          "type": "string"
-        },
-        "idFingerprint": {
-          "type": "string"
-        },
-        "walletAddress": {
           "type": "string"
         }
       }

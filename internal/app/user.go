@@ -4,13 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log"
-	
 
 	"ownify_api/internal/dto"
 	desc "ownify_api/pkg"
 )
 
-func (m *MicroserviceServer) VerifyUser(ctx context.Context, req *desc.VerifyUserRequest) (*desc.NetWorkResponse, error) {
+func (m *MicroserviceServer) CreateUser(ctx context.Context, req *desc.CreateUserRequest) (*desc.NetWorkResponse, error) {
 
 	// validate token.
 	user_id, err := m.TokenInterceptor(ctx)
@@ -24,7 +23,7 @@ func (m *MicroserviceServer) VerifyUser(ctx context.Context, req *desc.VerifyUse
 	}
 
 	user := dto.BriefUser{
-		PubKey:        req.WalletAddress,
+		PubAddr:       req.WalletAddress,
 		UserId:        *user_id,
 		FirstName:     req.FirstName,
 		LastName:      req.LastName,
@@ -33,8 +32,8 @@ func (m *MicroserviceServer) VerifyUser(ctx context.Context, req *desc.VerifyUse
 		Nationality:   req.Nationality,
 		IdFingerprint: req.IdFingerprint,
 	}
-	if !user.Valid() {
-		return nil, fmt.Errorf("[ERR] include invalid error information: %s", user.PubKey)
+	if err = user.Valid(); err != nil {
+		return nil, err
 	}
 	err = m.userService.CreateUser(user)
 	if err != nil {
@@ -47,7 +46,7 @@ func (m *MicroserviceServer) VerifyUser(ctx context.Context, req *desc.VerifyUse
 }
 
 func (m *MicroserviceServer) UpdateUser(ctx context.Context, req *desc.UpdateUserRequest) (*desc.UpdateUserResponse, error) {
-	_, err := m.getUserIdFromToken(ctx)
+	_, err := m.TokenInterceptor(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -67,31 +66,27 @@ func (m *MicroserviceServer) UpdateUser(ctx context.Context, req *desc.UpdateUse
 }
 
 func (m *MicroserviceServer) GetUser(ctx context.Context, req *desc.GetUserRequest) (*desc.NetWorkResponse, error) {
-	uid, err := m.getUserIdFromToken(ctx)
-	if err != nil {
-		log.Println("user isn't authorized")
-	}
-
-	isRegistered := m.authService.ValidUserWithId(uid, req.WalletAddress)
-	if !isRegistered {
-		return nil, fmt.Errorf("[ERR] you can't access other's user information")
-	}
-
-	user, err := m.userService.GetUser(req.WalletAddress)
+	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
 		return nil, err
 	}
+
+	user, err := m.userService.GetUser(*uid, req.WalletAddress)
+	if err != nil {
+		return nil, fmt.Errorf("[ERR] you can't access other's user information")
+	}
+
 	return BuildRes(user, "Here is your business info", true)
 }
 
 func (m *MicroserviceServer) DeleteUser(ctx context.Context, req *desc.DeleteUserRequest) (*desc.NetWorkResponse, error) {
-	uid, err := m.getUserIdFromToken(ctx)
+	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
 		log.Println("user isn't authorized")
 	}
 
-	isRegistered := m.authService.ValidUserWithId(uid, req.WalletAddress)
-	if !isRegistered {
+	_, err = m.userService.GetUser(*uid, req.WalletAddress)
+	if err != nil {
 		return nil, fmt.Errorf("[ERR] you can't access other's user information")
 	}
 

@@ -112,6 +112,7 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 	if err != nil {
 		return nil, err
 	}
+
 	err = DB.QueryRow(*sql).Scan(
 		&product.Owner,
 		&product.Barcode,
@@ -121,6 +122,7 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 		&product.IssuedDate,
 		&product.Location,
 	)
+	
 
 	if err != nil {
 		return nil, err

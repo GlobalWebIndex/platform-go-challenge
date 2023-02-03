@@ -48,6 +48,7 @@ func main() {
 
 	userService := service.NewUserService(dbHandler)
 	businessService := service.NewBusinessService(dbHandler)
+	ownershipService := service.NewOwnershipService(dbHandler)
 	authService := service.NewAuthService(dbHandler, tokenManager)
 	productService := service.NewProductService(dbHandler)
 	walletService := service.NewWalletService(wallet)
@@ -68,6 +69,7 @@ func main() {
 		desc.RegisterMicroserviceServer(grpcServer, app.NewMicroservice(
 			userService,
 			businessService,
+			ownershipService,
 			authService,
 			tokenManager,
 			productService,
@@ -85,8 +87,12 @@ func main() {
 	err = desc.RegisterMicroserviceHandlerServer(context.Background(), mux, app.NewMicroservice(
 		userService,
 		businessService,
+		ownershipService,
 		authService,
-		tokenManager, productService, walletService))
+		tokenManager,
+		productService,
+		walletService,
+	))
 	if err != nil {
 		log.Println("cannot register this service")
 	}

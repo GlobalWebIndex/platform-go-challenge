@@ -10,9 +10,9 @@ type UserService interface {
 		user dto.BriefUser,
 	) error
 
-	GetUser(pubKey string) (*dto.BriefUser, error)
+	GetUser(userId string, pubKey string) (*dto.BriefUser, error)
+
 	DeleteUser(pubKey string) error
-	GetLastUserId(walletType string) (*int64, error)
 }
 
 type userService struct {
@@ -28,13 +28,8 @@ func (u *userService) CreateUser(
 	return u.dbHandler.NewUserQuery().CreateUser(user)
 }
 
-// GetUser implements UserService
-func (u *userService) GetUser(pubKey string) (*dto.BriefUser, error) {
-	return u.dbHandler.NewUserQuery().GetUser(pubKey, "")
-}
-
-func (u *userService) GetLastUserId(walletType string) (*int64, error) {
-	return u.dbHandler.NewUserQuery().GetLastUserId(walletType)
+func (a *userService) GetUser(userId string, pubKey string) (*dto.BriefUser, error) {
+	return a.dbHandler.NewUserQuery().VerifyUser(userId, pubKey)
 }
 
 func (u *userService) DeleteUser(pubKey string) error {
