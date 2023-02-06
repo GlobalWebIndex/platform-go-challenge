@@ -52,6 +52,7 @@ func main() {
 	authService := service.NewAuthService(dbHandler, tokenManager)
 	productService := service.NewProductService(dbHandler)
 	walletService := service.NewWalletService(wallet)
+	notifyService := service.NewNotifyService()
 
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
@@ -74,6 +75,7 @@ func main() {
 			tokenManager,
 			productService,
 			walletService,
+			notifyService,
 		))
 
 		err = grpcServer.Serve(listener)
@@ -92,6 +94,7 @@ func main() {
 		tokenManager,
 		productService,
 		walletService,
+		notifyService,
 	))
 	if err != nil {
 		log.Println("cannot register this service")

@@ -8,10 +8,7 @@ import (
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
 	"strings"
-	"sync"
 )
-
-var wg sync.WaitGroup
 
 type ProductQuery interface {
 	AddProduct(
@@ -92,9 +89,7 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 	if net == strings.ToLower(domain.TestNet) {
 		tableName = domain.TestProductTableName
 	}
-
 	sqlBuilder := utils.NewSqlBuilder()
-
 	var product dto.BriefProduct
 	sql, err := sqlBuilder.Select(tableName, []string{
 		"owner",
@@ -112,7 +107,6 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 	if err != nil {
 		return nil, err
 	}
-
 	err = DB.QueryRow(*sql).Scan(
 		&product.Owner,
 		&product.Barcode,
@@ -122,7 +116,6 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 		&product.IssuedDate,
 		&product.Location,
 	)
-	
 
 	if err != nil {
 		return nil, err

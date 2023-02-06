@@ -14,6 +14,7 @@ type MicroserviceServer struct {
 	tokenManager     service.TokenManager
 	productService   service.ProductService
 	walletService    service.WalletService
+	notifyService    service.NotifyService
 }
 
 func NewMicroservice(
@@ -24,6 +25,7 @@ func NewMicroservice(
 	tokenManager service.TokenManager,
 	productService service.ProductService,
 	walletService service.WalletService,
+	notifyService service.NotifyService,
 ) *MicroserviceServer {
 	return &MicroserviceServer{
 		userService:      userService,
@@ -33,5 +35,6 @@ func NewMicroservice(
 		tokenManager:     tokenManager,
 		productService:   productService,
 		walletService:    walletService,
+		notifyService:    notifyService,
 	}
 }
