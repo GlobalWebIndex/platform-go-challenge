@@ -17,11 +17,12 @@ import (
 
 type WalletQuery interface {
 	AddNewAccount(role string, email string) (*string, error)
+	RegisterNewAccount(walletAddress string, userId string) (*string, error)
 	GetMyAccounts(role string, email string) ([]string, error)
 	MintOwnify(email string, pubKey string, products []dto.BriefProduct, net string) ([]uint64, error)
 	UpdatePinCode(role string, email string, newPinCode string) error
 
-	MakeTransaction(role string, userId string, pubKey string, rawTx []byte, net string) (*string, error)
+	MakeTx(rawTx []byte, net string) (*string, *uint64, error)
 }
 
 type walletQuery struct{}
@@ -246,7 +247,31 @@ func (w *walletQuery) UpdatePinCode(role string, userId string, newPinCode strin
 	return nil
 }
 
-func (w *walletQuery) MakeTransaction(role string, userId string, pubKey string, rawTx []byte, net string) (*string, error) {
-	txId := ""
-	return &txId, nil
+func (w *walletQuery) MakeTx(rawTx []byte, net string) (*string, *uint64, error) {
+	//algorand client initialize
+	client, _, err := NewClient(net)
+	pendingTxID, err := client.SendRawTransaction(rawTx).Do(context.Background())
+
+	confirmedTx, err := transaction.WaitForConfirmation(client, pendingTxID, 4, context.Background())
+	if err != nil {
+		return nil, nil, err
+	}
+	endIndex := confirmedTx.AssetIndex
+	return &pendingTxID, &endIndex, nil
+}
+
+func (w *walletQuery) RegisterNewAccount(walletAddress string, userId string) (*string, error) {
+	cols := []string{"chain_id", "pub_addr", "user_id"}
+	values := []interface{}{1, walletAddress, userId}
+
+	sqlBuilder := utils.NewSqlBuilder()
+	query, err := sqlBuilder.Insert("wallets", cols, values)
+	if err != nil {
+		return nil, err
+	}
+	_, err = DB.Exec(*query)
+	if err != nil {
+		return nil, err
+	}
+	return &walletAddress, nil
 }

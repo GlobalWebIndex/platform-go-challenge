@@ -7,6 +7,7 @@ import (
 
 type MicroserviceServer struct {
 	desc.UnimplementedMicroserviceServer
+	adminService     service.AdminService
 	userService      service.UserService
 	businessService  service.BusinessService
 	ownershipService service.OwnershipService
@@ -18,6 +19,7 @@ type MicroserviceServer struct {
 }
 
 func NewMicroservice(
+	adminService service.AdminService,
 	userService service.UserService,
 	businessService service.BusinessService,
 	ownershipService service.OwnershipService,
@@ -28,6 +30,7 @@ func NewMicroservice(
 	notifyService service.NotifyService,
 ) *MicroserviceServer {
 	return &MicroserviceServer{
+		adminService:     adminService,
 		userService:      userService,
 		businessService:  businessService,
 		ownershipService: ownershipService,

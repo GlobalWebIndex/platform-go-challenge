@@ -19,6 +19,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MicroserviceClient interface {
+	// admin
+	GrantBusiness(ctx context.Context, in *BusinessGrantRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	// user manage
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignInWithPhone(ctx context.Context, in *PhoneAuthRequest, opts ...grpc.CallOption) (*PhoneAuthResponse, error)
@@ -26,6 +28,8 @@ type MicroserviceClient interface {
 	// business
 	CreateBusiness(ctx context.Context, in *CreateBusinessRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	GetBusiness(ctx context.Context, in *GetBusinessRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	GetBusinessByPubAddr(ctx context.Context, in *GetBusinessWithPubAddrRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	GetBusinessByUserId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	DeleteBusiness(ctx context.Context, in *DeleteBusinessRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
@@ -36,10 +40,12 @@ type MicroserviceClient interface {
 	AddProduct(ctx context.Context, in *AddProductRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	AddProducts(ctx context.Context, in *AddProductsRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	VerifyProduct(ctx context.Context, in *VerifyAssetRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	GetOwnedProducts(ctx context.Context, in *GetOwnedProductsRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	SearchProducts(ctx context.Context, in *SearchProductsRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	// algorand service
 	CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	RegisterWallet(ctx context.Context, in *RegisterWalletRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	GetAccounts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAccountResponse, error)
 	MintOwnify(ctx context.Context, in *MintOwnifyRequest, opts ...grpc.CallOption) (*MintOwnifyResponse, error)
 	MintOwnifyWithCSV(ctx context.Context, in *MintOwnifyRequest, opts ...grpc.CallOption) (*MintOwnifyResponse, error)
@@ -52,6 +58,15 @@ type microserviceClient struct {
 
 func NewMicroserviceClient(cc grpc.ClientConnInterface) MicroserviceClient {
 	return &microserviceClient{cc}
+}
+
+func (c *microserviceClient) GrantBusiness(ctx context.Context, in *BusinessGrantRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GrantBusiness", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *microserviceClient) SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
@@ -93,6 +108,24 @@ func (c *microserviceClient) CreateBusiness(ctx context.Context, in *CreateBusin
 func (c *microserviceClient) GetBusiness(ctx context.Context, in *GetBusinessRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
 	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetBusiness", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) GetBusinessByPubAddr(ctx context.Context, in *GetBusinessWithPubAddrRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetBusinessByPubAddr", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) GetBusinessByUserId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetBusinessByUserId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -180,6 +213,15 @@ func (c *microserviceClient) VerifyProduct(ctx context.Context, in *VerifyAssetR
 	return out, nil
 }
 
+func (c *microserviceClient) GetOwnedProducts(ctx context.Context, in *GetOwnedProductsRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetOwnedProducts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *microserviceClient) GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
 	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetProducts", in, out, opts...)
@@ -201,6 +243,15 @@ func (c *microserviceClient) SearchProducts(ctx context.Context, in *SearchProdu
 func (c *microserviceClient) CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
 	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/CreateWallet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) RegisterWallet(ctx context.Context, in *RegisterWalletRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/RegisterWallet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -247,6 +298,8 @@ func (c *microserviceClient) MakeTransaction(ctx context.Context, in *MakeTransa
 // All implementations must embed UnimplementedMicroserviceServer
 // for forward compatibility
 type MicroserviceServer interface {
+	// admin
+	GrantBusiness(context.Context, *BusinessGrantRequest) (*NetWorkResponse, error)
 	// user manage
 	SignIn(context.Context, *SignInRequest) (*emptypb.Empty, error)
 	SignInWithPhone(context.Context, *PhoneAuthRequest) (*PhoneAuthResponse, error)
@@ -254,6 +307,8 @@ type MicroserviceServer interface {
 	// business
 	CreateBusiness(context.Context, *CreateBusinessRequest) (*NetWorkResponse, error)
 	GetBusiness(context.Context, *GetBusinessRequest) (*NetWorkResponse, error)
+	GetBusinessByPubAddr(context.Context, *GetBusinessWithPubAddrRequest) (*NetWorkResponse, error)
+	GetBusinessByUserId(context.Context, *emptypb.Empty) (*NetWorkResponse, error)
 	DeleteBusiness(context.Context, *DeleteBusinessRequest) (*NetWorkResponse, error)
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	GetUser(context.Context, *GetUserRequest) (*NetWorkResponse, error)
@@ -264,10 +319,12 @@ type MicroserviceServer interface {
 	AddProduct(context.Context, *AddProductRequest) (*NetWorkResponse, error)
 	AddProducts(context.Context, *AddProductsRequest) (*NetWorkResponse, error)
 	VerifyProduct(context.Context, *VerifyAssetRequest) (*NetWorkResponse, error)
+	GetOwnedProducts(context.Context, *GetOwnedProductsRequest) (*NetWorkResponse, error)
 	GetProducts(context.Context, *GetProductsRequest) (*NetWorkResponse, error)
 	SearchProducts(context.Context, *SearchProductsRequest) (*NetWorkResponse, error)
 	// algorand service
 	CreateWallet(context.Context, *CreateWalletRequest) (*NetWorkResponse, error)
+	RegisterWallet(context.Context, *RegisterWalletRequest) (*NetWorkResponse, error)
 	GetAccounts(context.Context, *emptypb.Empty) (*GetAccountResponse, error)
 	MintOwnify(context.Context, *MintOwnifyRequest) (*MintOwnifyResponse, error)
 	MintOwnifyWithCSV(context.Context, *MintOwnifyRequest) (*MintOwnifyResponse, error)
@@ -279,6 +336,9 @@ type MicroserviceServer interface {
 type UnimplementedMicroserviceServer struct {
 }
 
+func (UnimplementedMicroserviceServer) GrantBusiness(context.Context, *BusinessGrantRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GrantBusiness not implemented")
+}
 func (UnimplementedMicroserviceServer) SignIn(context.Context, *SignInRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
 }
@@ -293,6 +353,12 @@ func (UnimplementedMicroserviceServer) CreateBusiness(context.Context, *CreateBu
 }
 func (UnimplementedMicroserviceServer) GetBusiness(context.Context, *GetBusinessRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBusiness not implemented")
+}
+func (UnimplementedMicroserviceServer) GetBusinessByPubAddr(context.Context, *GetBusinessWithPubAddrRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBusinessByPubAddr not implemented")
+}
+func (UnimplementedMicroserviceServer) GetBusinessByUserId(context.Context, *emptypb.Empty) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBusinessByUserId not implemented")
 }
 func (UnimplementedMicroserviceServer) DeleteBusiness(context.Context, *DeleteBusinessRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBusiness not implemented")
@@ -321,6 +387,9 @@ func (UnimplementedMicroserviceServer) AddProducts(context.Context, *AddProducts
 func (UnimplementedMicroserviceServer) VerifyProduct(context.Context, *VerifyAssetRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyProduct not implemented")
 }
+func (UnimplementedMicroserviceServer) GetOwnedProducts(context.Context, *GetOwnedProductsRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOwnedProducts not implemented")
+}
 func (UnimplementedMicroserviceServer) GetProducts(context.Context, *GetProductsRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProducts not implemented")
 }
@@ -329,6 +398,9 @@ func (UnimplementedMicroserviceServer) SearchProducts(context.Context, *SearchPr
 }
 func (UnimplementedMicroserviceServer) CreateWallet(context.Context, *CreateWalletRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateWallet not implemented")
+}
+func (UnimplementedMicroserviceServer) RegisterWallet(context.Context, *RegisterWalletRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterWallet not implemented")
 }
 func (UnimplementedMicroserviceServer) GetAccounts(context.Context, *emptypb.Empty) (*GetAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccounts not implemented")
@@ -353,6 +425,24 @@ type UnsafeMicroserviceServer interface {
 
 func RegisterMicroserviceServer(s grpc.ServiceRegistrar, srv MicroserviceServer) {
 	s.RegisterService(&Microservice_ServiceDesc, srv)
+}
+
+func _Microservice_GrantBusiness_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BusinessGrantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).GrantBusiness(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/GrantBusiness",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).GrantBusiness(ctx, req.(*BusinessGrantRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Microservice_SignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -441,6 +531,42 @@ func _Microservice_GetBusiness_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroserviceServer).GetBusiness(ctx, req.(*GetBusinessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_GetBusinessByPubAddr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBusinessWithPubAddrRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).GetBusinessByPubAddr(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/GetBusinessByPubAddr",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).GetBusinessByPubAddr(ctx, req.(*GetBusinessWithPubAddrRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_GetBusinessByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).GetBusinessByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/GetBusinessByUserId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).GetBusinessByUserId(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -607,6 +733,24 @@ func _Microservice_VerifyProduct_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Microservice_GetOwnedProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOwnedProductsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).GetOwnedProducts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/GetOwnedProducts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).GetOwnedProducts(ctx, req.(*GetOwnedProductsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Microservice_GetProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProductsRequest)
 	if err := dec(in); err != nil {
@@ -657,6 +801,24 @@ func _Microservice_CreateWallet_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroserviceServer).CreateWallet(ctx, req.(*CreateWalletRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_RegisterWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterWalletRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).RegisterWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/RegisterWallet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).RegisterWallet(ctx, req.(*RegisterWalletRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -741,6 +903,10 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*MicroserviceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "GrantBusiness",
+			Handler:    _Microservice_GrantBusiness_Handler,
+		},
+		{
 			MethodName: "SignIn",
 			Handler:    _Microservice_SignIn_Handler,
 		},
@@ -759,6 +925,14 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBusiness",
 			Handler:    _Microservice_GetBusiness_Handler,
+		},
+		{
+			MethodName: "GetBusinessByPubAddr",
+			Handler:    _Microservice_GetBusinessByPubAddr_Handler,
+		},
+		{
+			MethodName: "GetBusinessByUserId",
+			Handler:    _Microservice_GetBusinessByUserId_Handler,
 		},
 		{
 			MethodName: "DeleteBusiness",
@@ -797,6 +971,10 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Microservice_VerifyProduct_Handler,
 		},
 		{
+			MethodName: "GetOwnedProducts",
+			Handler:    _Microservice_GetOwnedProducts_Handler,
+		},
+		{
 			MethodName: "GetProducts",
 			Handler:    _Microservice_GetProducts_Handler,
 		},
@@ -807,6 +985,10 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateWallet",
 			Handler:    _Microservice_CreateWallet_Handler,
+		},
+		{
+			MethodName: "RegisterWallet",
+			Handler:    _Microservice_RegisterWallet_Handler,
 		},
 		{
 			MethodName: "GetAccounts",

@@ -3,9 +3,12 @@ package utils
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/ed25519"
 	"crypto/sha1"
 	"encoding/base32"
 	"encoding/base64"
+
+	"github.com/algorand/go-algorand-sdk/v2/types"
 )
 
 var bytes = []byte{35, 46, 57, 24, 85, 35, 24, 74, 87, 35, 88, 98, 66, 32, 14, 05}
@@ -55,4 +58,21 @@ func Decrypt(text, key string) (string, error) {
 	plainText := make([]byte, len(cipherText))
 	cfb.XORKeyStream(plainText, cipherText)
 	return string(plainText), nil
+}
+
+// AddrToED25519PublicKey copies an address to pk
+func addrToED25519PublicKey(a types.Address) (pk ed25519.PublicKey) {
+	pk = make([]byte, len(a))
+	copy(pk, a[:])
+	return
+}
+
+// VerifySignature verifies a simple signature (not a multisig or logicsig)
+func VerifySignature(msg []byte, addrS string, sig []byte) bool {
+	addr, err := types.DecodeAddress(addrS)
+	if err != nil {
+		return false
+	}
+	pk := addrToED25519PublicKey(addr)
+	return ed25519.Verify(pk, msg, sig)
 }

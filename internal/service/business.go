@@ -7,8 +7,11 @@ import (
 
 type BusinessService interface {
 	CreateBusiness(business *dto.BriefBusiness) error
+	UpdateBusiness(business *dto.BriefBusiness) error
 
 	GetBusiness(email string) (*dto.BriefBusiness, error)
+	GetBusinessByWalletAddress(pubAddr string) (*dto.BriefBusiness, error)
+	GetBusinessByUserId(pubAddr string) (*dto.BriefBusiness, error)
 	DeleteBusiness(email string, userId string) error
 }
 
@@ -23,6 +26,14 @@ func NewBusinessService(dbHandler repository.DBHandler) BusinessService {
 func (b *businessService) CreateBusiness(
 	business *dto.BriefBusiness) error {
 	err := b.dbHandler.NewBusinessQuery().CreateBusiness(business)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (b *businessService) UpdateBusiness(
+	business *dto.BriefBusiness) error {
+	err := b.dbHandler.NewBusinessQuery().UpdateBusiness(business)
 	if err != nil {
 		return err
 	}
@@ -43,4 +54,13 @@ func (b *businessService) DeleteBusiness(email string, userId string) error {
 		return err
 	}
 	return nil
+}
+
+// GetBusinessByWalletAddress implements BusinessService
+func (b *businessService) GetBusinessByWalletAddress(pubAddr string) (*dto.BriefBusiness, error) {
+	return b.dbHandler.NewBusinessQuery().GetBusinessByWalletAddress(pubAddr)
+}
+
+func (b *businessService) GetBusinessByUserId(userId string) (*dto.BriefBusiness, error) {
+	return b.dbHandler.NewBusinessQuery().GetBusinessByUserId(userId)
 }

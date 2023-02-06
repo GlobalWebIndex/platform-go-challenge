@@ -12,10 +12,11 @@ type Wallet struct {
 	UserRole string `json:"user_role"`
 	Email    string `json:"email"`
 	PubKey   string `json:"pub_addr"`
+	UserId   string `json:"user_id"`
 }
 
 func (b *Wallet) Valid() bool {
 	_, err := mail.ParseAddress(b.Email)
 	_, addressErr := types.DecodeAddress(b.PubKey)
-	return !(err != nil || strings.TrimSpace(b.PubKey) == "" || addressErr != nil)
+	return !(err != nil || strings.TrimSpace(b.PubKey) == "" || addressErr != nil || strings.TrimSpace(b.UserId) == "")
 }

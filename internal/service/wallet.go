@@ -7,10 +7,11 @@ import (
 
 type WalletService interface {
 	AddNewAccount(role string, userId string) (*string, error)
+	RegisterNewAccount(walletAddress string, userId string) (*string, error)
 	GetMyAccounts(role string, userId string) ([]string, error)
 	MintOwnify(email string, pubKey string, products []dto.BriefProduct, net string) ([]uint64, error)
 	UpdatePinCode(role string, userId string, newPinCode string) error
-	MakeTransaction(role string, userId string, pubKey string, rawTx []byte, net string) (*string, error)
+	MakeTx(rawTx []byte, net string) (*string, *uint64, error)
 }
 
 type walletService struct {
@@ -57,8 +58,10 @@ func (w *walletService) UpdatePinCode(role string, userId string, newPinCode str
 	)
 }
 
-func (w *walletService) MakeTransaction(role string, userId string, pubKey string, rawTx []byte, net string) (*string, error) {
-	return w.wallet.NewWalletQuery().MakeTransaction(
-		role, userId, pubKey, rawTx, net,
-	)
+func (w *walletService) MakeTx(rawTx []byte, net string) (*string, *uint64, error) {
+	return w.wallet.NewWalletQuery().MakeTx(rawTx, net)
+}
+
+func (w *walletService) RegisterNewAccount(walletAddress string, userId string) (*string, error) {
+	return w.wallet.NewWalletQuery().RegisterNewAccount(walletAddress, userId)
 }

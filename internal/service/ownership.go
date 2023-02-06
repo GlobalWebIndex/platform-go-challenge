@@ -26,7 +26,7 @@ func (o *ownershipService) GetOwnerShip(pubKey string) (*dto.BriefBusiness, *dto
 	defer close(bChan)
 	defer close(uChan)
 	go func() {
-		business, err := o.dbHandler.NewBusinessQuery().GetBusiness(pubKey)
+		business, err := o.dbHandler.NewBusinessQuery().GetBusinessByWalletAddress(pubKey)
 		if err != nil {
 			bChan <- domain.Result[dto.BriefBusiness]{
 				Err: err,

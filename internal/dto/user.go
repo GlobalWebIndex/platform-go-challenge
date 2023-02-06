@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"fmt"
+
 	"github.com/algorand/go-algorand-sdk/v2/types"
 	"github.com/go-playground/validator/v10"
 )
@@ -25,4 +27,16 @@ func (u *BriefUser) Valid() error {
 	validate := validator.New()
 	err := validate.Struct(u)
 	return err
+}
+
+func (u *BriefUser) ValidMainInfo() error {
+	_, addressErr := types.DecodeAddress(u.PubAddr)
+	if addressErr != nil {
+		return addressErr
+	}
+
+	if u.FirstName != "" && u.LastName != "" && u.BirthDay != "" && u.Gender != "" && u.Nationality != "" {
+		return nil
+	}
+	return fmt.Errorf("[ERR] invalid user info: %s %s", u.FirstName, u.LastName)
 }

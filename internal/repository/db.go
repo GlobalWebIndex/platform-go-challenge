@@ -13,6 +13,7 @@ type DBHandler interface {
 	NewUserQuery() UserQuery
 	NewBusinessQuery() BusinessQuery
 	NewProductQuery() ProductQuery
+	NewAdminQuery() AdminQuery
 }
 
 type dbHandler struct {
@@ -79,4 +80,8 @@ func (d *dbHandler) NewBusinessQuery() BusinessQuery {
 
 func (d *dbHandler) NewProductQuery() ProductQuery {
 	return &productQuery{}
+}
+
+func (d *dbHandler) NewAdminQuery() AdminQuery {
+	return &adminQuery{}
 }

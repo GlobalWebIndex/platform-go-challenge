@@ -14,6 +14,14 @@ import "google/protobuf/struct.proto";
 
 service Microservice {
 
+  //admin
+  rpc GrantBusiness (BusinessGrantRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/grant/business"
+      body: "*"
+    };
+  }
+
   //user manage
   rpc SignIn (SignInRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
@@ -42,8 +50,17 @@ service Microservice {
     };
   }
   rpc GetBusiness(GetBusinessRequest) returns (NetWorkResponse) {
-    option (google.api.http).get = "/v1/business/{email}";
-    }
+    option (google.api.http).get = "/v1/business/email/{email}";
+  }
+
+  rpc GetBusinessByPubAddr(GetBusinessWithPubAddrRequest) returns (NetWorkResponse) {
+    option (google.api.http).get = "/v1/business/wallet/{pub_addr}";
+  }
+
+  rpc GetBusinessByUserId(google.protobuf.Empty) returns (NetWorkResponse) {
+    option (google.api.http).get = "/v1/business";
+  }
+  
   
   rpc DeleteBusiness(DeleteBusinessRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
@@ -104,6 +121,12 @@ service Microservice {
     };
   }
 
+  rpc GetOwnedProducts(GetOwnedProductsRequest) returns(NetWorkResponse) {
+    option (google.api.http) = {
+      get: "/v1/product/list/{net}/{wallet_address}/{page}/{per_page}"
+    };
+  }
+
   rpc GetProducts(GetProductsRequest) returns(NetWorkResponse) {
     option (google.api.http) = {
       get: "/v1/product/list/{net}/{page}/{per_page}"
@@ -123,6 +146,13 @@ service Microservice {
   rpc CreateWallet (CreateWalletRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
       post: "/v1/wallet/create"
+      body: "*"
+    };
+  }
+
+  rpc RegisterWallet (RegisterWalletRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/wallet/register"
       body: "*"
     };
   }
@@ -154,6 +184,12 @@ service Microservice {
   }
 }
 
+
+message BusinessGrantRequest {
+  string my_email = 1 [(validate.rules).string.email = true];;
+  string business_email = 2 [(validate.rules).string.email = true];
+  bool is_approved = 3;
+}
 
 message SignInRequest {
   string email = 1 [(validate.rules).string.email = true];
@@ -244,13 +280,21 @@ message AddProductRequest {
 message AddProductsRequest {
   int64 chain_id = 1;
   repeated Product products = 2;
-  string net = 3  [(validate.rules).string = {in: ["main","test"]}];
+  bytes tx = 3;
+  string net = 4  [(validate.rules).string = {in: ["main","test"]}];
 }
 
 message VerifyAssetRequest {
   int32 chain_id = 1;
   int64 asset_id = 2;
   string net = 3  [(validate.rules).string = {in: ["main","test"]}];
+}
+
+message GetOwnedProductsRequest {
+  string  net = 1  [(validate.rules).string = {in: ["main","test"]}];
+  string  wallet_address = 2;
+  int32 page = 3;
+  int32 per_page = 4;
 }
 
 message GetProductsRequest {
@@ -292,6 +336,9 @@ message CreateBusinessRequest {
 message GetBusinessRequest {
   string email = 1 [(validate.rules).string.email = true];
 }
+message GetBusinessWithPubAddrRequest {
+  string pub_addr = 1;
+}
 
 message DeleteBusinessRequest {
   string email = 1 [(validate.rules).string.email = true];
@@ -308,6 +355,13 @@ message CreateWalletRequest {
   int32 chain_id = 1;
   string user_role = 2 [(validate.rules).string = {in: ["person","business"]}];
   string email = 3 [(validate.rules).string.email = true];
+  string user_id = 4;
+}
+
+message RegisterWalletRequest {
+  int32 chain_id = 1;
+  string wallet_address = 2;
+  bytes sig = 4;
 }
 
 message CreateWalletResponse {
@@ -322,9 +376,6 @@ message GetAccountResponse {
 
 message MakeTransactionRequest {
   string chain_id = 1;
-  string email = 2 [(validate.rules).string.email = true];
-  string role = 3;
-  string pub_key = 4;
   bytes rawTx = 5;
   string net = 6;
 }
@@ -357,3 +408,4 @@ message MintOwnifyRequest {
 message MintOwnifyResponse {
   repeated uint64 asset_ids=1;
 }
+

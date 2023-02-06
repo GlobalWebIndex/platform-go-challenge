@@ -9,7 +9,6 @@ import (
 	desc "ownify_api/pkg"
 
 	"google.golang.org/grpc/metadata"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (m *MicroserviceServer) AddProduct(ctx context.Context, req *desc.AddProductRequest) (*desc.NetWorkResponse, error) {
@@ -70,18 +69,22 @@ func (m *MicroserviceServer) AddProducts(ctx context.Context, req *desc.AddProdu
 	if req.Net != domain.TestNet || req.Net == domain.MainNet {
 		return nil, fmt.Errorf("invalid network: %s", req.Net)
 	}
+	// _, assetId, err := m.walletService.MakeTx(req.Tx, req.Net)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	products := []dto.BriefProduct{}
 	dupRemover := make(map[int64]int)
+
 	for index, product := range req.Products {
 		if _, ok := dupRemover[product.AssetId]; ok {
 			return nil, fmt.Errorf("[ERR] include duplicated product information at %d", index)
 		}
-
 		dupRemover[product.AssetId] = 1
 		product := dto.BriefProduct{
 			ChainId:        int(req.ChainId),
-			AssetId:        int64(product.AssetId),
+			AssetId:        product.AssetId, //int64(*assetId) + int64(index),
 			Owner:          product.Owner,
 			Barcode:        product.Barcode,
 			ItemName:       product.ItemName,
@@ -108,7 +111,7 @@ func (m *MicroserviceServer) AddProducts(ctx context.Context, req *desc.AddProdu
 	}, nil
 }
 
-func (m *MicroserviceServer) GetProduct(ctx context.Context, req *desc.SignInRequest) (*emptypb.Empty, error) {
+func (m *MicroserviceServer) GetOwnedProducts(ctx context.Context, req *desc.GetOwnedProductsRequest) (*desc.NetWorkResponse, error) {
 	// md, _ := metadata.FromIncomingContext(ctx)
 	// fmt.Println(md.Get("test"))
 	// token, err := m.authService.SignIn(req.GetEmail(), req.GetPassword())
@@ -122,7 +125,7 @@ func (m *MicroserviceServer) GetProduct(ctx context.Context, req *desc.SignInReq
 	// if err != nil {
 	// 	return nil, err
 	// }
-	return &emptypb.Empty{}, nil
+	return nil, nil
 }
 
 func (m *MicroserviceServer) VerifyProduct(ctx context.Context, req *desc.VerifyAssetRequest) (*desc.NetWorkResponse, error) {
@@ -156,7 +159,6 @@ func (m *MicroserviceServer) GetProducts(ctx context.Context, req *desc.GetProdu
 }
 
 func (m *MicroserviceServer) SearchProducts(ctx context.Context, req *desc.SearchProductsRequest) (*desc.NetWorkResponse, error) {
-
 	filter := dto.BriefProduct{
 		AssetId:    req.Filter.AssetId,
 		Owner:      req.Filter.Owner,

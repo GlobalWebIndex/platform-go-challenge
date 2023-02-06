@@ -4,13 +4,14 @@ import (
 	"strconv"
 
 	"ownify_api/internal/repository"
-	//"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService interface {
 	CheckEmail(email string) bool
 	ValidUser(pubKey string, idFingerprint string) bool
 	ValidBusiness(uid string, email string) bool
+	VerifyBusinessByUserId(uid string) bool
+	ValidAdmin(uid string, email string) bool
 }
 
 type authService struct {
@@ -49,6 +50,15 @@ func (a *authService) ValidUser(pubKey string, idFingerprint string) bool {
 }
 
 func (a *authService) ValidBusiness(uid string, email string) bool {
-	_, err := a.dbHandler.NewBusinessQuery().VerifyBusiness(uid, email)
+	err := a.dbHandler.NewBusinessQuery().VerifyBusiness(uid, email)
+	return err == nil
+}
+func (a *authService) VerifyBusinessByUserId(uid string) bool {
+	err := a.dbHandler.NewBusinessQuery().VerifyBusinessByUserId(uid)
+	return err == nil
+}
+
+func (a *authService) ValidAdmin(uid string, email string) bool {
+	err := a.dbHandler.NewBusinessQuery().VerifyBusiness(uid, email)
 	return err == nil
 }

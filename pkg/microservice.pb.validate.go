@@ -35,6 +35,184 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on BusinessGrantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *BusinessGrantRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BusinessGrantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// BusinessGrantRequestMultiError, or nil if none found.
+func (m *BusinessGrantRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BusinessGrantRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateEmail(m.GetMyEmail()); err != nil {
+		err = BusinessGrantRequestValidationError{
+			field:  "MyEmail",
+			reason: "value must be a valid email address",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if err := m._validateEmail(m.GetBusinessEmail()); err != nil {
+		err = BusinessGrantRequestValidationError{
+			field:  "BusinessEmail",
+			reason: "value must be a valid email address",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for IsApproved
+
+	if len(errors) > 0 {
+		return BusinessGrantRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *BusinessGrantRequest) _validateHostname(host string) error {
+	s := strings.ToLower(strings.TrimSuffix(host, "."))
+
+	if len(host) > 253 {
+		return errors.New("hostname cannot exceed 253 characters")
+	}
+
+	for _, part := range strings.Split(s, ".") {
+		if l := len(part); l == 0 || l > 63 {
+			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
+		}
+
+		if part[0] == '-' {
+			return errors.New("hostname parts cannot begin with hyphens")
+		}
+
+		if part[len(part)-1] == '-' {
+			return errors.New("hostname parts cannot end with hyphens")
+		}
+
+		for _, r := range part {
+			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
+				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *BusinessGrantRequest) _validateEmail(addr string) error {
+	a, err := mail.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	addr = a.Address
+
+	if len(addr) > 254 {
+		return errors.New("email addresses cannot exceed 254 characters")
+	}
+
+	parts := strings.SplitN(addr, "@", 2)
+
+	if len(parts[0]) > 64 {
+		return errors.New("email address local phrase cannot exceed 64 characters")
+	}
+
+	return m._validateHostname(parts[1])
+}
+
+// BusinessGrantRequestMultiError is an error wrapping multiple validation
+// errors returned by BusinessGrantRequest.ValidateAll() if the designated
+// constraints aren't met.
+type BusinessGrantRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BusinessGrantRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BusinessGrantRequestMultiError) AllErrors() []error { return m }
+
+// BusinessGrantRequestValidationError is the validation error returned by
+// BusinessGrantRequest.Validate if the designated constraints aren't met.
+type BusinessGrantRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BusinessGrantRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BusinessGrantRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BusinessGrantRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BusinessGrantRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BusinessGrantRequestValidationError) ErrorName() string {
+	return "BusinessGrantRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e BusinessGrantRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBusinessGrantRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BusinessGrantRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BusinessGrantRequestValidationError{}
+
 // Validate checks the field values on SignInRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -1714,6 +1892,8 @@ func (m *AddProductsRequest) validate(all bool) error {
 
 	}
 
+	// no validation rules for Tx
+
 	if _, ok := _AddProductsRequest_Net_InLookup[m.GetNet()]; !ok {
 		err := AddProductsRequestValidationError{
 			field:  "Net",
@@ -1928,6 +2108,130 @@ var _ interface {
 } = VerifyAssetRequestValidationError{}
 
 var _VerifyAssetRequest_Net_InLookup = map[string]struct{}{
+	"main": {},
+	"test": {},
+}
+
+// Validate checks the field values on GetOwnedProductsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetOwnedProductsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetOwnedProductsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetOwnedProductsRequestMultiError, or nil if none found.
+func (m *GetOwnedProductsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetOwnedProductsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if _, ok := _GetOwnedProductsRequest_Net_InLookup[m.GetNet()]; !ok {
+		err := GetOwnedProductsRequestValidationError{
+			field:  "Net",
+			reason: "value must be in list [main test]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for WalletAddress
+
+	// no validation rules for Page
+
+	// no validation rules for PerPage
+
+	if len(errors) > 0 {
+		return GetOwnedProductsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetOwnedProductsRequestMultiError is an error wrapping multiple validation
+// errors returned by GetOwnedProductsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetOwnedProductsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetOwnedProductsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetOwnedProductsRequestMultiError) AllErrors() []error { return m }
+
+// GetOwnedProductsRequestValidationError is the validation error returned by
+// GetOwnedProductsRequest.Validate if the designated constraints aren't met.
+type GetOwnedProductsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetOwnedProductsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetOwnedProductsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetOwnedProductsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetOwnedProductsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetOwnedProductsRequestValidationError) ErrorName() string {
+	return "GetOwnedProductsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetOwnedProductsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetOwnedProductsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetOwnedProductsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetOwnedProductsRequestValidationError{}
+
+var _GetOwnedProductsRequest_Net_InLookup = map[string]struct{}{
 	"main": {},
 	"test": {},
 }
@@ -2668,6 +2972,111 @@ var _ interface {
 	ErrorName() string
 } = GetBusinessRequestValidationError{}
 
+// Validate checks the field values on GetBusinessWithPubAddrRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetBusinessWithPubAddrRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetBusinessWithPubAddrRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetBusinessWithPubAddrRequestMultiError, or nil if none found.
+func (m *GetBusinessWithPubAddrRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetBusinessWithPubAddrRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PubAddr
+
+	if len(errors) > 0 {
+		return GetBusinessWithPubAddrRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetBusinessWithPubAddrRequestMultiError is an error wrapping multiple
+// validation errors returned by GetBusinessWithPubAddrRequest.ValidateAll()
+// if the designated constraints aren't met.
+type GetBusinessWithPubAddrRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetBusinessWithPubAddrRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetBusinessWithPubAddrRequestMultiError) AllErrors() []error { return m }
+
+// GetBusinessWithPubAddrRequestValidationError is the validation error
+// returned by GetBusinessWithPubAddrRequest.Validate if the designated
+// constraints aren't met.
+type GetBusinessWithPubAddrRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetBusinessWithPubAddrRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetBusinessWithPubAddrRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetBusinessWithPubAddrRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetBusinessWithPubAddrRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetBusinessWithPubAddrRequestValidationError) ErrorName() string {
+	return "GetBusinessWithPubAddrRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetBusinessWithPubAddrRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetBusinessWithPubAddrRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetBusinessWithPubAddrRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetBusinessWithPubAddrRequestValidationError{}
+
 // Validate checks the field values on DeleteBusinessRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -3016,6 +3425,8 @@ func (m *CreateWalletRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for UserId
+
 	if len(errors) > 0 {
 		return CreateWalletRequestMultiError(errors)
 	}
@@ -3150,6 +3561,114 @@ var _CreateWalletRequest_UserRole_InLookup = map[string]struct{}{
 	"person":   {},
 	"business": {},
 }
+
+// Validate checks the field values on RegisterWalletRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RegisterWalletRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RegisterWalletRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RegisterWalletRequestMultiError, or nil if none found.
+func (m *RegisterWalletRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RegisterWalletRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ChainId
+
+	// no validation rules for WalletAddress
+
+	// no validation rules for Sig
+
+	if len(errors) > 0 {
+		return RegisterWalletRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RegisterWalletRequestMultiError is an error wrapping multiple validation
+// errors returned by RegisterWalletRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RegisterWalletRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RegisterWalletRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RegisterWalletRequestMultiError) AllErrors() []error { return m }
+
+// RegisterWalletRequestValidationError is the validation error returned by
+// RegisterWalletRequest.Validate if the designated constraints aren't met.
+type RegisterWalletRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RegisterWalletRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RegisterWalletRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RegisterWalletRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RegisterWalletRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RegisterWalletRequestValidationError) ErrorName() string {
+	return "RegisterWalletRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RegisterWalletRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRegisterWalletRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RegisterWalletRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RegisterWalletRequestValidationError{}
 
 // Validate checks the field values on CreateWalletResponse with the rules
 // defined in the proto definition for this message. If any rules are
@@ -3381,22 +3900,6 @@ func (m *MakeTransactionRequest) validate(all bool) error {
 
 	// no validation rules for ChainId
 
-	if err := m._validateEmail(m.GetEmail()); err != nil {
-		err = MakeTransactionRequestValidationError{
-			field:  "Email",
-			reason: "value must be a valid email address",
-			cause:  err,
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for Role
-
-	// no validation rules for PubKey
-
 	// no validation rules for RawTx
 
 	// no validation rules for Net
@@ -3406,56 +3909,6 @@ func (m *MakeTransactionRequest) validate(all bool) error {
 	}
 
 	return nil
-}
-
-func (m *MakeTransactionRequest) _validateHostname(host string) error {
-	s := strings.ToLower(strings.TrimSuffix(host, "."))
-
-	if len(host) > 253 {
-		return errors.New("hostname cannot exceed 253 characters")
-	}
-
-	for _, part := range strings.Split(s, ".") {
-		if l := len(part); l == 0 || l > 63 {
-			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
-		}
-
-		if part[0] == '-' {
-			return errors.New("hostname parts cannot begin with hyphens")
-		}
-
-		if part[len(part)-1] == '-' {
-			return errors.New("hostname parts cannot end with hyphens")
-		}
-
-		for _, r := range part {
-			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
-				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *MakeTransactionRequest) _validateEmail(addr string) error {
-	a, err := mail.ParseAddress(addr)
-	if err != nil {
-		return err
-	}
-	addr = a.Address
-
-	if len(addr) > 254 {
-		return errors.New("email addresses cannot exceed 254 characters")
-	}
-
-	parts := strings.SplitN(addr, "@", 2)
-
-	if len(parts[0]) > 64 {
-		return errors.New("email address local phrase cannot exceed 64 characters")
-	}
-
-	return m._validateHostname(parts[1])
 }
 
 // MakeTransactionRequestMultiError is an error wrapping multiple validation

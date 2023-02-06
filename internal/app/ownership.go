@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 
 	"ownify_api/internal/utils"
 	desc "ownify_api/pkg"
@@ -16,8 +17,12 @@ func (m *MicroserviceServer) GetOwnership(ctx context.Context, req *desc.GetOwne
 	if err != nil {
 		return nil, err
 	}
-	if b.Valid() {
+	if b.Email != "" {
 		return BuildRes(b, "business", true)
 	}
-	return BuildRes(u, "user", true)
+	if u.ValidMainInfo() == nil {
+		return BuildRes(u, "user", true)
+	}
+	return nil, fmt.Errorf("[ERR] Did not find ownership: %s", req.WalletAddress)
+
 }

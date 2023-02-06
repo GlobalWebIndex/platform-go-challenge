@@ -46,6 +46,7 @@ func main() {
 	dbHandler := repository.NewDBHandler(db)
 	wallet := repository.NewAlgoHandler()
 
+	adminService := service.NewAdminService(dbHandler)
 	userService := service.NewUserService(dbHandler)
 	businessService := service.NewBusinessService(dbHandler)
 	ownershipService := service.NewOwnershipService(dbHandler)
@@ -68,6 +69,7 @@ func main() {
 
 		grpcServer := grpc.NewServer(grpcOpts)
 		desc.RegisterMicroserviceServer(grpcServer, app.NewMicroservice(
+			adminService,
 			userService,
 			businessService,
 			ownershipService,
@@ -87,6 +89,7 @@ func main() {
 	// Starting HTTP server
 	mux := runtime.NewServeMux(httpOpts)
 	err = desc.RegisterMicroserviceHandlerServer(context.Background(), mux, app.NewMicroservice(
+		adminService,
 		userService,
 		businessService,
 		ownershipService,

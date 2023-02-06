@@ -29,6 +29,7 @@ type SqlBuilder interface {
 	Insert(tableName string, cols []string, values []interface{}) (*string, error)
 	Delete(tableName string, conditions []Tuple, joinKey string) (*string, error)
 	Select(tableName string, targets []string, conditions []Tuple, condOperator CondOperator, joinKey string) (*string, error)
+	Update(tableName string, values []Tuple, conditions []Tuple, joinKey string) (*string, error)
 }
 
 type sqlBuilder struct{}
@@ -114,4 +115,12 @@ func GenerateCond(keys []string, values []interface{}) []Tuple {
 		conds = append(conds, Tuple{Key: keys[i], Val: values[i]})
 	}
 	return conds
+}
+
+
+func (*sqlBuilder) Update(tableName string, values []Tuple, conditions []Tuple, joinKey string) (*string, error) {
+	valueQ := conditionBuilder(values, eq, ",")
+	condQ := conditionBuilder(conditions, eq, joinKey)
+	sql := fmt.Sprintf("UPDATE %s SET %s WHERE %s", tableName, *valueQ, *condQ)
+	return &sql, nil
 }

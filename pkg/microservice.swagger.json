@@ -16,6 +16,61 @@
     "application/json"
   ],
   "paths": {
+    "/v1/admin/grant/business": {
+      "post": {
+        "summary": "admin",
+        "operationId": "Microservice_GrantBusiness",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1BusinessGrantRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/business": {
+      "get": {
+        "operationId": "Microservice_GetBusinessByUserId",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
     "/v1/business/create": {
       "post": {
         "summary": "business",
@@ -81,7 +136,7 @@
         ]
       }
     },
-    "/v1/business/{email}": {
+    "/v1/business/email/{email}": {
       "get": {
         "operationId": "Microservice_GetBusiness",
         "responses": {
@@ -101,6 +156,36 @@
         "parameters": [
           {
             "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/business/wallet/{pubAddr}": {
+      "get": {
+        "operationId": "Microservice_GetBusinessByPubAddr",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pubAddr",
             "in": "path",
             "required": true,
             "type": "string"
@@ -290,6 +375,56 @@
         "parameters": [
           {
             "name": "net",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "perPage",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/product/list/{net}/{walletAddress}/{page}/{perPage}": {
+      "get": {
+        "operationId": "Microservice_GetOwnedProducts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "net",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "walletAddress",
             "in": "path",
             "required": true,
             "type": "string"
@@ -689,6 +824,38 @@
           "Microservice"
         ]
       }
+    },
+    "/v1/wallet/register": {
+      "post": {
+        "operationId": "Microservice_RegisterWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RegisterWalletRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
     }
   },
   "definitions": {
@@ -784,8 +951,26 @@
             "$ref": "#/definitions/v1Product"
           }
         },
+        "tx": {
+          "type": "string",
+          "format": "byte"
+        },
         "net": {
           "type": "string"
+        }
+      }
+    },
+    "v1BusinessGrantRequest": {
+      "type": "object",
+      "properties": {
+        "myEmail": {
+          "type": "string"
+        },
+        "businessEmail": {
+          "type": "string"
+        },
+        "isApproved": {
+          "type": "boolean"
         }
       }
     },
@@ -853,6 +1038,9 @@
           "type": "string"
         },
         "email": {
+          "type": "string"
+        },
+        "userId": {
           "type": "string"
         }
       },
@@ -1036,6 +1224,22 @@
         "issuedDate": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "v1RegisterWalletRequest": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "walletAddress": {
+          "type": "string"
+        },
+        "sig": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },

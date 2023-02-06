@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	//"golang.org/x/crypto/bcrypt"
 )
 
 type NotifyService interface {
@@ -34,7 +33,8 @@ var upgrader = websocket.Upgrader{
 var ws *websocket.Conn
 
 func NewNotifyService() NotifyService {
-	http.HandleFunc("/ws", wsEndpoint)
+	//http.HandleFunc("/v1/ws", wsEndpoint)
+	//http.ListenAndServe(":9000", nil)
 	return &notifyService{
 		conn: ws,
 	}

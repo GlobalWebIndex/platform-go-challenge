@@ -40,6 +40,32 @@ func (m *MicroserviceServer) CreateWallet(ctx context.Context, req *desc.CreateW
 
 }
 
+func (m *MicroserviceServer) RegisterWallet(ctx context.Context, req *desc.RegisterWalletRequest) (*desc.NetWorkResponse, error) {
+	// validate token.
+	uid, err := m.TokenInterceptor(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if utils.IsPubKey(req.WalletAddress) != nil {
+		return nil, fmt.Errorf("[ERR] invalid request: %v", req)
+	}
+
+	if !utils.VerifySignature([]byte(req.WalletAddress), req.WalletAddress, req.Sig) {
+		return nil, fmt.Errorf("[ERR] can't register other's wallet: %s", req.WalletAddress)
+	}
+
+	// register new wallet.
+	pubKey, err := m.walletService.RegisterNewAccount(req.WalletAddress, *uid)
+	if err != nil {
+		return nil, err
+	}
+	return BuildRes(dto.Wallet{
+		PubKey: *pubKey,
+	}, "Successfully registered", true)
+
+}
+
 func (m *MicroserviceServer) GetMyAccounts(ctx context.Context, req *desc.SignInRequest) (*emptypb.Empty, error) {
 	// validate token.
 	uid, err := m.TokenInterceptor(ctx)
@@ -94,14 +120,11 @@ func (m *MicroserviceServer) MakeTransaction(ctx context.Context, req *desc.Make
 		return &desc.MakeTransactionResponse{}, err
 	}
 
-	if !m.authService.ValidBusiness(*uid, req.Email) {
+	if !m.authService.VerifyBusinessByUserId(*uid) {
 		return &desc.MakeTransactionResponse{}, err
 	}
 
-	txId, err := m.walletService.MakeTransaction(
-		req.Role,
-		req.Email,
-		req.PubKey,
+	txId, _, err := m.walletService.MakeTx(
 		req.RawTx,
 		req.Net,
 	)
