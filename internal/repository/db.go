@@ -6,7 +6,6 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/Masterminds/squirrel"
 	"github.com/spf13/viper"
 )
 
@@ -21,10 +20,6 @@ type dbHandler struct {
 }
 
 var DB *sql.DB
-
-func pgQb() squirrel.StatementBuilderType {
-	return squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar).RunWith(DB)
-}
 
 func NewDBHandler(db *sql.DB) DBHandler {
 	return &dbHandler{db}
@@ -42,6 +37,28 @@ func NewDB() (*sql.DB, error) {
 	user := viper.Get("database.user").(string)
 	dbname := viper.Get("database.dbname").(string)
 	password := viper.Get("database.password").(string)
+
+	// Starting a database
+	connection := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname + "?parseTime=true"
+	DB, err = sql.Open("mysql", connection)
+	if err != nil {
+		return nil, err
+	}
+	return DB, nil
+}
+
+func NewTestDB() (*sql.DB, error) {
+	viper.AddConfigPath("../config")
+	viper.SetConfigName("config")
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalln("cannot read from a config")
+	}
+	host := viper.Get("database.test.host").(string)
+	port := viper.Get("database.test.port").(string)
+	user := viper.Get("database.test.user").(string)
+	dbname := viper.Get("database.test.dbname").(string)
+	password := viper.Get("database.test.password").(string)
 
 	// Starting a database
 	connection := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname + "?parseTime=true"
