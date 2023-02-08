@@ -1,0 +1,37 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      singlestoredb:
+        image: ghcr.io/singlestore-labs/singlestoredb-dev
+        ports:
+          - 3306:3306
+          - 8080:8080
+          - 9000:9000
+        env:
+          ROOT_PASSWORD: helloworld
+          SINGLESTORE_LICENSE: ${{ secrets.SINGLESTORE_LICENSE }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: sanity check using mysql client
+        run: |
+          mysql -u root -ptest -e "SELECT 1" -h 127.0.0.1
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+      - name: Build
+        run: go build -v ./...
+      - name: Test
+        run: go test -v ./...
