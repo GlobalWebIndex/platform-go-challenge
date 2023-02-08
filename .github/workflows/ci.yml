@@ -24,9 +24,6 @@ jobs:
           SINGLESTORE_LICENSE: BDc0N2Y2YTQzZjM2MTQwYTM4MmFlNTJhOGI4Y2I2MGI1AAAAAAAAAAAEAAAAAAAAACgwNAIYMWL4bAtDSFFwpdt5xsVJwuo3/NM6n0ilAhgVC+he8d+tSaNqHwRtQZzvMyDlKwLn6ZYAAA==
     steps:
       - uses: actions/checkout@v3
-      - name: sanity check using mysql client
-        run: |
-          mysql -u root -ptest -e "SELECT 1" -h 127.0.0.1
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
