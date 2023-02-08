@@ -61,7 +61,7 @@ func main() {
 
 	// Starting gRPC server
 	go func() {
-		listener, err := net.Listen("tcp", ":8081")
+		listener, err := net.Listen("tcp", ":8901")
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -102,5 +102,5 @@ func main() {
 	if err != nil {
 		log.Println("cannot register this service")
 	}
-	log.Fatalln(http.ListenAndServe(":8080", mux))
+	log.Fatalln(http.ListenAndServe(":8901", mux))
 }
