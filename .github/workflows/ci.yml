@@ -21,7 +21,7 @@ jobs:
           - 9000:9000
         env:
           ROOT_PASSWORD: helloworld
-          SINGLESTORE_LICENSE: ${{ secrets.SINGLESTORE_LICENSE }}
+          SINGLESTORE_LICENSE: BDc0N2Y2YTQzZjM2MTQwYTM4MmFlNTJhOGI4Y2I2MGI1AAAAAAAAAAAEAAAAAAAAACgwNAIYMWL4bAtDSFFwpdt5xsVJwuo3
     steps:
       - uses: actions/checkout@v3
       - name: sanity check using mysql client
