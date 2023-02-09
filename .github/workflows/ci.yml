@@ -21,7 +21,7 @@ jobs:
         volumes:
           # persist data between runs:
           - db-data:/var/lib/memsql
-          - ./init.sql:/init.sql
+          - /home/user/init.sql:/init.sql
         env:
           # use the LICENSE_KEY environment variable set in the terminal:
           LICENSE_KEY: ${SINGLESTORE_LICENSE}
