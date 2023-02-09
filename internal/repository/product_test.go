@@ -22,9 +22,7 @@ func init() {
 
 }
 func TestAddProduct(t *testing.T) {
-	db, err := repository.NewTestDB()
-	require.Nil(t, err)
-	err = DBSetup()
+	db, err := DBSetup()
 	require.Nil(t, err)
 	dbHandler := repository.NewDBHandler(db)
 	product := dto.BriefProduct{
@@ -46,9 +44,7 @@ func TestAddProduct(t *testing.T) {
 }
 
 func TestAddDuplicatedProduct(t *testing.T) {
-	db, err := repository.NewTestDB()
-	require.Nil(t, err)
-	err = DBSetup()
+	db, err := DBSetup()
 	require.Nil(t, err)
 	dbHandler := repository.NewDBHandler(db)
 
@@ -75,9 +71,7 @@ func TestAddDuplicatedProduct(t *testing.T) {
 }
 
 func TestAddProducts(t *testing.T) {
-	db, err := repository.NewTestDB()
-	require.Nil(t, err)
-	err = DBSetup()
+	db, err := DBSetup()
 	require.Nil(t, err)
 	dbHandler := repository.NewDBHandler(db)
 

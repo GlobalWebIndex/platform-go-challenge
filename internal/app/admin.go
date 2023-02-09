@@ -21,7 +21,7 @@ func (m *MicroserviceServer) GrantBusiness(ctx context.Context, req *desc.Busine
 
 	isRegistered := m.authService.ValidAdmin(*user_id, req.MyEmail)
 	if !isRegistered {
-		return nil, fmt.Errorf("[ERR] You are not admin", req.MyEmail)
+		return nil, fmt.Errorf("[ERR] You are not admin: %s", req.MyEmail)
 	}
 
 	err = m.adminService.GrantBusiness(req.BusinessEmail, req.IsApproved)
@@ -34,7 +34,7 @@ func (m *MicroserviceServer) GrantBusiness(ctx context.Context, req *desc.Busine
 		return nil, err
 	}
 	err = m.notifyService.SendMessage(msg)
-	
+
 	if err != nil {
 		return nil, err
 	}

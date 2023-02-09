@@ -1,6 +1,7 @@
 package repository_test
 
 import (
+	"database/sql"
 	"os"
 	"ownify_api/internal/repository"
 	"path"
@@ -10,10 +11,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func DBSetup() error {
-	_, err := repository.NewTestDB()
+func DBSetup() (*sql.DB, error) {
+	db, err := repository.NewTestDB()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	//delete database
 	deleteDBSql := "DROP DATABASE ownify"
@@ -23,23 +24,23 @@ func DBSetup() error {
 	createDBSql := "CREATE DATABASE ownify"
 	_, err = repository.DB.Exec(createDBSql)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	//select database
 	useDBSql := "USE ownify"
 	_, err = repository.DB.Exec(useDBSql)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	//create product_test table
 	productTestSql := "CREATE TABLE products_test(chain_id int NOT NULL,asset_id BIGINT PRIMARY KEY COMMENT 'Primary Key',owner VARCHAR(255) NOT NULL,barcode VARCHAR(30) NOT NULL,item_name VARCHAR(255),brand_name VARCHAR(255),additional_data TEXT,location VARCHAR(50),issued_date BIGINT,transfer_date BIGINT,manufacture VARCHAR(50),origin_country VARCHAR(50),status VARCHAR(20),warranty BOOLEAN,warranty_time TIMESTAMP,insurance BOOLEAN,insurance_time TIMESTAMP,data_sharing INT,recyclable BOOLEAN,ecommerce BOOLEAN,category VARCHAR(30),price FLOAT,currency VARCHAR(10),points FLOAT,authenticity BOOLEAN,ownership BOOLEAN,is_gs1 BOOLEAN,create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Create Time',name VARCHAR(255)) COMMENT '';"
 	_, err = repository.DB.Exec(productTestSql)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
-	return nil
+	return db, err
 }
 func init() {
 	_, filename, _, _ := runtime.Caller(0)

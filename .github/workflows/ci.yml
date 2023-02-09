@@ -13,15 +13,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     services:
-      singlestoredb:
-        image: ghcr.io/singlestore-labs/singlestoredb-dev
+      singlestore:
+        image: memsql/cluster-in-a-box
         ports:
           - 3306:3306
           - 8080:8080
-          - 9000:9000
+        volumes:
+          # persist data between runs:
+          - db-data:/var/lib/memsql
+          - ./init.sql:/init.sql
         env:
+          # use the LICENSE_KEY environment variable set in the terminal:
+          LICENSE_KEY: ${SINGLESTORE_LICENSE}
+          START_AFTER_INIT: Y
           ROOT_PASSWORD: helloworld
-          SINGLESTORE_LICENSE: BDc0N2Y2YTQzZjM2MTQwYTM4MmFlNTJhOGI4Y2I2MGI1AAAAAAAAAAAEAAAAAAAAACgwNAIYMWL4bAtDSFFwpdt5xsVJwuo3/NM6n0ilAhgVC+he8d+tSaNqHwRtQZzvMyDlKwLn6ZYAAA==
     steps:
       - uses: actions/checkout@v3
       - name: Set up Go

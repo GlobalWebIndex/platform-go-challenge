@@ -44,7 +44,6 @@ func (builder sqlBuilder) Insert(tableName string, cols []string, values []inter
 	}
 	valueS := []string{}
 	for _, val := range values {
-		fmt.Println(reflect.ValueOf(val).Kind())
 		if reflect.ValueOf(val).Kind() == reflect.Struct || reflect.ValueOf(val).Kind() == reflect.String {
 			valueS = append(valueS, strings.TrimSpace(fmt.Sprintf("\"%v\"", val)))
 			continue
