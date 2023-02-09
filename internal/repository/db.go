@@ -49,21 +49,21 @@ func NewDB() (*sql.DB, error) {
 }
 
 func NewTestDB() (*sql.DB, error) {
-	viper.AddConfigPath("../")
+	viper.AddConfigPath("../config")
 	viper.SetConfigName("config")
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatalln("cannot read from a config")
 	}
-	host := "localhost"      //viper.Get("database.test.host").(string)
-	port := "3306"           //viper.Get("database.test.port").(string)
-	user := "root"           //viper.Get("database.test.user").(string)
-	dbname := "ownify"       //viper.Get("database.test.dbname").(string)
-	password := "helloworld" //viper.Get("database.test.password").(string)
+	host := viper.Get("database.test.host").(string)
+	port := viper.Get("database.test.port").(string)
+	user := viper.Get("database.test.user").(string)
+	dbname := viper.Get("database.test.dbname").(string)
+	password := viper.Get("database.test.password").(string)
 
 	// Starting a database
 	connection := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname + "?parseTime=true"
-	DB, err = sql.Open("mysql", connection)
+	DB, err := sql.Open("mysql", connection)
 	if err != nil {
 		return nil, err
 	}

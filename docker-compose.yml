@@ -1,13 +1,21 @@
-version: '3.8'
-
+version: "3.8"
 services:
+  singlestore:
+    image: memsql/cluster-in-a-box
+    ports:
+      - 3306:3306
+      - 8080:8080
+    volumes:
+      # persist data between runs:
+      #- db-data:/var/lib/memsql
+      #- /home/user/init.sql:/init.sql
+      - ./init.sql:/init.sql
+    environment:
+      # use the LICENSE_KEY environment variable set in the terminal:
+      LICENSE_KEY: BDc0N2Y2YTQzZjM2MTQwYTM4MmFlNTJhOGI4Y2I2MGI1AAAAAAAAAAAEAAAAAAAAACgwNAIYMWL4bAtDSFFwpdt5xsVJwuo3/NM6n0ilAhgVC+he8d+tSaNqHwRtQZzvMyDlKwLn6ZYAAA==
+      ROOT_PASSWORD: helloworld
+      START_AFTER_INIT: Y
   ownify-api:
     build: ./
     ports:
-      - 8080:8080
-    networks:
-      - fullstack
-  
-networks:
-  fullstack:
-    driver: bridge
+      - 8900:8900

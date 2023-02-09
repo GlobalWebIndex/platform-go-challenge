@@ -32,7 +32,7 @@ func NewClient(net string) (*algod.Client, *indexer.Client, error) {
 	algodAddress := viper.Get("algod.client").(string)
 	indexerAddress := viper.Get("algod.indexer").(string)
 	const algodToken = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-	
+
 	if net == domain.TestNet {
 		algodAddress = viper.Get("algod.client.test").(string)
 		indexerAddress = viper.Get("algod.indexer.test").(string)

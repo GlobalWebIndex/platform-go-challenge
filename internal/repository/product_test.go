@@ -23,6 +23,7 @@ func init() {
 }
 func TestAddProduct(t *testing.T) {
 	db, err := DBSetup()
+
 	require.Nil(t, err)
 	dbHandler := repository.NewDBHandler(db)
 	product := dto.BriefProduct{

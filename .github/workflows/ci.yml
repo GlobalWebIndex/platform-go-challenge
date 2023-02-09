@@ -25,13 +25,13 @@ jobs:
         env:
           # use the LICENSE_KEY environment variable set in the terminal:
           LICENSE_KEY: ${SINGLESTORE_LICENSE}
-          START_AFTER_INIT: Y
           ROOT_PASSWORD: helloworld
+          START_AFTER_INIT: Y
     steps:
       - uses: actions/checkout@v3
       - name: Create env
         run: |
-          echo "${{ secrets.ENV_FILE }}" > config.env
+          mkdir config && echo "${{ secrets.ENV_FILE }}" > config/config.env && echo "${{ secrets.FIREBASE_ADMIN }}" > config/ownify-wallet-service-account.json
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
