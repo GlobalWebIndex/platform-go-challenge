@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Create env
         run: |
-          echo "${ENV_FILE}" > config.env
+          echo "${{ secrets.ENV_FILE }}" > config/config.env
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
