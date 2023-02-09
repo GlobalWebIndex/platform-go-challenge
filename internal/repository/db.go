@@ -49,7 +49,7 @@ func NewDB() (*sql.DB, error) {
 }
 
 func NewTestDB() (*sql.DB, error) {
-	viper.AddConfigPath("../config")
+	//viper.AddConfigPath("../config")
 	viper.SetConfigName("config")
 	err := viper.ReadInConfig()
 	if err != nil {
