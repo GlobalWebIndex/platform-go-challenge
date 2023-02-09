@@ -49,8 +49,8 @@ func NewDB() (*sql.DB, error) {
 }
 
 func NewTestDB() (*sql.DB, error) {
-	viper.AutomaticEnv()
-	//viper.AddConfigPath(".")
+	viper.AddConfigPath("../config")
+	viper.SetConfigName("config")
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatalln("cannot read from a config")

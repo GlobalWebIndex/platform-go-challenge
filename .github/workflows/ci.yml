@@ -29,6 +29,9 @@ jobs:
           ROOT_PASSWORD: helloworld
     steps:
       - uses: actions/checkout@v3
+      - name: Create env
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > config.env
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
