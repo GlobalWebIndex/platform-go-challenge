@@ -55,11 +55,11 @@ func NewTestDB() (*sql.DB, error) {
 	if err != nil {
 		log.Fatalln("cannot read from a config")
 	}
-	host := viper.Get("database_test_host").(string)
-	port := viper.Get("database_test_port").(string)
-	user := viper.Get("database_test_user").(string)
-	dbname := viper.Get("database_test_dbname").(string)
-	password := viper.Get("database_test_password").(string)
+	host := viper.Get("database.test.host").(string)
+	port := viper.Get("database.test.port").(string)
+	user := viper.Get("database.test.user").(string)
+	dbname := viper.Get("database.test.dbname").(string)
+	password := viper.Get("database.test.password").(string)
 
 	// Starting a database
 	connection := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname + "?parseTime=true"
