@@ -66,7 +66,7 @@ func (m *MicroserviceServer) AddProducts(ctx context.Context, req *desc.AddProdu
 		return nil, err
 	}
 
-	if req.Net != domain.TestNet || req.Net == domain.MainNet {
+	if req.Net != domain.TestNet && req.Net != domain.MainNet {
 		return nil, fmt.Errorf("invalid network: %s", req.Net)
 	}
 	// _, assetId, err := m.walletService.MakeTx(req.Tx, req.Net)

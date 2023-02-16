@@ -322,7 +322,6 @@ message FilterOptions {
 }
 
 
-
 //business
 message CreateBusinessRequest {
   string email = 1 [(validate.rules).string.email = true];
