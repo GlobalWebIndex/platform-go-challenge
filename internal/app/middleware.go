@@ -45,7 +45,7 @@ func GrpcInterceptor() grpc.ServerOption {
 
 func HttpInterceptor() runtime.ServeMuxOption {
 	headers := make(map[string]string)
-	headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
+	headers["Access-Control-Allow-Origin"] = "http://54.152.213.53"
 	return runtime.WithMetadata(func(ctx context.Context, req *http.Request) metadata.MD {
 		return metadata.New(headers)
 	})
