@@ -108,14 +108,17 @@ func main() {
 // addCORSHeaders is a middleware function that adds the necessary CORS headers to the HTTP response.
 func addCORSHeaders(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Set the Access-Control-Allow-Origin header to allow requests from any domain
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		// Check if the request method is OPTIONS, which is used for CORS preflight requests
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
-
+		setCORSHeaders(w, r)
 		handler.ServeHTTP(w, r)
 	})
+}
+func setCORSHeaders(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 }
