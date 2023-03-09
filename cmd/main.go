@@ -102,7 +102,7 @@ func main() {
 	if err != nil {
 		log.Println("cannot register this service")
 	}
-	log.Fatalln(http.ListenAndServe("0.0.0.0:8901", addCORSHeaders(mux)))
+	log.Fatalln(http.ListenAndServe(":8901", addCORSHeaders(mux)))
 }
 
 // addCORSHeaders is a middleware function that adds the necessary CORS headers to the HTTP response.
