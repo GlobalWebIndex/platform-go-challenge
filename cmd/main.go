@@ -61,7 +61,7 @@ func main() {
 
 	// Starting gRPC server
 	go func() {
-		listener, err := net.Listen("tcp", ":8900")
+		listener, err := net.Listen("tcp", "0.0.0.0:8900")
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -102,7 +102,7 @@ func main() {
 	if err != nil {
 		log.Println("cannot register this service")
 	}
-	log.Fatalln(http.ListenAndServe(":8901", addCORSHeaders(mux)))
+	log.Fatalln(http.ListenAndServe("0.0.0.0:8901", addCORSHeaders(mux)))
 }
 
 // addCORSHeaders is a middleware function that adds the necessary CORS headers to the HTTP response.
