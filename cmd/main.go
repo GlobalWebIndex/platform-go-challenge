@@ -58,6 +58,7 @@ func main() {
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
 	httpOpts := app.HttpInterceptor()
+	
 
 	// Starting gRPC server
 	go func() {
