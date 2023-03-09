@@ -51,6 +51,8 @@ func HttpInterceptor() runtime.ServeMuxOption {
 			return "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization", true
 		case "Access-Control-Allow-Methods":
 			return "GET, POST, PUT, DELETE, OPTIONS", true
+		case "Referrer-Policy":
+			return "strict-origin-when-cross-origin", true
 		default:
 			return "", false
 		}
