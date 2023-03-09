@@ -36,30 +36,11 @@ func GrpcInterceptor() grpc.ServerOption {
 	return grpcServerOptions
 }
 
-// func HttpInterceptor() runtime.ServeMuxOption {
-// 	httpServerOptions := runtime.WithMetadata(func(ctx context.Context, req *http.Request) metadata.MD {
-// 		return nil
-// 	})
-// 	return httpServerOptions
-// }
-
 func HttpInterceptor() runtime.ServeMuxOption {
-	headers := map[string]string{
-		"Access-Control-Allow-Origin":  "*",
-		"Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE",
-		"Access-Control-Allow-Headers": "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization",
-		"Referrer-Policy":              "strict-origin-when-cross-origin",
-	}
 
 	return runtime.WithMetadata(func(ctx context.Context, req *http.Request) metadata.MD {
-		md := metadata.New(headers)
-		return md
+		return nil
 	})
-	// headers := make(map[string]string)
-	// headers["Access-Control-Allow-Origin"] = "http://54.152.213.53"
-	// return runtime.WithMetadata(func(ctx context.Context, req *http.Request) metadata.MD {
-	// 	return metadata.New(headers)
-	// })
 }
 
 func (m *MicroserviceServer) getUserIdFromToken(ctx context.Context) (string, error) {

@@ -58,7 +58,6 @@ func main() {
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
 	httpOpts := app.HttpInterceptor()
-	
 
 	// Starting gRPC server
 	go func() {
@@ -103,5 +102,20 @@ func main() {
 	if err != nil {
 		log.Println("cannot register this service")
 	}
-	log.Fatalln(http.ListenAndServe(":8901", mux))
+	log.Fatalln(http.ListenAndServe(":8901", addCORSHeaders(mux)))
+}
+
+// addCORSHeaders is a middleware function that adds the necessary CORS headers to the HTTP response.
+func addCORSHeaders(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Set the Access-Control-Allow-Origin header to allow requests from any domain
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		// Check if the request method is OPTIONS, which is used for CORS preflight requests
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		handler.ServeHTTP(w, r)
+	})
 }
