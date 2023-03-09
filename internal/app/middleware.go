@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 
 	desc "ownify_api/pkg"
 
@@ -43,19 +44,16 @@ func GrpcInterceptor() grpc.ServerOption {
 // }
 
 func HttpInterceptor() runtime.ServeMuxOption {
-	return runtime.WithOutgoingHeaderMatcher(func(header string) (string, bool) {
-		switch header {
-		case "Access-Control-Allow-Origin":
-			return "*", true
-		case "Access-Control-Allow-Headers":
-			return "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization", true
-		case "Access-Control-Allow-Methods":
-			return "GET, POST, PUT, DELETE, OPTIONS", true
-		case "Referrer-Policy":
-			return "strict-origin-when-cross-origin", true
-		default:
-			return "", false
-		}
+	headers := map[string]string{
+		"Access-Control-Allow-Origin":  "*",
+		"Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE",
+		"Access-Control-Allow-Headers": "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization",
+		"Referrer-Policy":              "strict-origin-when-cross-origin",
+	}
+
+	return runtime.WithMetadata(func(ctx context.Context, req *http.Request) metadata.MD {
+		md := metadata.New(headers)
+		return md
 	})
 	// headers := make(map[string]string)
 	// headers["Access-Control-Allow-Origin"] = "http://54.152.213.53"
