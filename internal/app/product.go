@@ -167,15 +167,15 @@ func (m *MicroserviceServer) SearchProducts(ctx context.Context, req *desc.Searc
 		BrandName:  req.Filter.BrandName,
 		IssuedDate: req.Filter.IssuedDate,
 	}
-	products, err := m.productService.SearchProducts(filter, req.Net, req.Page, req.PerPage)
+	total, products, err := m.productService.SearchProducts(filter, req.Net, req.Page, req.PerPage)
 
 	if err != nil {
 		return nil, err
 	}
 
 	type data struct {
+		Total    int64              `json:"total"`
 		Products []dto.BriefProduct `json:"products"`
 	}
-
-	return BuildRes(data{Products: products}, "there are your products", true)
+	return BuildRes(data{Total: *total, Products: products}, "there are your products", true)
 }

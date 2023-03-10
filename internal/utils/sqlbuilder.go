@@ -30,6 +30,8 @@ type SqlBuilder interface {
 	Delete(tableName string, conditions []Tuple, joinKey string) (*string, error)
 	Select(tableName string, targets []string, conditions []Tuple, condOperator CondOperator, joinKey string) (*string, error)
 	Update(tableName string, values []Tuple, conditions []Tuple, joinKey string) (*string, error)
+
+	TotalCount(tableName string, conditions []Tuple, condOperator CondOperator, joinKey string) (*string, error)
 }
 
 type sqlBuilder struct{}
@@ -68,6 +70,20 @@ func (builder sqlBuilder) Select(tableName string, targets []string, conditions 
 	}
 	condStr := *conditionBuilder(conditions, condOperator, joinKey)
 	sql := fmt.Sprintf("SELECT %s FROM %s WHERE %s", targetStr, tableName, condStr)
+	return &sql, nil
+}
+
+func (builder sqlBuilder) TotalCount(tableName string, conditions []Tuple, condOperator CondOperator, joinKey string) (*string, error) {
+	if !condOperator.valid() {
+		return nil, fmt.Errorf("[ERR] invalid operator: %s", condOperator)
+	}
+
+	if len(conditions) == 0 {
+		sql := fmt.Sprintf("SELECT COUNT(*) FROM %s", tableName)
+		return &sql, nil
+	}
+	condStr := *conditionBuilder(conditions, condOperator, joinKey)
+	sql := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE %s", tableName, condStr)
 	return &sql, nil
 }
 
@@ -115,7 +131,6 @@ func GenerateCond(keys []string, values []interface{}) []Tuple {
 	}
 	return conds
 }
-
 
 func (*sqlBuilder) Update(tableName string, values []Tuple, conditions []Tuple, joinKey string) (*string, error) {
 	valueQ := conditionBuilder(values, eq, ",")
