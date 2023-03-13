@@ -107,7 +107,7 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 	if err != nil {
 		return nil, err
 	}
-	err = DB.QueryRow(*sql).Scan(
+	DB.QueryRow(*sql).Scan(
 		&product.Owner,
 		&product.Barcode,
 		&product.ItemName,
@@ -117,9 +117,6 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 		&product.Location,
 	)
 
-	if err != nil {
-		return nil, err
-	}
 	product.ChainId = chainId
 	product.AssetId = assetId
 
