@@ -167,8 +167,8 @@ func (m *MicroserviceServer) SearchProducts(ctx context.Context, req *desc.Searc
 		BrandName:  req.Filter.BrandName,
 		IssuedDate: req.Filter.IssuedDate,
 	}
+	
 	total, products, err := m.productService.SearchProducts(filter, req.Net, req.Page, req.PerPage)
-
 	if err != nil {
 		return nil, err
 	}
@@ -176,6 +176,9 @@ func (m *MicroserviceServer) SearchProducts(ctx context.Context, req *desc.Searc
 	type data struct {
 		Total    int64              `json:"total"`
 		Products []dto.BriefProduct `json:"products"`
+	}
+	if total == nil {
+		return BuildRes(data{Total: 0, Products: []dto.BriefProduct{}}, "there are your products", true)
 	}
 	return BuildRes(data{Total: *total, Products: products}, "there are your products", true)
 }

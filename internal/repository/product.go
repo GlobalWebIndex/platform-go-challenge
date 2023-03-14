@@ -177,6 +177,7 @@ func (u *productQuery) GetProducts(net string, page int, per_page int) ([]dto.Br
 }
 
 func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page int32, perPage int32) (*int64, []dto.BriefProduct, error) {
+	
 	tableName := domain.MainProductTableName
 	if net == strings.ToLower(domain.TestNet) {
 		tableName = domain.TestProductTableName
@@ -187,6 +188,97 @@ func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page 
 	var products []dto.BriefProduct
 	cons, values := utils.ConvertToEntity(&filter)
 	conds := utils.GenerateCond(cons, values)
+
+
+	preSql, err := sqlBuilder.Select(tableName, []string{
+		"chain_id",
+		"asset_id",
+		"owner",
+		"barcode",
+		"item_name",
+		"brand_name",
+		"additional_data",
+		"issued_date",
+		"location",
+	}, conds, "LIKE", "OR")
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	countsql, err := sqlBuilder.TotalCount(tableName, conds, "LIKE", "OR")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	countChan := make(chan domain.Result[int64])
+	productChan := make(chan domain.Result[[]dto.BriefProduct])
+
+	defer close(countChan)
+	defer close(productChan)
+	go func() {
+		var count int64
+		err := DB.QueryRow(*countsql).Scan(&count)
+		if err != nil {
+			countChan <- domain.Result[int64]{Err: err}
+			return
+		}
+		countChan <- domain.Result[int64]{Val: count}
+	}()
+
+	go func() {
+		//SELECT * FROM products_test ORDER BY create_time  LIMIT 4 OFFSET 1;
+		sql := *preSql + fmt.Sprintf(" ORDER BY created_time LIMIT %d OFFSET %d", perPage, page*perPage)
+
+		rows, err := DB.Query(sql)
+		if err != nil {
+			productChan <- domain.Result[[]dto.BriefProduct]{Err: err}
+			return
+		}
+		for rows.Next() {
+			var product dto.BriefProduct
+			_ = rows.Scan(
+				&product.ChainId,
+				&product.AssetId,
+				&product.Owner,
+				&product.Barcode,
+				&product.ItemName,
+				&product.BrandName,
+				&product.AdditionalData,
+				&product.IssuedDate,
+				&product.Location,
+			)
+			products = append(products, product)
+		}
+		productChan <- domain.Result[[]dto.BriefProduct]{Val: products}
+	}()
+
+	count := <-countChan
+	filteredProducts := <-productChan
+
+	if count.Err != nil {
+		return nil, nil, err
+	}
+	if filteredProducts.Err != nil {
+		return nil, nil, err
+	}
+
+	return &count.Val, filteredProducts.Val, nil
+}
+
+func (u *productQuery) SearchProductsByAssetId(filter dto.BriefProduct, net string, page int32, perPage int32) (*int64, []dto.BriefProduct, error) {
+	tableName := domain.MainProductTableName
+	if net == strings.ToLower(domain.TestNet) {
+		tableName = domain.TestProductTableName
+	}
+
+	sqlBuilder := utils.NewSqlBuilder()
+
+	var products []dto.BriefProduct
+	cons, values := utils.ConvertToEntity(&filter)
+	conds := utils.GenerateCond(cons, values)
+	
+
 	preSql, err := sqlBuilder.Select(tableName, []string{
 		"chain_id",
 		"asset_id",

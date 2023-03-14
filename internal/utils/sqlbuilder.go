@@ -107,12 +107,13 @@ func conditionBuilder(conditions []Tuple, operator CondOperator, joinKey string)
 		suffix = "%"
 	}
 	for index, pair := range conditions {
-		_, ok := pair.Val.(string)
-		if ok {
-			condStr += pair.Key + fmt.Sprintf(" %s \"%s%v%s\"", operator, prefix, pair.Val, suffix)
-		} else {
-			condStr += pair.Key + fmt.Sprintf(" %s %s%v%s", operator, prefix, pair.Val, suffix)
-		}
+		condStr += pair.Key + fmt.Sprintf(" %s \"%s%v%s\"", operator, prefix, pair.Val, suffix)
+		// _, ok := pair.Val.(string)
+		// if ok {
+		// 	condStr += pair.Key + fmt.Sprintf(" %s \"%s%v%s\"", operator, prefix, pair.Val, suffix)
+		// } else {
+		// 	condStr += pair.Key + fmt.Sprintf(" %s %s%v%s", operator, prefix, pair.Val, suffix)
+		// }
 
 		if index < condSize-1 {
 			condStr += " " + joinKey + " "
