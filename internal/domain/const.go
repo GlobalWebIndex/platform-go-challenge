@@ -10,16 +10,7 @@ const (
 	MainNet string = "main"
 )
 
-const (
-	TestProductTableName = "ownify.products_test"
-	MainProductTableName = "ownify.products_main"
-)
 
-const (
-	UserTableName     = "ownify.user"
-	BusinessTableName = "ownify.business"
-	WalletTableName   = "ownify.wallets"
-)
 
 const (
 	OwnifyAssetName    = "Ownify"

@@ -14,11 +14,13 @@ type DBHandler interface {
 	NewBusinessQuery() BusinessQuery
 	NewProductQuery() ProductQuery
 	NewAdminQuery() AdminQuery
+	NewloggerService() LoggerQuery
 }
 
 type dbHandler struct {
 	db *sql.DB
 }
+
 
 var DB *sql.DB
 
@@ -26,7 +28,7 @@ func NewDBHandler(db *sql.DB) DBHandler {
 	return &dbHandler{db}
 }
 
-func NewDB() (*sql.DB, error) {
+func NewDB(dbName string) (*sql.DB, error) {
 	viper.AddConfigPath("../config")
 	viper.SetConfigName("config")
 	err := viper.ReadInConfig()
@@ -36,7 +38,7 @@ func NewDB() (*sql.DB, error) {
 	host := viper.Get("database.host").(string)
 	port := viper.Get("database.port").(string)
 	user := viper.Get("database.user").(string)
-	dbname := viper.Get("database.dbname").(string)
+	dbname := viper.Get(dbName).(string)
 	password := viper.Get("database.password").(string)
 
 	// Starting a database
@@ -49,6 +51,28 @@ func NewDB() (*sql.DB, error) {
 }
 
 func NewTestDB() (*sql.DB, error) {
+	viper.AddConfigPath("../config")
+	viper.SetConfigName("config")
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalln("cannot read from a config")
+	}
+	host := viper.Get("database.test.host").(string)
+	port := viper.Get("database.test.port").(string)
+	user := viper.Get("database.test.user").(string)
+	dbname := viper.Get("database.test.dbname").(string)
+	password := viper.Get("database.test.password").(string)
+
+	// Starting a database
+	connection := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname + "?parseTime=true"
+	DB, err := sql.Open("mysql", connection)
+	if err != nil {
+		return nil, err
+	}
+	return DB, nil
+}
+
+func NewLogDB() (*sql.DB, error) {
 	viper.AddConfigPath("../config")
 	viper.SetConfigName("config")
 	err := viper.ReadInConfig()
@@ -84,4 +108,9 @@ func (d *dbHandler) NewProductQuery() ProductQuery {
 
 func (d *dbHandler) NewAdminQuery() AdminQuery {
 	return &adminQuery{}
+}
+
+// NewloggerService implements DBHandler
+func (*dbHandler) NewloggerService() LoggerQuery {
+	return &loggerQuery{}
 }

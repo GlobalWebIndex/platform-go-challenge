@@ -37,9 +37,9 @@ func (u *productQuery) AddProduct(product dto.BriefProduct, net string, verify b
 	}
 
 	// add to database.
-	tableName := domain.MainProductTableName
+	tableName := MainProductTableName
 	if net == domain.TestNet {
-		tableName = domain.TestProductTableName
+		tableName = TestProductTableName
 	}
 	cols, values := utils.ConvertToEntity(&product)
 	sqlBuilder := utils.NewSqlBuilder()
@@ -64,9 +64,9 @@ func (u *productQuery) AddProducts(products []dto.BriefProduct, net string, veri
 	}
 
 	// add to database.
-	tableName := domain.MainProductTableName
+	tableName := MainProductTableName
 	if net == domain.TestNet {
-		tableName = domain.TestProductTableName
+		tableName = TestProductTableName
 	}
 	sqlBuilder := utils.NewSqlBuilder()
 	for _, product := range products {
@@ -85,9 +85,9 @@ func (u *productQuery) AddProducts(products []dto.BriefProduct, net string, veri
 }
 
 func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.BriefProduct, error) {
-	tableName := domain.MainProductTableName
+	tableName := MainProductTableName
 	if net == strings.ToLower(domain.TestNet) {
-		tableName = domain.TestProductTableName
+		tableName = TestProductTableName
 	}
 	sqlBuilder := utils.NewSqlBuilder()
 	var product dto.BriefProduct
@@ -124,9 +124,9 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 }
 
 func (u *productQuery) GetProducts(net string, page int, per_page int) ([]dto.BriefProduct, error) {
-	tableName := domain.MainProductTableName
+	tableName := MainProductTableName
 	if net == strings.ToLower(domain.TestNet) {
-		tableName = domain.TestProductTableName
+		tableName = TestProductTableName
 	}
 
 	sqlBuilder := utils.NewSqlBuilder()
@@ -178,9 +178,9 @@ func (u *productQuery) GetProducts(net string, page int, per_page int) ([]dto.Br
 
 func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page int32, perPage int32) (*int64, []dto.BriefProduct, error) {
 	
-	tableName := domain.MainProductTableName
+	tableName := MainProductTableName
 	if net == strings.ToLower(domain.TestNet) {
-		tableName = domain.TestProductTableName
+		tableName = TestProductTableName
 	}
 
 	sqlBuilder := utils.NewSqlBuilder()
@@ -267,9 +267,9 @@ func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page 
 }
 
 func (u *productQuery) SearchProductsByAssetId(filter dto.BriefProduct, net string, page int32, perPage int32) (*int64, []dto.BriefProduct, error) {
-	tableName := domain.MainProductTableName
+	tableName := MainProductTableName
 	if net == strings.ToLower(domain.TestNet) {
-		tableName = domain.TestProductTableName
+		tableName = TestProductTableName
 	}
 
 	sqlBuilder := utils.NewSqlBuilder()

@@ -35,9 +35,9 @@ func (w *walletQuery) AddNewAccount(
 	if err != nil {
 		return nil, err
 	}
-	tableName := domain.BusinessTableName
+	tableName := BusinessTableName
 	if role == domain.PersonalWallet {
-		tableName = domain.UserTableName
+		tableName = UserTableName
 	}
 	//get user pin code hash from wallets table
 	var pin string
@@ -87,7 +87,7 @@ func (w *walletQuery) GetMyAccounts(
 ) ([]string, error) {
 	var accounts = []string{}
 	sqlBuilder := utils.NewSqlBuilder()
-	sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{
+	sql, err := sqlBuilder.Select(BusinessTableName, []string{
 		"pub_addr",
 	}, []utils.Tuple{{Key: "email", Val: email}}, "=", "OR")
 	if err != nil {
@@ -115,7 +115,7 @@ func (w *walletQuery) MintOwnify(
 	go func() {
 		var cipher string
 		sqlBuilder := utils.NewSqlBuilder()
-		sql, err := sqlBuilder.Select(domain.WalletTableName, []string{
+		sql, err := sqlBuilder.Select(WalletTableName, []string{
 			"seed_cipher",
 		}, []utils.Tuple{{Key: "email", Val: email}, {Key: "pub_addr", Val: pubKey}}, "=", "AND")
 		if err != nil {
@@ -140,7 +140,7 @@ func (w *walletQuery) MintOwnify(
 	go func() {
 		pin := ""
 		sqlBuilder := utils.NewSqlBuilder()
-		sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{
+		sql, err := sqlBuilder.Select(BusinessTableName, []string{
 			"pin",
 		}, []utils.Tuple{{Key: "email", Val: email}}, "=", "AND")
 		if err != nil {

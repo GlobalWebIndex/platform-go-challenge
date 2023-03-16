@@ -4,7 +4,6 @@ import (
 	//"fmt"
 
 	"fmt"
-	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
 )
@@ -33,7 +32,7 @@ func (u *businessQuery) CreateBusiness(
 	if !business.Valid() {
 		return fmt.Errorf("[ERR] invalid Info: %v", business)
 	}
-	tableName := domain.BusinessTableName
+	tableName := BusinessTableName
 	cols, values := utils.ConvertToEntity(business)
 	if !utils.Contains(cols, "phone_number") {
 		cols = append(cols, "phone_number")
@@ -59,7 +58,7 @@ func (u *businessQuery) UpdateBusiness(
 	if !business.Valid() {
 		return fmt.Errorf("[ERR] invalid Info: %v", business)
 	}
-	tableName := domain.BusinessTableName
+	tableName := BusinessTableName
 	cols, values := utils.ConvertToEntity(business)
 	if !utils.Contains(cols, "phone_number") {
 		cols = append(cols, "phone_number")
@@ -89,7 +88,7 @@ func (b *businessQuery) GetBusiness(email string) (*dto.BriefBusiness, error) {
 	var user dto.BriefBusiness
 
 	sqlBuilder := utils.NewSqlBuilder()
-	sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{
+	sql, err := sqlBuilder.Select(BusinessTableName, []string{
 		"business",
 		"first_name",
 		"last_name",
@@ -117,7 +116,7 @@ func (b *businessQuery) GetBusiness(email string) (*dto.BriefBusiness, error) {
 
 func (b *businessQuery) GetBusinessByWalletAddress(pubKey string) (*dto.BriefBusiness, error) {
 	var user dto.BriefBusiness
-	emailSql := fmt.Sprintf("SELECT b.email,b.business,b.first_name,b.last_name,b.location FROM %s w LEFT JOIN %s b ON w.email = b.email OR w.user_id = b.user_id WHERE w.pub_addr = \"%s\"", domain.WalletTableName, domain.BusinessTableName, pubKey)
+	emailSql := fmt.Sprintf("SELECT b.email,b.business,b.first_name,b.last_name,b.location FROM %s w LEFT JOIN %s b ON w.email = b.email OR w.user_id = b.user_id WHERE w.pub_addr = \"%s\"", WalletTableName, BusinessTableName, pubKey)
 	err := DB.QueryRow(emailSql).Scan(
 		&user.Email,
 		&user.Business,
@@ -133,7 +132,7 @@ func (b *businessQuery) GetBusinessByWalletAddress(pubKey string) (*dto.BriefBus
 
 func getBusiness(pubKey string) (*dto.BriefBusiness, error) {
 	var user dto.BriefBusiness
-	emailSql := fmt.Sprintf("SELECT b.email,b.business,b.first_name,b.last_name,b.location FROM %s w LEFT JOIN %s b ON w.email = b.email OR w.user_id = b.user_id WHERE w.pub_addr = \"%s\"", domain.WalletTableName, domain.BusinessTableName, pubKey)
+	emailSql := fmt.Sprintf("SELECT b.email,b.business,b.first_name,b.last_name,b.location FROM %s w LEFT JOIN %s b ON w.email = b.email OR w.user_id = b.user_id WHERE w.pub_addr = \"%s\"", WalletTableName, BusinessTableName, pubKey)
 	err := DB.QueryRow(emailSql).Scan(
 		&user.Email,
 		&user.Business,
@@ -167,7 +166,7 @@ func (b *businessQuery) GetBusinessByUserId(userId string) (*dto.BriefBusiness, 
 	var user dto.BriefBusiness
 
 	sqlBuilder := utils.NewSqlBuilder()
-	sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{
+	sql, err := sqlBuilder.Select(BusinessTableName, []string{
 		"email",
 		"business",
 		"first_name",
@@ -197,7 +196,7 @@ func (b *businessQuery) GetBusinessByUserId(userId string) (*dto.BriefBusiness, 
 func (b *businessQuery) DeleteBusiness(email string, userId string) error {
 	sqlBuilder := utils.NewSqlBuilder()
 	conditions := []utils.Tuple{{Key: "user_id", Val: userId}, {Key: "email", Val: email}}
-	sql, err := sqlBuilder.Delete(domain.BusinessTableName, conditions, "AND")
+	sql, err := sqlBuilder.Delete(BusinessTableName, conditions, "AND")
 	if err != nil {
 		return err
 	}
@@ -212,7 +211,7 @@ func (b *businessQuery) VerifyBusiness(userId string, email string) error {
 	isApproved := false
 	sqlBuilder := utils.NewSqlBuilder()
 	conditions := []utils.Tuple{{Key: "user_id", Val: userId}, {Key: "email", Val: email}}
-	sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{"is_approved"}, conditions, "=", "AND")
+	sql, err := sqlBuilder.Select(BusinessTableName, []string{"is_approved"}, conditions, "=", "AND")
 	fmt.Println(*sql)
 	if err != nil {
 		return err
@@ -232,7 +231,7 @@ func (b *businessQuery) VerifyBusinessByUserId(userId string) error {
 	isApproved := false
 	sqlBuilder := utils.NewSqlBuilder()
 	conditions := []utils.Tuple{{Key: "user_id", Val: userId}}
-	sql, err := sqlBuilder.Select(domain.BusinessTableName, []string{"is_approved"}, conditions, "=", "AND")
+	sql, err := sqlBuilder.Select(BusinessTableName, []string{"is_approved"}, conditions, "=", "AND")
 	fmt.Println(*sql)
 	if err != nil {
 		return err

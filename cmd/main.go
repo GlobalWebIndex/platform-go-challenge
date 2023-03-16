@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
+	"strings"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	_ "github.com/lib/pq"
@@ -12,19 +14,40 @@ import (
 	"google.golang.org/grpc"
 
 	"ownify_api/internal/app"
+	"ownify_api/internal/dto"
 	"ownify_api/internal/repository"
 	"ownify_api/internal/service"
 	desc "ownify_api/pkg"
+
+	"github.com/ipinfo/go-ipinfo/ipinfo"
+)
+
+const (
+	DB_OWNIFY   = "database.ownify.dbname"
+	DB_USER_LOG = "database.log.dbname"
 )
 
 func main() {
-	// DB
-	db, err := repository.NewDB()
+	// Ownify DB
+	ownifydb, err := repository.NewDB(DB_OWNIFY)
 	if err != nil {
 		log.Fatalf("[ERR] cannot create database %s", err)
 		return
 	}
-	err = db.Ping()
+
+	err = ownifydb.Ping()
+	if err != nil {
+		log.Fatalf("cannot ping db: %v", err)
+	}
+
+	// User Log DB
+	logdb, err := repository.NewDB(DB_USER_LOG)
+	if err != nil {
+		log.Fatalf("[ERR] cannot create database %s", err)
+		return
+	}
+
+	err = logdb.Ping()
 	if err != nil {
 		log.Fatalf("cannot ping db: %v", err)
 	}
@@ -43,17 +66,20 @@ func main() {
 
 	// Register all services
 	//dbHandler := repository.NewDBHandler(db)
-	dbHandler := repository.NewDBHandler(db)
+	ownifyDBHandler := repository.NewDBHandler(ownifydb)
+	logDBHandler := repository.NewDBHandler(logdb)
+
 	wallet := repository.NewAlgoHandler()
 
-	adminService := service.NewAdminService(dbHandler)
-	userService := service.NewUserService(dbHandler)
-	businessService := service.NewBusinessService(dbHandler)
-	ownershipService := service.NewOwnershipService(dbHandler)
-	authService := service.NewAuthService(dbHandler, tokenManager)
-	productService := service.NewProductService(dbHandler)
+	adminService := service.NewAdminService(ownifyDBHandler)
+	userService := service.NewUserService(ownifyDBHandler)
+	businessService := service.NewBusinessService(ownifyDBHandler)
+	ownershipService := service.NewOwnershipService(ownifyDBHandler)
+	authService := service.NewAuthService(ownifyDBHandler, tokenManager)
+	productService := service.NewProductService(ownifyDBHandler)
 	walletService := service.NewWalletService(wallet)
 	notifyService := service.NewNotifyService()
+	logService := service.NewloggerService(logDBHandler)
 
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
@@ -78,6 +104,7 @@ func main() {
 			productService,
 			walletService,
 			notifyService,
+			logService,
 		))
 
 		err = grpcServer.Serve(listener)
@@ -98,11 +125,12 @@ func main() {
 		productService,
 		walletService,
 		notifyService,
+		logService,
 	))
 	if err != nil {
 		log.Println("cannot register this service")
 	}
-	log.Fatalln(http.ListenAndServe(":8901", addCORSHeaders(mux)))
+	log.Fatalln(http.ListenAndServe(":8901", setUserLog(addCORSHeaders(mux), logService)))
 }
 
 // addCORSHeaders is a middleware function that adds the necessary CORS headers to the HTTP response.
@@ -117,4 +145,42 @@ func setCORSHeaders(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+}
+
+// Add User Session analysis
+func setUserLog(handler http.Handler, logger service.LoggerService) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logUserActivity(w, r, logger)
+		handler.ServeHTTP(w, r)
+	})
+}
+
+func logUserActivity(w http.ResponseWriter, r *http.Request, logger service.LoggerService) {
+
+	validIP, _, _ := net.SplitHostPort(getIP(r))
+	ip := net.ParseIP(validIP)
+	details, err := ipinfo.GetInfo(ip)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if strings.Contains(r.RequestURI, "product/verify") || strings.Contains(r.RequestURI, "ownership/") {
+		logger.LogUserActivity(dto.NewUserLogByIPInfo(details))
+	}
+
+	// Print the user's location information
+	//fmt.Println(w, "Your IP address is %s\n", ip.String())
+	fmt.Println(w, "Your location is %s, %s, %s\n", details.City, details.Region, details.Country)
+}
+
+func getIP(r *http.Request) string {
+	ip := r.Header.Get("X-Real-IP")
+	if ip == "" {
+		ip = r.Header.Get("X-Forwarded-For")
+		if ip == "" {
+			ip = r.RemoteAddr
+		}
+	}
+	return ip
 }

@@ -37,7 +37,6 @@ func GrpcInterceptor() grpc.ServerOption {
 }
 
 func HttpInterceptor() runtime.ServeMuxOption {
-
 	return runtime.WithMetadata(func(ctx context.Context, req *http.Request) metadata.MD {
 		return nil
 	})

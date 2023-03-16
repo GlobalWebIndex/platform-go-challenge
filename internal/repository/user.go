@@ -3,7 +3,6 @@ package repository
 import (
 	//"fmt"
 
-	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
 )
@@ -27,7 +26,7 @@ func (u *userQuery) CreateUser(
 
 	cols, values := utils.ConvertToEntity(&user)
 	sqlBuilder := utils.NewSqlBuilder()
-	query, err := sqlBuilder.Insert(domain.UserTableName, cols, values)
+	query, err := sqlBuilder.Insert(UserTableName, cols, values)
 	if err != nil {
 		return err
 	}
@@ -40,7 +39,7 @@ func (u *userQuery) CreateUser(
 
 func (u *userQuery) DeleteUser(pubKey string) error {
 	sqlBuilder := utils.NewSqlBuilder()
-	sql, err := sqlBuilder.Delete(domain.UserTableName, []utils.Tuple{{Key: "pub_addr", Val: pubKey}}, "OR")
+	sql, err := sqlBuilder.Delete(UserTableName, []utils.Tuple{{Key: "pub_addr", Val: pubKey}}, "OR")
 	if err != nil {
 		return err
 	}
@@ -55,7 +54,7 @@ func (u *userQuery) ValidUser(pubKey string, idFingerprint string) (*dto.BriefUs
 
 	var user dto.BriefUser
 	sqlBuilder := utils.NewSqlBuilder()
-	sql, err := sqlBuilder.Select(domain.UserTableName, []string{
+	sql, err := sqlBuilder.Select(UserTableName, []string{
 		"first_name",
 		"last_name",
 		"birth_day",
@@ -82,7 +81,7 @@ func (u *userQuery) ValidUser(pubKey string, idFingerprint string) (*dto.BriefUs
 func (b *userQuery) VerifyUser(userId string, pubKey string) (*dto.BriefUser, error) {
 	var user dto.BriefUser
 	sqlBuilder := utils.NewSqlBuilder()
-	sql, err := sqlBuilder.Select(domain.UserTableName, []string{
+	sql, err := sqlBuilder.Select(UserTableName, []string{
 		"first_name",
 		"last_name",
 		"birth_day",

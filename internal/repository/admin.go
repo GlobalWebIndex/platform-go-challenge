@@ -3,7 +3,6 @@ package repository
 import (
 	//"fmt"
 
-	"ownify_api/internal/domain"
 	"ownify_api/internal/utils"
 )
 
@@ -19,7 +18,7 @@ func (u *adminQuery) GrantBusiness(email string, isApproved bool) error {
 		return err
 	}
 
-	tableName := domain.BusinessTableName
+	tableName := BusinessTableName
 	sqlBuilder := utils.NewSqlBuilder()
 	sql, err := sqlBuilder.Update(tableName, []utils.Tuple{{Key: "is_approved", Val: isApproved}}, []utils.Tuple{{Key: "email", Val: email}}, "AND")
 	if err != nil {

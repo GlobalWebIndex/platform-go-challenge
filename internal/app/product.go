@@ -129,6 +129,7 @@ func (m *MicroserviceServer) GetOwnedProducts(ctx context.Context, req *desc.Get
 }
 
 func (m *MicroserviceServer) VerifyProduct(ctx context.Context, req *desc.VerifyAssetRequest) (*desc.NetWorkResponse, error) {
+	
 	product, err := m.productService.GetProduct(
 		int(req.ChainId),
 		req.AssetId,
