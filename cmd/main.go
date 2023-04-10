@@ -94,6 +94,7 @@ func main() {
 		log.Println("start server")
 
 		grpcServer := grpc.NewServer(grpcOpts)
+	
 		desc.RegisterMicroserviceServer(grpcServer, app.NewMicroservice(
 			adminService,
 			userService,

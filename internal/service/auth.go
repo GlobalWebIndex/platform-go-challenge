@@ -11,6 +11,7 @@ type AuthService interface {
 	ValidUser(pubKey string, idFingerprint string) bool
 	ValidBusiness(uid string, email string) bool
 	VerifyBusinessByUserId(uid string) bool
+	GetEmailByUserId(uid string) (*string, error)
 	ValidAdmin(uid string, email string) bool
 }
 
@@ -62,3 +63,12 @@ func (a *authService) ValidAdmin(uid string, email string) bool {
 	err := a.dbHandler.NewBusinessQuery().VerifyBusiness(uid, email)
 	return err == nil
 }
+
+func (a *authService) GetEmailByUserId(uid string) (*string, error)  {
+	business, err := a.dbHandler.NewBusinessQuery().GetBusinessByUserId(uid)
+	if err != nil {
+		return nil, err
+	}
+	return &business.Email, nil
+}
+

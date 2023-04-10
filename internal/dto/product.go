@@ -10,12 +10,12 @@ type BriefProduct struct {
 	ChainId        int    `json:"chain_id"`
 	AssetId        int64  `json:"asset_id"`
 	Owner          string `json:"owner"`
-	Barcode        string `json:"bar_code"`
+	Barcode        string `json:"barcode"`
 	ItemName       string `json:"item_name"`
 	BrandName      string `json:"brand_name"`
 	AdditionalData string `json:"additional_data"`
 	Location       string `json:"location"`
-	IssuedDate     int32  `json:"issued_date"`
+	IssuedDate     int64  `json:"issued_date"`
 }
 
 func (p *BriefProduct) Valid() bool {

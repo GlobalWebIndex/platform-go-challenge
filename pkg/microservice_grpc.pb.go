@@ -46,10 +46,13 @@ type MicroserviceClient interface {
 	// algorand service
 	CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	RegisterWallet(ctx context.Context, in *RegisterWalletRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
-	GetAccounts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAccountResponse, error)
+	GetAccounts(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	GetMyAccounts(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*GetAccountResponse, error)
 	MintOwnify(ctx context.Context, in *MintOwnifyRequest, opts ...grpc.CallOption) (*MintOwnifyResponse, error)
 	MintOwnifyWithCSV(ctx context.Context, in *MintOwnifyRequest, opts ...grpc.CallOption) (*MintOwnifyResponse, error)
 	MakeTransaction(ctx context.Context, in *MakeTransactionRequest, opts ...grpc.CallOption) (*MakeTransactionResponse, error)
+	SendOwnify(ctx context.Context, in *SendOwnifyRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	DeleteOwnify(ctx context.Context, in *DeleteOwnifyRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 }
 
 type microserviceClient struct {
@@ -258,9 +261,18 @@ func (c *microserviceClient) RegisterWallet(ctx context.Context, in *RegisterWal
 	return out, nil
 }
 
-func (c *microserviceClient) GetAccounts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAccountResponse, error) {
-	out := new(GetAccountResponse)
+func (c *microserviceClient) GetAccounts(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetAccounts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) GetMyAccounts(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*GetAccountResponse, error) {
+	out := new(GetAccountResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetMyAccounts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -288,6 +300,24 @@ func (c *microserviceClient) MintOwnifyWithCSV(ctx context.Context, in *MintOwni
 func (c *microserviceClient) MakeTransaction(ctx context.Context, in *MakeTransactionRequest, opts ...grpc.CallOption) (*MakeTransactionResponse, error) {
 	out := new(MakeTransactionResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/MakeTransaction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) SendOwnify(ctx context.Context, in *SendOwnifyRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/SendOwnify", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) DeleteOwnify(ctx context.Context, in *DeleteOwnifyRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/DeleteOwnify", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -325,10 +355,13 @@ type MicroserviceServer interface {
 	// algorand service
 	CreateWallet(context.Context, *CreateWalletRequest) (*NetWorkResponse, error)
 	RegisterWallet(context.Context, *RegisterWalletRequest) (*NetWorkResponse, error)
-	GetAccounts(context.Context, *emptypb.Empty) (*GetAccountResponse, error)
+	GetAccounts(context.Context, *SignInRequest) (*NetWorkResponse, error)
+	GetMyAccounts(context.Context, *SignInRequest) (*GetAccountResponse, error)
 	MintOwnify(context.Context, *MintOwnifyRequest) (*MintOwnifyResponse, error)
 	MintOwnifyWithCSV(context.Context, *MintOwnifyRequest) (*MintOwnifyResponse, error)
 	MakeTransaction(context.Context, *MakeTransactionRequest) (*MakeTransactionResponse, error)
+	SendOwnify(context.Context, *SendOwnifyRequest) (*NetWorkResponse, error)
+	DeleteOwnify(context.Context, *DeleteOwnifyRequest) (*NetWorkResponse, error)
 	mustEmbedUnimplementedMicroserviceServer()
 }
 
@@ -402,8 +435,11 @@ func (UnimplementedMicroserviceServer) CreateWallet(context.Context, *CreateWall
 func (UnimplementedMicroserviceServer) RegisterWallet(context.Context, *RegisterWalletRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterWallet not implemented")
 }
-func (UnimplementedMicroserviceServer) GetAccounts(context.Context, *emptypb.Empty) (*GetAccountResponse, error) {
+func (UnimplementedMicroserviceServer) GetAccounts(context.Context, *SignInRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccounts not implemented")
+}
+func (UnimplementedMicroserviceServer) GetMyAccounts(context.Context, *SignInRequest) (*GetAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMyAccounts not implemented")
 }
 func (UnimplementedMicroserviceServer) MintOwnify(context.Context, *MintOwnifyRequest) (*MintOwnifyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MintOwnify not implemented")
@@ -413,6 +449,12 @@ func (UnimplementedMicroserviceServer) MintOwnifyWithCSV(context.Context, *MintO
 }
 func (UnimplementedMicroserviceServer) MakeTransaction(context.Context, *MakeTransactionRequest) (*MakeTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MakeTransaction not implemented")
+}
+func (UnimplementedMicroserviceServer) SendOwnify(context.Context, *SendOwnifyRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendOwnify not implemented")
+}
+func (UnimplementedMicroserviceServer) DeleteOwnify(context.Context, *DeleteOwnifyRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteOwnify not implemented")
 }
 func (UnimplementedMicroserviceServer) mustEmbedUnimplementedMicroserviceServer() {}
 
@@ -824,7 +866,7 @@ func _Microservice_RegisterWallet_Handler(srv interface{}, ctx context.Context, 
 }
 
 func _Microservice_GetAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(SignInRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -836,7 +878,25 @@ func _Microservice_GetAccounts_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/ownify_api.v1.Microservice/GetAccounts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroserviceServer).GetAccounts(ctx, req.(*emptypb.Empty))
+		return srv.(MicroserviceServer).GetAccounts(ctx, req.(*SignInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_GetMyAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignInRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).GetMyAccounts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/GetMyAccounts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).GetMyAccounts(ctx, req.(*SignInRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -891,6 +951,42 @@ func _Microservice_MakeTransaction_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroserviceServer).MakeTransaction(ctx, req.(*MakeTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_SendOwnify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendOwnifyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).SendOwnify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/SendOwnify",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).SendOwnify(ctx, req.(*SendOwnifyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_DeleteOwnify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteOwnifyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).DeleteOwnify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/DeleteOwnify",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).DeleteOwnify(ctx, req.(*DeleteOwnifyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -995,6 +1091,10 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Microservice_GetAccounts_Handler,
 		},
 		{
+			MethodName: "GetMyAccounts",
+			Handler:    _Microservice_GetMyAccounts_Handler,
+		},
+		{
 			MethodName: "MintOwnify",
 			Handler:    _Microservice_MintOwnify_Handler,
 		},
@@ -1005,6 +1105,14 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MakeTransaction",
 			Handler:    _Microservice_MakeTransaction_Handler,
+		},
+		{
+			MethodName: "SendOwnify",
+			Handler:    _Microservice_SendOwnify_Handler,
+		},
+		{
+			MethodName: "DeleteOwnify",
+			Handler:    _Microservice_DeleteOwnify_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

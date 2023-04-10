@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"crypto/ed25519"
 	"encoding/json"
 	"fmt"
 	"net/mail"
@@ -16,19 +17,24 @@ import (
 )
 
 type WalletQuery interface {
-	AddNewAccount(role string, email string) (*string, error)
+	AddNewAccount(role string, userId string, email string) (*string, error)
 	RegisterNewAccount(walletAddress string, userId string) (*string, error)
 	GetMyAccounts(role string, email string) ([]string, error)
 	MintOwnify(email string, pubKey string, products []dto.BriefProduct, net string) ([]uint64, error)
 	UpdatePinCode(role string, email string, newPinCode string) error
 
 	MakeTx(rawTx []byte, net string) (*string, *uint64, error)
+
+	SendOwnify(email string, assetIds []uint64, sender string, receiver string, net string) (*string, error)
+
+	DeleteOwnify(email string, assetIds []uint64, owner string, net string) (*string, error)
 }
 
 type walletQuery struct{}
 
 func (w *walletQuery) AddNewAccount(
 	role string,
+	userId string,
 	email string,
 ) (*string, error) {
 	_, err := mail.ParseAddress(email)
@@ -67,10 +73,10 @@ func (w *walletQuery) AddNewAccount(
 	}
 
 	//inset to wallet table.
-	cols := []string{"chain_id", "pub_addr", "email", "user_role", "seed_cipher"}
-	values := []interface{}{0, pubKey, email, role, cipher}
+	cols := []string{"chain_id", "user_id", "pub_addr", "email", "user_role", "seed_cipher"}
+	values := []interface{}{0, userId, pubKey, email, role, cipher}
 
-	query, err := sqlBuilder.Insert("wallets", cols, values)
+	query, err := sqlBuilder.Insert(WalletTableName, cols, values)
 	if err != nil {
 		return nil, err
 	}
@@ -87,13 +93,21 @@ func (w *walletQuery) GetMyAccounts(
 ) ([]string, error) {
 	var accounts = []string{}
 	sqlBuilder := utils.NewSqlBuilder()
-	sql, err := sqlBuilder.Select(BusinessTableName, []string{
+	sql, err := sqlBuilder.Select(WalletTableName, []string{
 		"pub_addr",
 	}, []utils.Tuple{{Key: "email", Val: email}}, "=", "OR")
 	if err != nil {
 		return []string{}, err
 	}
-	err = DB.QueryRow(*sql).Scan(&accounts)
+
+	rows, err := DB.Query(*sql)
+	for rows.Next() {
+		var acc string
+		err = rows.Scan(&acc)
+		if err == nil {
+			accounts = append(accounts, acc)
+		}
+	}
 	if err != nil {
 		return []string{}, err
 	}
@@ -106,8 +120,202 @@ func (w *walletQuery) MintOwnify(
 	products []dto.BriefProduct,
 	net string,
 ) ([]uint64, error) {
+	prv, err := recoverAccProcess(email, pubKey)
+	if err != nil {
+		return nil, err
+	}
 
-	//get seed from wallet table.
+	//algorand client initialize
+	client, _, err := NewClient(net)
+	if err != nil {
+		return nil, err
+	}
+
+	//build ASA transaction
+	txns := []types.Transaction{}
+	for _, product := range products {
+		note, err := json.Marshal(product)
+		if err != nil {
+			return nil, err
+		}
+		txParams, err := client.SuggestedParams().Do(context.Background())
+		if err != nil {
+			return nil, err
+		}
+		metaHash := utils.Hash(fmt.Sprintf("%v", note))
+
+		txn, err := transaction.MakeAssetCreateTxn(pubKey,
+			note,
+			txParams, 1, 0,
+			false, pubKey, pubKey, pubKey, pubKey,
+			domain.OwnifyAssetName, domain.OwnifyAssetUnit, domain.OwnifyAssetMetaUrl, metaHash)
+
+		if err != nil {
+			return nil, err
+		}
+		txns = append(txns, txn)
+	}
+
+	groupedTxs, err := transaction.AssignGroupID(txns, pubKey)
+	if err != nil {
+		return nil, err
+	}
+	var stxs []byte
+	for _, txn := range groupedTxs {
+		_, stx, _ := crypto.SignTransaction(prv, txn)
+		stxs = append(stxs, stx...)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	pendingTxID, err := client.SendRawTransaction(stxs).Do(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	confirmedTx, err := transaction.WaitForConfirmation(client, pendingTxID, 4, context.Background())
+	if err != nil {
+		return nil, err
+	}
+	endIndex := confirmedTx.AssetIndex + uint64(len(products))
+
+	//add product to db.
+
+	return utils.MakeRange(confirmedTx.AssetIndex, endIndex), nil
+}
+
+func (w *walletQuery) SendOwnify(
+	email string,
+	assetIds []uint64,
+	sender string,
+	receiver string,
+	net string,
+) (*string, error) {
+
+	prv, err := recoverAccProcess(email, sender)
+	if err != nil {
+		return nil, err
+	}
+
+	//algorand client initialize
+	client, _, err := NewClient(net)
+	if err != nil {
+		return nil, err
+	}
+
+	//build ASA transaction
+	txns := []types.Transaction{}
+	for _, assetId := range assetIds {
+		txParams, err := client.SuggestedParams().Do(context.Background())
+		if err != nil {
+			return nil, err
+		}
+		txn, err := transaction.MakeAssetTransferTxn(sender,
+			receiver, 1,
+			[]byte(""),
+			txParams,
+			sender,
+			assetId,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		txns = append(txns, txn)
+	}
+
+	groupedTxs, err := transaction.AssignGroupID(txns, sender)
+	if err != nil {
+		return nil, err
+	}
+	var stxs []byte
+	for _, txn := range groupedTxs {
+		_, stx, _ := crypto.SignTransaction(prv, txn)
+		stxs = append(stxs, stx...)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	pendingTxID, err := client.SendRawTransaction(stxs).Do(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	_, err = transaction.WaitForConfirmation(client, pendingTxID, 4, context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return &pendingTxID, nil
+}
+
+func (w *walletQuery) DeleteOwnify(
+	email string,
+	assetIds []uint64,
+	owner string,
+	net string,
+) (*string, error) {
+
+	prv, err := recoverAccProcess(email, owner)
+	if err != nil {
+		return nil, err
+	}
+
+	//algorand client initialize
+	client, _, err := NewClient(net)
+	if err != nil {
+		return nil, err
+	}
+
+	//build ASA transaction
+	txns := []types.Transaction{}
+	for _, assetId := range assetIds {
+		txParams, err := client.SuggestedParams().Do(context.Background())
+		if err != nil {
+			return nil, err
+		}
+		txn, err := transaction.MakeAssetDestroyTxn(owner,
+			[]byte(""),
+			txParams,
+			assetId,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		txns = append(txns, txn)
+	}
+
+	groupedTxs, err := transaction.AssignGroupID(txns, owner)
+	if err != nil {
+		return nil, err
+	}
+	var stxs []byte
+	for _, txn := range groupedTxs {
+		_, stx, _ := crypto.SignTransaction(prv, txn)
+		stxs = append(stxs, stx...)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	pendingTxID, err := client.SendRawTransaction(stxs).Do(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	_, err = transaction.WaitForConfirmation(client, pendingTxID, 4, context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return &pendingTxID, nil
+}
+
+func recoverAccProcess(email, pubKey string) (ed25519.PrivateKey, error) {
 	cipherR := make(chan domain.Result[string])
 	pinR := make(chan domain.Result[string])
 	defer close(pinR)
@@ -171,69 +379,16 @@ func (w *walletQuery) MintOwnify(
 		return nil, pin.Err
 	}
 	prv, err := mnemonic.ToPrivateKey(seed)
-	if err != nil {
-		return nil, pin.Err
-	}
-
-	//algorand client initialize
-	client, _, err := NewClient(net)
-	if err != nil {
-		return nil, pin.Err
-	}
-
-	//build ASA transaction
-	txns := []types.Transaction{}
-	for _, product := range products {
-		note, err := json.Marshal(product)
-		if err != nil {
-			return nil, err
-		}
-		txParams, err := client.SuggestedParams().Do(context.Background())
-		if err != nil {
-			return nil, err
-		}
-		metaHash := utils.Hash(fmt.Sprintf("%v", note))
-
-		txn, err := transaction.MakeAssetCreateTxn(pubKey,
-			note,
-			txParams, 1, 0,
-			false, pubKey, pubKey, pubKey, pubKey,
-			domain.OwnifyAssetName, domain.OwnifyAssetUnit, domain.OwnifyAssetMetaUrl, metaHash)
-
-		if err != nil {
-			return nil, err
-		}
-		txns = append(txns, txn)
-	}
-
-	groupedTxs, err := transaction.AssignGroupID(txns, pubKey)
-	if err != nil {
-		return nil, pin.Err
-	}
-	var stxs []byte
-	for _, txn := range groupedTxs {
-		_, stx, _ := crypto.SignTransaction(prv, txn)
-		stxs = append(stxs, stx...)
-	}
 
 	if err != nil {
 		return nil, err
 	}
 
-	pendingTxID, err := client.SendRawTransaction(stxs).Do(context.Background())
-
-	if err != nil {
-		return nil, err
+	acc, err := crypto.AccountFromPrivateKey(prv)
+	if acc.Address.String() != pubKey {
+		return nil, fmt.Errorf("Address doesn't match")
 	}
-	confirmedTx, err := transaction.WaitForConfirmation(client, pendingTxID, 4, context.Background())
-	if err != nil {
-		return nil, err
-	}
-	endIndex := confirmedTx.AssetIndex + uint64(len(products))
-
-	//add product to db.
-
-	return utils.MakeRange(confirmedTx.AssetIndex, endIndex), nil
+	return prv, err
 }
 
 func (w *walletQuery) UpdatePinCode(role string, userId string, newPinCode string) error {

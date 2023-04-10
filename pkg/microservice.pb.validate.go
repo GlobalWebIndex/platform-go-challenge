@@ -3984,6 +3984,224 @@ var _ interface {
 	ErrorName() string
 } = MakeTransactionRequestValidationError{}
 
+// Validate checks the field values on SendOwnifyRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SendOwnifyRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SendOwnifyRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SendOwnifyRequestMultiError, or nil if none found.
+func (m *SendOwnifyRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SendOwnifyRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ChainId
+
+	// no validation rules for Sender
+
+	// no validation rules for Receiver
+
+	// no validation rules for Net
+
+	if len(errors) > 0 {
+		return SendOwnifyRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SendOwnifyRequestMultiError is an error wrapping multiple validation errors
+// returned by SendOwnifyRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SendOwnifyRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SendOwnifyRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SendOwnifyRequestMultiError) AllErrors() []error { return m }
+
+// SendOwnifyRequestValidationError is the validation error returned by
+// SendOwnifyRequest.Validate if the designated constraints aren't met.
+type SendOwnifyRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SendOwnifyRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SendOwnifyRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SendOwnifyRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SendOwnifyRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SendOwnifyRequestValidationError) ErrorName() string {
+	return "SendOwnifyRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SendOwnifyRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSendOwnifyRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SendOwnifyRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SendOwnifyRequestValidationError{}
+
+// Validate checks the field values on DeleteOwnifyRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteOwnifyRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteOwnifyRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteOwnifyRequestMultiError, or nil if none found.
+func (m *DeleteOwnifyRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteOwnifyRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ChainId
+
+	// no validation rules for Owner
+
+	// no validation rules for Net
+
+	if len(errors) > 0 {
+		return DeleteOwnifyRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteOwnifyRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteOwnifyRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteOwnifyRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteOwnifyRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteOwnifyRequestMultiError) AllErrors() []error { return m }
+
+// DeleteOwnifyRequestValidationError is the validation error returned by
+// DeleteOwnifyRequest.Validate if the designated constraints aren't met.
+type DeleteOwnifyRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteOwnifyRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteOwnifyRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteOwnifyRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteOwnifyRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteOwnifyRequestValidationError) ErrorName() string {
+	return "DeleteOwnifyRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteOwnifyRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteOwnifyRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteOwnifyRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteOwnifyRequestValidationError{}
+
 // Validate checks the field values on MakeTransactionResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

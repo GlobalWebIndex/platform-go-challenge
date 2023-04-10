@@ -6,12 +6,16 @@ import (
 )
 
 type WalletService interface {
-	AddNewAccount(role string, userId string) (*string, error)
+	AddNewAccount(role string, userId string, email string) (*string, error)
 	RegisterNewAccount(walletAddress string, userId string) (*string, error)
 	GetMyAccounts(role string, userId string) ([]string, error)
 	MintOwnify(email string, pubKey string, products []dto.BriefProduct, net string) ([]uint64, error)
 	UpdatePinCode(role string, userId string, newPinCode string) error
 	MakeTx(rawTx []byte, net string) (*string, *uint64, error)
+
+	SendOwnify(email string, assetIds []uint64, sender string, receiver string, net string) (*string, error)
+
+	DeleteOwnify(email string, assetIds []uint64, owner string, net string) (*string, error)
 }
 
 type walletService struct {
@@ -25,8 +29,9 @@ func NewWalletService(wallet repository.AlgoHandler) WalletService {
 func (w *walletService) AddNewAccount(
 	role string,
 	userId string,
+	email string,
 ) (*string, error) {
-	return w.wallet.NewWalletQuery().AddNewAccount(role, userId)
+	return w.wallet.NewWalletQuery().AddNewAccount(role, userId, email)
 }
 
 func (w *walletService) GetMyAccounts(
@@ -64,4 +69,12 @@ func (w *walletService) MakeTx(rawTx []byte, net string) (*string, *uint64, erro
 
 func (w *walletService) RegisterNewAccount(walletAddress string, userId string) (*string, error) {
 	return w.wallet.NewWalletQuery().RegisterNewAccount(walletAddress, userId)
+}
+
+func (w *walletService) SendOwnify(email string, assetIds []uint64, sender string, receiver string, net string) (*string, error) {
+	return w.wallet.NewWalletQuery().SendOwnify(email, assetIds, sender, receiver, net)
+}
+
+func (w *walletService) DeleteOwnify(email string, assetIds []uint64, owner string, net string) (*string, error) {
+	return w.wallet.NewWalletQuery().DeleteOwnify(email, assetIds, owner, net)
 }
