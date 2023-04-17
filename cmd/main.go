@@ -20,6 +20,7 @@ import (
 	desc "ownify_api/pkg"
 
 	"github.com/ipinfo/go-ipinfo/ipinfo"
+	"ownify_api/internal/config"
 )
 
 const (
@@ -53,7 +54,11 @@ func main() {
 	}
 
 	// preparing config file
-	viper.AddConfigPath("../config")
+	configPath, err := config.GetConfigPath()
+	if err != nil {
+		log.Fatalln("cannot determine config path")
+	}
+	viper.AddConfigPath(configPath)
 	viper.SetConfigName("config")
 	err = viper.ReadInConfig()
 	if err != nil {
@@ -94,7 +99,7 @@ func main() {
 		log.Println("start server")
 
 		grpcServer := grpc.NewServer(grpcOpts)
-	
+
 		desc.RegisterMicroserviceServer(grpcServer, app.NewMicroservice(
 			adminService,
 			userService,

@@ -91,7 +91,7 @@ func (m *MicroserviceServer) SendOwnify(ctx context.Context, req *desc.SendOwnif
 	if err != nil {
 		return nil, err
 	}
-	return BuildRes(txId, "Successfully deleted", true)
+	return BuildRes(txId, "Successfully sent", true)
 }
 
 func (m *MicroserviceServer) DeleteOwnify(ctx context.Context, req *desc.DeleteOwnifyRequest) (*desc.NetWorkResponse, error) {

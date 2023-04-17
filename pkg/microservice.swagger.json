@@ -739,33 +739,12 @@
         },
         "parameters": [
           {
-            "name": "chainId",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "assetIds",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uint64"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "owner",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "net",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DeleteOwnifyRequest"
+            }
           }
         ],
         "tags": [
@@ -888,23 +867,12 @@
         },
         "parameters": [
           {
-            "name": "chainId",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "rawTx",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "byte"
-          },
-          {
-            "name": "net",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1MakeTransactionRequest"
+            }
           }
         ],
         "tags": [
@@ -963,39 +931,12 @@
         },
         "parameters": [
           {
-            "name": "chainId",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "assetIds",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uint64"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "sender",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "receiver",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "net",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SendOwnifyRequest"
+            }
           }
         ],
         "tags": [
@@ -1234,6 +1175,28 @@
         }
       }
     },
+    "v1DeleteOwnifyRequest": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uint64"
+          }
+        },
+        "net": {
+          "type": "string"
+        }
+      }
+    },
     "v1DeleteUserRequest": {
       "type": "object",
       "properties": {
@@ -1278,6 +1241,21 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "v1MakeTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "string"
+        },
+        "rawTx": {
+          "type": "string",
+          "format": "byte"
+        },
+        "net": {
+          "type": "string"
         }
       }
     },
@@ -1440,6 +1418,31 @@
         "perPage": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "v1SendOwnifyRequest": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uint64"
+          }
+        },
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "net": {
+          "type": "string"
         }
       }
     },

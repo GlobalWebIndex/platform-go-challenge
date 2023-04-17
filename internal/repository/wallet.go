@@ -10,6 +10,7 @@ import (
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
 
+	"github.com/algorand/go-algorand-sdk/v2/client/v2/algod"
 	"github.com/algorand/go-algorand-sdk/v2/crypto"
 	"github.com/algorand/go-algorand-sdk/v2/mnemonic"
 	"github.com/algorand/go-algorand-sdk/v2/transaction"
@@ -131,59 +132,96 @@ func (w *walletQuery) MintOwnify(
 		return nil, err
 	}
 
-	//build ASA transaction
-	txns := []types.Transaction{}
-	for _, product := range products {
-		note, err := json.Marshal(product)
+	// Split the transactions into groups of 15.
+	chunkSize := 15
+	var chunks [][]dto.BriefProduct
+	for i := 0; i < len(products); i += chunkSize {
+		end := i + chunkSize
+
+		if end > len(products) {
+			end = len(products)
+		}
+
+		chunks = append(chunks, products[i:end])
+	}
+
+	var assetIndices []uint64
+
+	for _, chunk := range chunks {
+		txns := []types.Transaction{}
+		for _, product := range chunk {
+			note, err := json.Marshal(product)
+			if err != nil {
+				return nil, err
+			}
+			txParams, err := client.SuggestedParams().Do(context.Background())
+			if err != nil {
+				return nil, err
+			}
+			metaHash := utils.Hash(fmt.Sprintf("%v", note))
+			txn, err := transaction.MakeAssetCreateTxn(pubKey,
+				note,
+				txParams, 1, 0,
+				false, pubKey, pubKey, pubKey, pubKey,
+				domain.OwnifyAssetName, domain.OwnifyAssetUnit, domain.OwnifyAssetMetaUrl, metaHash)
+
+			if err != nil {
+				return nil, err
+			}
+			txns = append(txns, txn)
+		}
+
+		groupedTxs, err := transaction.AssignGroupID(txns, pubKey)
 		if err != nil {
 			return nil, err
 		}
-		txParams, err := client.SuggestedParams().Do(context.Background())
-		if err != nil {
-			return nil, err
+		var stxs []byte
+		for _, txn := range groupedTxs {
+			_, stx, _ := crypto.SignTransaction(prv, txn)
+			stxs = append(stxs, stx...)
 		}
-		metaHash := utils.Hash(fmt.Sprintf("%v", note))
 
-		txn, err := transaction.MakeAssetCreateTxn(pubKey,
-			note,
-			txParams, 1, 0,
-			false, pubKey, pubKey, pubKey, pubKey,
-			domain.OwnifyAssetName, domain.OwnifyAssetUnit, domain.OwnifyAssetMetaUrl, metaHash)
+		pendingTxID, err := client.SendRawTransaction(stxs).Do(context.Background())
 
 		if err != nil {
 			return nil, err
 		}
-		txns = append(txns, txn)
+		confirmedTx, err := transaction.WaitForConfirmation(client, pendingTxID, 4, context.Background())
+		if err != nil {
+			return nil, err
+		}
+		endIndex := confirmedTx.AssetIndex + uint64(len(chunk))
+
+		// Add the asset indices of the current chunk to the final result.
+		assetIndices = append(assetIndices, utils.MakeRange(confirmedTx.AssetIndex, endIndex)...)
 	}
 
-	groupedTxs, err := transaction.AssignGroupID(txns, pubKey)
-	if err != nil {
-		return nil, err
-	}
-	var stxs []byte
-	for _, txn := range groupedTxs {
-		_, stx, _ := crypto.SignTransaction(prv, txn)
-		stxs = append(stxs, stx...)
+	return assetIndices, nil
+}
+
+func processChunks(assetIds []uint64, chunkSize int, processFunc func([]uint64) ([]types.Transaction, error)) ([]types.Transaction, error) {
+	var chunks [][]uint64
+	for i := 0; i < len(assetIds); i += chunkSize {
+		end := i + chunkSize
+
+		if end > len(assetIds) {
+			end = len(assetIds)
+		}
+
+		chunks = append(chunks, assetIds[i:end])
 	}
 
-	if err != nil {
-		return nil, err
+	var allTxns []types.Transaction
+
+	for _, chunk := range chunks {
+		txns, err := processFunc(chunk)
+		if err != nil {
+			return nil, err
+		}
+		allTxns = append(allTxns, txns...)
 	}
 
-	pendingTxID, err := client.SendRawTransaction(stxs).Do(context.Background())
-
-	if err != nil {
-		return nil, err
-	}
-	confirmedTx, err := transaction.WaitForConfirmation(client, pendingTxID, 4, context.Background())
-	if err != nil {
-		return nil, err
-	}
-	endIndex := confirmedTx.AssetIndex + uint64(len(products))
-
-	//add product to db.
-
-	return utils.MakeRange(confirmedTx.AssetIndex, endIndex), nil
+	return allTxns, nil
 }
 
 func (w *walletQuery) SendOwnify(
@@ -193,7 +231,6 @@ func (w *walletQuery) SendOwnify(
 	receiver string,
 	net string,
 ) (*string, error) {
-
 	prv, err := recoverAccProcess(email, sender)
 	if err != nil {
 		return nil, err
@@ -205,51 +242,35 @@ func (w *walletQuery) SendOwnify(
 		return nil, err
 	}
 
-	//build ASA transaction
-	txns := []types.Transaction{}
-	for _, assetId := range assetIds {
-		txParams, err := client.SuggestedParams().Do(context.Background())
-		if err != nil {
-			return nil, err
+	sendChunk := func(chunk []uint64) ([]types.Transaction, error) {
+		txns := []types.Transaction{}
+		for _, assetId := range chunk {
+			txParams, err := client.SuggestedParams().Do(context.Background())
+			if err != nil {
+				return nil, err
+			}
+			txn, err := transaction.MakeAssetTransferTxn(sender,
+				receiver, 1,
+				[]byte(""),
+				txParams,
+				"",
+				assetId,
+			)
+
+			if err != nil {
+				return nil, err
+			}
+			txns = append(txns, txn)
 		}
-		txn, err := transaction.MakeAssetTransferTxn(sender,
-			receiver, 1,
-			[]byte(""),
-			txParams,
-			sender,
-			assetId,
-		)
-
-		if err != nil {
-			return nil, err
-		}
-		txns = append(txns, txn)
+		return txns, nil
 	}
 
-	groupedTxs, err := transaction.AssignGroupID(txns, sender)
-	if err != nil {
-		return nil, err
-	}
-	var stxs []byte
-	for _, txn := range groupedTxs {
-		_, stx, _ := crypto.SignTransaction(prv, txn)
-		stxs = append(stxs, stx...)
-	}
-
+	txns, err := processChunks(assetIds, 15, sendChunk)
 	if err != nil {
 		return nil, err
 	}
 
-	pendingTxID, err := client.SendRawTransaction(stxs).Do(context.Background())
-
-	if err != nil {
-		return nil, err
-	}
-	_, err = transaction.WaitForConfirmation(client, pendingTxID, 4, context.Background())
-	if err != nil {
-		return nil, err
-	}
-	return &pendingTxID, nil
+	return sendGroupedTransactions(client, prv, sender, txns)
 }
 
 func (w *walletQuery) DeleteOwnify(
@@ -258,7 +279,6 @@ func (w *walletQuery) DeleteOwnify(
 	owner string,
 	net string,
 ) (*string, error) {
-
 	prv, err := recoverAccProcess(email, owner)
 	if err != nil {
 		return nil, err
@@ -270,26 +290,37 @@ func (w *walletQuery) DeleteOwnify(
 		return nil, err
 	}
 
-	//build ASA transaction
-	txns := []types.Transaction{}
-	for _, assetId := range assetIds {
-		txParams, err := client.SuggestedParams().Do(context.Background())
-		if err != nil {
-			return nil, err
-		}
-		txn, err := transaction.MakeAssetDestroyTxn(owner,
-			[]byte(""),
-			txParams,
-			assetId,
-		)
+	deleteChunk := func(chunk []uint64) ([]types.Transaction, error) {
+		txns := []types.Transaction{}
+		for _, assetId := range chunk {
+			txParams, err := client.SuggestedParams().Do(context.Background())
+			if err != nil {
+				return nil, err
+			}
+			txn, err := transaction.MakeAssetDestroyTxn(owner,
+				[]byte(""),
+				txParams,
+				assetId,
+			)
 
-		if err != nil {
-			return nil, err
+			if err != nil {
+				return nil, err
+			}
+			txns = append(txns, txn)
 		}
-		txns = append(txns, txn)
+		return txns, nil
 	}
 
-	groupedTxs, err := transaction.AssignGroupID(txns, owner)
+	txns, err := processChunks(assetIds, 15, deleteChunk)
+	if err != nil {
+		return nil, err
+	}
+
+	return sendGroupedTransactions(client, prv, owner, txns)
+}
+
+func sendGroupedTransactions(client *algod.Client, prv ed25519.PrivateKey, sender string, txns []types.Transaction) (*string, error) {
+	groupedTxs, err := transaction.AssignGroupID(txns, sender)
 	if err != nil {
 		return nil, err
 	}

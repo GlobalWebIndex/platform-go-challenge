@@ -188,17 +188,20 @@ service Microservice {
   rpc MakeTransaction (MakeTransactionRequest) returns (MakeTransactionResponse) {
     option (google.api.http) = {
       post: "/v1/wallet/rawtx"
+      body: "*"
     };
   }
 
   rpc SendOwnify (SendOwnifyRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
       post: "/v1/wallet/send"
+      body: "*"
     };
   }
   rpc DeleteOwnify (DeleteOwnifyRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
       post: "/v1/wallet/delete"
+      body: "*"
     };
   }
 }
@@ -399,7 +402,7 @@ message MakeTransactionRequest {
 }
 
 message SendOwnifyRequest {
-  string chain_id = 1;
+  int32 chain_id = 1;
   repeated uint64 assetIds = 2;
   string sender = 3;
   string receiver = 4;
@@ -407,9 +410,9 @@ message SendOwnifyRequest {
 }
 
 message DeleteOwnifyRequest {
-  string chain_id = 1;
-  repeated uint64 assetIds = 2;
-  string owner = 3;
+  int32 chain_id = 1;
+  string owner = 2;
+  repeated uint64 assetIds = 3;
   string net = 4;
 }
 
