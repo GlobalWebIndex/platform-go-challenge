@@ -6,8 +6,9 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/spf13/viper"
 	"ownify_api/internal/config"
+
+	"github.com/spf13/viper"
 )
 
 type DBHandler interface {
@@ -39,7 +40,6 @@ func NewDB(dbName string) (*sql.DB, error) {
 	if err != nil {
 		log.Fatalln("cannot read from a config")
 	}
-
 	host := viper.Get("database.host").(string)
 	port := viper.Get("database.port").(string)
 	user := viper.Get("database.user").(string)
@@ -67,7 +67,6 @@ func NewTestDB() (*sql.DB, error) {
 		log.Fatalln("cannot read from a config")
 	}
 
-	
 	host := viper.Get("database.test.host").(string)
 	port := viper.Get("database.test.port").(string)
 	user := viper.Get("database.test.user").(string)

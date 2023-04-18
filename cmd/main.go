@@ -19,8 +19,9 @@ import (
 	"ownify_api/internal/service"
 	desc "ownify_api/pkg"
 
-	"github.com/ipinfo/go-ipinfo/ipinfo"
 	"ownify_api/internal/config"
+
+	"github.com/ipinfo/go-ipinfo/ipinfo"
 )
 
 const (
