@@ -3,10 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
-	"log"
 	"math/rand"
-	"ownify_api/internal/config"
-	"path/filepath"
 	"strconv"
 	"time"
 
@@ -128,12 +125,12 @@ func (t *tokenManager) ValidateFirebase(accessToken string) (*string, error) {
 }
 
 func getFirebaseAuthService() (*auth.Client, error) {
-	configPath, err := config.GetConfigPath()
-	if err != nil {
-		log.Fatalln("cannot determine config path")
-	}
-	credentialsPath := filepath.Join(configPath, "ownify-wallet-service-account.json")
-	opt := option.WithCredentialsFile(credentialsPath)
+	// configPath, err := config.GetConfigPath()
+	// if err != nil {
+	// 	log.Fatalln("cannot determine config path")
+	// }
+	// credentialsPath := filepath.Join(configPath, "ownify-wallet-service-account.json")
+	opt := option.WithCredentialsFile("../config/ownify-wallet-service-account.json")
 
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {

@@ -6,8 +6,6 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"ownify_api/internal/config"
-
 	"github.com/spf13/viper"
 )
 
@@ -30,13 +28,13 @@ func NewDBHandler(db *sql.DB) DBHandler {
 }
 
 func NewDB(dbName string) (*sql.DB, error) {
-	configPath, err := config.GetConfigPath()
-	if err != nil {
-		log.Fatalln("cannot determine config path")
-	}
-	viper.AddConfigPath(configPath)
+	// configPath, err := config.GetConfigPath()
+	// if err != nil {
+	// 	log.Fatalln("cannot determine config path")
+	// }
+	viper.AddConfigPath("../config")
 	viper.SetConfigName("config")
-	err = viper.ReadInConfig()
+	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatalln("cannot read from a config")
 	}
@@ -56,13 +54,16 @@ func NewDB(dbName string) (*sql.DB, error) {
 }
 
 func NewTestDB() (*sql.DB, error) {
-	configPath, err := config.GetConfigPath()
-	if err != nil {
-		log.Fatalln("cannot determine config path")
-	}
-	viper.AddConfigPath(configPath)
+	// configPath, err := config.GetConfigPath()
+	// if err != nil {
+	// 	log.Fatalln("cannot determine config path")
+	// }
+	// viper.AddConfigPath(configPath)
+
+	viper.AddConfigPath("../config")
 	viper.SetConfigName("config")
-	err = viper.ReadInConfig()
+	viper.SetConfigName("config")
+	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatalln("cannot read from a config")
 	}
