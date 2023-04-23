@@ -4,9 +4,10 @@ import (
 	"errors"
 	"strings"
 
+	"platform-go-challenge/models"
+	"platform-go-challenge/utils"
+
 	"gorm.io/gorm"
-	"platform2.0-go-challenge/models"
-	"platform2.0-go-challenge/utils"
 )
 
 type UserRepository struct{}

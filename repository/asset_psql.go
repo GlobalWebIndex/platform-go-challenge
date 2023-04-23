@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"platform2.0-go-challenge/models"
+	"platform-go-challenge/models"
 )
 
 type AssetRepository struct{}

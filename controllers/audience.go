@@ -6,10 +6,11 @@ import (
 
 	"reflect"
 
+	"platform-go-challenge/models"
+	Repository "platform-go-challenge/repository"
+	"platform-go-challenge/utils"
+
 	"gorm.io/gorm"
-	"platform2.0-go-challenge/models"
-	Repository "platform2.0-go-challenge/repository"
-	"platform2.0-go-challenge/utils"
 )
 
 type AudienceController struct{}

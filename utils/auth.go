@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"platform-go-challenge/models"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
-	"platform2.0-go-challenge/models"
 )
 
 var encryptionKey = "someKey"

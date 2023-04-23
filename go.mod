@@ -1,4 +1,4 @@
-module platform2.0-go-challenge
+module platform-go-challenge
 
 go 1.17
 
@@ -12,11 +12,13 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/golang/mock v1.4.4 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.2 // indirect
 	github.com/nahojer/sage v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
+	golang.org/x/tools v0.0.0-20200103221440-774c71fcf114 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 

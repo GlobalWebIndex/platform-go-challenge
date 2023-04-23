@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"platform2.0-go-challenge/models"
+	"platform-go-challenge/models"
 )
 
 func SendError(w http.ResponseWriter, status int, err models.Error) {

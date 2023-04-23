@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"strconv"
 
+	"platform-go-challenge/models"
+	Repository "platform-go-challenge/repository"
+	"platform-go-challenge/utils"
+
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
-	"platform2.0-go-challenge/models"
-	Repository "platform2.0-go-challenge/repository"
-	"platform2.0-go-challenge/utils"
 )
 
 type Controller struct{}
@@ -64,4 +65,3 @@ func (c Controller) GetUserAssets(db *gorm.DB) http.HandlerFunc {
 
 	}
 }
-

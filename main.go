@@ -6,12 +6,13 @@ import (
 	"net/http"
 	"os"
 
+	"platform-go-challenge/controllers"
+	"platform-go-challenge/models"
+	"platform-go-challenge/utils"
+
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/subosito/gotenv"
-	"platform2.0-go-challenge/controllers"
-	"platform2.0-go-challenge/models"
-	"platform2.0-go-challenge/utils"
 )
 
 func init() {
