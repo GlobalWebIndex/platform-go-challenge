@@ -2,30 +2,228 @@
 
 ## Introduction
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+This solution provides user endpoints with basic authedication functionality along with a CRUD API for user assets. For this challenge a postgres database with sample data has been created in https://api.elephantsql.com/.
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+## Run solution
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+A web server will start at http://localhost:8000 by running `go run main.go` 
 
-## Challenge
+### Sample Data
+In the created postgres database there are some sample data (charts, insights, audiences) for user with id 1.
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+## API
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+## Sign up
+`POST /api/users/signup`
+### Request
+    curl --location --request POST 'http://localhost:8000/api/users/signup'
+    --header 'Content-Type: application/json' 
+    --data-raw '
+    {
+        "Email": "pdimiropoulou@mail.com",
+        "Password": "1234"
+    }'
+  
+### Response
+Returns an integer for the new user id 
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+## Login
+`POST /api/users/login`
+### Request
+    curl --location --request POST 'http://localhost:8000/api/users/signup'
+    --header 'Content-Type: application/json' 
+    --data-raw '
+    {
+        "Email": "pdimiropoulou@mail.com",
+        "Password": "1234"
+    }'
+  
+### Response
+The token should be used in the header of user assets requests having as key:Authorization and value the value of the token provided in the response below.
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+    {
+        "id": 1,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBkaW1pcm9wb3Vsb3VAbWFpbC5jb20ifQ.6mtFYiH-Fmyc1ybc6H-3PcXXFUW6giYWs3knD5R0UKQ"AA
+    }
+ 
+## Get user assets
+`GET /api/assets/{user_id}`
+### Request
+    curl --location --request GET 'http://localhost:8000/api/assets/1?limit=10&offset=0'
+    --header 'Authorization:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBkaW1pcm9wb3Vsb3VAbWFpbC5jb20ifQ.6mtFYiH-Fmyc1ybc6H-3PcXXFUW6giYWs3knD5R0UKQ' 
+ 
+Parameters limit and offset can be used for pagination, if these parameters are not provided the response will contain all user assets
 
-It is appreciated, though not required, if a Dockerfile is included.
+### Response
+The token should be used in the header of user assets requests having as key:Authorization and value the value of the token provided in the response above.
 
-## Submission
+    {
+    "user_id": 1,
+    "charts": [
+        {
+            "ID": 1,
+            "UserId": 1,
+            "Favourite": true,
+            "Title": "Calls Chart",
+            "XAxes": "Calls",
+            "YAxes": "Duration",
+            "Data": "Test data for chart"
+        },
+        {
+            "ID": 2,
+            "UserId": 1,
+            "Favourite": true,
+            "Title": "Movies Chart",
+            "XAxes": "Movies",
+            "YAxes": "#Views",
+            "Data": "Test data for chart"
+        }
+    ],
+    "insights": [
+        {
+            "ID": 1,
+            "UserId": 1,
+            "Favourite": true,
+            "Text": "40% of millenials spend more than 3hours on social media daily"
+        },
+        {
+            "ID": 2,
+            "UserId": 1,
+            "Favourite": true,
+            "Text": "50% of females in age 30-35 spend more than 8hours on running weekly"
+        }
+    ],
+    "audiences": [
+        {
+            "ID": 1,
+            "UserId": 1,
+            "Favourite": true,
+            "Gender": "Female",
+            "Country": "Greece",
+            "AgeFrom": 30,
+            "AgeTo": 35,
+            "SocialHours": 2,
+            "Purchases": 80
+        },
+        {
+            "ID": 2,
+            "UserId": 1,
+            "Favourite": true,
+            "Gender": "Male",
+            "Country": "Greece",
+            "AgeFrom": 30,
+            "AgeTo": 35,
+            "SocialHours": 5,
+            "Purchases": 70
+        }
+    ]
+    }
 
-Just create a fork from the current repo and send it to us!
+## Create chart
+`POST api/assets/charts/{user_id}`
+### Request
 
-Good luck, potential colleague!
+    curl --location --request POST 'http://localhost:8000/api/assets/charts/1'
+    --header 'Content-Type: application/json' 
+    --header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBkaW1pcm9wb3Vsb3VAbWFpbC5jb20ifQ.6mtFYiH-Fmyc1ybc6H-3PcXXFUW6giYWs3knD5R0UKQ'
+    --data-raw  ' 
+    {
+      "UserId": 1,
+      "Title":"Movies Chart",
+      "XAxes":"Movies",
+      "YAxes":"#Views",
+      "Data":"Test data for chart"
+    }'
+  
+### Response
+Returns an integer for the new chart.New records are marked as favourite by default.
+
+## Create insight
+`POST api/assets/insights/{user_id}`
+### Request
+
+    curl --location --request POST 'http://localhost:8000/api/assets/insights/1'
+    --header 'Content-Type: application/json' 
+    --header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBkaW1pcm9wb3Vsb3VAbWFpbC5jb20ifQ.6mtFYiH-Fmyc1ybc6H-3PcXXFUW6giYWs3knD5R0UKQ'
+    --data-raw  ' 
+    {
+      "UserId": 1,
+      "Text":"40% of millenials spend more than 3hours on social media daily"
+    }'
+  
+### Response
+Returns an integer for the new insight. New records are marked as favourite by default.
+
+## Create audience
+`POST api/assets/audiences/{user_id}`
+### Request
+
+    curl --location --request POST 'http://localhost:8000/api/assets/audiences/1'
+    --header 'Content-Type: application/json' 
+    --header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBkaW1pcm9wb3Vsb3VAbWFpbC5jb20ifQ.6mtFYiH-Fmyc1ybc6H-3PcXXFUW6giYWs3knD5R0UKQ'
+    --data-raw  ' 
+    {
+            "UserId": 1,
+            "Favourite": true,
+            "Gender": "Female",
+            "Country": "Greece",
+            "AgeFrom": 30,
+            "AgeTo": 35,
+            "SocialHours": 2,
+            "Purchases": 80
+        }'
+  
+### Response
+Returns an integer for the new audience. New records are marked as favourite by default.
+
+## Update chart
+Mark or unmark as favourite a chart by setting Favourite:false 
+`PUT api/assets/charts`
+### Request
+    curl --location --request PUT 'http://localhost:8000/api/assets/charts/1'
+    --header 'Content-Type: application/json' 
+    --header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBkaW1pcm9wb3Vsb3VAbWFpbC5jb20ifQ.6mtFYiH-Fmyc1ybc6H-3PcXXFUW6giYWs3knD5R0UKQ'
+    --data-raw  ' 
+    {
+      "ID":1,
+      "UserId": 1,
+      "Favourite": false
+    }'
+  
+### Response
+Returns the string "Chart has been updated" or error message ""
+
+## Update insight
+### Request
+Mark or unmark as favourite an insight by setting Favourite:false 
+`PUT api/assets/insights/{user_id}`
+
+    curl --location --request PUT 'http://localhost:8000/api/assets/insights/1'
+    --header 'Content-Type: application/json' 
+    --header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBkaW1pcm9wb3Vsb3VAbWFpbC5jb20ifQ.6mtFYiH-Fmyc1ybc6H-3PcXXFUW6giYWs3knD5R0UKQ'
+    --data-raw  ' 
+    {
+      "ID":1,
+      "UserId": 1,
+      "Favourite": false
+    }'
+  
+### Response
+Returns the string "Insight has been updated".
+
+## Update audience
+Mark or unmark as favourite an audence by setting Favourite:false 
+`PUT api/assets/audiences/{user_id}`
+### Request
+    curl --location --request PUT 'http://localhost:8000/api/assets/audiences/1'
+    --header 'Content-Type: application/json' 
+    --header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBkaW1pcm9wb3Vsb3VAbWFpbC5jb20ifQ.6mtFYiH-Fmyc1ybc6H-3PcXXFUW6giYWs3knD5R0UKQ'
+    --data-raw  ' 
+    {
+            "ID": 1,
+            "UserId": 1,
+            "Favourite": false,
+        }'
+  
+### Response
+Returns the string "Audience has been updated".
