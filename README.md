@@ -91,7 +91,7 @@ Additionally, the OpenAPI 3.0 specification is provided in the respective folder
 
 This implementation can support any type of cache service by utilizing the created `CacheHandler` interface and implementing its methods.
 The results of a *GET* request to fetch the favourite assets list of a user are cached for faster future retrieval. When this list is updated (either by adding or removing assets), the cache entry is invalidated and the next time the same *GET* request is triggered, the updated resuls will be cached anew. Cache utilizes a map using the client cookies as keys and the *GET* response as the value.
-__At this time a resizing function for these maps is not implemented. To prevent a ever-growing memory allocation (since maps don't shrink) we can either create a fixed capacity map and handle the scaling (up and down when needed) manually, or create a map without specifying capacity and on events (intervals or triggers) scale the map down by recreating from scratch and adding the existing keys to it while setting the previous map to *nil* and allowing the GC to clean it up.__
+__At this time a resizing function for these maps is not implemented. To prevent an ever-growing memory allocation (since maps don't shrink) we can either create a fixed capacity map and handle the scaling (up and down when needed) manually, or create a map without specifying capacity and on events (intervals or triggers) scale the map down by recreating from scratch and adding the existing keys to it while setting the previous map to *nil* and allowing the GC to clean it up.__
 
 Currently, `memory` is the only implemented option (in-memory cache).
 
@@ -100,7 +100,7 @@ Currently, `memory` is the only implemented option (in-memory cache).
 #### Storage
 
 This implementation can support any type of storage by utilizing the created `StorageHandler` interface and implementing its methods. Storage utilizes two maps  for fast access times, one for the users favourite assets lists and another for the users authentication information. 
-__At this time a resizing function for these maps is not implemented. To prevent a ever-growing memory allocation (since maps don't shrink) we can either create a fixed capacity map and handle the scaling (up and down when needed) manually, or create a map without specifying capacity and on events (intervals or triggers) scale the map down by recreating from scratch and adding the existing keys to it while setting the previous map to *nil* and allowing the GC to clean it up.__
+__At this time a resizing function for these maps is not implemented. To prevent an ever-growing memory allocation (since maps don't shrink) we can either create a fixed capacity map and handle the scaling (up and down when needed) manually, or create a map without specifying capacity and on events (intervals or triggers) scale the map down by recreating from scratch and adding the existing keys to it while setting the previous map to *nil* and allowing the GC to clean it up.__
 
 Currently, `memory` is the only implemented option (in-memory storage).
 
@@ -116,7 +116,7 @@ Execute all the tests with the following command:
 
 ```bash
 
-go test  -v  ./...
+go test -v ./...
 
 ```
 
@@ -124,9 +124,9 @@ Additionaly, you can extract the tests coverage profile using the commands below
 
 ```bash
 
-go test  -v  -coverprofile=cover.out  ./...
+go test -v -coverprofile=cover.out ./...
 
-go tool  cover  -html  cover.out  -o  cover.html
+go tool cover -html cover.out -o cover.html
 
 ```
 
@@ -151,7 +151,7 @@ Additionaly, build version information can be injected into the binary using the
 
 ```bash
 
-go build  -ldflags="-X 'challenge/webserver.Version=v1.0.0' -X 'challenge/webserver.BuildTime=$(date -u +"%Y-%m-%d %H:%M:%S")' -X 'challenge/webserver.CommitHash=$(git rev-parse HEAD 2>/dev/null)' -X 'challenge/webserver.BuildUser=$(id -u -n)'"  .
+go build -ldflags="-X 'challenge/webserver.Version=v1.0.0' -X 'challenge/webserver.BuildTime=$(date -u +"%Y-%m-%d %H:%M:%S")' -X 'challenge/webserver.CommitHash=$(git rev-parse HEAD 2>/dev/null)' -X 'challenge/webserver.BuildUser=$(id -u -n)'" .
 
 ```
 
@@ -159,7 +159,7 @@ Execute the binary:
 
 ```bash
 
-chmod +x  challenge
+chmod +x challenge
 
 ./challenge
 
