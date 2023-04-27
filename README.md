@@ -179,6 +179,6 @@ Run a container with the build image, exposing the service port:
 
 ```bash
 
-docker run  -d  -p  8000:8000  --name  challenge  challenge
+docker run -d -p 8000:8000 --name challenge challenge
 
 ```
