@@ -1,0 +1,9 @@
+address: "0.0.0.0"
+port: 8000
+tokenSecret: "mytempsecretkey"
+adminUser: "adminUser"
+adminPass: "adminPass"
+storage: "memory"
+cache: "memory"
+profiler: true
+metrics: true

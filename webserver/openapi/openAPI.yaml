@@ -1,0 +1,376 @@
+openapi: 3.0.0
+info:
+  title:  GWI challenge
+  description: API for managing user's favourite assets
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/
+paths:
+  /signup:
+    post:
+      summary: Sign up new user
+      tags: 
+        - User management
+      description: Register a new user 
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+      responses:
+        '201':
+          description: New user registered
+        '400':
+          description: Invalid request body
+        '409':
+          description: User already exists
+        '500':
+          description: Internal server error
+  /signin:
+    post:
+      summary: Sign in existing user
+      tags: 
+        - User management
+      description: Logs in as an existing user
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+      responses:
+        '200':
+          description: User signed in
+          headers: 
+            Set-Cookie:
+              schema: 
+                type: string
+                example: token=abcde12345;
+        '400':
+          description: Invalid request body
+        '409':
+          description: Missing user credentials
+        '500':
+          description: Internal server error
+  /signout:
+    get:
+      security:
+        - cookieAuth: []
+      summary: Sign out user
+      description: Logs out a logged in user
+      tags: 
+        - User management
+      responses:
+        '200':
+          description: signout successful
+        '406':
+          description: Missing cookie
+  /version:
+    get:
+      summary: Retrieve version information
+      description: Retrieves the current build version information
+      tags: 
+        - Miscellaneous
+      responses:
+        '200':
+          description: build information retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VersionInformation' 
+        '500':
+          description: Serialization error
+  /metrics:
+    get:
+      summary: Retrieve collected metrics
+      description: Provides a Prometheus scraping endpoint for the collected metrics (if enabled)
+      tags: 
+        - Miscellaneous
+      responses:
+        '200':
+          description: Collected metrics
+  /debug/pprof:
+    get:
+      summary: Retrieve debugging information
+      description: Provides an endpoint to retrieve debugging information and record app profiles (if enabled)
+      tags: 
+        - Miscellaneous
+      responses:
+        '200':
+          description: Debugging information
+  /users/{userId}/favourites:
+    get:
+      security:
+        - cookieAuth: []
+      summary: Get user's favourite assets
+      description: Returns a list of all assets that the user has favourited
+      tags: 
+        - Service
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user whose favourites to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of assets favourited by the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Asset'
+        '401':
+          description: Unauthorized
+        '404':
+          description: User not found
+        '500':
+          description: Internal server error
+    post:
+      security:
+        - cookieAuth: []
+      summary: Add asset to user's favourites
+      description: Adds the specified asset to the user's favourites list
+      tags: 
+        - Service
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to add the favourite for
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Asset to add to the user's favourites
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Asset'
+      responses:
+        '201':
+          description: Asset added to user's favourits list
+        '400':
+          description: Malformed request body
+        '404':
+          description: User was not found
+        '409':
+          description: Asset with that id already exists
+        '500':
+          description: Internal server error
+  /users/{userId}/favourites/{assetId}:
+    put:
+      security:
+        - cookieAuth: []
+      summary: Edit asset description
+      description: Updates the description of the specified asset in the user's favourites list
+      tags: 
+        - Service
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user whose favourite to edit
+          required: true
+          schema:
+            type: string
+        - name: assetId
+          in: path
+          description: ID of the asset to edit
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: New description for the asset
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  description: The new description for the asset
+              required:
+                - description
+      responses:
+        '200':
+          description: Asset description updated
+        '400':
+          description: Malformed request body
+        '401':
+          description: Unauthorized
+        '404':
+          description: Asset was not found
+        '500':
+          description: Internal server error
+    delete:
+      security:
+        - cookieAuth: []
+      summary: Delete a favourite asset for a user
+      description: Deletes the favourite asset with the given ID for the given user.
+      tags: 
+        - Service
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user whose favourite asset will be deleted.
+          schema:
+            type: string
+        - name: assetId
+          in: path
+          required: true
+          description: The ID of the favourite asset to be deleted.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Asset was not found
+        '500':
+          description: Internal server error
+  /users/{userId}/create:
+    post:
+      security:
+        - cookieAuth: []
+      description: Create new user (for privileged users)
+      tags: 
+        - User management
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to create
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+      responses:
+        '201':
+          description: New user created
+        '400':
+          description: Invalid request body
+        '409':
+          description: User already exists
+        '500':
+          description: Internal server error
+  /users/{userId}/delete:
+    delete:
+      security:
+        - cookieAuth: []
+      description: User removal (for privileged users)
+      tags: 
+        - User management
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to be removed
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User deleted
+        '404':
+          description: User not found
+        '500':
+          description: Internal server error
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token  
+  schemas:
+    UserCredentials:
+      type: object
+      properties:
+        id:
+          type: string
+        password:
+          type: string
+    Chart:
+      type: object
+      properties:
+        title:
+          type: string
+        xAxisTitle:
+          type: string
+        yAxisTitle:
+          type: string
+        data:
+          type: object
+    Insight:
+      type: object
+      properties:
+        text:
+          type: string
+    Audience:
+      type: object
+      properties:
+        gender:
+          type: string
+        birthCountry:
+          type: string
+        ageGroup:
+          type: object
+          properties:
+            bottom:
+              type: number
+            top:
+              type: number
+        hoursDailyOnSocialMedia:
+          type: number
+        purchaces:
+          type: number
+    Asset:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        assetData:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Chart'
+            - $ref: '#/components/schemas/Insight'
+            - $ref: '#/components/schemas/Audience'
+        added:
+          type: string
+        modified:
+          type: string
+    UserFavourites:
+      type: array
+      items:
+        $ref: '#/components/schemas/Asset'
+    VersionInformation:
+      type: object
+      properties:
+        version:
+          type: string
+        buildTime:
+          type: string
+        commitHash:
+          type: string
+        buildUser:
+          type: string
