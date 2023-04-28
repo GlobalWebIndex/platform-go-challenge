@@ -108,7 +108,7 @@ Currently, `memory` is the only implemented option (in-memory storage).
 
 #### Metrics
 
-If metric collection is enabled using the configuration (env) file, GO runtime metrics and metrics pertaining to the API endpoints are collected and exposed through the corresponding Prometheus scraping endpoint (*/metrics*). 
+If metric collection is enabled using the configuration (yaml) file, GO runtime metrics and metrics pertaining to the API endpoints are collected and exposed through the corresponding Prometheus scraping endpoint (*/metrics*). 
 
 #### Tests
 
