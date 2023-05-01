@@ -29,3 +29,20 @@ It is appreciated, though not required, if a Dockerfile is included.
 Just create a fork from the current repo and send it to us!
 
 Good luck, potential colleague!
+
+## Run the project
+
+In the parent folder run :
+```
+docker compose up -d --build
+```
+
+API Endpoints :
+
+|HTTP Method    | Endpoint                    | Description                                                  |
+| ------------- | --------------------------- | ------------------------------------------------------------ |
+|GET            | /users                      | Get all available users                                      |
+|POST           | /users                      | Create a new user passing a User object in body              |
+|GET            | /users/{user_id}            | Get user info providing its id                               |
+|GET            | /users/{user_id}/favorites  | Get favorites for specific user                              |
+|POST           |  /users/{user_id}/favorites | Add new favorite for user passing the relevant object in body|

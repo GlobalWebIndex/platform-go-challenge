@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  platform-go-challenge:
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    container_name: platform-go-challenge
+    ports:
+      - "8080:8080" 
+    depends_on: 
+      - postgres-db 
+    environment:
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_USER: gochallenge
+      DB_PASSWORD: gochallenge
+      DB_NAME: platform_go_challenge
+
+  postgres-db:
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+      - ./sql/load_initial_data.sql:/docker-entrypoint-initdb.d/load_initial_data.sql
+    environment:
+      POSTGRES_DB: platform_go_challenge
+      POSTGRES_USER: gochallenge
+      POSTGRES_PASSWORD: gochallenge
+
+volumes:
+  postgres-db:
+    driver: local
