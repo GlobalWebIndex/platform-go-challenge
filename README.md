@@ -72,8 +72,22 @@ directory. To generate the needed Bearer token, please call /token endpoint with
 
 1. Unit tests for adding, removing, editing assets are done only for Charts and only for happy paths.
 2. JWT mechanism just requires a fake username and password to generate a JWT token and does NOT do
-    actual login due to lack of time. Also no test created for it
+   actual login due to lack of time. Also no test created for it
 
 ## Performance
 
+If Users favourites data were causing performance issues, I would investigate the following solutions:
+
+1. Add a cache to the repository layer, over the DB and keep there the User's favourite Assets
+   in order to have faster access to it
+1. Limit Payload by implementing Pagination
+1. Limit Payload by compressing the data with Accept-Encoding: gzip or compress
+1. Add indexes in DB. For example we could add indexed to the Users-Assets tables e.g "users_charts" on user_id
+   and chart_id
+
+* All these solutions would need to be discussed with the Engineering team to find the most suitable as
+  they all have their pros and cons
+
 ## Security
+
+1. JWT mechanism added for Authentication and Authorization (incomplete - see Known Issues)
