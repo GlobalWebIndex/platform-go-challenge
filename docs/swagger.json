@@ -1,0 +1,348 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "# Assessment for GWI Platform Go Challange",
+    "title": "Platform Go Challenge OpenAPI",
+    "termsOfService": "there are no TOS at this moment, use at your own risk we take no responsibility",
+    "contact": {
+      "name": "Loukas Peteinaris",
+      "url": "https://github.com/loukaspe",
+      "email": "loukas.peteinaris@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    },
+    "version": "0.0.1"
+  },
+  "host": "localhost",
+  "basePath": "/",
+  "paths": {
+    "/health-check": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "summary": "Check for the health of the app",
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/HealthCheckResponse"
+            }
+          },
+          "500": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/HealthCheckResponse"
+            }
+          }
+        }
+      }
+    },
+    "/token": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "summary": "Generates JWT token for authentication and authorization",
+        "operationId": "jwtToken",
+        "parameters": [
+          {
+            "x-go-name": "Username",
+            "name": "username",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "x-go-name": "Password",
+            "name": "password",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/JwtResponse"
+            }
+          },
+          "500": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/JwtResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/{userId}/favourites": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "summary": "It returns favourite Assets of User's with ID {userId}",
+        "operationId": "getUserFavouriteAsset"
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "summary": "It adds Asset with ID {assetId} to User's with ID {userId} favourites",
+        "operationId": "addUserFavouriteAsset",
+        "parameters": [
+          {
+            "x-go-name": "AssetType",
+            "name": "assetType",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "x-go-name": "AssetId",
+            "name": "assetId",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "summary": "It deletes favourite Asset with ID {assetId} of User's with ID {userId}",
+        "operationId": "deleteUserFavouriteAsset",
+        "parameters": [
+          {
+            "x-go-name": "AssetType",
+            "name": "assetType",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "x-go-name": "AssetId",
+            "name": "assetId",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          }
+        ]
+      }
+    },
+    "/user/{userId}/favourites/{assetId}": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "summary": "It updates Asset's with ID {assetId} description of User's with ID {userId} favourites",
+        "operationId": "updateUserFavouriteAssetDescription",
+        "parameters": [
+          {
+            "x-go-name": "AssetType",
+            "name": "assetType",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "x-go-name": "Description",
+            "name": "description",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "AddUserFavouriteAssetResponse": {
+      "description": "Response when we add asset to user's favorite",
+      "type": "object",
+      "properties": {
+        "errorMessage": {
+          "description": "possible error message",
+          "type": "string",
+          "x-go-name": "ErrorMessage"
+        }
+      },
+      "x-go-package": "github.com/loukaspe/platform-go-challenge/internal/handlers/userFavourites"
+    },
+    "Asset": {
+      "type": "object",
+      "properties": {
+        "GetDescription": {
+          "type": "string"
+        },
+        "GetType": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "github.com/loukaspe/platform-go-challenge/internal/core/domain"
+    },
+    "DeleteUserFavouriteAssetResponse": {
+      "description": "Response when we delete user's favorite asset",
+      "type": "object",
+      "properties": {
+        "errorMessage": {
+          "description": "possible error message",
+          "type": "string",
+          "x-go-name": "ErrorMessage"
+        }
+      },
+      "x-go-package": "github.com/loukaspe/platform-go-challenge/internal/handlers/userFavourites"
+    },
+    "GetUserFavouriteAssetsResponse": {
+      "description": "Response when we get user's favorite assets",
+      "type": "object",
+      "properties": {
+        "errorMessage": {
+          "description": "possible error message",
+          "type": "string",
+          "x-go-name": "ErrorMessage"
+        },
+        "favouritesAssets": {
+          "description": "user's favourite assets",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Asset"
+          },
+          "x-go-name": "FavouritesAssets"
+        }
+      },
+      "x-go-package": "github.com/loukaspe/platform-go-challenge/internal/handlers/userFavourites"
+    },
+    "HealthCheckResponse": {
+      "description": "Response when we do health check",
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "description": "message that all is OK or what is wrong",
+          "type": "string",
+          "x-go-name": "Message"
+        }
+      },
+      "x-go-package": "github.com/loukaspe/platform-go-challenge/internal/handlers"
+    },
+    "JwtResponse": {
+      "description": "Response with jwtToken",
+      "type": "object",
+      "properties": {
+        "errorMessage": {
+          "description": "possible error message",
+          "type": "string",
+          "x-go-name": "ErrorMessage"
+        },
+        "token": {
+          "description": "jwt token",
+          "type": "string",
+          "x-go-name": "Token"
+        }
+      },
+      "x-go-package": "github.com/loukaspe/platform-go-challenge/internal/handlers"
+    },
+    "UpdateUserFavouriteAssetDescriptionResponse": {
+      "description": "Response when we get user's favorite assets",
+      "type": "object",
+      "properties": {
+        "errorMessage": {
+          "description": "possible error message",
+          "type": "string",
+          "x-go-name": "ErrorMessage"
+        }
+      },
+      "x-go-package": "github.com/loukaspe/platform-go-challenge/internal/handlers/userFavourites"
+    }
+  },
+  "securityDefinitions": {
+    "bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ]
+}
