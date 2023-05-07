@@ -46,13 +46,20 @@ func (s *Server) Run() {
 		}
 	}()
 
-	//TODO: also close db
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, os.Kill, syscall.SIGTERM)
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := s.httpServer.Shutdown(ctx); err != nil {
+		log.Fatal(err)
+	}
+	db, err := s.DB.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.Close()
+	if err != nil {
 		log.Fatal(err)
 	}
 }
