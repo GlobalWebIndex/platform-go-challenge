@@ -1,0 +1,5 @@
+GET http://localhost:8080/users/1/favourites
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhIiwiZXhwIjoxNjgzNDkzMTk3LCJVc2VySW5mbyI6eyJVc2VybmFtZSI6ImEiLCJQYXNzd29yZCI6ImIiLCJGYXZvdXJpdGVBc3NldHMiOm51bGx9fQ.pE5k4PEh7SkTVvPgmcNpvcfuL2NOmilid2gERlatYT8
+
+###

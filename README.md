@@ -1,31 +1,93 @@
-# GlobalWebIndex Engineering Challenge
+# Platform Go Challenge
 
-## Introduction
+---
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+## Description
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+Service that provides a REST API offering CRUD operations for adding, removing, editing
+and getting a User's favourite Assets (Chart, Insight, Audience)
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+---
 
-## Challenge
+## Run
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+`cd script && make start-app`
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+* This command will start the app with `localhost` address and `:8080` port (specified in build/Dockerfile.dev and .env)
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+`cd script && make migrate-data-small`
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+* This command will add to DB 10 Users and 3 Assets per User for testing reasons
 
-It is appreciated, though not required, if a Dockerfile is included.
+`cd script && make migrate-data-large`
 
-## Submission
+* This command will add to DB 10 Users and 10.000 Assets per User for testing reasons
 
-Just create a fork from the current repo and send it to us!
+Then you can add, edit, remove and get User's favourites like the examples in /examples  
+directory. To generate the needed Bearer token, please call /token endpoint with username  
+& password like in the example
 
-Good luck, potential colleague!
+---
+
+## Makefile Commands
+
+| Command                         | Usage                                                                  |
+|---------------------------------|------------------------------------------------------------------------|
+| start-app                       | `Start app`                                                            |
+| kill-app                        | `Stop app`                                                             |
+| rebuild-app                     | `Rebuild app`                                                          |
+| tests-all                       | `Run both unit and integration tests`                                  |
+| tests-benchmark                 | `Run benchmark tests`                                                  |
+| tests-unit                      | `Run unit tests `                                                      |
+| tests-file FILE={filePath}      | `Run specific file test`                                               |
+| generate-mock FILE={filePath}   | `Generate mock for a specific file`                                    |
+| run-linter                      | `Runs linter`                                                          |
+| generate-swagger-files          | `Generates swagger.json definitions in Docs dir`                       |
+| tests-package PACKAGE={package} | `Run specific package test`                                            |
+| tests-all-with-coverage         | `Run both unit and integration tests via docker with coverage details` |
+| migrate-data-small              | `Run migration of a small dataset Users & Assets in the DB`            |
+| migrate-data-large              | `Run migration of a larger dataset Users & Assets in the DB`           |
+
+* All these are executed through docker containers
+* In order to execute makefile commands type **make** plus a command from the table above
+
+  make {command}
+
+---
+
+## Notes
+
+1. .env is pushed to Git only for the Assessment purpose. Config and .env files should never be tracked.
+2. There are three Dockerfile files.
+    1. Dockerfile is the normal, production one
+    2. Dockerfile.dev is for setting up a remote debugger Delve
+    3. Dockerfile.utilities is for building a docker for "utilities" like running tests,  
+       linting etc
+3. Asset types' fields and their validation was done very simply for the scope of this assessment
+4. As described at the assignment, the User sees a list of Assets and adds some to their
+   favorites (by starring them for example). So the Assets are existing. This is why
+   the AddAsset() takes just IDs and just associates a User with an Asset, and not create it.
+
+## Known Issues
+
+1. Unit tests for adding, removing, editing assets are done only for Charts and only for happy paths.
+2. JWT mechanism just requires a fake username and password to generate a JWT token and does NOT do
+   actual login due to lack of time. Also no test created for it
+
+## Performance
+
+If Users favourites data were causing performance issues, I would investigate the following solutions:
+
+1. Add a cache to the repository layer, over the DB and keep there the User's favourite Assets
+   in order to have faster access to it
+1. Limit Payload by implementing Pagination
+1. Limit Payload by compressing the data with Accept-Encoding: gzip or compress
+1. Add indexes in DB. For example we could add indexed to the Users-Assets tables e.g "users_charts" on user_id
+   and chart_id
+
+* All these solutions would need to be discussed with the Engineering team to find the most suitable as
+  they all have their pros and cons
+
+## Security
+
+1. JWT mechanism added for Authentication and Authorization (incomplete - see Known Issues)
