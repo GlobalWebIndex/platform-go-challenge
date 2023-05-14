@@ -124,3 +124,33 @@ func (m *MicroserviceServer) GetBusinessByUserId(ctx context.Context, req *empty
 
 	return BuildRes(data, "Here is your business info", true)
 }
+
+func (m *MicroserviceServer) GenerateNewAPIKey(ctx context.Context, req *desc.NewLicenseRequest) (*desc.NetWorkResponse, error) {
+	uid, err := m.TokenInterceptor(ctx)
+	if err != nil {
+		return nil, err
+	}
+	apiKey, err := m.licenseService.GenerateAPIKey(req.Email, *uid)
+	if err != nil {
+		return nil, err
+	}
+	return BuildRes(apiKey, "successfully generated", true)
+}
+
+func (m *MicroserviceServer) GetApiKey(ctx context.Context, req *desc.LicenseRequest) (*desc.NetWorkResponse, error) {
+	uid, err := m.TokenInterceptor(ctx)
+	if err != nil {
+		return nil, err
+	}
+	apiKeys, err := m.licenseService.GetAPIKey(req.Email, *uid)
+	if err != nil {
+		return nil, err
+	}
+	type ApiKeyRes struct {
+		ApiKeyRes []string `json:"api_keys"`
+	}
+	res := ApiKeyRes{
+		ApiKeyRes: apiKeys,
+	}
+	return BuildRes(res, "you have api key already.", true)
+}

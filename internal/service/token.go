@@ -117,7 +117,7 @@ func (t *tokenManager) ValidateFirebase(accessToken string) (*string, error) {
 		return nil, fmt.Errorf("[ERR] can't initialize firebase app client : %s", err)
 	}
 
-	token, err := client.VerifyIDTokenAndCheckRevoked(context.Background(), accessToken)
+	token, err := client.VerifyIDToken(context.Background(), accessToken)
 	if err != nil {
 		return nil, fmt.Errorf("invalid user: %s", err)
 	}

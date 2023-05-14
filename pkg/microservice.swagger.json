@@ -166,6 +166,70 @@
         ]
       }
     },
+    "/v1/business/license/new": {
+      "post": {
+        "summary": "generate license key",
+        "operationId": "Microservice_GenerateNewAPIKey",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1NewLicenseRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/business/license/{email}": {
+      "get": {
+        "summary": "get license key",
+        "operationId": "Microservice_GetApiKey",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
     "/v1/business/wallet/{pubAddr}": {
       "get": {
         "operationId": "Microservice_GetBusinessByPubAddr",
@@ -1318,6 +1382,14 @@
         },
         "data": {
           "type": "object"
+        }
+      }
+    },
+    "v1NewLicenseRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
         }
       }
     },

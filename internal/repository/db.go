@@ -15,11 +15,14 @@ type DBHandler interface {
 	NewProductQuery() ProductQuery
 	NewAdminQuery() AdminQuery
 	NewloggerService() LoggerQuery
+	NewLicenseQuery() LicenseQuery
 }
 
 type dbHandler struct {
 	db *sql.DB
 }
+
+
 
 var DB *sql.DB
 
@@ -124,4 +127,9 @@ func (d *dbHandler) NewAdminQuery() AdminQuery {
 // NewloggerService implements DBHandler
 func (*dbHandler) NewloggerService() LoggerQuery {
 	return &loggerQuery{}
+}
+
+// NewLicenseQuery implements DBHandler
+func (*dbHandler) NewLicenseQuery() LicenseQuery {
+	return &licenseQuery{}
 }

@@ -178,12 +178,17 @@ func (m *MicroserviceServer) MintOwnify(ctx context.Context, req *desc.MintOwnif
 	ownifyProducts := []dto.BriefProduct{}
 	for _, item := range req.Products {
 		product := dto.BriefProduct{
+			ChainId:        int(item.ChainId),
 			Barcode:        item.Barcode,
 			BrandName:      item.BrandName,
 			ItemName:       item.ItemName,
 			AdditionalData: item.AdditionalData,
 			Location:       item.Location,
 			IssuedDate:     item.IssuedDate,
+		}
+		// set default value Algorand.
+		if item.ChainId == 0 {
+			item.ChainId = 1
 		}
 		ownifyProducts = append(ownifyProducts, product)
 	}

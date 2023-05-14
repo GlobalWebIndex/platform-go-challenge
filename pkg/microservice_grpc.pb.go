@@ -36,6 +36,10 @@ type MicroserviceClient interface {
 	GetOwnership(ctx context.Context, in *GetOwnershipRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	// generate license key
+	GenerateNewAPIKey(ctx context.Context, in *NewLicenseRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	// get license key
+	GetApiKey(ctx context.Context, in *LicenseRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	// product manage
 	AddProduct(ctx context.Context, in *AddProductRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	AddProducts(ctx context.Context, in *AddProductsRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
@@ -183,6 +187,24 @@ func (c *microserviceClient) UpdateUser(ctx context.Context, in *UpdateUserReque
 func (c *microserviceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
 	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/DeleteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) GenerateNewAPIKey(ctx context.Context, in *NewLicenseRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GenerateNewAPIKey", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) GetApiKey(ctx context.Context, in *LicenseRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetApiKey", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -345,6 +367,10 @@ type MicroserviceServer interface {
 	GetOwnership(context.Context, *GetOwnershipRequest) (*NetWorkResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*NetWorkResponse, error)
+	// generate license key
+	GenerateNewAPIKey(context.Context, *NewLicenseRequest) (*NetWorkResponse, error)
+	// get license key
+	GetApiKey(context.Context, *LicenseRequest) (*NetWorkResponse, error)
 	// product manage
 	AddProduct(context.Context, *AddProductRequest) (*NetWorkResponse, error)
 	AddProducts(context.Context, *AddProductsRequest) (*NetWorkResponse, error)
@@ -410,6 +436,12 @@ func (UnimplementedMicroserviceServer) UpdateUser(context.Context, *UpdateUserRe
 }
 func (UnimplementedMicroserviceServer) DeleteUser(context.Context, *DeleteUserRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedMicroserviceServer) GenerateNewAPIKey(context.Context, *NewLicenseRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateNewAPIKey not implemented")
+}
+func (UnimplementedMicroserviceServer) GetApiKey(context.Context, *LicenseRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetApiKey not implemented")
 }
 func (UnimplementedMicroserviceServer) AddProduct(context.Context, *AddProductRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddProduct not implemented")
@@ -717,6 +749,42 @@ func _Microservice_DeleteUser_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroserviceServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_GenerateNewAPIKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewLicenseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).GenerateNewAPIKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/GenerateNewAPIKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).GenerateNewAPIKey(ctx, req.(*NewLicenseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_GetApiKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LicenseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).GetApiKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/GetApiKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).GetApiKey(ctx, req.(*LicenseRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1053,6 +1121,14 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUser",
 			Handler:    _Microservice_DeleteUser_Handler,
+		},
+		{
+			MethodName: "GenerateNewAPIKey",
+			Handler:    _Microservice_GenerateNewAPIKey_Handler,
+		},
+		{
+			MethodName: "GetApiKey",
+			Handler:    _Microservice_GetApiKey_Handler,
 		},
 		{
 			MethodName: "AddProduct",

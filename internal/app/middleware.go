@@ -3,13 +3,15 @@ package app
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
+	"ownify_api/internal/utils"
 	desc "ownify_api/pkg"
 
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"golang.org/x/time/rate"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -17,6 +19,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 )
+
+var limiter = rate.NewLimiter(5, 1)
 
 type validatable interface {
 	Validate() error
@@ -37,8 +41,19 @@ func GrpcInterceptor() grpc.ServerOption {
 }
 
 func HttpInterceptor() runtime.ServeMuxOption {
+
 	return runtime.WithMetadata(func(ctx context.Context, req *http.Request) metadata.MD {
-		return nil
+		meta := map[string]string{}
+		if req.Header.Get("Authorization") != "" {
+			meta["Authorization"] = req.Header.Get("Authorization")
+		}
+		if req.Header.Get("x-api-key") != "" {
+			meta["x-api-key"] = req.Header.Get("x-api-key")
+		}
+		if len(meta) == 0 {
+			return nil
+		}
+		return metadata.New(meta)
 	})
 }
 
@@ -50,15 +65,41 @@ func (m *MicroserviceServer) getUserIdFromToken(ctx context.Context) (string, er
 	}
 	return token[0], nil
 }
+func (m *MicroserviceServer) getUserInfoFromApiKey(ctx context.Context) (string, string, error) {
+	md, _ := metadata.FromIncomingContext(ctx)
+	apiKey := md.Get("x-api-key")
+	if apiKey == nil {
+		return "", "", status.Errorf(codes.PermissionDenied, "user isn't authorized")
+	}
+	contents := strings.Split(apiKey[0], "-")
+	if len(contents) != 3 {
+		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
+	}
+	email, err := utils.Decrypt(contents[0], contents[2])
+	if err != nil {
+		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
+	}
+	userId, err := utils.Decrypt(contents[1], contents[2])
+	if err != nil {
+		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
+	}
+	return email, userId, nil
+}
 
 func (m *MicroserviceServer) TokenInterceptor(ctx context.Context) (*string, error) {
+	// check rate limitation
+	if !limiter.Allow() {
+		return nil, status.Errorf(codes.ResourceExhausted, "Too many requests")
+	}
 	// validate token.
-	md, _ := metadata.FromIncomingContext(ctx)
-	fmt.Println(md.Get("test"))
 	token, err := m.getUserIdFromToken(ctx)
 	if err != nil {
-		log.Println("user isn't authorized")
-		return nil, err
+		_, userId, err := m.getUserInfoFromApiKey(ctx)
+		if err != nil {
+			log.Println("user isn't authorized")
+			return nil, err
+		}
+		return &userId, err
 	}
 	uid, err := m.tokenManager.ValidateFirebase(token)
 	if err != nil {

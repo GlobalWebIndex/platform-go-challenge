@@ -100,6 +100,21 @@ service Microservice {
     };
   }
   
+  // generate license key
+  rpc GenerateNewAPIKey (NewLicenseRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/business/license/new"
+      body: "*"
+    };
+  }
+
+  // get license key
+  rpc GetApiKey (LicenseRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      get: "/v1/business/license/{email}"
+    };
+  }
+  
   //product manage
   rpc AddProduct(AddProductRequest) returns (NetWorkResponse){
     option (google.api.http) = {
@@ -446,3 +461,14 @@ message MintOwnifyResponse {
   repeated uint64 asset_ids=1;
 }
 
+
+message NewLicenseRequest {
+  string email = 1 [(validate.rules).string.email = true];
+}
+message NewLicenseResponse {
+  string license = 1;
+}
+
+message LicenseRequest {
+  string email = 1 [(validate.rules).string.email = true];
+}

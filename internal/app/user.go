@@ -105,3 +105,4 @@ func (m *MicroserviceServer) DeleteUser(ctx context.Context, req *desc.DeleteUse
 		Success: true,
 	}, nil
 }
+

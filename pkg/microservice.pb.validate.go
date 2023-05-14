@@ -4743,3 +4743,433 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MintOwnifyResponseValidationError{}
+
+// Validate checks the field values on NewLicenseRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *NewLicenseRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on NewLicenseRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// NewLicenseRequestMultiError, or nil if none found.
+func (m *NewLicenseRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *NewLicenseRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateEmail(m.GetEmail()); err != nil {
+		err = NewLicenseRequestValidationError{
+			field:  "Email",
+			reason: "value must be a valid email address",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return NewLicenseRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *NewLicenseRequest) _validateHostname(host string) error {
+	s := strings.ToLower(strings.TrimSuffix(host, "."))
+
+	if len(host) > 253 {
+		return errors.New("hostname cannot exceed 253 characters")
+	}
+
+	for _, part := range strings.Split(s, ".") {
+		if l := len(part); l == 0 || l > 63 {
+			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
+		}
+
+		if part[0] == '-' {
+			return errors.New("hostname parts cannot begin with hyphens")
+		}
+
+		if part[len(part)-1] == '-' {
+			return errors.New("hostname parts cannot end with hyphens")
+		}
+
+		for _, r := range part {
+			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
+				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *NewLicenseRequest) _validateEmail(addr string) error {
+	a, err := mail.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	addr = a.Address
+
+	if len(addr) > 254 {
+		return errors.New("email addresses cannot exceed 254 characters")
+	}
+
+	parts := strings.SplitN(addr, "@", 2)
+
+	if len(parts[0]) > 64 {
+		return errors.New("email address local phrase cannot exceed 64 characters")
+	}
+
+	return m._validateHostname(parts[1])
+}
+
+// NewLicenseRequestMultiError is an error wrapping multiple validation errors
+// returned by NewLicenseRequest.ValidateAll() if the designated constraints
+// aren't met.
+type NewLicenseRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m NewLicenseRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m NewLicenseRequestMultiError) AllErrors() []error { return m }
+
+// NewLicenseRequestValidationError is the validation error returned by
+// NewLicenseRequest.Validate if the designated constraints aren't met.
+type NewLicenseRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e NewLicenseRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e NewLicenseRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e NewLicenseRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e NewLicenseRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e NewLicenseRequestValidationError) ErrorName() string {
+	return "NewLicenseRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e NewLicenseRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sNewLicenseRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = NewLicenseRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = NewLicenseRequestValidationError{}
+
+// Validate checks the field values on NewLicenseResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *NewLicenseResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on NewLicenseResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// NewLicenseResponseMultiError, or nil if none found.
+func (m *NewLicenseResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *NewLicenseResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for License
+
+	if len(errors) > 0 {
+		return NewLicenseResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// NewLicenseResponseMultiError is an error wrapping multiple validation errors
+// returned by NewLicenseResponse.ValidateAll() if the designated constraints
+// aren't met.
+type NewLicenseResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m NewLicenseResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m NewLicenseResponseMultiError) AllErrors() []error { return m }
+
+// NewLicenseResponseValidationError is the validation error returned by
+// NewLicenseResponse.Validate if the designated constraints aren't met.
+type NewLicenseResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e NewLicenseResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e NewLicenseResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e NewLicenseResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e NewLicenseResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e NewLicenseResponseValidationError) ErrorName() string {
+	return "NewLicenseResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e NewLicenseResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sNewLicenseResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = NewLicenseResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = NewLicenseResponseValidationError{}
+
+// Validate checks the field values on LicenseRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *LicenseRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LicenseRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in LicenseRequestMultiError,
+// or nil if none found.
+func (m *LicenseRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LicenseRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateEmail(m.GetEmail()); err != nil {
+		err = LicenseRequestValidationError{
+			field:  "Email",
+			reason: "value must be a valid email address",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return LicenseRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *LicenseRequest) _validateHostname(host string) error {
+	s := strings.ToLower(strings.TrimSuffix(host, "."))
+
+	if len(host) > 253 {
+		return errors.New("hostname cannot exceed 253 characters")
+	}
+
+	for _, part := range strings.Split(s, ".") {
+		if l := len(part); l == 0 || l > 63 {
+			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
+		}
+
+		if part[0] == '-' {
+			return errors.New("hostname parts cannot begin with hyphens")
+		}
+
+		if part[len(part)-1] == '-' {
+			return errors.New("hostname parts cannot end with hyphens")
+		}
+
+		for _, r := range part {
+			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
+				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *LicenseRequest) _validateEmail(addr string) error {
+	a, err := mail.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	addr = a.Address
+
+	if len(addr) > 254 {
+		return errors.New("email addresses cannot exceed 254 characters")
+	}
+
+	parts := strings.SplitN(addr, "@", 2)
+
+	if len(parts[0]) > 64 {
+		return errors.New("email address local phrase cannot exceed 64 characters")
+	}
+
+	return m._validateHostname(parts[1])
+}
+
+// LicenseRequestMultiError is an error wrapping multiple validation errors
+// returned by LicenseRequest.ValidateAll() if the designated constraints
+// aren't met.
+type LicenseRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LicenseRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LicenseRequestMultiError) AllErrors() []error { return m }
+
+// LicenseRequestValidationError is the validation error returned by
+// LicenseRequest.Validate if the designated constraints aren't met.
+type LicenseRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e LicenseRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e LicenseRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e LicenseRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e LicenseRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e LicenseRequestValidationError) ErrorName() string { return "LicenseRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e LicenseRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sLicenseRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = LicenseRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = LicenseRequestValidationError{}

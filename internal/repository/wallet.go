@@ -203,7 +203,6 @@ func processChunks(assetIds []uint64, chunkSize int, processFunc func([]uint64) 
 	var chunks [][]uint64
 	for i := 0; i < len(assetIds); i += chunkSize {
 		end := i + chunkSize
-
 		if end > len(assetIds) {
 			end = len(assetIds)
 		}

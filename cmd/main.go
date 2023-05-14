@@ -8,9 +8,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
+	"golang.org/x/time/rate"
 	"google.golang.org/grpc"
 
 	"ownify_api/internal/app"
@@ -86,6 +87,7 @@ func main() {
 	walletService := service.NewWalletService(wallet)
 	notifyService := service.NewNotifyService()
 	logService := service.NewloggerService(logDBHandler)
+	licenseService := service.NewLicenseService(ownifyDBHandler)
 
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
@@ -112,6 +114,7 @@ func main() {
 			walletService,
 			notifyService,
 			logService,
+			licenseService,
 		))
 
 		err = grpcServer.Serve(listener)
@@ -122,6 +125,7 @@ func main() {
 
 	// Starting HTTP server
 	mux := runtime.NewServeMux(httpOpts)
+
 	err = desc.RegisterMicroserviceHandlerServer(context.Background(), mux, app.NewMicroservice(
 		adminService,
 		userService,
@@ -133,6 +137,7 @@ func main() {
 		walletService,
 		notifyService,
 		logService,
+		licenseService,
 	))
 	if err != nil {
 		log.Println("cannot register this service")
@@ -160,6 +165,18 @@ func setCORSHeaders(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+}
+
+func rateLimitMiddleware(limiter *rate.Limiter) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if !limiter.Allow() {
+				http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
 }
 
 // Add User Session analysis
