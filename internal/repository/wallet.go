@@ -9,6 +9,7 @@ import (
 	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
+	"strings"
 
 	"github.com/algorand/go-algorand-sdk/v2/client/v2/algod"
 	"github.com/algorand/go-algorand-sdk/v2/crypto"
@@ -199,7 +200,7 @@ func (w *walletQuery) MintOwnify(
 	return assetIndices, nil
 }
 
-func processChunks(assetIds []uint64, chunkSize int, processFunc func([]uint64) ([]types.Transaction, error)) ([]types.Transaction, error) {
+func processChunks(assetIds []uint64, chunkSize int, processFunc func([]uint64) (*string, error)) (*string, error) {
 	var chunks [][]uint64
 	for i := 0; i < len(assetIds); i += chunkSize {
 		end := i + chunkSize
@@ -210,18 +211,43 @@ func processChunks(assetIds []uint64, chunkSize int, processFunc func([]uint64) 
 		chunks = append(chunks, assetIds[i:end])
 	}
 
-	var allTxns []types.Transaction
+	var allTxns []string
 
 	for _, chunk := range chunks {
-		txns, err := processFunc(chunk)
+		txIds, err := processFunc(chunk)
 		if err != nil {
 			return nil, err
 		}
-		allTxns = append(allTxns, txns...)
+		allTxns = append(allTxns, *txIds)
 	}
 
-	return allTxns, nil
+	totalTxId := strings.Join(allTxns, ",")
+	return &totalTxId, nil
 }
+
+// func processChunks(assetIds []uint64, chunkSize int, processFunc func([]uint64) ([]types.Transaction, error)) ([]types.Transaction, error) {
+// 	var chunks [][]uint64
+// 	for i := 0; i < len(assetIds); i += chunkSize {
+// 		end := i + chunkSize
+// 		if end > len(assetIds) {
+// 			end = len(assetIds)
+// 		}
+
+// 		chunks = append(chunks, assetIds[i:end])
+// 	}
+
+// 	var allTxns []types.Transaction
+
+// 	for _, chunk := range chunks {
+// 		txns, err := processFunc(chunk)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		allTxns = append(allTxns, txns...)
+// 	}
+
+// 	return allTxns, nil
+// }
 
 func (w *walletQuery) SendOwnify(
 	email string,
@@ -241,7 +267,7 @@ func (w *walletQuery) SendOwnify(
 		return nil, err
 	}
 
-	sendChunk := func(chunk []uint64) ([]types.Transaction, error) {
+	sendChunk := func(chunk []uint64) (*string, error) {
 		txns := []types.Transaction{}
 		for _, assetId := range chunk {
 			txParams, err := client.SuggestedParams().Do(context.Background())
@@ -261,15 +287,10 @@ func (w *walletQuery) SendOwnify(
 			}
 			txns = append(txns, txn)
 		}
-		return txns, nil
-	}
 
-	txns, err := processChunks(assetIds, 15, sendChunk)
-	if err != nil {
-		return nil, err
+		return sendGroupedTransactions(client, prv, sender, txns)
 	}
-
-	return sendGroupedTransactions(client, prv, sender, txns)
+	return processChunks(assetIds, 15, sendChunk)
 }
 
 func (w *walletQuery) DeleteOwnify(
@@ -289,7 +310,7 @@ func (w *walletQuery) DeleteOwnify(
 		return nil, err
 	}
 
-	deleteChunk := func(chunk []uint64) ([]types.Transaction, error) {
+	deleteChunk := func(chunk []uint64) (*string, error) {
 		txns := []types.Transaction{}
 		for _, assetId := range chunk {
 			txParams, err := client.SuggestedParams().Do(context.Background())
@@ -307,15 +328,9 @@ func (w *walletQuery) DeleteOwnify(
 			}
 			txns = append(txns, txn)
 		}
-		return txns, nil
+		return sendGroupedTransactions(client, prv, owner, txns)
 	}
-
-	txns, err := processChunks(assetIds, 15, deleteChunk)
-	if err != nil {
-		return nil, err
-	}
-
-	return sendGroupedTransactions(client, prv, owner, txns)
+	return processChunks(assetIds, 15, deleteChunk)
 }
 
 func sendGroupedTransactions(client *algod.Client, prv ed25519.PrivateKey, sender string, txns []types.Transaction) (*string, error) {
