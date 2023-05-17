@@ -32,6 +32,8 @@ func NewClient(net string) (*algod.Client, *indexer.Client, error) {
 	algodAddress := viper.Get("algod.client").(string)
 	indexerAddress := viper.Get("algod.indexer").(string)
 	const algodToken = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	algodClientToken := viper.Get("algod.client").(string)
+	algodIndexerToken := viper.Get("algod.client").(string)
 
 	if net == domain.TestNet {
 		algodAddress = viper.Get("algod.client.test").(string)
@@ -39,13 +41,16 @@ func NewClient(net string) (*algod.Client, *indexer.Client, error) {
 	}
 
 	// create algorand client
-	commonClient, err := common.MakeClient(algodAddress, "X-API-Key", "") //algod.MakeClient(algodAddress, algodToken)
+	//tokenHeaderKey := "X-API-Key"
+	tokenHeaderKey := "X-Algo-Api-Token"
+	
+	commonClient, err := common.MakeClient(algodAddress, tokenHeaderKey, algodClientToken) //algod.MakeClient(algodAddress, algodToken)
 	algodClient := (*algod.Client)(commonClient)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	algodIndexer, err := indexer.MakeClient(indexerAddress, algodToken)
+	algodIndexer, err := indexer.MakeClient(indexerAddress, algodIndexerToken)
 	if err != nil {
 		return nil, nil, err
 	}
