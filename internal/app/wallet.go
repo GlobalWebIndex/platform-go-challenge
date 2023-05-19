@@ -22,6 +22,11 @@ func (m *MicroserviceServer) CreateWallet(ctx context.Context, req *desc.CreateW
 	if !m.authService.ValidBusiness(*uid, req.Email) {
 		return nil, err
 	}
+
+	acc, err := m.walletService.GetMyAccounts(req.UserRole, *uid)
+	if len(acc) != 0 || err != nil {
+		return nil, fmt.Errorf("[ERR] user: %s have already account err:%s", *uid, err.Error())
+	}
 	// create new wallet.
 	pubKey, err := m.walletService.AddNewAccount(
 		req.UserRole,
