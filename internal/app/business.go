@@ -41,11 +41,20 @@ func (m *MicroserviceServer) CreateBusiness(ctx context.Context, req *desc.Creat
 		}
 		return &desc.NetWorkResponse{Success: true, Msg: "Successfully updated!"}, nil
 	}
+
+	customerId, err := m.paymentService.CreateCustomer(req.Email)
+	if err != nil {
+		return nil, err
+	}
 	err = m.businessService.CreateBusiness(&business)
 	if err != nil {
 		return nil, err
 	}
-	return &desc.NetWorkResponse{Success: true, Msg: "Successfully created!"}, nil
+	type CreateBusinessRes struct {
+		CustomerId string `json:"customer_id"`
+	}
+	res := CreateBusinessRes{CustomerId: customerId}
+	return BuildRes(res, "Successfully created!", true)
 }
 
 func (m *MicroserviceServer) DeleteBusiness(ctx context.Context, req *desc.DeleteBusinessRequest) (*desc.NetWorkResponse, error) {

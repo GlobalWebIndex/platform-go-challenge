@@ -51,7 +51,6 @@ func (m *MicroserviceServer) RegisterWallet(ctx context.Context, req *desc.Regis
 	if err != nil {
 		return nil, err
 	}
-
 	if utils.IsPubKey(req.WalletAddress) != nil {
 		return nil, fmt.Errorf("[ERR] invalid request: %v", req)
 	}

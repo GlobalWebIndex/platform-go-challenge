@@ -219,6 +219,34 @@ service Microservice {
       body: "*"
     };
   }
+
+  // subscription management
+  rpc CreateSubscription (CreateSubscriptionRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/business/subscription/create"
+      body: "*"
+    };
+  }
+
+  rpc UpdateSubscription (UpdateSubscriptionRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/business/subscription/update"
+      body: "*"
+    };
+  }
+
+  rpc CancelSubscription (CancelSubscriptionRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/business/subscription/cancel"
+      body: "*"
+    };
+  }
+
+  rpc VerifySubscriptionStatus (VerifySubscriptionRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      get: "/v1/business/subscription/verify/{email}"
+    };
+  }
 }
 
 
@@ -472,3 +500,25 @@ message NewLicenseResponse {
 message LicenseRequest {
   string email = 1 [(validate.rules).string.email = true];
 }
+
+// subscription messages 
+message CreateSubscriptionRequest {
+  string customerId = 1;
+  string priceId = 2;
+}
+
+message UpdateSubscriptionRequest {
+  string oldPriceId = 1;
+  string newPriceId = 2;
+}
+
+message CancelSubscriptionRequest {
+  string subscriptionID = 1;
+}
+
+message VerifySubscriptionRequest {
+  string email = 1;
+}
+
+
+

@@ -67,6 +67,8 @@ func main() {
 		log.Fatalln("cannot read from a config")
 	}
 
+	stripeKey := viper.Get("stripe.secret.key").(string)
+
 	// JWT
 	signedKeyJWT := viper.Get("jwt.signedKey").(string)
 	tokenManager := service.NewTokenManager(signedKeyJWT)
@@ -88,6 +90,7 @@ func main() {
 	notifyService := service.NewNotifyService()
 	logService := service.NewloggerService(logDBHandler)
 	licenseService := service.NewLicenseService(ownifyDBHandler)
+	paymentService := service.NewPaymentService(ownifyDBHandler, stripeKey)
 
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
@@ -115,6 +118,7 @@ func main() {
 			notifyService,
 			logService,
 			licenseService,
+			paymentService,
 		))
 
 		err = grpcServer.Serve(listener)
@@ -138,6 +142,7 @@ func main() {
 		notifyService,
 		logService,
 		licenseService,
+		paymentService,
 	))
 	if err != nil {
 		log.Println("cannot register this service")

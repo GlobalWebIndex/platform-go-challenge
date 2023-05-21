@@ -230,6 +230,133 @@
         ]
       }
     },
+    "/v1/business/subscription/cancel": {
+      "post": {
+        "operationId": "Microservice_CancelSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CancelSubscriptionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/business/subscription/create": {
+      "post": {
+        "summary": "subscription management",
+        "operationId": "Microservice_CreateSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateSubscriptionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/business/subscription/update": {
+      "post": {
+        "operationId": "Microservice_UpdateSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateSubscriptionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/business/subscription/verify/{email}": {
+      "get": {
+        "operationId": "Microservice_VerifySubscriptionStatus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
     "/v1/business/wallet/{pubAddr}": {
       "get": {
         "operationId": "Microservice_GetBusinessByPubAddr",
@@ -1159,6 +1286,14 @@
         }
       }
     },
+    "v1CancelSubscriptionRequest": {
+      "type": "object",
+      "properties": {
+        "subscriptionID": {
+          "type": "string"
+        }
+      }
+    },
     "v1CreateBusinessRequest": {
       "type": "object",
       "properties": {
@@ -1185,6 +1320,18 @@
         }
       },
       "title": "business"
+    },
+    "v1CreateSubscriptionRequest": {
+      "type": "object",
+      "properties": {
+        "customerId": {
+          "type": "string"
+        },
+        "priceId": {
+          "type": "string"
+        }
+      },
+      "title": "subscription messages"
     },
     "v1CreateUserRequest": {
       "type": "object",
@@ -1525,6 +1672,17 @@
           "type": "string"
         },
         "password": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UpdateSubscriptionRequest": {
+      "type": "object",
+      "properties": {
+        "oldPriceId": {
+          "type": "string"
+        },
+        "newPriceId": {
           "type": "string"
         }
       }

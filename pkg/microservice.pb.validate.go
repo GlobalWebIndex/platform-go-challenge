@@ -5173,3 +5173,423 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = LicenseRequestValidationError{}
+
+// Validate checks the field values on CreateSubscriptionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateSubscriptionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateSubscriptionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateSubscriptionRequestMultiError, or nil if none found.
+func (m *CreateSubscriptionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateSubscriptionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CustomerId
+
+	// no validation rules for PriceId
+
+	if len(errors) > 0 {
+		return CreateSubscriptionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateSubscriptionRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateSubscriptionRequest.ValidateAll() if the
+// designated constraints aren't met.
+type CreateSubscriptionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateSubscriptionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateSubscriptionRequestMultiError) AllErrors() []error { return m }
+
+// CreateSubscriptionRequestValidationError is the validation error returned by
+// CreateSubscriptionRequest.Validate if the designated constraints aren't met.
+type CreateSubscriptionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateSubscriptionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateSubscriptionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateSubscriptionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateSubscriptionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateSubscriptionRequestValidationError) ErrorName() string {
+	return "CreateSubscriptionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateSubscriptionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateSubscriptionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateSubscriptionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateSubscriptionRequestValidationError{}
+
+// Validate checks the field values on UpdateSubscriptionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateSubscriptionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateSubscriptionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateSubscriptionRequestMultiError, or nil if none found.
+func (m *UpdateSubscriptionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateSubscriptionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for OldPriceId
+
+	// no validation rules for NewPriceId
+
+	if len(errors) > 0 {
+		return UpdateSubscriptionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateSubscriptionRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateSubscriptionRequest.ValidateAll() if the
+// designated constraints aren't met.
+type UpdateSubscriptionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateSubscriptionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateSubscriptionRequestMultiError) AllErrors() []error { return m }
+
+// UpdateSubscriptionRequestValidationError is the validation error returned by
+// UpdateSubscriptionRequest.Validate if the designated constraints aren't met.
+type UpdateSubscriptionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateSubscriptionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateSubscriptionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateSubscriptionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateSubscriptionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateSubscriptionRequestValidationError) ErrorName() string {
+	return "UpdateSubscriptionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateSubscriptionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateSubscriptionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateSubscriptionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateSubscriptionRequestValidationError{}
+
+// Validate checks the field values on CancelSubscriptionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CancelSubscriptionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CancelSubscriptionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CancelSubscriptionRequestMultiError, or nil if none found.
+func (m *CancelSubscriptionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CancelSubscriptionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SubscriptionID
+
+	if len(errors) > 0 {
+		return CancelSubscriptionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CancelSubscriptionRequestMultiError is an error wrapping multiple validation
+// errors returned by CancelSubscriptionRequest.ValidateAll() if the
+// designated constraints aren't met.
+type CancelSubscriptionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CancelSubscriptionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CancelSubscriptionRequestMultiError) AllErrors() []error { return m }
+
+// CancelSubscriptionRequestValidationError is the validation error returned by
+// CancelSubscriptionRequest.Validate if the designated constraints aren't met.
+type CancelSubscriptionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CancelSubscriptionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CancelSubscriptionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CancelSubscriptionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CancelSubscriptionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CancelSubscriptionRequestValidationError) ErrorName() string {
+	return "CancelSubscriptionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CancelSubscriptionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCancelSubscriptionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CancelSubscriptionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CancelSubscriptionRequestValidationError{}
+
+// Validate checks the field values on VerifySubscriptionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *VerifySubscriptionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on VerifySubscriptionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// VerifySubscriptionRequestMultiError, or nil if none found.
+func (m *VerifySubscriptionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *VerifySubscriptionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Email
+
+	if len(errors) > 0 {
+		return VerifySubscriptionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// VerifySubscriptionRequestMultiError is an error wrapping multiple validation
+// errors returned by VerifySubscriptionRequest.ValidateAll() if the
+// designated constraints aren't met.
+type VerifySubscriptionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m VerifySubscriptionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m VerifySubscriptionRequestMultiError) AllErrors() []error { return m }
+
+// VerifySubscriptionRequestValidationError is the validation error returned by
+// VerifySubscriptionRequest.Validate if the designated constraints aren't met.
+type VerifySubscriptionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e VerifySubscriptionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e VerifySubscriptionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e VerifySubscriptionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e VerifySubscriptionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e VerifySubscriptionRequestValidationError) ErrorName() string {
+	return "VerifySubscriptionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e VerifySubscriptionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sVerifySubscriptionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = VerifySubscriptionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = VerifySubscriptionRequestValidationError{}

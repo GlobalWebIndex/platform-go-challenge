@@ -16,6 +16,7 @@ type DBHandler interface {
 	NewAdminQuery() AdminQuery
 	NewloggerService() LoggerQuery
 	NewLicenseQuery() LicenseQuery
+	NewPaymentQuery() PaymentQuery
 }
 
 type dbHandler struct {
@@ -133,3 +134,9 @@ func (*dbHandler) NewloggerService() LoggerQuery {
 func (*dbHandler) NewLicenseQuery() LicenseQuery {
 	return &licenseQuery{}
 }
+
+// NewLicenseQuery implements DBHandler
+func (*dbHandler) NewPaymentQuery() PaymentQuery {
+	return &paymentQuery{}
+}
+
