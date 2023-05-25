@@ -1,0 +1,11 @@
+[
+  {
+    "delete": "user",
+    "deletes": [
+      {
+        "q": {},
+        "limit": 0
+      }
+    ]
+  }
+]

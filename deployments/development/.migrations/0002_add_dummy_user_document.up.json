@@ -1,0 +1,54 @@
+[
+  {
+    "insert": "user",
+    "documents": [
+      {
+        "_id": {
+          "$oid": "646556f77b0912000743ff46"
+        },
+        "name": "Nikos",
+        "surname": "Koukos",
+        "assets": [
+          {
+            "_id": {
+              "$oid": "646556f77b0912000743ff47"
+            },
+            "type": "bar_chart",
+            "is_favourite": true,
+            "title": "bar chart title",
+            "y_axis_title": "zobi",
+            "data": [
+              {
+                "label": "bufan",
+                "value": 2.71828
+              },
+              {
+                "label": "eka",
+                "value": 4.2
+              }
+            ]
+          },
+          {
+            "_id": {
+              "$oid": "646556f77b0912000743ff48"
+            },
+            "type": "audience",
+            "is_favourite": false,
+            "gender": "male",
+            "age_group": "25to29",
+            "num_of_purchases_per_month": 10,
+            "hours_spent_daily_on_social": 10.3
+          },
+          {
+            "_id": {
+              "$oid": "646556f77b0912000743ff49"
+            },
+            "type": "insight",
+            "is_favourite": false,
+            "data": "House cats share 95.6% of their genetic makeup with tigers"
+          }
+        ]
+      }
+    ]
+  }
+]

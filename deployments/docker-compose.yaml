@@ -1,0 +1,47 @@
+version: "3.8"
+services:
+  user-favourites:
+    container_name: user-favourites
+    restart: always
+    build:
+      context: ..
+      dockerfile: deployments/development/Dockerfile
+    ports:
+      - "8080:8080"
+      - "40000:40000"
+    depends_on:
+      - mongodb
+    networks:
+      - gwi
+
+  mongodb:
+    image: mongo:4.2.24
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb_data:/data/db
+    restart: always
+    networks:
+      - gwi
+
+  mongo-express:
+    image: mongo-express:0.54.0
+    container_name: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+    ports:
+      - "8081:8081"
+    restart: always
+    depends_on:
+      - mongodb
+    networks:
+      - gwi
+
+volumes:
+  mongodb_data:
+
+networks:
+  gwi:
+    name: gwi
