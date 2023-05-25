@@ -1,0 +1,11 @@
+[
+  {
+    "aggregate": "user",
+    "pipeline": [
+      {
+        "$out": "user"
+      }
+    ],
+    "cursor": {}
+  }
+]
