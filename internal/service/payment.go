@@ -206,6 +206,10 @@ func (s *paymentService) CheckoutSession(sessionId string) error {
 	endedAt := sub.EndedAt
 	priceID := sub.Items.Data[0].Price.ID
 
+	if priceID == "" || subscriptionID == "" {
+		return fmt.Errorf("session doesn't checkout")
+	}
+
 	subscription := dto.Subscription{
 		Email:          cust.Email,
 		CustomerId:     customerID,
