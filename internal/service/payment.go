@@ -2,11 +2,9 @@ package service
 
 import (
 	"fmt"
-	"log"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/repository"
 
-	"github.com/spf13/viper"
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
 	"github.com/stripe/stripe-go/v74/customer"
@@ -56,15 +54,15 @@ func (s *paymentService) CreateProduct(name, price, description string) (string,
 
 func (s *paymentService) CreateCheckoutSessionId(priceId string) (string, string, error) {
 
-	viper.AddConfigPath("../config")
-	viper.SetConfigName("config")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalln("cannot read from a config")
-	}
-	ownfiyUrl := viper.Get("ownify.client.url").(string)
-	successUrl := ownfiyUrl + "subscription?session_id={CHECKOUT_SESSION_ID}"
-	cancelUrl := ownfiyUrl + "subscription"
+	// viper.AddConfigPath("../config")
+	// viper.SetConfigName("config")
+	// err := viper.ReadInConfig()
+	// if err != nil {
+	// 	log.Fatalln("cannot read from a config")
+	// }
+	// ownfiyUrl := viper.Get("ownify.client.url").(string)
+	successUrl := "https://did.ownify.org/subscription?session_id={CHECKOUT_SESSION_ID}"
+	cancelUrl := "https://did.ownify.org/subscription"
 	params := &stripe.CheckoutSessionParams{
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
