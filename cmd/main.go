@@ -170,7 +170,7 @@ func setCORSHeaders(w http.ResponseWriter, r *http.Request) {
 	// Add CORS headers to the response
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE, PATCH")
 }
 
 func rateLimitMiddleware(limiter *rate.Limiter) func(http.Handler) http.Handler {

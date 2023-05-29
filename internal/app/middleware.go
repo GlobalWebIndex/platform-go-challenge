@@ -60,10 +60,12 @@ func HttpInterceptor() runtime.ServeMuxOption {
 func (m *MicroserviceServer) getUserIdFromToken(ctx context.Context) (string, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
 	token := md.Get("Authorization")
+
 	if token == nil {
 		return "", status.Errorf(codes.PermissionDenied, "user isn't authorized")
 	}
-	return token[0], nil
+	removeBearerFromToken := strings.Split(token[0], " ")
+	return removeBearerFromToken[1], nil
 }
 func (m *MicroserviceServer) getUserInfoFromApiKey(ctx context.Context) (string, string, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
