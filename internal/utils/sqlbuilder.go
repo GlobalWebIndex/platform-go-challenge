@@ -27,6 +27,7 @@ func (s CondOperator) valid() bool {
 
 type SqlBuilder interface {
 	Insert(tableName string, cols []string, values []interface{}) (*string, error)
+
 	Delete(tableName string, conditions []Tuple, joinKey string) (*string, error)
 	Select(tableName string, targets []string, conditions []Tuple, condOperator CondOperator, joinKey string) (*string, error)
 	Update(tableName string, values []Tuple, conditions []Tuple, joinKey string) (*string, error)

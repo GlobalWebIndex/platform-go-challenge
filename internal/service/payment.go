@@ -1,20 +1,28 @@
 package service
 
 import (
+	"fmt"
+	"ownify_api/internal/dto"
 	"ownify_api/internal/repository"
 
 	"github.com/stripe/stripe-go/v74"
+	"github.com/stripe/stripe-go/v74/checkout/session"
 	"github.com/stripe/stripe-go/v74/customer"
+	"github.com/stripe/stripe-go/v74/product"
 	sub "github.com/stripe/stripe-go/v74/subscription"
 )
 
 type PaymentService interface {
+	CreateProduct(name, price, description string) (string, error)
+	CreateCheckoutSessionId(priceId string) (string, string, error)
 	CreateCustomer(email string) (string, error)
 	CreateSubscription(customerID string, priceId string) (*string, error)
 	UpdateSubscription(oldPriceID, newPriceId string) error
 	CancelSubscription(subscriptionID string) error
 
 	VerifySubscriptionStatus(email string) bool
+	GetActiveProducts() ([]*stripe.Product, error)
+	CheckoutSession(sessionId string) error
 }
 
 type paymentService struct {
@@ -28,6 +36,43 @@ func NewPaymentService(dbHandler repository.DBHandler, stripeAPIKey string) Paym
 		dbHandler:    dbHandler,
 		stripeAPIKey: stripeAPIKey,
 	}
+}
+
+func (s *paymentService) CreateProduct(name, price, description string) (string, error) {
+	params := &stripe.ProductParams{
+		Name:         stripe.String(name),
+		Description:  stripe.String(description),
+		Type:         stripe.String("basic service"), //or "good", according to your need
+		DefaultPrice: &price,
+	}
+	p, err := product.New(params)
+	if err != nil {
+		return "", err
+	}
+	return p.ID, nil
+}
+
+func (s *paymentService) CreateCheckoutSessionId(priceId string) (string, string, error) {
+	params := &stripe.CheckoutSessionParams{
+		PaymentMethodTypes: stripe.StringSlice([]string{
+			"card",
+		}),
+		LineItems: []*stripe.CheckoutSessionLineItemParams{
+			{
+				Price:    stripe.String(priceId),
+				Quantity: stripe.Int64(1),
+			},
+		},
+		Mode:       stripe.String(string(stripe.CheckoutSessionModeSubscription)),
+		SuccessURL: stripe.String("http://localhost:3000/subscription?session_id={CHECKOUT_SESSION_ID}"),
+		CancelURL:  stripe.String("http://localhost:3000/subscription"),
+	}
+
+	checkoutSession, err := session.New(params)
+	if err != nil {
+		return "", "", err
+	}
+	return checkoutSession.ID, checkoutSession.URL, nil
 }
 
 func (s *paymentService) CreateCustomer(email string) (string, error) {
@@ -99,4 +144,66 @@ func (s *paymentService) CancelSubscription(subscriptionID string) error {
 
 func (s *paymentService) VerifySubscriptionStatus(email string) bool {
 	return s.dbHandler.NewPaymentQuery().VerifySubscriptionStatus(email)
+}
+
+func (s *paymentService) GetActiveProducts() ([]*stripe.Product, error) {
+	params := &stripe.ProductListParams{
+		Active: stripe.Bool(true),
+	}
+
+	i := product.List(params)
+	var products []*stripe.Product
+	for i.Next() {
+		p := i.Product()
+		products = append(products, p)
+	}
+
+	if err := i.Err(); err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}
+
+func (s *paymentService) CheckoutSession(sessionId string) error {
+	// Retrieve the checkout session
+	sess, err := session.Get(sessionId, nil)
+	if err != nil {
+		return err
+	}
+
+	// Get the customer object
+	customerParams := &stripe.CustomerParams{}
+	customerParams.AddExpand("subscriptions")
+	cust, err := customer.Get(sess.Customer.ID, customerParams)
+	if err != nil {
+		return err
+	}
+
+	if s.dbHandler.NewPaymentQuery().VerifySubscriptionStatus(cust.Email) {
+		return fmt.Errorf("[Err] Already registered this subscription")
+	}
+
+	subscriptionParams := &stripe.SubscriptionParams{}
+	subscriptionParams.AddExpand("items.data.price")
+	sub, err := sub.Get(sess.Subscription.ID, subscriptionParams)
+	if err != nil {
+		return err
+	}
+
+	customerID := cust.ID
+	subscriptionID := sub.ID
+	endedAt := sub.EndedAt
+	priceID := sub.Items.Data[0].Price.ID
+
+	subscription := dto.Subscription{
+		Email:          cust.Email,
+		CustomerId:     customerID,
+		SubscriptionId: subscriptionID,
+		EndAt:          endedAt,
+		PriceId:        priceID,
+	}
+
+	err = s.dbHandler.NewPaymentQuery().CreateSubscription(subscription)
+	return err
 }

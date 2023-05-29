@@ -1,5 +1,5 @@
 package dto
 
 type SQLable interface {
-	BriefBusiness | BriefProduct | BriefUser | UserActivity
+	BriefBusiness | BriefProduct | BriefUser | UserActivity | Subscription
 }

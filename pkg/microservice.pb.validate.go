@@ -2236,6 +2236,109 @@ var _GetOwnedProductsRequest_Net_InLookup = map[string]struct{}{
 	"test": {},
 }
 
+// Validate checks the field values on GetSubscriptionPlansRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetSubscriptionPlansRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetSubscriptionPlansRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetSubscriptionPlansRequestMultiError, or nil if none found.
+func (m *GetSubscriptionPlansRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetSubscriptionPlansRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetSubscriptionPlansRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetSubscriptionPlansRequestMultiError is an error wrapping multiple
+// validation errors returned by GetSubscriptionPlansRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetSubscriptionPlansRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetSubscriptionPlansRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetSubscriptionPlansRequestMultiError) AllErrors() []error { return m }
+
+// GetSubscriptionPlansRequestValidationError is the validation error returned
+// by GetSubscriptionPlansRequest.Validate if the designated constraints
+// aren't met.
+type GetSubscriptionPlansRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetSubscriptionPlansRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetSubscriptionPlansRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetSubscriptionPlansRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetSubscriptionPlansRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetSubscriptionPlansRequestValidationError) ErrorName() string {
+	return "GetSubscriptionPlansRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetSubscriptionPlansRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetSubscriptionPlansRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetSubscriptionPlansRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetSubscriptionPlansRequestValidationError{}
+
 // Validate checks the field values on GetProductsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -5593,3 +5696,212 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = VerifySubscriptionRequestValidationError{}
+
+// Validate checks the field values on CreateCheckoutSessionIdRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateCheckoutSessionIdRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateCheckoutSessionIdRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// CreateCheckoutSessionIdRequestMultiError, or nil if none found.
+func (m *CreateCheckoutSessionIdRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateCheckoutSessionIdRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PriceId
+
+	if len(errors) > 0 {
+		return CreateCheckoutSessionIdRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateCheckoutSessionIdRequestMultiError is an error wrapping multiple
+// validation errors returned by CreateCheckoutSessionIdRequest.ValidateAll()
+// if the designated constraints aren't met.
+type CreateCheckoutSessionIdRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateCheckoutSessionIdRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateCheckoutSessionIdRequestMultiError) AllErrors() []error { return m }
+
+// CreateCheckoutSessionIdRequestValidationError is the validation error
+// returned by CreateCheckoutSessionIdRequest.Validate if the designated
+// constraints aren't met.
+type CreateCheckoutSessionIdRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateCheckoutSessionIdRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateCheckoutSessionIdRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateCheckoutSessionIdRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateCheckoutSessionIdRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateCheckoutSessionIdRequestValidationError) ErrorName() string {
+	return "CreateCheckoutSessionIdRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateCheckoutSessionIdRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateCheckoutSessionIdRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateCheckoutSessionIdRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateCheckoutSessionIdRequestValidationError{}
+
+// Validate checks the field values on CheckSessionIDRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CheckSessionIDRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckSessionIDRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckSessionIDRequestMultiError, or nil if none found.
+func (m *CheckSessionIDRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckSessionIDRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SessionId
+
+	if len(errors) > 0 {
+		return CheckSessionIDRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CheckSessionIDRequestMultiError is an error wrapping multiple validation
+// errors returned by CheckSessionIDRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CheckSessionIDRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckSessionIDRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckSessionIDRequestMultiError) AllErrors() []error { return m }
+
+// CheckSessionIDRequestValidationError is the validation error returned by
+// CheckSessionIDRequest.Validate if the designated constraints aren't met.
+type CheckSessionIDRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckSessionIDRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckSessionIDRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckSessionIDRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckSessionIDRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckSessionIDRequestValidationError) ErrorName() string {
+	return "CheckSessionIDRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CheckSessionIDRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckSessionIDRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckSessionIDRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckSessionIDRequestValidationError{}

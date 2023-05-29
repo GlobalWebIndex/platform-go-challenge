@@ -57,11 +57,13 @@ type MicroserviceClient interface {
 	MakeTransaction(ctx context.Context, in *MakeTransactionRequest, opts ...grpc.CallOption) (*MakeTransactionResponse, error)
 	SendOwnify(ctx context.Context, in *SendOwnifyRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	DeleteOwnify(ctx context.Context, in *DeleteOwnifyRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
-	// subscription management
+	GetSubscriptionPlans(ctx context.Context, in *GetSubscriptionPlansRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	CreateCheckoutSessionId(ctx context.Context, in *CreateCheckoutSessionIdRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	CreateSubscription(ctx context.Context, in *CreateSubscriptionRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	UpdateSubscription(ctx context.Context, in *UpdateSubscriptionRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	CancelSubscription(ctx context.Context, in *CancelSubscriptionRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	VerifySubscriptionStatus(ctx context.Context, in *VerifySubscriptionRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	CheckSessionID(ctx context.Context, in *CheckSessionIDRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 }
 
 type microserviceClient struct {
@@ -351,6 +353,24 @@ func (c *microserviceClient) DeleteOwnify(ctx context.Context, in *DeleteOwnifyR
 	return out, nil
 }
 
+func (c *microserviceClient) GetSubscriptionPlans(ctx context.Context, in *GetSubscriptionPlansRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/GetSubscriptionPlans", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) CreateCheckoutSessionId(ctx context.Context, in *CreateCheckoutSessionIdRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/CreateCheckoutSessionId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *microserviceClient) CreateSubscription(ctx context.Context, in *CreateSubscriptionRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
 	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/CreateSubscription", in, out, opts...)
@@ -381,6 +401,15 @@ func (c *microserviceClient) CancelSubscription(ctx context.Context, in *CancelS
 func (c *microserviceClient) VerifySubscriptionStatus(ctx context.Context, in *VerifySubscriptionRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
 	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/VerifySubscriptionStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) CheckSessionID(ctx context.Context, in *CheckSessionIDRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/ownify_api.v1.Microservice/CheckSessionID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -429,11 +458,13 @@ type MicroserviceServer interface {
 	MakeTransaction(context.Context, *MakeTransactionRequest) (*MakeTransactionResponse, error)
 	SendOwnify(context.Context, *SendOwnifyRequest) (*NetWorkResponse, error)
 	DeleteOwnify(context.Context, *DeleteOwnifyRequest) (*NetWorkResponse, error)
-	// subscription management
+	GetSubscriptionPlans(context.Context, *GetSubscriptionPlansRequest) (*NetWorkResponse, error)
+	CreateCheckoutSessionId(context.Context, *CreateCheckoutSessionIdRequest) (*NetWorkResponse, error)
 	CreateSubscription(context.Context, *CreateSubscriptionRequest) (*NetWorkResponse, error)
 	UpdateSubscription(context.Context, *UpdateSubscriptionRequest) (*NetWorkResponse, error)
 	CancelSubscription(context.Context, *CancelSubscriptionRequest) (*NetWorkResponse, error)
 	VerifySubscriptionStatus(context.Context, *VerifySubscriptionRequest) (*NetWorkResponse, error)
+	CheckSessionID(context.Context, *CheckSessionIDRequest) (*NetWorkResponse, error)
 	mustEmbedUnimplementedMicroserviceServer()
 }
 
@@ -534,6 +565,12 @@ func (UnimplementedMicroserviceServer) SendOwnify(context.Context, *SendOwnifyRe
 func (UnimplementedMicroserviceServer) DeleteOwnify(context.Context, *DeleteOwnifyRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteOwnify not implemented")
 }
+func (UnimplementedMicroserviceServer) GetSubscriptionPlans(context.Context, *GetSubscriptionPlansRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSubscriptionPlans not implemented")
+}
+func (UnimplementedMicroserviceServer) CreateCheckoutSessionId(context.Context, *CreateCheckoutSessionIdRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCheckoutSessionId not implemented")
+}
 func (UnimplementedMicroserviceServer) CreateSubscription(context.Context, *CreateSubscriptionRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSubscription not implemented")
 }
@@ -545,6 +582,9 @@ func (UnimplementedMicroserviceServer) CancelSubscription(context.Context, *Canc
 }
 func (UnimplementedMicroserviceServer) VerifySubscriptionStatus(context.Context, *VerifySubscriptionRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifySubscriptionStatus not implemented")
+}
+func (UnimplementedMicroserviceServer) CheckSessionID(context.Context, *CheckSessionIDRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckSessionID not implemented")
 }
 func (UnimplementedMicroserviceServer) mustEmbedUnimplementedMicroserviceServer() {}
 
@@ -1117,6 +1157,42 @@ func _Microservice_DeleteOwnify_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Microservice_GetSubscriptionPlans_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSubscriptionPlansRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).GetSubscriptionPlans(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/GetSubscriptionPlans",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).GetSubscriptionPlans(ctx, req.(*GetSubscriptionPlansRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_CreateCheckoutSessionId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCheckoutSessionIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).CreateCheckoutSessionId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/CreateCheckoutSessionId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).CreateCheckoutSessionId(ctx, req.(*CreateCheckoutSessionIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Microservice_CreateSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateSubscriptionRequest)
 	if err := dec(in); err != nil {
@@ -1185,6 +1261,24 @@ func _Microservice_VerifySubscriptionStatus_Handler(srv interface{}, ctx context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroserviceServer).VerifySubscriptionStatus(ctx, req.(*VerifySubscriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_CheckSessionID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckSessionIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).CheckSessionID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ownify_api.v1.Microservice/CheckSessionID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).CheckSessionID(ctx, req.(*CheckSessionIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1321,6 +1415,14 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Microservice_DeleteOwnify_Handler,
 		},
 		{
+			MethodName: "GetSubscriptionPlans",
+			Handler:    _Microservice_GetSubscriptionPlans_Handler,
+		},
+		{
+			MethodName: "CreateCheckoutSessionId",
+			Handler:    _Microservice_CreateCheckoutSessionId_Handler,
+		},
+		{
 			MethodName: "CreateSubscription",
 			Handler:    _Microservice_CreateSubscription_Handler,
 		},
@@ -1335,6 +1437,10 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifySubscriptionStatus",
 			Handler:    _Microservice_VerifySubscriptionStatus_Handler,
+		},
+		{
+			MethodName: "CheckSessionID",
+			Handler:    _Microservice_CheckSessionID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -20,7 +20,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-var limiter = rate.NewLimiter(5, 1)
+var limiter = rate.NewLimiter(10, 1)
 
 type validatable interface {
 	Validate() error
@@ -72,14 +72,14 @@ func (m *MicroserviceServer) getUserInfoFromApiKey(ctx context.Context) (string,
 		return "", "", status.Errorf(codes.PermissionDenied, "user isn't authorized")
 	}
 	contents := strings.Split(apiKey[0], "-")
-	if len(contents) != 3 {
+	if len(contents) != 4 {
 		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
 	}
-	email, err := utils.Decrypt(contents[0], contents[2])
+	email, err := utils.Decrypt(contents[1], contents[3])
 	if err != nil {
 		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
 	}
-	userId, err := utils.Decrypt(contents[1], contents[2])
+	userId, err := utils.Decrypt(contents[1], contents[3])
 	if err != nil {
 		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
 	}
@@ -91,7 +91,7 @@ func (m *MicroserviceServer) TokenInterceptor(ctx context.Context) (*string, err
 	if !limiter.Allow() {
 		return nil, status.Errorf(codes.ResourceExhausted, "Too many requests")
 	}
-	// validate token.
+	//validate token.
 	token, err := m.getUserIdFromToken(ctx)
 	if err != nil {
 		_, userId, err := m.getUserInfoFromApiKey(ctx)

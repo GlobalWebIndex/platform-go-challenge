@@ -81,7 +81,7 @@ func (m *MicroserviceServer) GetBusiness(ctx context.Context, req *desc.GetBusin
 	// validate token.
 	_, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return &desc.NetWorkResponse{Success: false, Msg: "Access denied."}, err
+		return nil, err
 	}
 
 	err = utils.IsEmail(req.Email)
@@ -94,6 +94,9 @@ func (m *MicroserviceServer) GetBusiness(ctx context.Context, req *desc.GetBusin
 		return nil, err
 	}
 
+	// check subscription status
+	isSubscription := m.paymentService.VerifySubscriptionStatus(req.Email)
+	data.IsSubscribed = isSubscription
 	return BuildRes(data, "Here is your business info", true)
 }
 

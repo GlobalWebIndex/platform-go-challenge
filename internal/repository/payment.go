@@ -1,12 +1,17 @@
 package repository
 
 import (
+	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
 )
 
 type PaymentQuery interface {
 	CreateCustomer(email, customerId string) error
-	UpdateSubscription(customerId string, priceId string, subscriptionId string, endAt int64) error
+	CreateSubscription(subscription dto.Subscription) error
+
+	//email, customerId, priceId, subscriptionId string, endAt int64
+
+	UpdateSubscription(customerId, priceId, subscriptionId string, endAt int64) error
 	CancelSubscription(email string, customerId string) error
 	VerifySubscriptionStatus(email string) bool
 }
@@ -27,6 +32,22 @@ func (l *paymentQuery) CreateCustomer(email, customerId string) error {
 	}
 
 	sql, err := sqlBuilder.Insert(tableName, cols, interfaceVals)
+	if err != nil {
+		return err
+	}
+	_, err = DB.Exec(*sql)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *paymentQuery) CreateSubscription(subscription dto.Subscription) error {
+
+	tableName := PaymentTableName
+	sqlBuilder := utils.NewSqlBuilder()
+	cons, values := utils.ConvertToEntity(&subscription)
+	sql, err := sqlBuilder.Insert(tableName, cons, values)
 	if err != nil {
 		return err
 	}
@@ -74,7 +95,7 @@ func (l *paymentQuery) VerifySubscriptionStatus(email string) bool {
 	var customerId string
 	var subscriptionId string
 	var priceId string
-	sql, err := sqlBuilder.Select(tableName, []string{"customer_id", "subscription_id", "price_id"}, []utils.Tuple{{Key: "email", Val: email}}, "eq", "OR")
+	sql, err := sqlBuilder.Select(tableName, []string{"customer_id", "subscription_id", "price_id"}, []utils.Tuple{{Key: "email", Val: email}}, "=", "OR")
 	if err != nil {
 		return false
 	}

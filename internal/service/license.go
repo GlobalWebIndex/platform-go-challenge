@@ -34,7 +34,7 @@ func (s *licenseService) GenerateAPIKey(email string, userId string) (*string, e
 		return nil, err
 	}
 	// Concatenate email, userId, and the random part to create the API key
-	apiKey := fmt.Sprintf("%s-%s-%s", encryptedEmail, encryptedUserId, randomPart)
+	apiKey := fmt.Sprintf("%s-%s-%s-%s", "ownify", encryptedEmail, encryptedUserId, randomPart)
 	err = s.dao.NewLicenseQuery().SaveAPIKey(email, userId, apiKey)
 
 	if err != nil {

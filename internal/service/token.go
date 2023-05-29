@@ -131,7 +131,6 @@ func getFirebaseAuthService() (*auth.Client, error) {
 	// }
 	// credentialsPath := filepath.Join(configPath, "ownify-wallet-service-account.json")
 	opt := option.WithCredentialsFile("../config/ownify-wallet-service-account.json")
-
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		return nil, fmt.Errorf("[ERR] can't initialize firebase app: %s", err)

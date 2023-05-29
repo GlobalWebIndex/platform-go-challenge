@@ -129,7 +129,7 @@ func (m *MicroserviceServer) GetOwnedProducts(ctx context.Context, req *desc.Get
 }
 
 func (m *MicroserviceServer) VerifyProduct(ctx context.Context, req *desc.VerifyAssetRequest) (*desc.NetWorkResponse, error) {
-	
+
 	product, err := m.productService.GetProduct(
 		int(req.ChainId),
 		req.AssetId,
@@ -168,7 +168,7 @@ func (m *MicroserviceServer) SearchProducts(ctx context.Context, req *desc.Searc
 		BrandName:  req.Filter.BrandName,
 		IssuedDate: req.Filter.IssuedDate,
 	}
-	
+
 	total, products, err := m.productService.SearchProducts(filter, req.Net, req.Page, req.PerPage)
 	if err != nil {
 		return nil, err

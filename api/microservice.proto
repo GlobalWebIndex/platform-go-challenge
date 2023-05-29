@@ -221,6 +221,20 @@ service Microservice {
   }
 
   // subscription management
+
+  rpc GetSubscriptionPlans(GetSubscriptionPlansRequest) returns(NetWorkResponse) {
+    option (google.api.http) = {
+      get: "/v1/business/subscription/plans"
+    };
+  }
+
+  rpc CreateCheckoutSessionId (CreateCheckoutSessionIdRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/business/subscription/create-checkout-session"
+      body: "*"
+    };
+  }
+
   rpc CreateSubscription (CreateSubscriptionRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
       post: "/v1/business/subscription/create"
@@ -245,6 +259,13 @@ service Microservice {
   rpc VerifySubscriptionStatus (VerifySubscriptionRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
       get: "/v1/business/subscription/verify/{email}"
+    };
+  }
+
+  rpc CheckSessionID(CheckSessionIDRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/business/subscription/sessionId"
+      body: "*"
     };
   }
 }
@@ -361,6 +382,9 @@ message GetOwnedProductsRequest {
   int32 page = 3;
   int32 per_page = 4;
 }
+
+message GetSubscriptionPlansRequest {}
+
 
 message GetProductsRequest {
   string  net = 1  [(validate.rules).string = {in: ["main","test"]}];
@@ -520,5 +544,12 @@ message VerifySubscriptionRequest {
   string email = 1;
 }
 
+message CreateCheckoutSessionIdRequest {
+  string priceId = 1; 
+}
+
+message CheckSessionIDRequest {
+  string sessionId = 1;
+}
 
 

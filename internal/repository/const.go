@@ -10,7 +10,7 @@ const (
 	BusinessTableName    = "ownify.business"
 	WalletTableName      = "ownify.wallets"
 	UserLicenseTableName = "ownify.license"
-	PaymentTableName = "ownify.payment"
+	PaymentTableName     = "ownify.payments"
 )
 
 const (

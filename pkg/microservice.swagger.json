@@ -264,7 +264,6 @@
     },
     "/v1/business/subscription/create": {
       "post": {
-        "summary": "subscription management",
         "operationId": "Microservice_CreateSubscription",
         "responses": {
           "200": {
@@ -287,6 +286,92 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/v1CreateSubscriptionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/business/subscription/create-checkout-session": {
+      "post": {
+        "operationId": "Microservice_CreateCheckoutSessionId",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateCheckoutSessionIdRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/business/subscription/plans": {
+      "get": {
+        "operationId": "Microservice_GetSubscriptionPlans",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Microservice"
+        ]
+      }
+    },
+    "/v1/business/subscription/sessionId": {
+      "post": {
+        "operationId": "Microservice_CheckSessionID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1NetWorkResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CheckSessionIDRequest"
             }
           }
         ],
@@ -1294,6 +1379,14 @@
         }
       }
     },
+    "v1CheckSessionIDRequest": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        }
+      }
+    },
     "v1CreateBusinessRequest": {
       "type": "object",
       "properties": {
@@ -1320,6 +1413,14 @@
         }
       },
       "title": "business"
+    },
+    "v1CreateCheckoutSessionIdRequest": {
+      "type": "object",
+      "properties": {
+        "priceId": {
+          "type": "string"
+        }
+      }
     },
     "v1CreateSubscriptionRequest": {
       "type": "object",

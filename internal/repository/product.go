@@ -102,7 +102,7 @@ func (u *productQuery) GetProduct(chainId int, assetId int64, net string) (*dto.
 	}, []utils.Tuple{{
 		Key: "asset_id",
 		Val: assetId,
-	}, {Key: "chain_id", Val: chainId}}, "=", "AND")
+	}}, "=", "AND")
 
 	if err != nil {
 		return nil, err
@@ -177,7 +177,7 @@ func (u *productQuery) GetProducts(net string, page int, per_page int) ([]dto.Br
 }
 
 func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page int32, perPage int32) (*int64, []dto.BriefProduct, error) {
-	
+
 	tableName := MainProductTableName
 	if net == strings.ToLower(domain.TestNet) {
 		tableName = TestProductTableName
@@ -188,7 +188,6 @@ func (u *productQuery) SearchProducts(filter dto.BriefProduct, net string, page 
 	var products []dto.BriefProduct
 	cons, values := utils.ConvertToEntity(&filter)
 	conds := utils.GenerateCond(cons, values)
-
 
 	preSql, err := sqlBuilder.Select(tableName, []string{
 		"chain_id",
@@ -277,7 +276,6 @@ func (u *productQuery) SearchProductsByAssetId(filter dto.BriefProduct, net stri
 	var products []dto.BriefProduct
 	cons, values := utils.ConvertToEntity(&filter)
 	conds := utils.GenerateCond(cons, values)
-	
 
 	preSql, err := sqlBuilder.Select(tableName, []string{
 		"chain_id",
