@@ -172,7 +172,7 @@ service Microservice {
     };
   }
 
-  rpc GetAccounts (SignInRequest) returns (NetWorkResponse) {
+  rpc GetAccounts (GetWalletsRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
       get: "/v1/wallet/{email}/accounts"
     };
@@ -280,6 +280,10 @@ message BusinessGrantRequest {
 message SignInRequest {
   string email = 1 [(validate.rules).string.email = true];
   string password = 2  [(validate.rules).string = {min_len: 8, max_len: 20}];
+}
+
+message GetWalletsRequest {
+  string email = 1 [(validate.rules).string.email = true];
 }
 
 message PhoneAuthRequest {

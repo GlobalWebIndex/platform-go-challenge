@@ -1243,12 +1243,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [

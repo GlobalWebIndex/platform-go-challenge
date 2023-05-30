@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"fmt"
-	"ownify_api/internal/domain"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
 	desc "ownify_api/pkg"
@@ -146,7 +145,7 @@ func (m *MicroserviceServer) GetMyAccounts(ctx context.Context, req *desc.SignIn
 	return &desc.GetAccountResponse{}, nil
 }
 
-func (m *MicroserviceServer) GetAccounts(ctx context.Context, req *desc.SignInRequest) (*desc.NetWorkResponse, error) {
+func (m *MicroserviceServer) GetAccounts(ctx context.Context, req *desc.GetWalletsRequest) (*desc.NetWorkResponse, error) {
 	// validate token.
 	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
@@ -159,7 +158,7 @@ func (m *MicroserviceServer) GetAccounts(ctx context.Context, req *desc.SignInRe
 		return nil, err
 	}
 
-	wallets, err := m.walletService.GetMyAccounts(string(domain.BUSINESS), req.Email)
+	wallets, err := m.walletService.GetMyAccounts(req.Email, *uid)
 	if err != nil {
 		return BuildRes([]string{}, "You did not create wallet", true)
 	}
