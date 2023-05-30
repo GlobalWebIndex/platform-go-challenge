@@ -21,7 +21,7 @@ import (
 type WalletQuery interface {
 	AddNewAccount(role string, userId string, email string) (*string, error)
 	RegisterNewAccount(walletAddress string, userId string) (*string, error)
-	GetMyAccounts(role string, email string) ([]string, error)
+	GetMyAccounts(email string, userId string) ([]string, error)
 	MintOwnify(email string, pubKey string, products []dto.BriefProduct, net string) ([]uint64, error)
 	UpdatePinCode(role string, email string, newPinCode string) error
 
@@ -90,14 +90,14 @@ func (w *walletQuery) AddNewAccount(
 }
 
 func (w *walletQuery) GetMyAccounts(
-	role string,
 	email string,
+	userId string,
 ) ([]string, error) {
 	var accounts = []string{}
 	sqlBuilder := utils.NewSqlBuilder()
 	sql, err := sqlBuilder.Select(WalletTableName, []string{
 		"pub_addr",
-	}, []utils.Tuple{{Key: "email", Val: email}}, "=", "OR")
+	}, []utils.Tuple{{Key: "email", Val: email}, {Key: "user_id", Val: userId}}, "=", "OR")
 	if err != nil {
 		return []string{}, err
 	}

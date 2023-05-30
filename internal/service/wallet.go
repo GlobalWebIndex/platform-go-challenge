@@ -8,7 +8,8 @@ import (
 type WalletService interface {
 	AddNewAccount(role string, userId string, email string) (*string, error)
 	RegisterNewAccount(walletAddress string, userId string) (*string, error)
-	GetMyAccounts(role string, userId string) ([]string, error)
+	GetMyAccounts(email string, userId string) ([]string, error)
+
 	MintOwnify(email string, pubKey string, products []dto.BriefProduct, net string) ([]uint64, error)
 	UpdatePinCode(role string, userId string, newPinCode string) error
 	MakeTx(rawTx []byte, net string) (*string, *uint64, error)
@@ -35,10 +36,10 @@ func (w *walletService) AddNewAccount(
 }
 
 func (w *walletService) GetMyAccounts(
-	role string,
+	email string,
 	userId string,
 ) ([]string, error) {
-	return w.wallet.NewWalletQuery().GetMyAccounts(role, userId)
+	return w.wallet.NewWalletQuery().GetMyAccounts(email, userId)
 }
 
 func (w *walletService) MintOwnify(email string, pubKey string, products []dto.BriefProduct, net string) ([]uint64, error) {
