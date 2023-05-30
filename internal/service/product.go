@@ -16,6 +16,8 @@ type ProductService interface {
 		net string,
 		verify bool,
 	) error
+
+	DeleteProducts(assetIds []uint64, net string) error
 	GetProduct(
 		chainId int, assetId int64,
 		net string,
@@ -49,6 +51,9 @@ func (p *productService) AddProducts(
 ) error {
 	err := p.dbHandler.NewProductQuery().AddProducts(products, net, verify)
 	return err
+}
+func (p *productService) DeleteProducts(assetIds []uint64, net string) error {
+	return p.dbHandler.NewProductQuery().DeleteProducts(assetIds, net)
 }
 
 func (p *productService) GetProduct(

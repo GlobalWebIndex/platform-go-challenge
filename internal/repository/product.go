@@ -18,6 +18,7 @@ type ProductQuery interface {
 	) error
 
 	AddProducts(products []dto.BriefProduct, net string, verify bool) error
+	DeleteProducts(assetIds []uint64, net string) error
 	GetProduct(chainId int, assetId int64, net string) (*dto.BriefProduct, error)
 
 	GetProducts(net string, page int, per_page int) ([]dto.BriefProduct, error)
@@ -63,23 +64,72 @@ func (u *productQuery) AddProducts(products []dto.BriefProduct, net string, veri
 		}
 	}
 
+	if len(products) == 0 {
+		return nil
+	}
+
 	// add to database.
 	tableName := MainProductTableName
 	if net == domain.TestNet {
 		tableName = TestProductTableName
 	}
-	sqlBuilder := utils.NewSqlBuilder()
-	for _, product := range products {
 
-		cols, values := utils.ConvertToEntity(&product)
-		query, err := sqlBuilder.Insert(tableName, cols, values)
-		if err != nil {
-			return err
+	var valueStrings []string
+	var valueArgs []interface{}
+
+	cols, _ := utils.ConvertToEntity(&products[0])
+
+	for _, product := range products {
+		_, values := utils.ConvertToEntity(&product)
+		var qmarks []string
+
+		for range cols {
+			qmarks = append(qmarks, "?")
 		}
-		_, err = DB.Exec(*query)
-		if err != nil {
-			return err
-		}
+
+		valueStrings = append(valueStrings, "("+strings.Join(qmarks, ", ")+")")
+		valueArgs = append(valueArgs, values...)
+	}
+
+	stmt := fmt.Sprintf("INSERT INTO %s (%s) VALUES %s", tableName, strings.Join(cols, ","), strings.Join(valueStrings, ","))
+
+	_, err := DB.Exec(stmt, valueArgs...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *productQuery) DeleteProducts(assetIds []uint64, net string) error {
+	// If no products to delete, just return.
+	if len(assetIds) == 0 {
+		return nil
+	}
+
+	// Choose the table name based on the network.
+	tableName := MainProductTableName
+	if net == domain.TestNet {
+		tableName = TestProductTableName
+	}
+
+	// Prepare a string of placeholders for the query.
+	placeholders := make([]string, len(assetIds))
+	for i := range placeholders {
+		placeholders[i] = "?"
+	}
+
+	stmt := fmt.Sprintf("DELETE FROM %s WHERE  asset_id IN (%s)", tableName, strings.Join(placeholders, ","))
+
+	// Convert the productIds to []interface{} for the Exec function.
+	args := make([]interface{}, len(assetIds))
+	for i, asset_id := range assetIds {
+		args[i] = asset_id
+	}
+
+	_, err := DB.Exec(stmt, args...)
+	if err != nil {
+		return err
 	}
 	return nil
 }

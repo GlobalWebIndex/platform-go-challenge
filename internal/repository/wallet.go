@@ -32,7 +32,9 @@ type WalletQuery interface {
 	DeleteOwnify(email string, assetIds []uint64, owner string, net string) (*string, error)
 }
 
-type walletQuery struct{}
+type walletQuery struct {
+	ProductQueryService ProductQuery
+}
 
 func (w *walletQuery) AddNewAccount(
 	role string,
@@ -148,7 +150,7 @@ func (w *walletQuery) MintOwnify(
 
 	var assetIndices []uint64
 
-	for _, chunk := range chunks {
+	for index, chunk := range chunks {
 		txns := []types.Transaction{}
 		for _, product := range chunk {
 			note, err := json.Marshal(product)
@@ -193,6 +195,21 @@ func (w *walletQuery) MintOwnify(
 		}
 		endIndex := confirmedTx.AssetIndex + uint64(len(chunk))
 
+		// add to database
+		startProductIndex := index * 15
+		endProductIndex := (index + 1) * 15
+		if endProductIndex > len(products) {
+			endProductIndex = len(products)
+		}
+		addedProducts := products[startProductIndex:endProductIndex]
+		for i := 0; i < len(addedProducts); i++ {
+			addedProducts[i].AssetId = int64(confirmedTx.AssetIndex + uint64(i))
+			addedProducts[i].Owner = pubKey
+		}
+		err = w.ProductQueryService.AddProducts(addedProducts, net, false)
+		if err != nil {
+			return nil, err
+		}
 		// Add the asset indices of the current chunk to the final result.
 		assetIndices = append(assetIndices, utils.MakeRange(confirmedTx.AssetIndex, endIndex)...)
 	}
@@ -312,7 +329,9 @@ func (w *walletQuery) DeleteOwnify(
 
 	deleteChunk := func(chunk []uint64) (*string, error) {
 		txns := []types.Transaction{}
+
 		for _, assetId := range chunk {
+
 			txParams, err := client.SuggestedParams().Do(context.Background())
 			if err != nil {
 				return nil, err
@@ -328,7 +347,13 @@ func (w *walletQuery) DeleteOwnify(
 			}
 			txns = append(txns, txn)
 		}
-		return sendGroupedTransactions(client, prv, owner, txns)
+		txId, err := sendGroupedTransactions(client, prv, owner, txns)
+		if err != nil {
+			return nil, err
+		}
+		// delete operation
+		w.ProductQueryService.DeleteProducts(chunk, net)
+		return txId, nil
 	}
 	return processChunks(assetIds, 15, deleteChunk)
 }

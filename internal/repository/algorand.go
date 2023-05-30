@@ -34,7 +34,7 @@ func NewClient(net string) (*algod.Client, *indexer.Client, error) {
 	const algodToken = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 	algodClientToken := viper.Get("algod.private.client.token").(string)
 	algodIndexerToken := viper.Get("algod.private.indexer.token").(string)
-	
+
 	if net == domain.TestNet {
 		algodAddress = viper.Get("algod.private.client.test").(string)
 		indexerAddress = viper.Get("algod.private.indexer.test").(string)
@@ -59,7 +59,7 @@ func NewClient(net string) (*algod.Client, *indexer.Client, error) {
 }
 
 func (a *algoHandler) NewWalletQuery() WalletQuery {
-	return &walletQuery{}
+	return &walletQuery{ProductQueryService: a.NewProductQuery()}
 }
 
 func (a *algoHandler) NewProductQuery() ProductQuery {

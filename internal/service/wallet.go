@@ -47,14 +47,6 @@ func (w *walletService) MintOwnify(email string, pubKey string, products []dto.B
 	if err != nil {
 		return nil, err
 	}
-	for i := 0; i < len(mintedIds); i++ {
-		products[i].AssetId = int64(mintedIds[i])
-		products[i].Owner = pubKey
-	}
-	err = w.wallet.NewProductQuery().AddProducts(products, net, false)
-	if err != nil {
-		return nil, err
-	}
 	return mintedIds, nil
 }
 
