@@ -118,7 +118,7 @@ func (s *paymentService) CreateSubscription(customerID string, priceId string) (
 	if err != nil {
 		return &newSub.ID, err
 	}
-	err = s.dbHandler.NewPaymentQuery().UpdateSubscription(customerID, priceId, newSub.ID, newSub.EndedAt)
+	//err = s.dbHandler.NewPaymentQuery().UpdateSubscription(customerID, priceId, newSub.ID, newSub.EndedAt)
 	return &newSub.ID, err
 }
 
