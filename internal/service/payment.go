@@ -94,10 +94,10 @@ func (s *paymentService) CreateCustomer(email string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = s.dbHandler.NewPaymentQuery().CreateCustomer(email, c.ID)
-	if err != nil {
-		return "", err
-	}
+	// err = s.dbHandler.NewPaymentQuery().CreateCustomer(email, c.ID)
+	// if err != nil {
+	// 	return "", err
+	// }
 	return c.ID, err
 }
 
