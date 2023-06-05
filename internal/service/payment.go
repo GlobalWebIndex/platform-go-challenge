@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/repository"
+	"strings"
 
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
@@ -177,7 +178,7 @@ func (s *paymentService) GetActiveProducts() ([]*stripe.Product, error) {
 
 func (s *paymentService) CheckoutSession(sessionId string) error {
 	// Retrieve the checkout session
-	sess, err := session.Get(sessionId, nil)
+	session, err := session.Get(sessionId, nil)
 	if err != nil {
 		return err
 	}
@@ -185,33 +186,33 @@ func (s *paymentService) CheckoutSession(sessionId string) error {
 	// Get the customer object
 	customerParams := &stripe.CustomerParams{}
 	customerParams.AddExpand("subscriptions")
-	cust, err := customer.Get(sess.Customer.ID, customerParams)
+	customer, err := customer.Get(session.Customer.ID, customerParams)
 	if err != nil {
 		return err
 	}
 
-	if s.dbHandler.NewPaymentQuery().VerifySubscriptionStatus(cust.Email) {
+	if s.dbHandler.NewPaymentQuery().VerifySubscriptionStatus(customer.Email) {
 		return fmt.Errorf("[Err] Already registered this subscription")
 	}
 
 	subscriptionParams := &stripe.SubscriptionParams{}
 	subscriptionParams.AddExpand("items.data.price")
-	sub, err := sub.Get(sess.Subscription.ID, subscriptionParams)
+	sub, err := sub.Get(session.Subscription.ID, subscriptionParams)
 	if err != nil {
 		return err
 	}
 
-	customerID := cust.ID
+	customerID := customer.ID
 	subscriptionID := sub.ID
 	endedAt := sub.EndedAt
 	priceID := sub.Items.Data[0].Price.ID
 
-	if priceID == "" || subscriptionID == "" {
+	if strings.TrimSpace(priceID) == "" || strings.TrimSpace(subscriptionID) == "" {
 		return fmt.Errorf("session doesn't checkout")
 	}
 
 	subscription := dto.Subscription{
-		Email:          cust.Email,
+		Email:          customer.Email,
 		CustomerId:     customerID,
 		SubscriptionId: subscriptionID,
 		EndAt:          endedAt,

@@ -126,12 +126,12 @@ func (m *MicroserviceServer) GetBusinessByUserId(ctx context.Context, req *empty
 	// validate token.
 	userId, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return &desc.NetWorkResponse{Success: false, Msg: "Access denied."}, err
+		return nil, fmt.Errorf("[Err] please login first of all")
 	}
 
 	data, err := m.businessService.GetBusinessByUserId(*userId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("[Err] You did not register business")
 	}
 
 	return BuildRes(data, "Here is your business info", true)
