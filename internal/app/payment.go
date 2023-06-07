@@ -2,7 +2,9 @@ package app
 
 import (
 	"context"
+	"fmt"
 
+	"ownify_api/internal/constants"
 	desc "ownify_api/pkg"
 
 	"github.com/stripe/stripe-go/v74"
@@ -58,7 +60,7 @@ func (m *MicroserviceServer) CreateSubscription(ctx context.Context, req *desc.C
 	// validate token.
 	_, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return &desc.NetWorkResponse{}, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 
 	subscriptionId, err := m.paymentService.CreateSubscription(req.CustomerId, req.PriceId)
@@ -79,7 +81,7 @@ func (m *MicroserviceServer) UpdateSubscription(ctx context.Context, req *desc.U
 	// validate token.
 	_, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return &desc.NetWorkResponse{}, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 	err = m.paymentService.UpdateSubscription(req.OldPriceId, req.NewPriceId)
 
@@ -100,7 +102,7 @@ func (m *MicroserviceServer) CancelSubscription(ctx context.Context, req *desc.C
 	// validate token.
 	_, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return &desc.NetWorkResponse{}, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 
 	err = m.paymentService.CancelSubscription(req.SubscriptionID)
@@ -122,13 +124,12 @@ func (m *MicroserviceServer) CheckSessionID(ctx context.Context, req *desc.Check
 	// validate token.
 	_, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 
 	err = m.paymentService.CheckoutSession(req.SessionId)
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidStripSessionID, "raw message:%s", err)
 	}
 
 	return BuildRes(true, "Successfully session checked out!", true)

@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"ownify_api/internal/constants"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
 	desc "ownify_api/pkg"
@@ -133,10 +134,10 @@ func (m *MicroserviceServer) GetMyAccounts(ctx context.Context, req *desc.SignIn
 	// validate token.
 	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 	if utils.IsEmpty(req.Email) {
-		return nil, fmt.Errorf("[ERR] invalid request: %v", req)
+		return nil, fmt.Errorf(constants.ErrInvalidRequest, "raw message: %v", req)
 	}
 	if !m.authService.ValidBusiness(*uid, req.Email) {
 		return nil, err
@@ -149,10 +150,10 @@ func (m *MicroserviceServer) GetAccounts(ctx context.Context, req *desc.GetWalle
 	// validate token.
 	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 	if utils.IsEmpty(req.Email) {
-		return nil, fmt.Errorf("[ERR] invalid request: %v", req)
+		return nil, fmt.Errorf(constants.ErrInvalidRequest, "raw message: %v", req)
 	}
 	if !m.authService.ValidBusiness(*uid, req.Email) {
 		return nil, err
@@ -176,7 +177,7 @@ func (m *MicroserviceServer) MintOwnify(ctx context.Context, req *desc.MintOwnif
 	// validate token.
 	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return &desc.MintOwnifyResponse{}, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 	if !m.authService.ValidBusiness(*uid, req.Email) {
 		return &desc.MintOwnifyResponse{}, err
@@ -212,7 +213,7 @@ func (m *MicroserviceServer) MakeTransaction(ctx context.Context, req *desc.Make
 	// validate token.
 	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return &desc.MakeTransactionResponse{}, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 
 	if !m.authService.VerifyBusinessByUserId(*uid) {

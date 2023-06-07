@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"ownify_api/internal/constants"
 	"ownify_api/internal/utils"
 	desc "ownify_api/pkg"
 )
@@ -13,7 +14,7 @@ func (m *MicroserviceServer) GrantBusiness(ctx context.Context, req *desc.Busine
 	// validate token.
 	user_id, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 	if utils.IsEmail(req.MyEmail) != nil || utils.IsEmail(req.BusinessEmail) != nil {
 		return nil, fmt.Errorf("[ERR] include invalid email address")

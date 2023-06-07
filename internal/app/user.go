@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"ownify_api/internal/constants"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
 	desc "ownify_api/pkg"
@@ -15,7 +16,7 @@ func (m *MicroserviceServer) CreateUser(ctx context.Context, req *desc.CreateUse
 	// validate token.
 	user_id, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 
 	isRegistered := m.authService.ValidUser(req.WalletAddress, req.IdFingerprint)
@@ -49,7 +50,7 @@ func (m *MicroserviceServer) CreateUser(ctx context.Context, req *desc.CreateUse
 func (m *MicroserviceServer) UpdateUser(ctx context.Context, req *desc.UpdateUserRequest) (*desc.UpdateUserResponse, error) {
 	_, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 
 	// updatedUser, err := m.userService.UpdateUser(dto.Person{
@@ -105,4 +106,3 @@ func (m *MicroserviceServer) DeleteUser(ctx context.Context, req *desc.DeleteUse
 		Success: true,
 	}, nil
 }
-

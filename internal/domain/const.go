@@ -10,8 +10,6 @@ const (
 	MainNet string = "main"
 )
 
-
-
 const (
 	OwnifyAssetName    = "Ownify"
 	OwnifyAssetUnit    = "OWNIFY"

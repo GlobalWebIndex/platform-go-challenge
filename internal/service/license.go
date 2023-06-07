@@ -47,7 +47,7 @@ func (s *licenseService) GenerateAPIKey(email string, userId string) (*string, e
 func (s *licenseService) GetAPIKey(email string, userId string) ([]string, error) {
 	apiKeys, err := s.dao.NewLicenseQuery().GetAPIKey(email, userId)
 	if err != nil {
-		return nil, errors.New("could not save API key: " + err.Error())
+		return nil, errors.New("You did not create API Key: " + err.Error())
 	}
 	return apiKeys, nil
 }

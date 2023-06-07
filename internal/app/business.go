@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"ownify_api/internal/constants"
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
 	desc "ownify_api/pkg"
@@ -91,7 +92,7 @@ func (m *MicroserviceServer) GetBusiness(ctx context.Context, req *desc.GetBusin
 
 	data, err := m.businessService.GetBusiness(req.Email)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrNotFoundBusiness, "raw message:%s", err)
 	}
 
 	// check subscription status
@@ -105,7 +106,7 @@ func (m *MicroserviceServer) GetBusinessByPubAddr(ctx context.Context, req *desc
 	// validate token.
 	_, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return &desc.NetWorkResponse{Success: false, Msg: "Access denied."}, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 
 	err = utils.IsPubKey(req.PubAddr)
@@ -126,12 +127,12 @@ func (m *MicroserviceServer) GetBusinessByUserId(ctx context.Context, req *empty
 	// validate token.
 	userId, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("[Err] please login first of all")
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 
 	data, err := m.businessService.GetBusinessByUserId(*userId)
 	if err != nil {
-		return nil, fmt.Errorf("[Err] You did not register business")
+		return nil, fmt.Errorf(constants.ErrNotFoundBusiness, "raw message:%s", err)
 	}
 
 	return BuildRes(data, "Here is your business info", true)
@@ -140,7 +141,7 @@ func (m *MicroserviceServer) GetBusinessByUserId(ctx context.Context, req *empty
 func (m *MicroserviceServer) GenerateNewAPIKey(ctx context.Context, req *desc.NewLicenseRequest) (*desc.NetWorkResponse, error) {
 	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 	apiKey, err := m.licenseService.GenerateAPIKey(req.Email, *uid)
 	if err != nil {
@@ -152,7 +153,7 @@ func (m *MicroserviceServer) GenerateNewAPIKey(ctx context.Context, req *desc.Ne
 func (m *MicroserviceServer) GetApiKey(ctx context.Context, req *desc.LicenseRequest) (*desc.NetWorkResponse, error) {
 	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 	apiKeys, err := m.licenseService.GetAPIKey(req.Email, *uid)
 	if err != nil {
