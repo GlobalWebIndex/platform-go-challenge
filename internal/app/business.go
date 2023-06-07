@@ -17,7 +17,7 @@ func (m *MicroserviceServer) CreateBusiness(ctx context.Context, req *desc.Creat
 	// validate token.
 	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return &desc.NetWorkResponse{}, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 
 	business := dto.BriefBusiness{
@@ -31,7 +31,7 @@ func (m *MicroserviceServer) CreateBusiness(ctx context.Context, req *desc.Creat
 		Location:    req.Location,
 	}
 	if !business.Valid() {
-		return nil, fmt.Errorf("[ERR] invalid information!: %s", req.Email)
+		return nil, fmt.Errorf(constants.ErrInvalidBusinessInfo, "raw message: %s", req.Email)
 	}
 
 	isRegistered := m.authService.VerifyBusinessByUserId(*uid)
@@ -157,7 +157,7 @@ func (m *MicroserviceServer) GetApiKey(ctx context.Context, req *desc.LicenseReq
 	}
 	apiKeys, err := m.licenseService.GetAPIKey(req.Email, *uid)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.WarningNotFoundApiKey, "raw message:%s", err)
 	}
 	type ApiKeyRes struct {
 		ApiKeyRes []string `json:"api_keys"`

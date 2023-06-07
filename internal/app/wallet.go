@@ -156,12 +156,12 @@ func (m *MicroserviceServer) GetAccounts(ctx context.Context, req *desc.GetWalle
 		return nil, fmt.Errorf(constants.ErrInvalidRequest, "raw message: %v", req)
 	}
 	if !m.authService.ValidBusiness(*uid, req.Email) {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrNotFoundBusiness, "raw message:%s", err)
 	}
 
 	wallets, err := m.walletService.GetMyAccounts(req.Email, *uid)
 	if err != nil {
-		return BuildRes([]string{}, "You did not create wallet", true)
+		return nil, fmt.Errorf(constants.WarningNotFoundWallet, "raw message:%s", err)
 	}
 
 	type AccountRes struct {
