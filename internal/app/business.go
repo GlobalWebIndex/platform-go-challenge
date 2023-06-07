@@ -45,11 +45,11 @@ func (m *MicroserviceServer) CreateBusiness(ctx context.Context, req *desc.Creat
 
 	customerId, err := m.paymentService.CreateCustomer(req.Email)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrNotAllowCreateStripeCustomerId, "raw message:%s", err)
 	}
 	err = m.businessService.CreateBusiness(&business)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrNotAllowCreateBusiness, "raw message:%s", err)
 	}
 	type CreateBusinessRes struct {
 		CustomerId string `json:"customer_id"`
@@ -63,11 +63,11 @@ func (m *MicroserviceServer) DeleteBusiness(ctx context.Context, req *desc.Delet
 	// validate token.
 	uid, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("[ERR] no permission to user: %s", req.Email)
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
 
 	if !m.authService.ValidBusiness(*uid, req.Email) {
-		return nil, fmt.Errorf("[ERR] no permission to user: %s", req.Email)
+		return nil, fmt.Errorf(constants.ErrNotFoundBusiness, "raw message:%s", err)
 	}
 
 	err = m.businessService.DeleteBusiness(req.Email, *uid)
@@ -82,12 +82,11 @@ func (m *MicroserviceServer) GetBusiness(ctx context.Context, req *desc.GetBusin
 	// validate token.
 	_, err := m.TokenInterceptor(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
 	}
-
 	err = utils.IsEmail(req.Email)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidRequest, "raw message:%s", req)
 	}
 
 	data, err := m.businessService.GetBusiness(req.Email)
@@ -111,12 +110,12 @@ func (m *MicroserviceServer) GetBusinessByPubAddr(ctx context.Context, req *desc
 
 	err = utils.IsPubKey(req.PubAddr)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrInvalidRequest, "raw message:%s", err)
 	}
 
 	data, err := m.businessService.GetBusinessByWalletAddress(req.PubAddr)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrNotFoundBusiness, "raw message:%s", err)
 	}
 
 	return BuildRes(data, "Here is your business info", true)
@@ -145,7 +144,7 @@ func (m *MicroserviceServer) GenerateNewAPIKey(ctx context.Context, req *desc.Ne
 	}
 	apiKey, err := m.licenseService.GenerateAPIKey(req.Email, *uid)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(constants.ErrNotAllowCreateAPIKey, "raw message:%s", err)
 	}
 	return BuildRes(apiKey, "successfully generated", true)
 }
