@@ -1,0 +1,2878 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/core/asset/v1/asset.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "AssetService"
+    },
+    {
+      "name": "AssetService"
+    },
+    {
+      "name": "FavouriteService"
+    },
+    {
+      "name": "FavouriteService"
+    },
+    {
+      "name": "OpinionService"
+    },
+    {
+      "name": "OpinionService"
+    },
+    {
+      "name": "UserService"
+    },
+    {
+      "name": "UserService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/asset/create": {
+      "post": {
+        "summary": "Create",
+        "operationId": "AssetService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servassetv1CreateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "asset",
+            "description": "asset",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AssetInstance"
+            }
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/api/v1/asset/delete/{id.uuid}": {
+      "delete": {
+        "summary": "Delete",
+        "operationId": "AssetService_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servassetv1DeleteResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/api/v1/asset/get": {
+      "post": {
+        "summary": "Get",
+        "operationId": "AssetService_Get2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servassetv1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "id",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/api/v1/asset/get/{id.uuid}": {
+      "get": {
+        "summary": "Get",
+        "operationId": "AssetService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servassetv1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/api/v1/asset/update/{id.uuid}/{id.rev}": {
+      "patch": {
+        "summary": "Update",
+        "operationId": "AssetService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servassetv1UpdateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "asset",
+            "description": "asset",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AssetInstance"
+            }
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/api/v1/favourite/create": {
+      "post": {
+        "summary": "Create",
+        "operationId": "FavouriteService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servfavouritev1CreateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "favourite",
+            "description": "favourite",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteAsset"
+            }
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v1/favourite/delete/{id.uuid}": {
+      "delete": {
+        "summary": "Delete",
+        "operationId": "FavouriteService_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servfavouritev1DeleteResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v1/favourite/get": {
+      "post": {
+        "summary": "Get",
+        "operationId": "FavouriteService_Get2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servfavouritev1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "id",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v1/favourite/get/{id.uuid}": {
+      "get": {
+        "summary": "Get",
+        "operationId": "FavouriteService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servfavouritev1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v1/favourite/list/user/{idUser.uuid_1}": {
+      "get": {
+        "summary": "ListFavourites - stream favourites of a user",
+        "operationId": "UserService_ListFavourites",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1ListFavouritesResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1ListFavouritesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "idUser.uuid_1",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "idUser.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v1/favourite/list/user/{idUser.uuid}": {
+      "get": {
+        "summary": "List - stream favourites of a user",
+        "operationId": "FavouriteService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/servfavouritev1ListResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of servfavouritev1ListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "idUser.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "idUser.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v1/favourite/update/{id.uuid}/{id.rev}": {
+      "patch": {
+        "summary": "Update",
+        "operationId": "FavouriteService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servfavouritev1UpdateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "favourite",
+            "description": "favourite",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteAsset"
+            }
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v1/opinion/create": {
+      "post": {
+        "summary": "Create",
+        "operationId": "OpinionService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servstdopinionv1CreateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "opinion",
+            "description": "opinion",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1OpinionAsset"
+            }
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v1/opinion/delete/{id.uuid}": {
+      "delete": {
+        "summary": "Delete",
+        "operationId": "OpinionService_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servstdopinionv1DeleteResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v1/opinion/get": {
+      "post": {
+        "summary": "Get",
+        "operationId": "OpinionService_Get2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servstdopinionv1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "id",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v1/opinion/get/{id.uuid}": {
+      "get": {
+        "summary": "Get",
+        "operationId": "OpinionService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servstdopinionv1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v1/opinion/list/user/{idUser.uuid_1}": {
+      "get": {
+        "summary": "ListOpinions - stream opinions of a user",
+        "operationId": "UserService_ListOpinions",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1ListOpinionsResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1ListOpinionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "idUser.uuid_1",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "idUser.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v1/opinion/list/user/{idUser.uuid}": {
+      "get": {
+        "summary": "List - stream opinions of a user",
+        "operationId": "OpinionService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/servstdopinionv1ListResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of servstdopinionv1ListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "idUser.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "idUser.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v1/opinion/update/{id.uuid}/{id.rev}": {
+      "patch": {
+        "summary": "Update",
+        "operationId": "OpinionService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servstdopinionv1UpdateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "opinion",
+            "description": "opinion",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1OpinionAsset"
+            }
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v1/user/create": {
+      "post": {
+        "summary": "Create",
+        "operationId": "UserService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servuserv1CreateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user",
+            "description": "user",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UserInstance"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v1/user/delete/{id.uuid}": {
+      "delete": {
+        "summary": "Delete",
+        "operationId": "UserService_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servuserv1DeleteResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v1/user/get": {
+      "post": {
+        "summary": "Get",
+        "operationId": "UserService_Get2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servuserv1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "id",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v1/user/get/{id.uuid}": {
+      "get": {
+        "summary": "Get",
+        "operationId": "UserService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servuserv1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v1/user/update/{id.uuid}/{id.rev}": {
+      "patch": {
+        "summary": "Update",
+        "operationId": "UserService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servuserv1UpdateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "user",
+            "description": "user",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UserInstance"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v2/asset/create": {
+      "post": {
+        "summary": "Create",
+        "operationId": "AssetService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssetInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AssetInstance"
+            }
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/api/v2/asset/delete/{uuid}": {
+      "delete": {
+        "summary": "Delete",
+        "operationId": "AssetService_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssetInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/api/v2/asset/get": {
+      "post": {
+        "summary": "Get",
+        "operationId": "AssetService_Get2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssetInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/api/v2/asset/get/{uuid}": {
+      "get": {
+        "summary": "Get",
+        "operationId": "AssetService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssetInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/api/v2/asset/update/{id.uuid}/{id.rev}": {
+      "patch": {
+        "summary": "Update",
+        "operationId": "AssetService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssetInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "object",
+                  "title": "id - AssetIDX"
+                },
+                "md": {
+                  "$ref": "#/definitions/v1AssetMetaData",
+                  "title": "md - AssetMetaData"
+                },
+                "chart": {
+                  "$ref": "#/definitions/v1AssetChart",
+                  "title": "chart - Chart (that has a small title, axes titles and data)"
+                },
+                "insight": {
+                  "$ref": "#/definitions/v1AssetInsight",
+                  "title": "insight - Insight (a small piece of text that provides some insight into a\ntopic, e.g. \"40% of millenials spend more than 3hours on social media\ndaily\")"
+                },
+                "audience": {
+                  "$ref": "#/definitions/v1AssetAudience",
+                  "description": "audience - Audience (which is a series of characteristics, for that\nexercise lets focus on gender (Male, Female), birth country, age groups,\nhours spent daily on social media, number of purchases last month) e.g.\nMales from 24-35 that spent more than 3 hours on social media daily."
+                }
+              },
+              "title": "AssetInstance"
+            }
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/api/v2/favourite/create": {
+      "post": {
+        "summary": "Create",
+        "operationId": "FavouriteService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteAsset"
+            }
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v2/favourite/delete/{uuid}": {
+      "delete": {
+        "summary": "Delete",
+        "operationId": "FavouriteService_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v2/favourite/get": {
+      "post": {
+        "summary": "Get",
+        "operationId": "FavouriteService_Get2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v2/favourite/get/{uuid}": {
+      "get": {
+        "summary": "Get",
+        "operationId": "FavouriteService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v2/favourite/list/user/{uuid}": {
+      "get": {
+        "summary": "List - stream favourites of a user",
+        "operationId": "FavouriteService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1FavouriteAsset"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1FavouriteAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v2/favourite/update/{id.uuid}/{id.rev}": {
+      "patch": {
+        "summary": "Update",
+        "operationId": "FavouriteService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "object",
+                  "title": "id - User's Favourite Asset"
+                },
+                "md": {
+                  "$ref": "#/definitions/v1AssetMetaData",
+                  "title": "md - User's Favourite Asset MetaData"
+                },
+                "idUser": {
+                  "$ref": "#/definitions/v1IDX",
+                  "title": "id_user (from)"
+                },
+                "idAsset": {
+                  "$ref": "#/definitions/v1IDX",
+                  "title": "id_asset (to)"
+                },
+                "asset": {
+                  "$ref": "#/definitions/v1AssetInstance",
+                  "title": "asset - User's Favourite Asset Instance"
+                }
+              },
+              "title": "FavouriteAsset"
+            }
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/api/v2/opinion/create": {
+      "post": {
+        "summary": "Create",
+        "operationId": "OpinionService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1OpinionAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1OpinionAsset"
+            }
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v2/opinion/delete/{uuid}": {
+      "delete": {
+        "summary": "Delete",
+        "operationId": "OpinionService_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1OpinionAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v2/opinion/get": {
+      "post": {
+        "summary": "Get",
+        "operationId": "OpinionService_Get2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1OpinionAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v2/opinion/get/{uuid}": {
+      "get": {
+        "summary": "Get",
+        "operationId": "OpinionService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1OpinionAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v2/opinion/list/user/{uuid}": {
+      "get": {
+        "summary": "List - stream opinins of a user",
+        "operationId": "OpinionService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1OpinionAsset"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1OpinionAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v2/opinion/update/{id.uuid}/{id.rev}": {
+      "patch": {
+        "summary": "Update",
+        "operationId": "OpinionService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1OpinionAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "object",
+                  "title": "id - User's Opinion Asset"
+                },
+                "md": {
+                  "$ref": "#/definitions/v1AssetMetaData",
+                  "title": "md - User's Opinion Asset MetaData"
+                },
+                "idUser": {
+                  "$ref": "#/definitions/v1IDX",
+                  "title": "id_user (from)"
+                },
+                "idAsset": {
+                  "$ref": "#/definitions/v1IDX",
+                  "title": "id_asset (to)"
+                },
+                "asset": {
+                  "$ref": "#/definitions/v1AssetInstance",
+                  "title": "asset - User's Opinion Asset Instance"
+                },
+                "isFavourite": {
+                  "type": "boolean",
+                  "title": "is_favourite"
+                },
+                "stars": {
+                  "type": "integer",
+                  "format": "int32",
+                  "title": "stars"
+                }
+              },
+              "title": "OpinionAsset"
+            }
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/api/v2/user/create": {
+      "post": {
+        "summary": "Create",
+        "operationId": "UserService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UserInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UserInstance"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v2/user/delete/{uuid}": {
+      "delete": {
+        "summary": "Delete",
+        "operationId": "UserService_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UserInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v2/user/get": {
+      "post": {
+        "summary": "Get",
+        "operationId": "UserService_Get2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UserInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v2/user/get/{uuid}": {
+      "get": {
+        "summary": "Get",
+        "operationId": "UserService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UserInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v2/user/update/{id.uuid}/{id.rev}": {
+      "patch": {
+        "summary": "Update",
+        "operationId": "UserService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UserInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id.uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id.rev",
+            "description": "rev - revision",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "object",
+                  "description": "username - Name (1-256 characters) required",
+                  "title": "idx - User IDX"
+                },
+                "username": {
+                  "type": "string",
+                  "title": "username"
+                }
+              },
+              "title": "UserInstance"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v2/user/{uuid}/favourites": {
+      "get": {
+        "summary": "ListFavourites - stream favourites of a user",
+        "operationId": "UserService_ListFavourites",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1FavouriteAsset"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1FavouriteAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v2/user/{uuid}/opinions": {
+      "get": {
+        "summary": "ListOpinions - stream opinions of a user",
+        "operationId": "UserService_ListOpinions",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1OpinionAsset"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1OpinionAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "description": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rev",
+            "description": "rev - revision",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/proto.serv.asset.v1.AssetService/Gett": {
+      "post": {
+        "summary": "Gett",
+        "operationId": "AssetService_Gett",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servassetv1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/servassetv1GetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/proto.serv.asset.v2.AssetService/Gett": {
+      "post": {
+        "summary": "Gett",
+        "operationId": "AssetService_Gett",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssetInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "AssetService"
+        ]
+      }
+    },
+    "/proto.serv.favourite.v1.FavouriteService/Gett": {
+      "post": {
+        "summary": "Gett",
+        "operationId": "FavouriteService_Gett",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servfavouritev1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/servfavouritev1GetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/proto.serv.favourite.v2.FavouriteService/Gett": {
+      "post": {
+        "summary": "Gett",
+        "operationId": "FavouriteService_Gett",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
+    "/proto.serv.opinion.v2.OpinionService/Gett": {
+      "post": {
+        "summary": "Gett",
+        "operationId": "OpinionService_Gett",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1OpinionAsset"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
+    "/proto.serv.user.v1.UserService/Gett": {
+      "post": {
+        "summary": "Gett",
+        "operationId": "UserService_Gett",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servuserv1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/servuserv1GetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/proto.serv.user.v2.UserService/Gett": {
+      "post": {
+        "summary": "Gett",
+        "operationId": "UserService_Gett",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UserInstance"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IDX"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/proto.servstd.opinion.v1.OpinionService/Gett": {
+      "post": {
+        "summary": "Gett",
+        "operationId": "OpinionService_Gett",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/servstdopinionv1GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/servstdopinionv1GetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "protobufNullValue": {
+      "type": "string",
+      "enum": null,
+      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\nThe JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "servassetv1CreateResponse": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "$ref": "#/definitions/v1AssetInstance",
+          "title": "asset"
+        }
+      },
+      "title": "CreateResponse"
+    },
+    "servassetv1DeleteResponse": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "$ref": "#/definitions/v1AssetInstance",
+          "title": "asset"
+        }
+      },
+      "title": "DeleteResponse"
+    },
+    "servassetv1GetRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/v1IDX",
+          "title": "id"
+        }
+      },
+      "title": "GetRequest"
+    },
+    "servassetv1GetResponse": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "$ref": "#/definitions/v1AssetInstance",
+          "title": "asset"
+        }
+      },
+      "title": "GetResponse"
+    },
+    "servassetv1UpdateResponse": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "$ref": "#/definitions/v1AssetInstance",
+          "title": "asset"
+        }
+      },
+      "title": "UpdateResponse"
+    },
+    "servfavouritev1CreateResponse": {
+      "type": "object",
+      "properties": {
+        "favourite": {
+          "$ref": "#/definitions/v1FavouriteAsset",
+          "title": "favourite"
+        }
+      },
+      "title": "CreateResponse"
+    },
+    "servfavouritev1DeleteResponse": {
+      "type": "object",
+      "properties": {
+        "favourite": {
+          "$ref": "#/definitions/v1FavouriteAsset",
+          "title": "favourite"
+        }
+      },
+      "title": "DeleteResponse"
+    },
+    "servfavouritev1GetRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/v1IDX",
+          "title": "id"
+        }
+      },
+      "title": "GetRequest"
+    },
+    "servfavouritev1GetResponse": {
+      "type": "object",
+      "properties": {
+        "favourite": {
+          "$ref": "#/definitions/v1FavouriteAsset",
+          "title": "favourite"
+        }
+      },
+      "title": "GetResponse"
+    },
+    "servfavouritev1ListResponse": {
+      "type": "object",
+      "properties": {
+        "favourite": {
+          "$ref": "#/definitions/v1FavouriteAsset",
+          "title": "favourite"
+        }
+      },
+      "title": "ListResponse"
+    },
+    "servfavouritev1UpdateResponse": {
+      "type": "object",
+      "properties": {
+        "favourite": {
+          "$ref": "#/definitions/v1FavouriteAsset",
+          "title": "favourite"
+        }
+      },
+      "title": "UpdateResponse"
+    },
+    "servstdopinionv1CreateResponse": {
+      "type": "object",
+      "properties": {
+        "opinion": {
+          "$ref": "#/definitions/v1OpinionAsset",
+          "title": "opinion"
+        }
+      },
+      "title": "CreateResponse"
+    },
+    "servstdopinionv1DeleteResponse": {
+      "type": "object",
+      "properties": {
+        "opinion": {
+          "$ref": "#/definitions/v1OpinionAsset",
+          "title": "opinion"
+        }
+      },
+      "title": "DeleteResponse"
+    },
+    "servstdopinionv1GetRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/v1IDX",
+          "title": "id"
+        }
+      },
+      "title": "GetRequest"
+    },
+    "servstdopinionv1GetResponse": {
+      "type": "object",
+      "properties": {
+        "opinion": {
+          "$ref": "#/definitions/v1OpinionAsset",
+          "title": "opinion"
+        }
+      },
+      "title": "GetResponse"
+    },
+    "servstdopinionv1ListResponse": {
+      "type": "object",
+      "properties": {
+        "opinion": {
+          "$ref": "#/definitions/v1OpinionAsset",
+          "title": "opinion"
+        }
+      },
+      "title": "ListResponse"
+    },
+    "servstdopinionv1UpdateResponse": {
+      "type": "object",
+      "properties": {
+        "opinion": {
+          "$ref": "#/definitions/v1OpinionAsset",
+          "title": "opinion"
+        }
+      },
+      "title": "UpdateResponse"
+    },
+    "servuserv1CreateResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1UserInstance",
+          "title": "user"
+        }
+      },
+      "title": "CreateResponse"
+    },
+    "servuserv1DeleteResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1UserInstance",
+          "title": "user"
+        }
+      },
+      "title": "DeleteResponse"
+    },
+    "servuserv1GetRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/v1IDX",
+          "title": "id"
+        }
+      },
+      "title": "GetRequest"
+    },
+    "servuserv1GetResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1UserInstance",
+          "title": "user"
+        }
+      },
+      "title": "GetResponse"
+    },
+    "servuserv1UpdateResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1UserInstance",
+          "title": "user"
+        }
+      },
+      "title": "UpdateResponse"
+    },
+    "v1AssetAudience": {
+      "type": "object",
+      "properties": {
+        "md": {
+          "$ref": "#/definitions/v1AssetMetaData",
+          "title": "md - Asset Audience MetaData"
+        },
+        "gender": {
+          "type": "string",
+          "title": "gender - (male | female)"
+        },
+        "genders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "genders - [](male, female)"
+        },
+        "countryCode": {
+          "type": "string",
+          "title": "country_code - iso 2 birth country code (auto lowercase)"
+        },
+        "countryCodes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "country_codes - [](0-300 elements, unique, code max_len 2) optional"
+        },
+        "ageMin": {
+          "type": "integer",
+          "format": "int64",
+          "title": "age_min - age groups (1-100)"
+        },
+        "ageMax": {
+          "type": "integer",
+          "format": "int64",
+          "title": "age_max - age groups (1-100)"
+        },
+        "hoursMin": {
+          "type": "integer",
+          "format": "int64",
+          "title": "hours_min - hours on social (1-24) hours spent daily on social media"
+        },
+        "hoursMax": {
+          "type": "integer",
+          "format": "int64",
+          "title": "hours_max - hours on social (1-24) hours spent daily on social media"
+        },
+        "purchasesMin": {
+          "type": "integer",
+          "format": "int64",
+          "title": "purchases_min - (1-100_000) number of purchases last month"
+        },
+        "purchasesMax": {
+          "type": "integer",
+          "format": "int64",
+          "title": "purchases_max - (1-100_000) number of purchases last month"
+        }
+      },
+      "description": "AssetAudience -  (which is a series of characteristics, for that exercise\nlets focus on gender (Male, Female), birth country, age groups, hours spent\ndaily on social media, number of purchases last month) e.g. Males from 24-35\nthat spent more than 3 hours on social media daily."
+    },
+    "v1AssetChart": {
+      "type": "object",
+      "properties": {
+        "md": {
+          "$ref": "#/definitions/v1AssetMetaData",
+          "title": "md - Asset Chart MetaData"
+        },
+        "title": {
+          "type": "string",
+          "title": "title - (0-256 characters) optional"
+        },
+        "data": {
+          "type": "object",
+          "title": "data"
+        },
+        "dataRaw": {
+          "type": "string",
+          "format": "byte",
+          "title": "data_raw - raw binary data (65536)"
+        },
+        "options": {
+          "type": "object",
+          "title": "options"
+        }
+      },
+      "title": "AssetChart - (that has a small title, axes titles and data)"
+    },
+    "v1AssetInsight": {
+      "type": "object",
+      "properties": {
+        "md": {
+          "$ref": "#/definitions/v1AssetMetaData",
+          "title": "md - Asset Insight MetaData"
+        },
+        "sentence": {
+          "type": "string",
+          "title": "sentence - (1-256 characters) required"
+        }
+      },
+      "title": "AssetInsight - (a small piece of text that provides some insight into a\ntopic, e.g. \"40% of millenials spend more than 3hours on social media daily\")",
+      "required": [
+        "sentence"
+      ]
+    },
+    "v1AssetInstance": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/v1IDX",
+          "title": "id - AssetIDX"
+        },
+        "md": {
+          "$ref": "#/definitions/v1AssetMetaData",
+          "title": "md - AssetMetaData"
+        },
+        "chart": {
+          "$ref": "#/definitions/v1AssetChart",
+          "title": "chart - Chart (that has a small title, axes titles and data)"
+        },
+        "insight": {
+          "$ref": "#/definitions/v1AssetInsight",
+          "title": "insight - Insight (a small piece of text that provides some insight into a\ntopic, e.g. \"40% of millenials spend more than 3hours on social media\ndaily\")"
+        },
+        "audience": {
+          "$ref": "#/definitions/v1AssetAudience",
+          "description": "audience - Audience (which is a series of characteristics, for that\nexercise lets focus on gender (Male, Female), birth country, age groups,\nhours spent daily on social media, number of purchases last month) e.g.\nMales from 24-35 that spent more than 3 hours on social media daily."
+        }
+      },
+      "title": "AssetInstance"
+    },
+    "v1AssetMetaData": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "title - (0-256 characters) optional"
+        },
+        "topic": {
+          "type": "string",
+          "title": "topic - (0-256 characters) optional"
+        },
+        "label": {
+          "type": "string",
+          "title": "label - (0-256 characters) optional"
+        },
+        "description": {
+          "type": "string",
+          "title": "description - (0-1024 characters) optional"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "tags - (0-32 elements, unique, tag max_len 32) optional"
+        }
+      },
+      "title": "AssetMetaData - title, topic, label, description, tags"
+    },
+    "v1FavouriteAsset": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/v1IDX",
+          "title": "id - User's Favourite Asset"
+        },
+        "md": {
+          "$ref": "#/definitions/v1AssetMetaData",
+          "title": "md - User's Favourite Asset MetaData"
+        },
+        "idUser": {
+          "$ref": "#/definitions/v1IDX",
+          "title": "id_user (from)"
+        },
+        "idAsset": {
+          "$ref": "#/definitions/v1IDX",
+          "title": "id_asset (to)"
+        },
+        "asset": {
+          "$ref": "#/definitions/v1AssetInstance",
+          "title": "asset - User's Favourite Asset Instance"
+        }
+      },
+      "title": "FavouriteAsset"
+    },
+    "v1IDX": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "uuid"
+        },
+        "rev": {
+          "type": "string",
+          "format": "int64",
+          "title": "rev - revision"
+        }
+      },
+      "title": "IDX (uuid, revision) optional"
+    },
+    "v1ListFavouritesResponse": {
+      "type": "object",
+      "properties": {
+        "favourite": {
+          "$ref": "#/definitions/v1FavouriteAsset",
+          "title": "favourite"
+        }
+      },
+      "title": "ListFavouritesResponse"
+    },
+    "v1ListOpinionsResponse": {
+      "type": "object",
+      "properties": {
+        "opinion": {
+          "$ref": "#/definitions/v1OpinionAsset",
+          "title": "opinion"
+        }
+      },
+      "title": "ListOpinionsResponse"
+    },
+    "v1OpinionAsset": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/v1IDX",
+          "title": "id - User's Opinion Asset"
+        },
+        "md": {
+          "$ref": "#/definitions/v1AssetMetaData",
+          "title": "md - User's Opinion Asset MetaData"
+        },
+        "idUser": {
+          "$ref": "#/definitions/v1IDX",
+          "title": "id_user (from)"
+        },
+        "idAsset": {
+          "$ref": "#/definitions/v1IDX",
+          "title": "id_asset (to)"
+        },
+        "asset": {
+          "$ref": "#/definitions/v1AssetInstance",
+          "title": "asset - User's Opinion Asset Instance"
+        },
+        "isFavourite": {
+          "type": "boolean",
+          "title": "is_favourite"
+        },
+        "stars": {
+          "type": "integer",
+          "format": "int32",
+          "title": "stars"
+        }
+      },
+      "title": "OpinionAsset"
+    },
+    "v1UserInstance": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/v1IDX",
+          "description": "username - Name (1-256 characters) required",
+          "title": "idx - User IDX"
+        },
+        "username": {
+          "type": "string",
+          "title": "username"
+        }
+      },
+      "title": "UserInstance"
+    }
+  }
+}

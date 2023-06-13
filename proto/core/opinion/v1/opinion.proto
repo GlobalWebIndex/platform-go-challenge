@@ -1,0 +1,54 @@
+// proto/core/opinion/v1/opinion.proto
+
+syntax = "proto3";
+
+package proto.core.opinion.v1;
+
+// /usr/local/include/google/protobuf/
+// import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+// import "google/api/http.proto";
+// import "google/protobuf/any.proto";
+// import "google/protobuf/duration.proto";
+// import "google/protobuf/empty.proto";
+// import "google/protobuf/field_mask.proto";
+// import "google/protobuf/struct.proto";
+// import "google/protobuf/timestamp.proto";
+// import "google/protobuf/wrappers.proto";
+// import "google/rpc/status.proto";
+import "proto/core/asset/v1/asset.proto";
+import "proto/core/idx/v1/idx.proto";
+import "validate/validate.proto";
+
+option go_package = "x-gwi/proto/core/opinion/v1;opinion_pb";
+
+// OpinionAsset
+message OpinionAsset {
+  reserved 1, 2;
+
+  // id - User's Opinion Asset
+  proto.core.idx.v1.IDX id = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false}
+  ];
+
+  // md - User's Opinion Asset MetaData
+  optional proto.core.asset.v1.AssetMetaData md = 4;
+
+  // id_user (from)
+  optional proto.core.idx.v1.IDX id_user = 5;
+
+  // id_asset (to)
+  optional proto.core.idx.v1.IDX id_asset = 6;
+
+  // asset - User's Opinion Asset Instance
+  optional proto.core.asset.v1.AssetInstance asset = 7;
+
+  // is_favourite
+  optional bool is_favourite = 8;
+
+  // stars
+  optional int32 stars = 9;
+
+
+}
