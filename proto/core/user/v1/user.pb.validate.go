@@ -86,23 +86,15 @@ func (m *UserInstance) validate(all bool) error {
 		}
 	}
 
-	if m.Username != nil {
-
-		if m.GetUsername() != "" {
-
-			if l := utf8.RuneCountInString(m.GetUsername()); l < 1 || l > 256 {
-				err := UserInstanceValidationError{
-					field:  "Username",
-					reason: "value length must be between 1 and 256 runes, inclusive",
-				}
-				if !all {
-					return err
-				}
-				errors = append(errors, err)
-			}
-
+	if l := utf8.RuneCountInString(m.GetUsername()); l < 1 || l > 256 {
+		err := UserInstanceValidationError{
+			field:  "Username",
+			reason: "value length must be between 1 and 256 runes, inclusive",
 		}
-
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

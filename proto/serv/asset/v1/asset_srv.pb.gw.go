@@ -204,7 +204,7 @@ func local_request_AssetService_Gett_0(ctx context.Context, marshaler runtime.Ma
 }
 
 var (
-	filter_AssetService_Update_0 = &utilities.DoubleArray{Encoding: map[string]int{"asset": 0, "id": 1, "uuid": 2, "rev": 3}, Base: []int{1, 2, 6, 7, 8, 0, 0, 4, 0, 6, 0, 0, 0}, Check: []int{0, 1, 1, 1, 1, 2, 2, 3, 8, 3, 10, 4, 5}}
+	filter_AssetService_Update_0 = &utilities.DoubleArray{Encoding: map[string]int{"asset": 0, "id": 1, "uuid": 2, "rev": 3}, Base: []int{1, 7, 3, 8, 9, 2, 0, 5, 5, 0, 0, 0, 0, 0}, Check: []int{0, 1, 2, 1, 1, 3, 6, 2, 8, 9, 2, 2, 4, 5}}
 )
 
 func request_AssetService_Update_0(ctx context.Context, marshaler runtime.Marshaler, client AssetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -233,24 +233,24 @@ func request_AssetService_Update_0(ctx context.Context, marshaler runtime.Marsha
 		_   = err
 	)
 
-	val, ok = pathParams["id.uuid"]
+	val, ok = pathParams["asset.id.uuid"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "asset.id.uuid")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "asset.id.uuid", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "asset.id.uuid", err)
 	}
 
-	val, ok = pathParams["id.rev"]
+	val, ok = pathParams["asset.id.rev"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.rev")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "asset.id.rev")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.rev", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "asset.id.rev", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.rev", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "asset.id.rev", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -291,24 +291,24 @@ func local_request_AssetService_Update_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["id.uuid"]
+	val, ok = pathParams["asset.id.uuid"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "asset.id.uuid")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "asset.id.uuid", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "asset.id.uuid", err)
 	}
 
-	val, ok = pathParams["id.rev"]
+	val, ok = pathParams["asset.id.rev"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.rev")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "asset.id.rev")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.rev", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "asset.id.rev", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.rev", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "asset.id.rev", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -507,7 +507,7 @@ func RegisterAssetServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.serv.asset.v1.AssetService/Update", runtime.WithHTTPPathPattern("/api/v1/asset/update/{id.uuid}/{id.rev}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.serv.asset.v1.AssetService/Update", runtime.WithHTTPPathPattern("/api/v1/asset/update/{asset.id.uuid}/{asset.id.rev}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -684,7 +684,7 @@ func RegisterAssetServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.asset.v1.AssetService/Update", runtime.WithHTTPPathPattern("/api/v1/asset/update/{id.uuid}/{id.rev}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.asset.v1.AssetService/Update", runtime.WithHTTPPathPattern("/api/v1/asset/update/{asset.id.uuid}/{asset.id.rev}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -734,7 +734,7 @@ var (
 
 	pattern_AssetService_Gett_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"proto.serv.asset.v1.AssetService", "Gett"}, ""))
 
-	pattern_AssetService_Update_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v1", "asset", "update", "id.uuid", "id.rev"}, ""))
+	pattern_AssetService_Update_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v1", "asset", "update", "asset.id.uuid", "asset.id.rev"}, ""))
 
 	pattern_AssetService_Delete_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "asset", "delete", "id.uuid"}, ""))
 )

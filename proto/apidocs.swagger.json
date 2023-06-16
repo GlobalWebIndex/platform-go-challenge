@@ -62,7 +62,10 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1AssetInstance"
+              "$ref": "#/definitions/v1AssetInstance",
+              "required": [
+                "asset"
+              ]
             }
           }
         ],
@@ -98,12 +101,61 @@
             "type": "string"
           },
           {
+            "name": "id.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "id.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -136,7 +188,10 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX",
+              "required": [
+                "id"
+              ]
             }
           }
         ],
@@ -172,12 +227,61 @@
             "type": "string"
           },
           {
+            "name": "id.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "id.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -185,7 +289,7 @@
         ]
       }
     },
-    "/api/v1/asset/update/{id.uuid}/{id.rev}": {
+    "/api/v1/asset/update/{asset.id.uuid}/{asset.id.rev}": {
       "patch": {
         "summary": "Update",
         "operationId": "AssetService_Update",
@@ -205,19 +309,18 @@
         },
         "parameters": [
           {
-            "name": "id.uuid",
+            "name": "asset.id.uuid",
             "description": "uuid",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
-            "name": "id.rev",
-            "description": "rev - revision",
+            "name": "asset.id.rev",
+            "description": "rev - revision string",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "asset",
@@ -225,7 +328,49 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1AssetInstance"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "title": "kind"
+                    },
+                    "uid": {
+                      "type": "string",
+                      "title": "uid"
+                    },
+                    "revN": {
+                      "type": "string",
+                      "format": "int64",
+                      "title": "rev_n - revision number"
+                    },
+                    "aql": {
+                      "$ref": "#/definitions/v1MetaDocAQL",
+                      "title": "aql - MetaDocAQL"
+                    }
+                  },
+                  "title": "id - Asset StoreIDX"
+                },
+                "md": {
+                  "$ref": "#/definitions/v1AssetMetaData",
+                  "title": "md - AssetMetaData"
+                },
+                "chart": {
+                  "$ref": "#/definitions/v1AssetChart",
+                  "title": "chart - Chart (that has a small title, axes titles and data)"
+                },
+                "insight": {
+                  "$ref": "#/definitions/v1AssetInsight",
+                  "title": "insight - Insight (a small piece of text that provides some insight into a\ntopic, e.g. \"40% of millenials spend more than 3hours on social media\ndaily\")"
+                },
+                "audience": {
+                  "$ref": "#/definitions/v1AssetAudience",
+                  "description": "audience - Audience (which is a series of characteristics, for that\nexercise lets focus on gender (Male, Female), birth country, age groups,\nhours spent daily on social media, number of purchases last month) e.g.\nMales from 24-35 that spent more than 3 hours on social media daily."
+                }
+              },
+              "title": "asset"
             }
           }
         ],
@@ -259,7 +404,10 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1FavouriteAsset"
+              "$ref": "#/definitions/v1FavouriteAsset",
+              "required": [
+                "favourite"
+              ]
             }
           }
         ],
@@ -295,12 +443,61 @@
             "type": "string"
           },
           {
+            "name": "id.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "id.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -333,7 +530,10 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX",
+              "required": [
+                "id"
+              ]
             }
           }
         ],
@@ -369,12 +569,61 @@
             "type": "string"
           },
           {
+            "name": "id.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "id.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -418,12 +667,61 @@
             "type": "string"
           },
           {
+            "name": "idUser.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "idUser.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "idUser.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -467,12 +765,61 @@
             "type": "string"
           },
           {
+            "name": "idUser.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "idUser.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "idUser.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -480,7 +827,7 @@
         ]
       }
     },
-    "/api/v1/favourite/update/{id.uuid}/{id.rev}": {
+    "/api/v1/favourite/update/{favourite.id.uuid}/{favourite.id.rev}": {
       "patch": {
         "summary": "Update",
         "operationId": "FavouriteService_Update",
@@ -500,19 +847,18 @@
         },
         "parameters": [
           {
-            "name": "id.uuid",
+            "name": "favourite.id.uuid",
             "description": "uuid",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
-            "name": "id.rev",
-            "description": "rev - revision",
+            "name": "favourite.id.rev",
+            "description": "rev - revision string",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "favourite",
@@ -520,7 +866,49 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1FavouriteAsset"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "title": "kind"
+                    },
+                    "uid": {
+                      "type": "string",
+                      "title": "uid"
+                    },
+                    "revN": {
+                      "type": "string",
+                      "format": "int64",
+                      "title": "rev_n - revision number"
+                    },
+                    "aql": {
+                      "$ref": "#/definitions/v1MetaDocAQL",
+                      "title": "aql - MetaDocAQL"
+                    }
+                  },
+                  "title": "id - User's Favourite Asset StoreIDX"
+                },
+                "idUser": {
+                  "$ref": "#/definitions/v1StoreIDX",
+                  "title": "id_user (from)"
+                },
+                "idAsset": {
+                  "$ref": "#/definitions/v1StoreIDX",
+                  "title": "id_asset (to)"
+                },
+                "md": {
+                  "$ref": "#/definitions/v1AssetMetaData",
+                  "title": "md - User's Favourite Asset MetaData"
+                },
+                "asset": {
+                  "$ref": "#/definitions/v1AssetInstance",
+                  "title": "asset - User's Favourite Asset Instance"
+                }
+              },
+              "title": "favourite"
             }
           }
         ],
@@ -554,7 +942,10 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1OpinionAsset"
+              "$ref": "#/definitions/v1OpinionAsset",
+              "required": [
+                "opinion"
+              ]
             }
           }
         ],
@@ -590,12 +981,61 @@
             "type": "string"
           },
           {
+            "name": "id.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "id.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -628,7 +1068,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX"
             }
           }
         ],
@@ -664,12 +1104,61 @@
             "type": "string"
           },
           {
+            "name": "id.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "id.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -713,12 +1202,61 @@
             "type": "string"
           },
           {
+            "name": "idUser.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "idUser.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "idUser.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -762,12 +1300,61 @@
             "type": "string"
           },
           {
+            "name": "idUser.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "idUser.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "idUser.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "idUser.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -775,7 +1362,7 @@
         ]
       }
     },
-    "/api/v1/opinion/update/{id.uuid}/{id.rev}": {
+    "/api/v1/opinion/update/{opinion.id.uuid}/{opinion.id.rev}": {
       "patch": {
         "summary": "Update",
         "operationId": "OpinionService_Update",
@@ -795,19 +1382,18 @@
         },
         "parameters": [
           {
-            "name": "id.uuid",
+            "name": "opinion.id.uuid",
             "description": "uuid",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
-            "name": "id.rev",
-            "description": "rev - revision",
+            "name": "opinion.id.rev",
+            "description": "rev - revision string",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "opinion",
@@ -815,7 +1401,58 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1OpinionAsset"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "title": "kind"
+                    },
+                    "uid": {
+                      "type": "string",
+                      "title": "uid"
+                    },
+                    "revN": {
+                      "type": "string",
+                      "format": "int64",
+                      "title": "rev_n - revision number"
+                    },
+                    "aql": {
+                      "$ref": "#/definitions/v1MetaDocAQL",
+                      "title": "aql - MetaDocAQL"
+                    }
+                  },
+                  "title": "id - User's Opinion Asset StoreIDX"
+                },
+                "idUser": {
+                  "$ref": "#/definitions/v1StoreIDX",
+                  "title": "id_user (from)"
+                },
+                "idAsset": {
+                  "$ref": "#/definitions/v1StoreIDX",
+                  "title": "id_asset (to)"
+                },
+                "md": {
+                  "$ref": "#/definitions/v1AssetMetaData",
+                  "title": "md - User's Opinion Asset MetaData"
+                },
+                "asset": {
+                  "$ref": "#/definitions/v1AssetInstance",
+                  "title": "asset - User's Opinion Asset Instance"
+                },
+                "isFavourite": {
+                  "type": "boolean",
+                  "title": "is_favourite"
+                },
+                "stars": {
+                  "type": "integer",
+                  "format": "int32",
+                  "title": "stars"
+                }
+              },
+              "title": "opinion"
             }
           }
         ],
@@ -849,7 +1486,10 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UserInstance"
+              "$ref": "#/definitions/v1UserInstance",
+              "required": [
+                "user"
+              ]
             }
           }
         ],
@@ -885,12 +1525,61 @@
             "type": "string"
           },
           {
+            "name": "id.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "id.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -923,7 +1612,10 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX",
+              "required": [
+                "id"
+              ]
             }
           }
         ],
@@ -959,12 +1651,61 @@
             "type": "string"
           },
           {
+            "name": "id.kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "id.aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "id.aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -972,7 +1713,7 @@
         ]
       }
     },
-    "/api/v1/user/update/{id.uuid}/{id.rev}": {
+    "/api/v1/user/update/{user.id.uuid}/{user.id.rev}": {
       "patch": {
         "summary": "Update",
         "operationId": "UserService_Update",
@@ -992,19 +1733,18 @@
         },
         "parameters": [
           {
-            "name": "id.uuid",
+            "name": "user.id.uuid",
             "description": "uuid",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
-            "name": "id.rev",
-            "description": "rev - revision",
+            "name": "user.id.rev",
+            "description": "rev - revision string",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "user",
@@ -1012,7 +1752,41 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UserInstance"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "title": "kind"
+                    },
+                    "uid": {
+                      "type": "string",
+                      "title": "uid"
+                    },
+                    "revN": {
+                      "type": "string",
+                      "format": "int64",
+                      "title": "rev_n - revision number"
+                    },
+                    "aql": {
+                      "$ref": "#/definitions/v1MetaDocAQL",
+                      "title": "aql - MetaDocAQL"
+                    }
+                  },
+                  "description": "username - Name (1-256 characters) required",
+                  "title": "idx - User StoreIDX"
+                },
+                "username": {
+                  "type": "string",
+                  "title": "username"
+                }
+              },
+              "title": "user",
+              "required": [
+                "username"
+              ]
             }
           }
         ],
@@ -1081,12 +1855,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1118,7 +1941,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX"
             }
           }
         ],
@@ -1154,12 +1977,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1195,11 +2067,10 @@
           },
           {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "body",
@@ -1210,7 +2081,26 @@
               "properties": {
                 "id": {
                   "type": "object",
-                  "title": "id - AssetIDX"
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "title": "kind"
+                    },
+                    "uid": {
+                      "type": "string",
+                      "title": "uid"
+                    },
+                    "revN": {
+                      "type": "string",
+                      "format": "int64",
+                      "title": "rev_n - revision number"
+                    },
+                    "aql": {
+                      "$ref": "#/definitions/v1MetaDocAQL",
+                      "title": "aql - MetaDocAQL"
+                    }
+                  },
+                  "title": "id - Asset StoreIDX"
                 },
                 "md": {
                   "$ref": "#/definitions/v1AssetMetaData",
@@ -1298,12 +2188,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1335,7 +2274,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX"
             }
           }
         ],
@@ -1371,12 +2310,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1420,12 +2408,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1461,11 +2498,10 @@
           },
           {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "body",
@@ -1476,19 +2512,38 @@
               "properties": {
                 "id": {
                   "type": "object",
-                  "title": "id - User's Favourite Asset"
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "title": "kind"
+                    },
+                    "uid": {
+                      "type": "string",
+                      "title": "uid"
+                    },
+                    "revN": {
+                      "type": "string",
+                      "format": "int64",
+                      "title": "rev_n - revision number"
+                    },
+                    "aql": {
+                      "$ref": "#/definitions/v1MetaDocAQL",
+                      "title": "aql - MetaDocAQL"
+                    }
+                  },
+                  "title": "id - User's Favourite Asset StoreIDX"
+                },
+                "idUser": {
+                  "$ref": "#/definitions/v1StoreIDX",
+                  "title": "id_user (from)"
+                },
+                "idAsset": {
+                  "$ref": "#/definitions/v1StoreIDX",
+                  "title": "id_asset (to)"
                 },
                 "md": {
                   "$ref": "#/definitions/v1AssetMetaData",
                   "title": "md - User's Favourite Asset MetaData"
-                },
-                "idUser": {
-                  "$ref": "#/definitions/v1IDX",
-                  "title": "id_user (from)"
-                },
-                "idAsset": {
-                  "$ref": "#/definitions/v1IDX",
-                  "title": "id_asset (to)"
                 },
                 "asset": {
                   "$ref": "#/definitions/v1AssetInstance",
@@ -1564,12 +2619,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1601,7 +2705,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX"
             }
           }
         ],
@@ -1637,12 +2741,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1686,12 +2839,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1727,11 +2929,10 @@
           },
           {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "body",
@@ -1742,19 +2943,38 @@
               "properties": {
                 "id": {
                   "type": "object",
-                  "title": "id - User's Opinion Asset"
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "title": "kind"
+                    },
+                    "uid": {
+                      "type": "string",
+                      "title": "uid"
+                    },
+                    "revN": {
+                      "type": "string",
+                      "format": "int64",
+                      "title": "rev_n - revision number"
+                    },
+                    "aql": {
+                      "$ref": "#/definitions/v1MetaDocAQL",
+                      "title": "aql - MetaDocAQL"
+                    }
+                  },
+                  "title": "id - User's Opinion Asset StoreIDX"
+                },
+                "idUser": {
+                  "$ref": "#/definitions/v1StoreIDX",
+                  "title": "id_user (from)"
+                },
+                "idAsset": {
+                  "$ref": "#/definitions/v1StoreIDX",
+                  "title": "id_asset (to)"
                 },
                 "md": {
                   "$ref": "#/definitions/v1AssetMetaData",
                   "title": "md - User's Opinion Asset MetaData"
-                },
-                "idUser": {
-                  "$ref": "#/definitions/v1IDX",
-                  "title": "id_user (from)"
-                },
-                "idAsset": {
-                  "$ref": "#/definitions/v1IDX",
-                  "title": "id_asset (to)"
                 },
                 "asset": {
                   "$ref": "#/definitions/v1AssetInstance",
@@ -1839,12 +3059,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1876,7 +3145,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX"
             }
           }
         ],
@@ -1912,12 +3181,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1953,11 +3271,10 @@
           },
           {
             "name": "id.rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "body",
@@ -1968,15 +3285,37 @@
               "properties": {
                 "id": {
                   "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "title": "kind"
+                    },
+                    "uid": {
+                      "type": "string",
+                      "title": "uid"
+                    },
+                    "revN": {
+                      "type": "string",
+                      "format": "int64",
+                      "title": "rev_n - revision number"
+                    },
+                    "aql": {
+                      "$ref": "#/definitions/v1MetaDocAQL",
+                      "title": "aql - MetaDocAQL"
+                    }
+                  },
                   "description": "username - Name (1-256 characters) required",
-                  "title": "idx - User IDX"
+                  "title": "idx - User StoreIDX"
                 },
                 "username": {
                   "type": "string",
                   "title": "username"
                 }
               },
-              "title": "UserInstance"
+              "title": "UserInstance",
+              "required": [
+                "username"
+              ]
             }
           }
         ],
@@ -2021,12 +3360,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -2070,12 +3458,61 @@
             "type": "string"
           },
           {
+            "name": "kind",
+            "description": "kind",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "uid",
+            "description": "uid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "rev",
-            "description": "rev - revision",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "revN",
+            "description": "rev_n - revision number",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "aql._key",
+            "description": "key - _key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._id",
+            "description": "id - DocumentID string Format: collection/_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._rev",
+            "description": "rev - revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "aql._oldRev",
+            "description": "old_rev - old revision string",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -2140,7 +3577,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX"
             }
           }
         ],
@@ -2206,7 +3643,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX"
             }
           }
         ],
@@ -2239,7 +3676,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX"
             }
           }
         ],
@@ -2305,7 +3742,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1IDX"
+              "$ref": "#/definitions/v1StoreIDX"
             }
           }
         ],
@@ -2406,11 +3843,14 @@
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "#/definitions/v1IDX",
+          "$ref": "#/definitions/v1StoreIDX",
           "title": "id"
         }
       },
-      "title": "GetRequest"
+      "title": "GetRequest",
+      "required": [
+        "id"
+      ]
     },
     "servassetv1GetResponse": {
       "type": "object",
@@ -2456,11 +3896,14 @@
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "#/definitions/v1IDX",
+          "$ref": "#/definitions/v1StoreIDX",
           "title": "id"
         }
       },
-      "title": "GetRequest"
+      "title": "GetRequest",
+      "required": [
+        "id"
+      ]
     },
     "servfavouritev1GetResponse": {
       "type": "object",
@@ -2516,7 +3959,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "#/definitions/v1IDX",
+          "$ref": "#/definitions/v1StoreIDX",
           "title": "id"
         }
       },
@@ -2576,11 +4019,14 @@
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "#/definitions/v1IDX",
+          "$ref": "#/definitions/v1StoreIDX",
           "title": "id"
         }
       },
-      "title": "GetRequest"
+      "title": "GetRequest",
+      "required": [
+        "id"
+      ]
     },
     "servuserv1GetResponse": {
       "type": "object",
@@ -2712,8 +4158,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "#/definitions/v1IDX",
-          "title": "id - AssetIDX"
+          "$ref": "#/definitions/v1StoreIDX",
+          "title": "id - Asset StoreIDX"
         },
         "md": {
           "$ref": "#/definitions/v1AssetMetaData",
@@ -2767,20 +4213,20 @@
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "#/definitions/v1IDX",
-          "title": "id - User's Favourite Asset"
+          "$ref": "#/definitions/v1StoreIDX",
+          "title": "id - User's Favourite Asset StoreIDX"
+        },
+        "idUser": {
+          "$ref": "#/definitions/v1StoreIDX",
+          "title": "id_user (from)"
+        },
+        "idAsset": {
+          "$ref": "#/definitions/v1StoreIDX",
+          "title": "id_asset (to)"
         },
         "md": {
           "$ref": "#/definitions/v1AssetMetaData",
           "title": "md - User's Favourite Asset MetaData"
-        },
-        "idUser": {
-          "$ref": "#/definitions/v1IDX",
-          "title": "id_user (from)"
-        },
-        "idAsset": {
-          "$ref": "#/definitions/v1IDX",
-          "title": "id_asset (to)"
         },
         "asset": {
           "$ref": "#/definitions/v1AssetInstance",
@@ -2788,21 +4234,6 @@
         }
       },
       "title": "FavouriteAsset"
-    },
-    "v1IDX": {
-      "type": "object",
-      "properties": {
-        "uuid": {
-          "type": "string",
-          "title": "uuid"
-        },
-        "rev": {
-          "type": "string",
-          "format": "int64",
-          "title": "rev - revision"
-        }
-      },
-      "title": "IDX (uuid, revision) optional"
     },
     "v1ListFavouritesResponse": {
       "type": "object",
@@ -2824,24 +4255,47 @@
       },
       "title": "ListOpinionsResponse"
     },
+    "v1MetaDocAQL": {
+      "type": "object",
+      "properties": {
+        "_key": {
+          "type": "string",
+          "title": "key - _key"
+        },
+        "_id": {
+          "type": "string",
+          "title": "id - DocumentID string Format: collection/_key"
+        },
+        "_rev": {
+          "type": "string",
+          "title": "rev - revision string"
+        },
+        "_oldRev": {
+          "type": "string",
+          "title": "old_rev - old revision string"
+        }
+      },
+      "description": "DocumentID references a document in a collection.\nFormat: collection/_key\ntype DocumentID string\n\nArangoID is a generic Arango ID struct representation\ntype ArangoID struct {\n\tID               string `json:\"id,omitempty\"`\n\tGloballyUniqueId string `json:\"globallyUniqueId,omitempty\"`\n}\n\nREV rev = 4 [json_name = \"_rev\"];",
+      "title": "MetaDocAQL - ArangoDB DocumentMeta\nDocumentMeta contains all meta data used to identifier a document.\ntype DocumentMeta struct {\n\tKey    string     `json:\"_key,omitempty\"`\n\tID     DocumentID `json:\"_id,omitempty\"`\n\tRev    string     `json:\"_rev,omitempty\"`\n\tOldRev string     `json:\"_oldRev,omitempty\"`\n}"
+    },
     "v1OpinionAsset": {
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "#/definitions/v1IDX",
-          "title": "id - User's Opinion Asset"
+          "$ref": "#/definitions/v1StoreIDX",
+          "title": "id - User's Opinion Asset StoreIDX"
+        },
+        "idUser": {
+          "$ref": "#/definitions/v1StoreIDX",
+          "title": "id_user (from)"
+        },
+        "idAsset": {
+          "$ref": "#/definitions/v1StoreIDX",
+          "title": "id_asset (to)"
         },
         "md": {
           "$ref": "#/definitions/v1AssetMetaData",
           "title": "md - User's Opinion Asset MetaData"
-        },
-        "idUser": {
-          "$ref": "#/definitions/v1IDX",
-          "title": "id_user (from)"
-        },
-        "idAsset": {
-          "$ref": "#/definitions/v1IDX",
-          "title": "id_asset (to)"
         },
         "asset": {
           "$ref": "#/definitions/v1AssetInstance",
@@ -2859,20 +4313,54 @@
       },
       "title": "OpinionAsset"
     },
+    "v1StoreIDX": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "title": "kind"
+        },
+        "uid": {
+          "type": "string",
+          "title": "uid"
+        },
+        "rev": {
+          "type": "string",
+          "title": "rev - revision string"
+        },
+        "uuid": {
+          "type": "string",
+          "title": "uuid"
+        },
+        "revN": {
+          "type": "string",
+          "format": "int64",
+          "title": "rev_n - revision number"
+        },
+        "aql": {
+          "$ref": "#/definitions/v1MetaDocAQL",
+          "title": "aql - MetaDocAQL"
+        }
+      },
+      "title": "StoreIDX (uuid, revision) optional"
+    },
     "v1UserInstance": {
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "#/definitions/v1IDX",
+          "$ref": "#/definitions/v1StoreIDX",
           "description": "username - Name (1-256 characters) required",
-          "title": "idx - User IDX"
+          "title": "idx - User StoreIDX"
         },
         "username": {
           "type": "string",
           "title": "username"
         }
       },
-      "title": "UserInstance"
+      "title": "UserInstance",
+      "required": [
+        "username"
+      ]
     }
   }
 }

@@ -34,12 +34,12 @@ standard methods: List, Get, Create, Update, and Delete
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | Create | [.proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) | [.proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) | Create |
-| Get | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) | Get |
-| Gett | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) | Gett |
+| Get | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) | Get |
+| Gett | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) | Gett |
 | Update | [.proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) | [.proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) | Update |
-| Delete | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) | Delete |
-| ListFavourites | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) stream | ListFavourites - stream favourites of a user |
-| ListOpinions | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) stream | ListOpinions - stream opinions of a user |
+| Delete | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) | Delete |
+| ListFavourites | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) stream | ListFavourites - stream favourites of a user |
+| ListOpinions | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) stream | ListOpinions - stream opinions of a user |
 
  
 

@@ -20,7 +20,7 @@ type App struct {
 	inst    *instance.Instance
 	pki     *pki.PKI
 	auth    *auth.Auth
-	storage *storage.Storage
+	storage *storage.AppStorage
 	server  *server.Server
 
 	cancel context.CancelFunc
@@ -110,7 +110,7 @@ func initApp(ctx context.Context, config *Config) (*App, context.Context, error)
 		return nil, nil, fmt.Errorf("auth.NewAuth: %w", err)
 	}
 	// 7
-	if app.storage, err = storage.NewStorage(ctx, app.config.Storage, app.inst, app.auth); err != nil {
+	if app.storage, err = storage.NewAppStorage(ctx, app.config.Storage, app.inst, app.auth); err != nil {
 		return nil, nil, fmt.Errorf("storage.NewStorage: %w", err)
 	}
 	// 8

@@ -204,7 +204,7 @@ func local_request_UserService_Gett_0(ctx context.Context, marshaler runtime.Mar
 }
 
 var (
-	filter_UserService_Update_0 = &utilities.DoubleArray{Encoding: map[string]int{"user": 0, "id": 1, "uuid": 2, "rev": 3}, Base: []int{1, 2, 6, 7, 8, 0, 0, 4, 0, 6, 0, 0, 0}, Check: []int{0, 1, 1, 1, 1, 2, 2, 3, 8, 3, 10, 4, 5}}
+	filter_UserService_Update_0 = &utilities.DoubleArray{Encoding: map[string]int{"user": 0, "id": 1, "uuid": 2, "rev": 3}, Base: []int{1, 7, 3, 8, 9, 2, 0, 5, 5, 0, 0, 0, 0, 0}, Check: []int{0, 1, 2, 1, 1, 3, 6, 2, 8, 9, 2, 2, 4, 5}}
 )
 
 func request_UserService_Update_0(ctx context.Context, marshaler runtime.Marshaler, client UserServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -233,24 +233,24 @@ func request_UserService_Update_0(ctx context.Context, marshaler runtime.Marshal
 		_   = err
 	)
 
-	val, ok = pathParams["id.uuid"]
+	val, ok = pathParams["user.id.uuid"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user.id.uuid")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "user.id.uuid", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user.id.uuid", err)
 	}
 
-	val, ok = pathParams["id.rev"]
+	val, ok = pathParams["user.id.rev"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.rev")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user.id.rev")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.rev", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "user.id.rev", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.rev", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user.id.rev", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -291,24 +291,24 @@ func local_request_UserService_Update_0(ctx context.Context, marshaler runtime.M
 		_   = err
 	)
 
-	val, ok = pathParams["id.uuid"]
+	val, ok = pathParams["user.id.uuid"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user.id.uuid")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "user.id.uuid", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user.id.uuid", err)
 	}
 
-	val, ok = pathParams["id.rev"]
+	val, ok = pathParams["user.id.rev"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.rev")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user.id.rev")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.rev", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "user.id.rev", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.rev", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user.id.rev", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -597,7 +597,7 @@ func RegisterUserServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.serv.user.v1.UserService/Update", runtime.WithHTTPPathPattern("/api/v1/user/update/{id.uuid}/{id.rev}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.serv.user.v1.UserService/Update", runtime.WithHTTPPathPattern("/api/v1/user/update/{user.id.uuid}/{user.id.rev}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -788,7 +788,7 @@ func RegisterUserServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.user.v1.UserService/Update", runtime.WithHTTPPathPattern("/api/v1/user/update/{id.uuid}/{id.rev}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.user.v1.UserService/Update", runtime.WithHTTPPathPattern("/api/v1/user/update/{user.id.uuid}/{user.id.rev}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -882,7 +882,7 @@ var (
 
 	pattern_UserService_Gett_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"proto.serv.user.v1.UserService", "Gett"}, ""))
 
-	pattern_UserService_Update_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v1", "user", "update", "id.uuid", "id.rev"}, ""))
+	pattern_UserService_Update_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v1", "user", "update", "user.id.uuid", "user.id.rev"}, ""))
 
 	pattern_UserService_Delete_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "user", "delete", "id.uuid"}, ""))
 

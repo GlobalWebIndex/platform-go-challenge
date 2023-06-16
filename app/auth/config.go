@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"x-gwi/internal/env"
+	"x-gwi/app/x/env"
 )
 
 type ConfigAuth struct {

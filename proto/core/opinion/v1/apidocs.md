@@ -25,10 +25,10 @@ OpinionAsset
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | id - User&#39;s Opinion Asset |
+| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id - User&#39;s Opinion Asset StoreIDX |
+| id_user | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id_user (from) |
+| id_asset | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id_asset (to) |
 | md | [proto.core.asset.v1.AssetMetaData](#proto-core-asset-v1-AssetMetaData) | optional | md - User&#39;s Opinion Asset MetaData |
-| id_user | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | optional | id_user (from) |
-| id_asset | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | optional | id_asset (to) |
 | asset | [proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | optional | asset - User&#39;s Opinion Asset Instance |
 | is_favourite | [bool](#bool) | optional | is_favourite |
 | stars | [int32](#int32) | optional | stars |

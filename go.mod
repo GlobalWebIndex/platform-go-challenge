@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/VictoriaMetrics/fastcache v1.12.1
 	github.com/alexsergivan/transliterator v1.0.0
+	github.com/arangodb/go-driver v1.6.0
 	github.com/envoyproxy/protoc-gen-validate v1.0.1
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0
@@ -12,11 +13,12 @@ require (
 	github.com/rs/zerolog v1.29.1
 	golang.org/x/crypto v0.10.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20230530153820-e85fd2cbaebc
-	google.golang.org/grpc v1.55.0
+	google.golang.org/grpc v1.56.0
 	google.golang.org/protobuf v1.30.0
 )
 
 require (
+	github.com/arangodb/go-velocypack v0.0.0-20200318135517-5af53c29c67e // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.4 // indirect

@@ -57,6 +57,17 @@ func (m *CreateRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetFavourite() == nil {
+		err := CreateRequestValidationError{
+			field:  "Favourite",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetFavourite()).(type) {
 		case interface{ ValidateAll() error }:
@@ -186,33 +197,37 @@ func (m *CreateResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetFavourite()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateResponseValidationError{
-					field:  "Favourite",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Favourite != nil {
+
+		if all {
+			switch v := interface{}(m.GetFavourite()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateResponseValidationError{
+						field:  "Favourite",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateResponseValidationError{
+						field:  "Favourite",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetFavourite()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateResponseValidationError{
+				return CreateResponseValidationError{
 					field:  "Favourite",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetFavourite()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreateResponseValidationError{
-				field:  "Favourite",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -314,6 +329,17 @@ func (m *GetRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetId() == nil {
+		err := GetRequestValidationError{
+			field:  "Id",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetId()).(type) {
@@ -443,33 +469,37 @@ func (m *GetResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetFavourite()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetResponseValidationError{
-					field:  "Favourite",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Favourite != nil {
+
+		if all {
+			switch v := interface{}(m.GetFavourite()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetResponseValidationError{
+						field:  "Favourite",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetResponseValidationError{
+						field:  "Favourite",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetFavourite()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, GetResponseValidationError{
+				return GetResponseValidationError{
 					field:  "Favourite",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetFavourite()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetResponseValidationError{
-				field:  "Favourite",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -571,33 +601,15 @@ func (m *UpdateRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetId()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateRequestValidationError{
-					field:  "Id",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateRequestValidationError{
-					field:  "Id",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	if m.GetFavourite() == nil {
+		err := UpdateRequestValidationError{
+			field:  "Favourite",
+			reason: "value is required",
 		}
-	} else if v, ok := interface{}(m.GetId()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateRequestValidationError{
-				field:  "Id",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
+		if !all {
+			return err
 		}
+		errors = append(errors, err)
 	}
 
 	if all {
@@ -758,33 +770,37 @@ func (m *UpdateResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetFavourite()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateResponseValidationError{
-					field:  "Favourite",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Favourite != nil {
+
+		if all {
+			switch v := interface{}(m.GetFavourite()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateResponseValidationError{
+						field:  "Favourite",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateResponseValidationError{
+						field:  "Favourite",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetFavourite()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateResponseValidationError{
+				return UpdateResponseValidationError{
 					field:  "Favourite",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetFavourite()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateResponseValidationError{
-				field:  "Favourite",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -886,6 +902,17 @@ func (m *DeleteRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetId() == nil {
+		err := DeleteRequestValidationError{
+			field:  "Id",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetId()).(type) {
@@ -1016,33 +1043,37 @@ func (m *DeleteResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetFavourite()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DeleteResponseValidationError{
-					field:  "Favourite",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Favourite != nil {
+
+		if all {
+			switch v := interface{}(m.GetFavourite()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DeleteResponseValidationError{
+						field:  "Favourite",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DeleteResponseValidationError{
+						field:  "Favourite",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetFavourite()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, DeleteResponseValidationError{
+				return DeleteResponseValidationError{
 					field:  "Favourite",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetFavourite()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DeleteResponseValidationError{
-				field:  "Favourite",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -1144,6 +1175,17 @@ func (m *ListRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetIdUser() == nil {
+		err := ListRequestValidationError{
+			field:  "IdUser",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetIdUser()).(type) {

@@ -51,7 +51,7 @@ CreateResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| opinion | [proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) |  | opinion |
+| opinion | [proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | optional | opinion |
 
 
 
@@ -66,7 +66,7 @@ DeleteRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | id |
+| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id |
 
 
 
@@ -81,7 +81,7 @@ DeleteResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| opinion | [proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) |  | opinion |
+| opinion | [proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | optional | opinion |
 
 
 
@@ -96,7 +96,7 @@ GetRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | id |
+| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id |
 
 
 
@@ -111,7 +111,7 @@ GetResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| opinion | [proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) |  | opinion |
+| opinion | [proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | optional | opinion |
 
 
 
@@ -126,7 +126,7 @@ ListRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id_user | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | id_user (from) |
+| id_user | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id_user (from) |
 
 
 
@@ -156,7 +156,6 @@ UpdateRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | id |
 | opinion | [proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) |  | opinion |
 | update_mask | [google.protobuf.FieldMask](#google-protobuf-FieldMask) |  | update_mask https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature |
 
@@ -173,7 +172,7 @@ UpdateResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| opinion | [proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) |  | opinion |
+| opinion | [proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | optional | opinion |
 
 
 

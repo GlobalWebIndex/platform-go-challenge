@@ -16,8 +16,8 @@ import "google/api/field_behavior.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
+import "proto/core/_store/v1/store.proto";
 import "proto/core/asset/v1/asset.proto";
-import "proto/core/idx/v1/idx.proto";
 import "validate/validate.proto";
 
 option go_package = "x-gwi/proto/core/opinion/v1;opinion_pb";
@@ -26,20 +26,21 @@ option go_package = "x-gwi/proto/core/opinion/v1;opinion_pb";
 message OpinionAsset {
   reserved 1, 2;
 
-  // id - User's Opinion Asset
-  proto.core.idx.v1.IDX id = 3 [
+  // id - User's Opinion Asset StoreIDX
+  proto.core._store.v1.StoreIDX id = 3 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).message = { required: false, skip: false}
   ];
 
-  // md - User's Opinion Asset MetaData
-  optional proto.core.asset.v1.AssetMetaData md = 4;
-
   // id_user (from)
-  optional proto.core.idx.v1.IDX id_user = 5;
+  proto.core._store.v1.StoreIDX id_user = 4;
 
   // id_asset (to)
-  optional proto.core.idx.v1.IDX id_asset = 6;
+  proto.core._store.v1.StoreIDX id_asset = 5;
+
+  // md - User's Opinion Asset MetaData
+  optional proto.core.asset.v1.AssetMetaData md = 6;
+
 
   // asset - User's Opinion Asset Instance
   optional proto.core.asset.v1.AssetInstance asset = 7;

@@ -34,11 +34,11 @@ standard methods: List, Get, Create, Update, and Delete
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | Create | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Create |
-| Get | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Get |
-| Gett | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Gett |
+| Get | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Get |
+| Gett | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Gett |
 | Update | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Update |
-| Delete | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Delete |
-| List | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) stream | List - stream opinins of a user |
+| Delete | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Delete |
+| List | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) stream | List - stream opinins of a user |
 
  
 

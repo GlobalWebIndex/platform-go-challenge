@@ -15,8 +15,8 @@ import "google/api/annotations.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
+import "proto/core/_store/v1/store.proto";
 import "proto/core/favourite/v1/favourite.proto";
-import "proto/core/idx/v1/idx.proto";
 import "proto/core/opinion/v1/opinion.proto";
 import "proto/core/user/v1/user.proto";
 // https://github.com/bufbuild/protoc-gen-validate
@@ -38,7 +38,7 @@ service UserService {
   };
 
   // Get
-  rpc Get(proto.core.idx.v1.IDX) returns (proto.core.user.v1.UserInstance) {
+  rpc Get(proto.core._store.v1.StoreIDX) returns (proto.core.user.v1.UserInstance) {
     option (google.api.http) = {
       get: "/api/v2/user/get/{uuid}"
       additional_bindings { post: "/api/v2/user/get" body: "*" }
@@ -46,7 +46,7 @@ service UserService {
   };
 
   // Gett
-  rpc Gett(proto.core.idx.v1.IDX) returns (proto.core.user.v1.UserInstance);
+  rpc Gett(proto.core._store.v1.StoreIDX) returns (proto.core.user.v1.UserInstance);
 
   // Update
   rpc Update(proto.core.user.v1.UserInstance) returns (proto.core.user.v1.UserInstance) {
@@ -61,21 +61,21 @@ service UserService {
   };
 
   // Delete
-  rpc Delete(proto.core.idx.v1.IDX) returns (proto.core.user.v1.UserInstance) {
+  rpc Delete(proto.core._store.v1.StoreIDX) returns (proto.core.user.v1.UserInstance) {
     option (google.api.http) = {
       delete: "/api/v2/user/delete/{uuid}"
     };
   };
 
   // ListFavourites - stream favourites of a user
-  rpc ListFavourites(proto.core.idx.v1.IDX) returns (stream proto.core.favourite.v1.FavouriteAsset) {
+  rpc ListFavourites(proto.core._store.v1.StoreIDX) returns (stream proto.core.favourite.v1.FavouriteAsset) {
     option (google.api.http) = {
       get: "/api/v2/user/{uuid}/favourites"
     };
   };
 
   // ListOpinions - stream opinions of a user
-  rpc ListOpinions(proto.core.idx.v1.IDX) returns (stream proto.core.opinion.v1.OpinionAsset) {
+  rpc ListOpinions(proto.core._store.v1.StoreIDX) returns (stream proto.core.opinion.v1.OpinionAsset) {
     option (google.api.http) = {
       get: "/api/v2/user/{uuid}/opinions"
     };

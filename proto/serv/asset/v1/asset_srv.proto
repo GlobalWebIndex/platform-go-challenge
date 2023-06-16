@@ -6,6 +6,7 @@ package proto.serv.asset.v1;
 
 // /usr/local/include/google/protobuf/
 import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
 // import "google/api/http.proto";
 // import "google/protobuf/any.proto";
 // import "google/protobuf/duration.proto";
@@ -15,10 +16,10 @@ import "google/protobuf/field_mask.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
+import "proto/core/_store/v1/store.proto";
 import "proto/core/asset/v1/asset.proto";
-import "proto/core/idx/v1/idx.proto";
 // https://github.com/bufbuild/protoc-gen-validate
-// import "validate/validate.proto";
+import "validate/validate.proto";
 
 option go_package = "x-gwi/proto/serv/asset/v1;asset_srvpb";
 
@@ -49,7 +50,7 @@ service AssetService {
   // Update
   rpc Update(UpdateRequest) returns (UpdateResponse) {
     option (google.api.http) = {
-      patch: "/api/v1/asset/update/{id.uuid}/{id.rev}"
+      patch: "/api/v1/asset/update/{asset.id.uuid}/{asset.id.rev}"
       body: "asset"
       // additional_bindings {
       //   put: "/api/v1/asset/update/{id.uuid}/{id.rev}"
@@ -71,7 +72,10 @@ message CreateRequest {
   reserved 1, 2, 3;
 
   // asset
-  proto.core.asset.v1.AssetInstance asset = 4;
+  proto.core.asset.v1.AssetInstance asset = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
 }
 
 // CreateResponse
@@ -84,10 +88,13 @@ message CreateResponse {
 
 // GetRequest
 message GetRequest {
-  reserved 1, 2, 3;
+  reserved 1, 2;
 
   // id
-  proto.core.idx.v1.IDX id = 4;
+  proto.core._store.v1.StoreIDX id = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
 }
 
 // GetResponse
@@ -100,13 +107,13 @@ message GetResponse {
 
 // UpdateRequest
 message UpdateRequest {
-  reserved 1, 2;
-
-  // id
-  proto.core.idx.v1.IDX id = 3;
+  reserved 1, 2, 3;
 
   // asset
-  proto.core.asset.v1.AssetInstance asset = 4;
+  proto.core.asset.v1.AssetInstance asset = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
 
   // update_mask
   // https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature
@@ -126,7 +133,10 @@ message DeleteRequest {
   reserved 1, 2;
 
   // id
-  proto.core.idx.v1.IDX id = 3;
+  proto.core._store.v1.StoreIDX id = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
 }
 
 // DeleteResponse

@@ -34,11 +34,11 @@ standard methods: List, Get, Create, Update, and Delete
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | Create | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Create |
-| Get | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Get |
-| Gett | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Gett |
+| Get | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Get |
+| Gett | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Gett |
 | Update | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Update |
-| Delete | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Delete |
-| List | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) stream | List - stream favourites of a user |
+| Delete | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Delete |
+| List | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) stream | List - stream favourites of a user |
 
  
 

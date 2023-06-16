@@ -86,6 +86,64 @@ func (m *FavouriteAsset) validate(all bool) error {
 		}
 	}
 
+	if all {
+		switch v := interface{}(m.GetIdUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, FavouriteAssetValidationError{
+					field:  "IdUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, FavouriteAssetValidationError{
+					field:  "IdUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetIdUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FavouriteAssetValidationError{
+				field:  "IdUser",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetIdAsset()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, FavouriteAssetValidationError{
+					field:  "IdAsset",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, FavouriteAssetValidationError{
+					field:  "IdAsset",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetIdAsset()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FavouriteAssetValidationError{
+				field:  "IdAsset",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if m.Md != nil {
 
 		if all {
@@ -111,72 +169,6 @@ func (m *FavouriteAsset) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return FavouriteAssetValidationError{
 					field:  "Md",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.IdUser != nil {
-
-		if all {
-			switch v := interface{}(m.GetIdUser()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, FavouriteAssetValidationError{
-						field:  "IdUser",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, FavouriteAssetValidationError{
-						field:  "IdUser",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetIdUser()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return FavouriteAssetValidationError{
-					field:  "IdUser",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.IdAsset != nil {
-
-		if all {
-			switch v := interface{}(m.GetIdAsset()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, FavouriteAssetValidationError{
-						field:  "IdAsset",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, FavouriteAssetValidationError{
-						field:  "IdAsset",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetIdAsset()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return FavouriteAssetValidationError{
-					field:  "IdAsset",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

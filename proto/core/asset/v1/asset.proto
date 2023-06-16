@@ -16,7 +16,7 @@ import "google/protobuf/struct.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
-import "proto/core/idx/v1/idx.proto";
+import "proto/core/_store/v1/store.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 import "validate/validate.proto";
 
@@ -26,8 +26,8 @@ option go_package = "x-gwi/proto/core/asset/v1;asset_pb";
 message AssetInstance {
   reserved 1, 2;
 
-  // id - AssetIDX
-  proto.core.idx.v1.IDX id = 3 [
+  // id - Asset StoreIDX
+  proto.core._store.v1.StoreIDX id = 3 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).message = { required: false, skip: false}
   ];

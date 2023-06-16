@@ -34,10 +34,10 @@ standard methods: List, Get, Create, Update, and Delete
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | Create | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Create |
-| Get | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Get |
-| Gett | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Gett |
+| Get | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Get |
+| Gett | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Gett |
 | Update | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Update |
-| Delete | [.proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Delete |
+| Delete | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Delete |
 
  
 

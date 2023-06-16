@@ -6,6 +6,7 @@ package proto.serv.user.v1;
 
 // /usr/local/include/google/protobuf/
 import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
 // import "google/api/http.proto";
 // import "google/protobuf/any.proto";
 // import "google/protobuf/duration.proto";
@@ -15,12 +16,12 @@ import "google/protobuf/field_mask.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
+import "proto/core/_store/v1/store.proto";
 import "proto/core/favourite/v1/favourite.proto";
-import "proto/core/idx/v1/idx.proto";
 import "proto/core/opinion/v1/opinion.proto";
 import "proto/core/user/v1/user.proto";
 // https://github.com/bufbuild/protoc-gen-validate
-// import "validate/validate.proto";
+import "validate/validate.proto";
 
 option go_package = "x-gwi/proto/serv/user/v1;user_srvpb";
 
@@ -51,7 +52,7 @@ service UserService {
   // Update
   rpc Update(UpdateRequest) returns (UpdateResponse) {
     option (google.api.http) = {
-      patch: "/api/v1/user/update/{id.uuid}/{id.rev}"
+      patch: "/api/v1/user/update/{user.id.uuid}/{user.id.rev}"
       body: "user"
       // additional_bindings {
       //   put: "/api/v1/user/update/{id.uuid}/{id.rev}"
@@ -87,7 +88,10 @@ message CreateRequest {
   reserved 1, 2, 3;
 
   // user
-  proto.core.user.v1.UserInstance user = 4;
+  proto.core.user.v1.UserInstance user = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
 }
 
 // CreateResponse
@@ -95,15 +99,18 @@ message CreateResponse {
   reserved 1, 2, 3;
 
   // user
-  proto.core.user.v1.UserInstance user = 4;
+  optional proto.core.user.v1.UserInstance user = 4;
 }
 
 // GetRequest
 message GetRequest {
-  reserved 1, 2, 3;
+  reserved 1, 2;
 
   // id
-  proto.core.idx.v1.IDX id = 4;
+  proto.core._store.v1.StoreIDX id = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
 }
 
 // GetResponse
@@ -116,13 +123,13 @@ message GetResponse {
 
 // UpdateRequest
 message UpdateRequest {
-  reserved 1, 2;
-
-  // id
-  proto.core.idx.v1.IDX id = 3;
+  reserved 1, 2, 3;
 
   // user
-  proto.core.user.v1.UserInstance user = 4;
+  proto.core.user.v1.UserInstance user = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
 
   // update_mask
   // https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature
@@ -142,7 +149,10 @@ message DeleteRequest {
   reserved 1, 2;
 
   // id
-  proto.core.idx.v1.IDX id = 3;
+  proto.core._store.v1.StoreIDX id = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
 }
 
 // DeleteResponse
@@ -158,7 +168,10 @@ message ListFavouritesRequest {
   reserved 1, 2, 3;
 
   // id_user (from)
-  proto.core.idx.v1.IDX id_user = 5;
+  proto.core._store.v1.StoreIDX id_user = 5 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
 }
 
 // ListFavouritesResponse
@@ -174,7 +187,10 @@ message ListOpinionsRequest {
   reserved 1, 2, 3;
 
   // id_user (from)
-  proto.core.idx.v1.IDX id_user = 5;
+  proto.core._store.v1.StoreIDX id_user = 5 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
 }
 
 // ListOpinionsResponse

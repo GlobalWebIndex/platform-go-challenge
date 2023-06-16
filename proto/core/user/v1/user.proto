@@ -16,7 +16,7 @@ import "google/api/field_behavior.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
-import "proto/core/idx/v1/idx.proto";
+import "proto/core/_store/v1/store.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 import "validate/validate.proto";
 
@@ -26,15 +26,22 @@ option go_package = "x-gwi/proto/core/user/v1;user_pb";
 message UserInstance {
   reserved 1, 2;
 
-  // idx - User IDX
-  proto.core.idx.v1.IDX id = 3 [
+  // idx - User StoreIDX
+  proto.core._store.v1.StoreIDX id = 3 [
     (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).message = { required: false, skip: false}
+    (validate.rules).message = { required: false, skip: false }
   ];  // username - Name (1-256 characters) required
 
   // username
-  optional string username = 4 [
-    (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).string = { ignore_empty: true, min_len: 1, max_len: 256 }
+  string username = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).string = { ignore_empty: false, min_len: 1, max_len: 256 }
   ];
+
+  // ignore_empty: false,
+  // sentence - (1-256 characters) required
+  // optional string sentence = 5 [
+  //   (google.api.field_behavior) = REQUIRED,
+  //   (validate.rules).string = { min_len: 1, max_len: 256 }
+  // ];
 }

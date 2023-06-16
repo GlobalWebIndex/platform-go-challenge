@@ -57,6 +57,17 @@ func (m *CreateRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetOpinion() == nil {
+		err := CreateRequestValidationError{
+			field:  "Opinion",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetOpinion()).(type) {
 		case interface{ ValidateAll() error }:
@@ -186,33 +197,37 @@ func (m *CreateResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetOpinion()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateResponseValidationError{
-					field:  "Opinion",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Opinion != nil {
+
+		if all {
+			switch v := interface{}(m.GetOpinion()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateResponseValidationError{
+						field:  "Opinion",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateResponseValidationError{
+						field:  "Opinion",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetOpinion()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateResponseValidationError{
+				return CreateResponseValidationError{
 					field:  "Opinion",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetOpinion()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreateResponseValidationError{
-				field:  "Opinion",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -443,33 +458,37 @@ func (m *GetResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetOpinion()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetResponseValidationError{
-					field:  "Opinion",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Opinion != nil {
+
+		if all {
+			switch v := interface{}(m.GetOpinion()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetResponseValidationError{
+						field:  "Opinion",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetResponseValidationError{
+						field:  "Opinion",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetOpinion()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, GetResponseValidationError{
+				return GetResponseValidationError{
 					field:  "Opinion",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetOpinion()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetResponseValidationError{
-				field:  "Opinion",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -571,33 +590,15 @@ func (m *UpdateRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetId()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateRequestValidationError{
-					field:  "Id",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateRequestValidationError{
-					field:  "Id",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	if m.GetOpinion() == nil {
+		err := UpdateRequestValidationError{
+			field:  "Opinion",
+			reason: "value is required",
 		}
-	} else if v, ok := interface{}(m.GetId()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateRequestValidationError{
-				field:  "Id",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
+		if !all {
+			return err
 		}
+		errors = append(errors, err)
 	}
 
 	if all {
@@ -758,33 +759,37 @@ func (m *UpdateResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetOpinion()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateResponseValidationError{
-					field:  "Opinion",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Opinion != nil {
+
+		if all {
+			switch v := interface{}(m.GetOpinion()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateResponseValidationError{
+						field:  "Opinion",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateResponseValidationError{
+						field:  "Opinion",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetOpinion()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateResponseValidationError{
+				return UpdateResponseValidationError{
 					field:  "Opinion",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetOpinion()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateResponseValidationError{
-				field:  "Opinion",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -886,6 +891,17 @@ func (m *DeleteRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetId() == nil {
+		err := DeleteRequestValidationError{
+			field:  "Id",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetId()).(type) {
@@ -1016,33 +1032,37 @@ func (m *DeleteResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetOpinion()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DeleteResponseValidationError{
-					field:  "Opinion",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Opinion != nil {
+
+		if all {
+			switch v := interface{}(m.GetOpinion()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DeleteResponseValidationError{
+						field:  "Opinion",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DeleteResponseValidationError{
+						field:  "Opinion",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetOpinion()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, DeleteResponseValidationError{
+				return DeleteResponseValidationError{
 					field:  "Opinion",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetOpinion()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DeleteResponseValidationError{
-				field:  "Opinion",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -1144,6 +1164,17 @@ func (m *ListRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetIdUser() == nil {
+		err := ListRequestValidationError{
+			field:  "IdUser",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetIdUser()).(type) {

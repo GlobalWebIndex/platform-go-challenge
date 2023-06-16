@@ -12,8 +12,8 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"x-gwi/proto/core/_store/v1"
 	"x-gwi/proto/core/favourite/v1"
-	"x-gwi/proto/core/idx/v1"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
@@ -72,7 +72,7 @@ var (
 )
 
 func request_FavouriteService_Get_0(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -105,7 +105,7 @@ func request_FavouriteService_Get_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_FavouriteService_Get_0(ctx context.Context, marshaler runtime.Marshaler, server FavouriteServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -138,7 +138,7 @@ func local_request_FavouriteService_Get_0(ctx context.Context, marshaler runtime
 }
 
 func request_FavouriteService_Get_1(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -155,7 +155,7 @@ func request_FavouriteService_Get_1(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_FavouriteService_Get_1(ctx context.Context, marshaler runtime.Marshaler, server FavouriteServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -172,7 +172,7 @@ func local_request_FavouriteService_Get_1(ctx context.Context, marshaler runtime
 }
 
 func request_FavouriteService_Gett_0(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -189,7 +189,7 @@ func request_FavouriteService_Gett_0(ctx context.Context, marshaler runtime.Mars
 }
 
 func local_request_FavouriteService_Gett_0(ctx context.Context, marshaler runtime.Marshaler, server FavouriteServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -298,7 +298,7 @@ var (
 )
 
 func request_FavouriteService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -331,7 +331,7 @@ func request_FavouriteService_Delete_0(ctx context.Context, marshaler runtime.Ma
 }
 
 func local_request_FavouriteService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, server FavouriteServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -368,7 +368,7 @@ var (
 )
 
 func request_FavouriteService_List_0(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (FavouriteService_ListClient, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	var (

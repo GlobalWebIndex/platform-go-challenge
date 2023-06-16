@@ -5,45 +5,59 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"x-gwi/internal/env"
-	"x-gwi/internal/id"
+	"x-gwi/app/x/env"
+	"x-gwi/app/x/id"
 )
 
 type Instance struct {
 	name string
-	mode string
+	mode InstMode
 	id   id.XID
+}
+
+type InstMode string
+
+const (
+	ModeDev   InstMode = InstMode("dev")
+	ModeProd  InstMode = InstMode("prod")
+	ModeTest  InstMode = InstMode("test")
+	ModeStage InstMode = InstMode("stage")
+)
+
+func InstModes() []InstMode {
+	return []InstMode{
+		ModeDev,
+		ModeProd,
+		ModeTest,
+		ModeStage,
+	}
+}
+
+func (i InstMode) String() string {
+	return string(i)
+}
+
+func (i InstMode) Valid() bool {
+	for _, v := range InstModes() {
+		if i == v {
+			return true
+		}
+	}
+
+	return false
 }
 
 func NewInstance() *Instance {
 	return &Instance{
 		id:   id.XiD(),
 		name: env.Env("APP_NAME", "app"),
-		mode: env.Env("APP_MODE", modes()[0]),
+		mode: InstMode(env.Env("APP_MODE", ModeDev.String())),
 		// TENANT
 	}
 }
 
-func modes() []string {
-	return []string{"dev", "prod", "stage", "test"}
-}
-
 func (i *Instance) Valid() bool {
-	if i.mode == "" {
-		return false
-	}
-
-	var validMode bool
-
-	for _, v := range modes() {
-		if v == i.mode {
-			validMode = true
-
-			break
-		}
-	}
-
-	return validMode &&
+	return i.mode.Valid() &&
 		i.name != "" &&
 		!i.id.IsNil()
 }
@@ -53,7 +67,7 @@ func (i *Instance) Name() string {
 }
 
 func (i *Instance) Mode() string {
-	return i.mode
+	return i.mode.String()
 }
 
 func (i *Instance) pass() []byte {

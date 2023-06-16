@@ -15,7 +15,7 @@ import "google/api/annotations.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
-import "proto/core/idx/v1/idx.proto";
+import "proto/core/_store/v1/store.proto";
 import "proto/core/opinion/v1/opinion.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 // import "validate/validate.proto";
@@ -36,7 +36,7 @@ service OpinionService {
   };
 
   // Get
-  rpc Get(proto.core.idx.v1.IDX) returns (proto.core.opinion.v1.OpinionAsset) {
+  rpc Get(proto.core._store.v1.StoreIDX) returns (proto.core.opinion.v1.OpinionAsset) {
     option (google.api.http) = {
       get: "/api/v2/opinion/get/{uuid}"
       additional_bindings { post: "/api/v2/opinion/get" body: "*" }
@@ -44,7 +44,7 @@ service OpinionService {
   };
 
   // Gett
-  rpc Gett(proto.core.idx.v1.IDX) returns (proto.core.opinion.v1.OpinionAsset);
+  rpc Gett(proto.core._store.v1.StoreIDX) returns (proto.core.opinion.v1.OpinionAsset);
 
   // Update
   rpc Update(proto.core.opinion.v1.OpinionAsset) returns (proto.core.opinion.v1.OpinionAsset) {
@@ -59,14 +59,14 @@ service OpinionService {
   };
 
   // Delete
-  rpc Delete(proto.core.idx.v1.IDX) returns (proto.core.opinion.v1.OpinionAsset) {
+  rpc Delete(proto.core._store.v1.StoreIDX) returns (proto.core.opinion.v1.OpinionAsset) {
     option (google.api.http) = {
       delete: "/api/v2/opinion/delete/{uuid}"
     };
   };
 
   // List - stream opinins of a user
-  rpc List(proto.core.idx.v1.IDX) returns (stream proto.core.opinion.v1.OpinionAsset) {
+  rpc List(proto.core._store.v1.StoreIDX) returns (stream proto.core.opinion.v1.OpinionAsset) {
     option (google.api.http) = {
       get: "/api/v2/opinion/list/user/{uuid}"
     };

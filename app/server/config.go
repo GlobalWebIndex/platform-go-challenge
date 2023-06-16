@@ -1,6 +1,6 @@
 package server
 
-import "x-gwi/internal/env"
+import "x-gwi/app/x/env"
 
 type ConfigServer struct {
 	GRPC   ConfigGRPC

@@ -25,10 +25,10 @@ UserInstance
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | idx - User IDX
+| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | idx - User StoreIDX
 
 username - Name (1-256 characters) required |
-| username | [string](#string) | optional | username |
+| username | [string](#string) |  | username |
 
 
 

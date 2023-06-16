@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"x-gwi/internal/env"
+	"x-gwi/app/x/env"
 )
 
 type ServiceMethod string

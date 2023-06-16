@@ -53,7 +53,7 @@ CreateResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user | [proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) |  | user |
+| user | [proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) | optional | user |
 
 
 
@@ -68,7 +68,7 @@ DeleteRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | id |
+| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id |
 
 
 
@@ -98,7 +98,7 @@ GetRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | id |
+| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id |
 
 
 
@@ -128,7 +128,7 @@ ListFavouritesRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id_user | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | id_user (from) |
+| id_user | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id_user (from) |
 
 
 
@@ -158,7 +158,7 @@ ListOpinionsRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id_user | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | id_user (from) |
+| id_user | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id_user (from) |
 
 
 
@@ -188,7 +188,6 @@ UpdateRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | id |
 | user | [proto.core.user.v1.UserInstance](#proto-core-user-v1-UserInstance) |  | user |
 | update_mask | [google.protobuf.FieldMask](#google-protobuf-FieldMask) |  | update_mask https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature |
 

@@ -12,8 +12,8 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"x-gwi/proto/core/_store/v1"
 	"x-gwi/proto/core/asset/v1"
-	"x-gwi/proto/core/idx/v1"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
@@ -72,7 +72,7 @@ var (
 )
 
 func request_AssetService_Get_0(ctx context.Context, marshaler runtime.Marshaler, client AssetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -105,7 +105,7 @@ func request_AssetService_Get_0(ctx context.Context, marshaler runtime.Marshaler
 }
 
 func local_request_AssetService_Get_0(ctx context.Context, marshaler runtime.Marshaler, server AssetServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -138,7 +138,7 @@ func local_request_AssetService_Get_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func request_AssetService_Get_1(ctx context.Context, marshaler runtime.Marshaler, client AssetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -155,7 +155,7 @@ func request_AssetService_Get_1(ctx context.Context, marshaler runtime.Marshaler
 }
 
 func local_request_AssetService_Get_1(ctx context.Context, marshaler runtime.Marshaler, server AssetServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -172,7 +172,7 @@ func local_request_AssetService_Get_1(ctx context.Context, marshaler runtime.Mar
 }
 
 func request_AssetService_Gett_0(ctx context.Context, marshaler runtime.Marshaler, client AssetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -189,7 +189,7 @@ func request_AssetService_Gett_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func local_request_AssetService_Gett_0(ctx context.Context, marshaler runtime.Marshaler, server AssetServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -298,7 +298,7 @@ var (
 )
 
 func request_AssetService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, client AssetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -331,7 +331,7 @@ func request_AssetService_Delete_0(ctx context.Context, marshaler runtime.Marsha
 }
 
 func local_request_AssetService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, server AssetServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq idx_pb.IDX
+	var protoReq store_pb.StoreIDX
 	var metadata runtime.ServerMetadata
 
 	var (

@@ -57,6 +57,17 @@ func (m *CreateRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetUser() == nil {
+		err := CreateRequestValidationError{
+			field:  "User",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetUser()).(type) {
 		case interface{ ValidateAll() error }:
@@ -186,33 +197,37 @@ func (m *CreateResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetUser()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateResponseValidationError{
-					field:  "User",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.User != nil {
+
+		if all {
+			switch v := interface{}(m.GetUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateResponseValidationError{
+						field:  "User",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateResponseValidationError{
+						field:  "User",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateResponseValidationError{
+				return CreateResponseValidationError{
 					field:  "User",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreateResponseValidationError{
-				field:  "User",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -314,6 +329,17 @@ func (m *GetRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetId() == nil {
+		err := GetRequestValidationError{
+			field:  "Id",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetId()).(type) {
@@ -571,33 +597,15 @@ func (m *UpdateRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetId()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateRequestValidationError{
-					field:  "Id",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateRequestValidationError{
-					field:  "Id",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	if m.GetUser() == nil {
+		err := UpdateRequestValidationError{
+			field:  "User",
+			reason: "value is required",
 		}
-	} else if v, ok := interface{}(m.GetId()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateRequestValidationError{
-				field:  "Id",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
+		if !all {
+			return err
 		}
+		errors = append(errors, err)
 	}
 
 	if all {
@@ -887,6 +895,17 @@ func (m *DeleteRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetId() == nil {
+		err := DeleteRequestValidationError{
+			field:  "Id",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetId()).(type) {
 		case interface{ ValidateAll() error }:
@@ -1144,6 +1163,17 @@ func (m *ListFavouritesRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetIdUser() == nil {
+		err := ListFavouritesRequestValidationError{
+			field:  "IdUser",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetIdUser()).(type) {
@@ -1406,6 +1436,17 @@ func (m *ListOpinionsRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetIdUser() == nil {
+		err := ListOpinionsRequestValidationError{
+			field:  "IdUser",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetIdUser()).(type) {

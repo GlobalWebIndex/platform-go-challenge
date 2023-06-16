@@ -13,8 +13,8 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	v11 "x-gwi/proto/core/_store/v1"
 	v12 "x-gwi/proto/core/favourite/v1"
-	v11 "x-gwi/proto/core/idx/v1"
 	v13 "x-gwi/proto/core/opinion/v1"
 	v1 "x-gwi/proto/core/user/v1"
 )
@@ -41,17 +41,17 @@ type UserServiceClient interface {
 	// Create
 	Create(ctx context.Context, in *v1.UserInstance, opts ...grpc.CallOption) (*v1.UserInstance, error)
 	// Get
-	Get(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.UserInstance, error)
+	Get(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.UserInstance, error)
 	// Gett
-	Gett(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.UserInstance, error)
+	Gett(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.UserInstance, error)
 	// Update
 	Update(ctx context.Context, in *v1.UserInstance, opts ...grpc.CallOption) (*v1.UserInstance, error)
 	// Delete
-	Delete(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.UserInstance, error)
+	Delete(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.UserInstance, error)
 	// ListFavourites - stream favourites of a user
-	ListFavourites(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (UserService_ListFavouritesClient, error)
+	ListFavourites(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (UserService_ListFavouritesClient, error)
 	// ListOpinions - stream opinions of a user
-	ListOpinions(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (UserService_ListOpinionsClient, error)
+	ListOpinions(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (UserService_ListOpinionsClient, error)
 }
 
 type userServiceClient struct {
@@ -71,7 +71,7 @@ func (c *userServiceClient) Create(ctx context.Context, in *v1.UserInstance, opt
 	return out, nil
 }
 
-func (c *userServiceClient) Get(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.UserInstance, error) {
+func (c *userServiceClient) Get(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.UserInstance, error) {
 	out := new(v1.UserInstance)
 	err := c.cc.Invoke(ctx, UserService_Get_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -80,7 +80,7 @@ func (c *userServiceClient) Get(ctx context.Context, in *v11.IDX, opts ...grpc.C
 	return out, nil
 }
 
-func (c *userServiceClient) Gett(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.UserInstance, error) {
+func (c *userServiceClient) Gett(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.UserInstance, error) {
 	out := new(v1.UserInstance)
 	err := c.cc.Invoke(ctx, UserService_Gett_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -98,7 +98,7 @@ func (c *userServiceClient) Update(ctx context.Context, in *v1.UserInstance, opt
 	return out, nil
 }
 
-func (c *userServiceClient) Delete(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.UserInstance, error) {
+func (c *userServiceClient) Delete(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.UserInstance, error) {
 	out := new(v1.UserInstance)
 	err := c.cc.Invoke(ctx, UserService_Delete_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -107,7 +107,7 @@ func (c *userServiceClient) Delete(ctx context.Context, in *v11.IDX, opts ...grp
 	return out, nil
 }
 
-func (c *userServiceClient) ListFavourites(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (UserService_ListFavouritesClient, error) {
+func (c *userServiceClient) ListFavourites(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (UserService_ListFavouritesClient, error) {
 	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[0], UserService_ListFavourites_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func (x *userServiceListFavouritesClient) Recv() (*v12.FavouriteAsset, error) {
 	return m, nil
 }
 
-func (c *userServiceClient) ListOpinions(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (UserService_ListOpinionsClient, error) {
+func (c *userServiceClient) ListOpinions(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (UserService_ListOpinionsClient, error) {
 	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[1], UserService_ListOpinions_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
@@ -178,17 +178,17 @@ type UserServiceServer interface {
 	// Create
 	Create(context.Context, *v1.UserInstance) (*v1.UserInstance, error)
 	// Get
-	Get(context.Context, *v11.IDX) (*v1.UserInstance, error)
+	Get(context.Context, *v11.StoreIDX) (*v1.UserInstance, error)
 	// Gett
-	Gett(context.Context, *v11.IDX) (*v1.UserInstance, error)
+	Gett(context.Context, *v11.StoreIDX) (*v1.UserInstance, error)
 	// Update
 	Update(context.Context, *v1.UserInstance) (*v1.UserInstance, error)
 	// Delete
-	Delete(context.Context, *v11.IDX) (*v1.UserInstance, error)
+	Delete(context.Context, *v11.StoreIDX) (*v1.UserInstance, error)
 	// ListFavourites - stream favourites of a user
-	ListFavourites(*v11.IDX, UserService_ListFavouritesServer) error
+	ListFavourites(*v11.StoreIDX, UserService_ListFavouritesServer) error
 	// ListOpinions - stream opinions of a user
-	ListOpinions(*v11.IDX, UserService_ListOpinionsServer) error
+	ListOpinions(*v11.StoreIDX, UserService_ListOpinionsServer) error
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -199,22 +199,22 @@ type UnimplementedUserServiceServer struct {
 func (UnimplementedUserServiceServer) Create(context.Context, *v1.UserInstance) (*v1.UserInstance, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedUserServiceServer) Get(context.Context, *v11.IDX) (*v1.UserInstance, error) {
+func (UnimplementedUserServiceServer) Get(context.Context, *v11.StoreIDX) (*v1.UserInstance, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedUserServiceServer) Gett(context.Context, *v11.IDX) (*v1.UserInstance, error) {
+func (UnimplementedUserServiceServer) Gett(context.Context, *v11.StoreIDX) (*v1.UserInstance, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Gett not implemented")
 }
 func (UnimplementedUserServiceServer) Update(context.Context, *v1.UserInstance) (*v1.UserInstance, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedUserServiceServer) Delete(context.Context, *v11.IDX) (*v1.UserInstance, error) {
+func (UnimplementedUserServiceServer) Delete(context.Context, *v11.StoreIDX) (*v1.UserInstance, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedUserServiceServer) ListFavourites(*v11.IDX, UserService_ListFavouritesServer) error {
+func (UnimplementedUserServiceServer) ListFavourites(*v11.StoreIDX, UserService_ListFavouritesServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListFavourites not implemented")
 }
-func (UnimplementedUserServiceServer) ListOpinions(*v11.IDX, UserService_ListOpinionsServer) error {
+func (UnimplementedUserServiceServer) ListOpinions(*v11.StoreIDX, UserService_ListOpinionsServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListOpinions not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
@@ -249,7 +249,7 @@ func _UserService_Create_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _UserService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.IDX)
+	in := new(v11.StoreIDX)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -261,13 +261,13 @@ func _UserService_Get_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: UserService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Get(ctx, req.(*v11.IDX))
+		return srv.(UserServiceServer).Get(ctx, req.(*v11.StoreIDX))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _UserService_Gett_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.IDX)
+	in := new(v11.StoreIDX)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -279,7 +279,7 @@ func _UserService_Gett_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: UserService_Gett_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Gett(ctx, req.(*v11.IDX))
+		return srv.(UserServiceServer).Gett(ctx, req.(*v11.StoreIDX))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -303,7 +303,7 @@ func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _UserService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.IDX)
+	in := new(v11.StoreIDX)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -315,13 +315,13 @@ func _UserService_Delete_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: UserService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Delete(ctx, req.(*v11.IDX))
+		return srv.(UserServiceServer).Delete(ctx, req.(*v11.StoreIDX))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _UserService_ListFavourites_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(v11.IDX)
+	m := new(v11.StoreIDX)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
@@ -342,7 +342,7 @@ func (x *userServiceListFavouritesServer) Send(m *v12.FavouriteAsset) error {
 }
 
 func _UserService_ListOpinions_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(v11.IDX)
+	m := new(v11.StoreIDX)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}

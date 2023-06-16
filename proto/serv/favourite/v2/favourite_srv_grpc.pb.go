@@ -13,8 +13,8 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	v11 "x-gwi/proto/core/_store/v1"
 	v1 "x-gwi/proto/core/favourite/v1"
-	v11 "x-gwi/proto/core/idx/v1"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -38,15 +38,15 @@ type FavouriteServiceClient interface {
 	// Create
 	Create(ctx context.Context, in *v1.FavouriteAsset, opts ...grpc.CallOption) (*v1.FavouriteAsset, error)
 	// Get
-	Get(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error)
+	Get(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error)
 	// Gett
-	Gett(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error)
+	Gett(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error)
 	// Update
 	Update(ctx context.Context, in *v1.FavouriteAsset, opts ...grpc.CallOption) (*v1.FavouriteAsset, error)
 	// Delete
-	Delete(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error)
+	Delete(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error)
 	// List - stream favourites of a user
-	List(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (FavouriteService_ListClient, error)
+	List(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (FavouriteService_ListClient, error)
 }
 
 type favouriteServiceClient struct {
@@ -66,7 +66,7 @@ func (c *favouriteServiceClient) Create(ctx context.Context, in *v1.FavouriteAss
 	return out, nil
 }
 
-func (c *favouriteServiceClient) Get(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error) {
+func (c *favouriteServiceClient) Get(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error) {
 	out := new(v1.FavouriteAsset)
 	err := c.cc.Invoke(ctx, FavouriteService_Get_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -75,7 +75,7 @@ func (c *favouriteServiceClient) Get(ctx context.Context, in *v11.IDX, opts ...g
 	return out, nil
 }
 
-func (c *favouriteServiceClient) Gett(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error) {
+func (c *favouriteServiceClient) Gett(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error) {
 	out := new(v1.FavouriteAsset)
 	err := c.cc.Invoke(ctx, FavouriteService_Gett_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -93,7 +93,7 @@ func (c *favouriteServiceClient) Update(ctx context.Context, in *v1.FavouriteAss
 	return out, nil
 }
 
-func (c *favouriteServiceClient) Delete(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error) {
+func (c *favouriteServiceClient) Delete(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.FavouriteAsset, error) {
 	out := new(v1.FavouriteAsset)
 	err := c.cc.Invoke(ctx, FavouriteService_Delete_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -102,7 +102,7 @@ func (c *favouriteServiceClient) Delete(ctx context.Context, in *v11.IDX, opts .
 	return out, nil
 }
 
-func (c *favouriteServiceClient) List(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (FavouriteService_ListClient, error) {
+func (c *favouriteServiceClient) List(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (FavouriteService_ListClient, error) {
 	stream, err := c.cc.NewStream(ctx, &FavouriteService_ServiceDesc.Streams[0], FavouriteService_List_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
@@ -141,15 +141,15 @@ type FavouriteServiceServer interface {
 	// Create
 	Create(context.Context, *v1.FavouriteAsset) (*v1.FavouriteAsset, error)
 	// Get
-	Get(context.Context, *v11.IDX) (*v1.FavouriteAsset, error)
+	Get(context.Context, *v11.StoreIDX) (*v1.FavouriteAsset, error)
 	// Gett
-	Gett(context.Context, *v11.IDX) (*v1.FavouriteAsset, error)
+	Gett(context.Context, *v11.StoreIDX) (*v1.FavouriteAsset, error)
 	// Update
 	Update(context.Context, *v1.FavouriteAsset) (*v1.FavouriteAsset, error)
 	// Delete
-	Delete(context.Context, *v11.IDX) (*v1.FavouriteAsset, error)
+	Delete(context.Context, *v11.StoreIDX) (*v1.FavouriteAsset, error)
 	// List - stream favourites of a user
-	List(*v11.IDX, FavouriteService_ListServer) error
+	List(*v11.StoreIDX, FavouriteService_ListServer) error
 	mustEmbedUnimplementedFavouriteServiceServer()
 }
 
@@ -160,19 +160,19 @@ type UnimplementedFavouriteServiceServer struct {
 func (UnimplementedFavouriteServiceServer) Create(context.Context, *v1.FavouriteAsset) (*v1.FavouriteAsset, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedFavouriteServiceServer) Get(context.Context, *v11.IDX) (*v1.FavouriteAsset, error) {
+func (UnimplementedFavouriteServiceServer) Get(context.Context, *v11.StoreIDX) (*v1.FavouriteAsset, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedFavouriteServiceServer) Gett(context.Context, *v11.IDX) (*v1.FavouriteAsset, error) {
+func (UnimplementedFavouriteServiceServer) Gett(context.Context, *v11.StoreIDX) (*v1.FavouriteAsset, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Gett not implemented")
 }
 func (UnimplementedFavouriteServiceServer) Update(context.Context, *v1.FavouriteAsset) (*v1.FavouriteAsset, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedFavouriteServiceServer) Delete(context.Context, *v11.IDX) (*v1.FavouriteAsset, error) {
+func (UnimplementedFavouriteServiceServer) Delete(context.Context, *v11.StoreIDX) (*v1.FavouriteAsset, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedFavouriteServiceServer) List(*v11.IDX, FavouriteService_ListServer) error {
+func (UnimplementedFavouriteServiceServer) List(*v11.StoreIDX, FavouriteService_ListServer) error {
 	return status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedFavouriteServiceServer) mustEmbedUnimplementedFavouriteServiceServer() {}
@@ -207,7 +207,7 @@ func _FavouriteService_Create_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _FavouriteService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.IDX)
+	in := new(v11.StoreIDX)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -219,13 +219,13 @@ func _FavouriteService_Get_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: FavouriteService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FavouriteServiceServer).Get(ctx, req.(*v11.IDX))
+		return srv.(FavouriteServiceServer).Get(ctx, req.(*v11.StoreIDX))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _FavouriteService_Gett_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.IDX)
+	in := new(v11.StoreIDX)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -237,7 +237,7 @@ func _FavouriteService_Gett_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: FavouriteService_Gett_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FavouriteServiceServer).Gett(ctx, req.(*v11.IDX))
+		return srv.(FavouriteServiceServer).Gett(ctx, req.(*v11.StoreIDX))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -261,7 +261,7 @@ func _FavouriteService_Update_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _FavouriteService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.IDX)
+	in := new(v11.StoreIDX)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -273,13 +273,13 @@ func _FavouriteService_Delete_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: FavouriteService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FavouriteServiceServer).Delete(ctx, req.(*v11.IDX))
+		return srv.(FavouriteServiceServer).Delete(ctx, req.(*v11.StoreIDX))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _FavouriteService_List_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(v11.IDX)
+	m := new(v11.StoreIDX)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}

@@ -15,8 +15,8 @@ import "google/api/annotations.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
+import "proto/core/_store/v1/store.proto";
 import "proto/core/favourite/v1/favourite.proto";
-import "proto/core/idx/v1/idx.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 // import "validate/validate.proto";
 
@@ -36,7 +36,7 @@ service FavouriteService {
   };
 
   // Get
-  rpc Get(proto.core.idx.v1.IDX) returns (proto.core.favourite.v1.FavouriteAsset) {
+  rpc Get(proto.core._store.v1.StoreIDX) returns (proto.core.favourite.v1.FavouriteAsset) {
     option (google.api.http) = {
       get: "/api/v2/favourite/get/{uuid}"
       additional_bindings { post: "/api/v2/favourite/get" body: "*" }
@@ -44,7 +44,7 @@ service FavouriteService {
   };
 
   // Gett
-  rpc Gett(proto.core.idx.v1.IDX) returns (proto.core.favourite.v1.FavouriteAsset);
+  rpc Gett(proto.core._store.v1.StoreIDX) returns (proto.core.favourite.v1.FavouriteAsset);
 
   // Update
   rpc Update(proto.core.favourite.v1.FavouriteAsset) returns (proto.core.favourite.v1.FavouriteAsset) {
@@ -59,14 +59,14 @@ service FavouriteService {
   };
 
   // Delete
-  rpc Delete(proto.core.idx.v1.IDX) returns (proto.core.favourite.v1.FavouriteAsset) {
+  rpc Delete(proto.core._store.v1.StoreIDX) returns (proto.core.favourite.v1.FavouriteAsset) {
     option (google.api.http) = {
       delete: "/api/v2/favourite/delete/{uuid}"
     };
   };
 
   // List - stream favourites of a user
-  rpc List(proto.core.idx.v1.IDX) returns (stream proto.core.favourite.v1.FavouriteAsset) {
+  rpc List(proto.core._store.v1.StoreIDX) returns (stream proto.core.favourite.v1.FavouriteAsset) {
     option (google.api.http) = {
       get: "/api/v2/favourite/list/user/{uuid}"
     };

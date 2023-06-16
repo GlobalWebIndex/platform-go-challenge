@@ -93,7 +93,7 @@ AssetInstance
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core.idx.v1.IDX](#proto-core-idx-v1-IDX) |  | id - AssetIDX |
+| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id - Asset StoreIDX |
 | md | [AssetMetaData](#proto-core-asset-v1-AssetMetaData) | optional | md - AssetMetaData |
 | chart | [AssetChart](#proto-core-asset-v1-AssetChart) | optional | chart - Chart (that has a small title, axes titles and data) |
 | insight | [AssetInsight](#proto-core-asset-v1-AssetInsight) | optional | insight - Insight (a small piece of text that provides some insight into a topic, e.g. &#34;40% of millenials spend more than 3hours on social media daily&#34;) |

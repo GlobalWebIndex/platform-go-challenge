@@ -19,6 +19,8 @@ import (
 	"github.com/rs/xid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/pkgerrors"
+
+	"x-gwi/app/x/env"
 )
 
 //nolint:gochecknoinits
@@ -31,7 +33,7 @@ func init() {
 	// zerolog.SetGlobalLevel(zerolog.DebugLevel)
 
 	cfg := &Logs{
-		App: "xm-com",
+		App: env.Env("APP_NAME", "app"),
 		Enable: EnableOutput{
 			SysLog:  false,
 			StdErr:  false,
@@ -237,8 +239,9 @@ func LogTrace2() (string, string) {
 
 	//nolint:godox
 	// 	TODO: on test  bi. is empty
+	// module
 	if bpm == "" {
-		bpm = "xm-com"
+		bpm = "x-gwi"
 	}
 
 	if len(fn) > 0 && len(bpm) > 0 {

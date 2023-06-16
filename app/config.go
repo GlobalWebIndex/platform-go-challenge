@@ -12,7 +12,7 @@ import (
 type Config struct {
 	Inst    *instance.Instance
 	Auth    *auth.ConfigAuth
-	Storage *storage.ConfigStorage
+	Storage *storage.ConfigAppStorage
 	Server  *server.ConfigServer
 	Client  *client.ConfigClient
 	// Services

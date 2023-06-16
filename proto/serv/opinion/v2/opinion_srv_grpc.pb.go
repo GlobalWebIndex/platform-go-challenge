@@ -13,7 +13,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	v11 "x-gwi/proto/core/idx/v1"
+	v11 "x-gwi/proto/core/_store/v1"
 	v1 "x-gwi/proto/core/opinion/v1"
 )
 
@@ -38,15 +38,15 @@ type OpinionServiceClient interface {
 	// Create
 	Create(ctx context.Context, in *v1.OpinionAsset, opts ...grpc.CallOption) (*v1.OpinionAsset, error)
 	// Get
-	Get(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error)
+	Get(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error)
 	// Gett
-	Gett(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error)
+	Gett(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error)
 	// Update
 	Update(ctx context.Context, in *v1.OpinionAsset, opts ...grpc.CallOption) (*v1.OpinionAsset, error)
 	// Delete
-	Delete(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error)
+	Delete(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error)
 	// List - stream opinins of a user
-	List(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (OpinionService_ListClient, error)
+	List(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (OpinionService_ListClient, error)
 }
 
 type opinionServiceClient struct {
@@ -66,7 +66,7 @@ func (c *opinionServiceClient) Create(ctx context.Context, in *v1.OpinionAsset, 
 	return out, nil
 }
 
-func (c *opinionServiceClient) Get(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error) {
+func (c *opinionServiceClient) Get(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error) {
 	out := new(v1.OpinionAsset)
 	err := c.cc.Invoke(ctx, OpinionService_Get_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -75,7 +75,7 @@ func (c *opinionServiceClient) Get(ctx context.Context, in *v11.IDX, opts ...grp
 	return out, nil
 }
 
-func (c *opinionServiceClient) Gett(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error) {
+func (c *opinionServiceClient) Gett(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error) {
 	out := new(v1.OpinionAsset)
 	err := c.cc.Invoke(ctx, OpinionService_Gett_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -93,7 +93,7 @@ func (c *opinionServiceClient) Update(ctx context.Context, in *v1.OpinionAsset, 
 	return out, nil
 }
 
-func (c *opinionServiceClient) Delete(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error) {
+func (c *opinionServiceClient) Delete(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.OpinionAsset, error) {
 	out := new(v1.OpinionAsset)
 	err := c.cc.Invoke(ctx, OpinionService_Delete_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -102,7 +102,7 @@ func (c *opinionServiceClient) Delete(ctx context.Context, in *v11.IDX, opts ...
 	return out, nil
 }
 
-func (c *opinionServiceClient) List(ctx context.Context, in *v11.IDX, opts ...grpc.CallOption) (OpinionService_ListClient, error) {
+func (c *opinionServiceClient) List(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (OpinionService_ListClient, error) {
 	stream, err := c.cc.NewStream(ctx, &OpinionService_ServiceDesc.Streams[0], OpinionService_List_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
@@ -141,15 +141,15 @@ type OpinionServiceServer interface {
 	// Create
 	Create(context.Context, *v1.OpinionAsset) (*v1.OpinionAsset, error)
 	// Get
-	Get(context.Context, *v11.IDX) (*v1.OpinionAsset, error)
+	Get(context.Context, *v11.StoreIDX) (*v1.OpinionAsset, error)
 	// Gett
-	Gett(context.Context, *v11.IDX) (*v1.OpinionAsset, error)
+	Gett(context.Context, *v11.StoreIDX) (*v1.OpinionAsset, error)
 	// Update
 	Update(context.Context, *v1.OpinionAsset) (*v1.OpinionAsset, error)
 	// Delete
-	Delete(context.Context, *v11.IDX) (*v1.OpinionAsset, error)
+	Delete(context.Context, *v11.StoreIDX) (*v1.OpinionAsset, error)
 	// List - stream opinins of a user
-	List(*v11.IDX, OpinionService_ListServer) error
+	List(*v11.StoreIDX, OpinionService_ListServer) error
 	mustEmbedUnimplementedOpinionServiceServer()
 }
 
@@ -160,19 +160,19 @@ type UnimplementedOpinionServiceServer struct {
 func (UnimplementedOpinionServiceServer) Create(context.Context, *v1.OpinionAsset) (*v1.OpinionAsset, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedOpinionServiceServer) Get(context.Context, *v11.IDX) (*v1.OpinionAsset, error) {
+func (UnimplementedOpinionServiceServer) Get(context.Context, *v11.StoreIDX) (*v1.OpinionAsset, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedOpinionServiceServer) Gett(context.Context, *v11.IDX) (*v1.OpinionAsset, error) {
+func (UnimplementedOpinionServiceServer) Gett(context.Context, *v11.StoreIDX) (*v1.OpinionAsset, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Gett not implemented")
 }
 func (UnimplementedOpinionServiceServer) Update(context.Context, *v1.OpinionAsset) (*v1.OpinionAsset, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedOpinionServiceServer) Delete(context.Context, *v11.IDX) (*v1.OpinionAsset, error) {
+func (UnimplementedOpinionServiceServer) Delete(context.Context, *v11.StoreIDX) (*v1.OpinionAsset, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedOpinionServiceServer) List(*v11.IDX, OpinionService_ListServer) error {
+func (UnimplementedOpinionServiceServer) List(*v11.StoreIDX, OpinionService_ListServer) error {
 	return status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedOpinionServiceServer) mustEmbedUnimplementedOpinionServiceServer() {}
@@ -207,7 +207,7 @@ func _OpinionService_Create_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _OpinionService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.IDX)
+	in := new(v11.StoreIDX)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -219,13 +219,13 @@ func _OpinionService_Get_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: OpinionService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OpinionServiceServer).Get(ctx, req.(*v11.IDX))
+		return srv.(OpinionServiceServer).Get(ctx, req.(*v11.StoreIDX))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _OpinionService_Gett_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.IDX)
+	in := new(v11.StoreIDX)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -237,7 +237,7 @@ func _OpinionService_Gett_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: OpinionService_Gett_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OpinionServiceServer).Gett(ctx, req.(*v11.IDX))
+		return srv.(OpinionServiceServer).Gett(ctx, req.(*v11.StoreIDX))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -261,7 +261,7 @@ func _OpinionService_Update_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _OpinionService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.IDX)
+	in := new(v11.StoreIDX)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -273,13 +273,13 @@ func _OpinionService_Delete_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: OpinionService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OpinionServiceServer).Delete(ctx, req.(*v11.IDX))
+		return srv.(OpinionServiceServer).Delete(ctx, req.(*v11.StoreIDX))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _OpinionService_List_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(v11.IDX)
+	m := new(v11.StoreIDX)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
