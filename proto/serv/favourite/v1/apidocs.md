@@ -36,7 +36,7 @@ CreateRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| favourite | [proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) |  | favourite |
+| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) |  | favourite |
 
 
 
@@ -51,7 +51,7 @@ CreateResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| favourite | [proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | optional | favourite |
+| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | optional | favourite |
 
 
 
@@ -66,7 +66,7 @@ DeleteRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id |
+| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid |
 
 
 
@@ -81,7 +81,7 @@ DeleteResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| favourite | [proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | optional | favourite |
+| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | optional | favourite |
 
 
 
@@ -96,7 +96,7 @@ GetRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id |
+| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid |
 
 
 
@@ -111,7 +111,7 @@ GetResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| favourite | [proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | optional | favourite |
+| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | optional | favourite |
 
 
 
@@ -126,7 +126,7 @@ ListRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id_user | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id_user (from) |
+| id_user | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | id_user (from) |
 
 
 
@@ -141,7 +141,7 @@ ListResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| favourite | [proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) |  | favourite |
+| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) |  | favourite |
 
 
 
@@ -156,7 +156,7 @@ UpdateRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| favourite | [proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) |  | favourite |
+| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) |  | favourite |
 | update_mask | [google.protobuf.FieldMask](#google-protobuf-FieldMask) |  | update_mask https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature |
 
 
@@ -172,7 +172,7 @@ UpdateResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| favourite | [proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | optional | favourite |
+| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | optional | favourite |
 
 
 

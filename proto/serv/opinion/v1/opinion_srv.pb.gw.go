@@ -2,11 +2,11 @@
 // source: proto/serv/opinion/v1/opinion_srv.proto
 
 /*
-Package opinion_srvpb is a reverse proxy.
+Package pbsrvopinion is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package opinion_srvpb
+package pbsrvopinion
 
 import (
 	"context"
@@ -66,7 +66,7 @@ func local_request_OpinionService_Create_0(ctx context.Context, marshaler runtim
 }
 
 var (
-	filter_OpinionService_Get_0 = &utilities.DoubleArray{Encoding: map[string]int{"id": 0, "uuid": 1}, Base: []int{1, 2, 3, 2, 0, 0}, Check: []int{0, 1, 1, 2, 4, 3}}
+	filter_OpinionService_Get_0 = &utilities.DoubleArray{Encoding: map[string]int{"qid": 0, "key": 1}, Base: []int{1, 2, 3, 2, 0, 0}, Check: []int{0, 1, 1, 2, 4, 3}}
 )
 
 func request_OpinionService_Get_0(ctx context.Context, marshaler runtime.Marshaler, client OpinionServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -80,14 +80,14 @@ func request_OpinionService_Get_0(ctx context.Context, marshaler runtime.Marshal
 		_   = err
 	)
 
-	val, ok = pathParams["id.uuid"]
+	val, ok = pathParams["qid.key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "qid.key")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "qid.key", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "qid.key", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -113,14 +113,14 @@ func local_request_OpinionService_Get_0(ctx context.Context, marshaler runtime.M
 		_   = err
 	)
 
-	val, ok = pathParams["id.uuid"]
+	val, ok = pathParams["qid.key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "qid.key")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "qid.key", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "qid.key", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -143,7 +143,7 @@ func request_OpinionService_Get_1(ctx context.Context, marshaler runtime.Marshal
 	if berr != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Id); err != nil && err != io.EOF {
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Qid); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -160,7 +160,7 @@ func local_request_OpinionService_Get_1(ctx context.Context, marshaler runtime.M
 	if berr != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Id); err != nil && err != io.EOF {
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Qid); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -204,7 +204,7 @@ func local_request_OpinionService_Gett_0(ctx context.Context, marshaler runtime.
 }
 
 var (
-	filter_OpinionService_Update_0 = &utilities.DoubleArray{Encoding: map[string]int{"opinion": 0, "id": 1, "uuid": 2, "rev": 3}, Base: []int{1, 7, 3, 8, 9, 2, 0, 5, 5, 0, 0, 0, 0, 0}, Check: []int{0, 1, 2, 1, 1, 3, 6, 2, 8, 9, 2, 2, 4, 5}}
+	filter_OpinionService_Update_0 = &utilities.DoubleArray{Encoding: map[string]int{"opinion": 0, "qid": 1, "key": 2, "rev": 3}, Base: []int{1, 7, 3, 8, 9, 2, 0, 5, 5, 0, 0, 0, 0, 0}, Check: []int{0, 1, 2, 1, 1, 3, 6, 2, 8, 9, 2, 2, 4, 5}}
 )
 
 func request_OpinionService_Update_0(ctx context.Context, marshaler runtime.Marshaler, client OpinionServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -233,24 +233,24 @@ func request_OpinionService_Update_0(ctx context.Context, marshaler runtime.Mars
 		_   = err
 	)
 
-	val, ok = pathParams["opinion.id.uuid"]
+	val, ok = pathParams["opinion.qid.key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "opinion.id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "opinion.qid.key")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "opinion.id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "opinion.qid.key", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "opinion.id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "opinion.qid.key", err)
 	}
 
-	val, ok = pathParams["opinion.id.rev"]
+	val, ok = pathParams["opinion.qid.rev"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "opinion.id.rev")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "opinion.qid.rev")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "opinion.id.rev", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "opinion.qid.rev", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "opinion.id.rev", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "opinion.qid.rev", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -291,24 +291,24 @@ func local_request_OpinionService_Update_0(ctx context.Context, marshaler runtim
 		_   = err
 	)
 
-	val, ok = pathParams["opinion.id.uuid"]
+	val, ok = pathParams["opinion.qid.key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "opinion.id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "opinion.qid.key")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "opinion.id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "opinion.qid.key", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "opinion.id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "opinion.qid.key", err)
 	}
 
-	val, ok = pathParams["opinion.id.rev"]
+	val, ok = pathParams["opinion.qid.rev"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "opinion.id.rev")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "opinion.qid.rev")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "opinion.id.rev", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "opinion.qid.rev", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "opinion.id.rev", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "opinion.qid.rev", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -324,7 +324,7 @@ func local_request_OpinionService_Update_0(ctx context.Context, marshaler runtim
 }
 
 var (
-	filter_OpinionService_Delete_0 = &utilities.DoubleArray{Encoding: map[string]int{"id": 0, "uuid": 1}, Base: []int{1, 2, 3, 2, 0, 0}, Check: []int{0, 1, 1, 2, 4, 3}}
+	filter_OpinionService_Delete_0 = &utilities.DoubleArray{Encoding: map[string]int{"qid": 0, "key": 1}, Base: []int{1, 2, 3, 2, 0, 0}, Check: []int{0, 1, 1, 2, 4, 3}}
 )
 
 func request_OpinionService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, client OpinionServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -338,14 +338,14 @@ func request_OpinionService_Delete_0(ctx context.Context, marshaler runtime.Mars
 		_   = err
 	)
 
-	val, ok = pathParams["id.uuid"]
+	val, ok = pathParams["qid.key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "qid.key")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "qid.key", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "qid.key", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -371,14 +371,14 @@ func local_request_OpinionService_Delete_0(ctx context.Context, marshaler runtim
 		_   = err
 	)
 
-	val, ok = pathParams["id.uuid"]
+	val, ok = pathParams["qid.key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "qid.key")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "qid.key", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "qid.key", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -394,7 +394,7 @@ func local_request_OpinionService_Delete_0(ctx context.Context, marshaler runtim
 }
 
 var (
-	filter_OpinionService_List_0 = &utilities.DoubleArray{Encoding: map[string]int{"id_user": 0, "uuid": 1}, Base: []int{1, 2, 3, 2, 0, 0}, Check: []int{0, 1, 1, 2, 4, 3}}
+	filter_OpinionService_List_0 = &utilities.DoubleArray{Encoding: map[string]int{"id_user": 0, "key": 1}, Base: []int{1, 2, 3, 2, 0, 0}, Check: []int{0, 1, 1, 2, 4, 3}}
 )
 
 func request_OpinionService_List_0(ctx context.Context, marshaler runtime.Marshaler, client OpinionServiceClient, req *http.Request, pathParams map[string]string) (OpinionService_ListClient, runtime.ServerMetadata, error) {
@@ -408,14 +408,14 @@ func request_OpinionService_List_0(ctx context.Context, marshaler runtime.Marsha
 		_   = err
 	)
 
-	val, ok = pathParams["id_user.uuid"]
+	val, ok = pathParams["id_user.key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id_user.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id_user.key")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id_user.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "id_user.key", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id_user.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id_user.key", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -477,7 +477,7 @@ func RegisterOpinionServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Get", runtime.WithHTTPPathPattern("/api/v1/opinion/get/{id.uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Get", runtime.WithHTTPPathPattern("/api/v1/opinion/get/{qid.key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -552,7 +552,7 @@ func RegisterOpinionServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Update", runtime.WithHTTPPathPattern("/api/v1/opinion/update/{opinion.id.uuid}/{opinion.id.rev}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Update", runtime.WithHTTPPathPattern("/api/v1/opinion/update/{opinion.qid.key}/{opinion.qid.rev}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -577,7 +577,7 @@ func RegisterOpinionServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Delete", runtime.WithHTTPPathPattern("/api/v1/opinion/delete/{id.uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Delete", runtime.WithHTTPPathPattern("/api/v1/opinion/delete/{qid.key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -670,7 +670,7 @@ func RegisterOpinionServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Get", runtime.WithHTTPPathPattern("/api/v1/opinion/get/{id.uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Get", runtime.WithHTTPPathPattern("/api/v1/opinion/get/{qid.key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -736,7 +736,7 @@ func RegisterOpinionServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Update", runtime.WithHTTPPathPattern("/api/v1/opinion/update/{opinion.id.uuid}/{opinion.id.rev}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Update", runtime.WithHTTPPathPattern("/api/v1/opinion/update/{opinion.qid.key}/{opinion.qid.rev}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -758,7 +758,7 @@ func RegisterOpinionServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Delete", runtime.WithHTTPPathPattern("/api/v1/opinion/delete/{id.uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/Delete", runtime.WithHTTPPathPattern("/api/v1/opinion/delete/{qid.key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -780,7 +780,7 @@ func RegisterOpinionServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/List", runtime.WithHTTPPathPattern("/api/v1/opinion/list/user/{id_user.uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.servstd.opinion.v1.OpinionService/List", runtime.WithHTTPPathPattern("/api/v1/opinion/list/user/{id_user.key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -802,17 +802,17 @@ func RegisterOpinionServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 var (
 	pattern_OpinionService_Create_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v1", "opinion", "create"}, ""))
 
-	pattern_OpinionService_Get_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "opinion", "get", "id.uuid"}, ""))
+	pattern_OpinionService_Get_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "opinion", "get", "qid.key"}, ""))
 
 	pattern_OpinionService_Get_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v1", "opinion", "get"}, ""))
 
 	pattern_OpinionService_Gett_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"proto.servstd.opinion.v1.OpinionService", "Gett"}, ""))
 
-	pattern_OpinionService_Update_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v1", "opinion", "update", "opinion.id.uuid", "opinion.id.rev"}, ""))
+	pattern_OpinionService_Update_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v1", "opinion", "update", "opinion.qid.key", "opinion.qid.rev"}, ""))
 
-	pattern_OpinionService_Delete_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "opinion", "delete", "id.uuid"}, ""))
+	pattern_OpinionService_Delete_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "opinion", "delete", "qid.key"}, ""))
 
-	pattern_OpinionService_List_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v1", "opinion", "list", "user", "id_user.uuid"}, ""))
+	pattern_OpinionService_List_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v1", "opinion", "list", "user", "id_user.key"}, ""))
 )
 
 var (

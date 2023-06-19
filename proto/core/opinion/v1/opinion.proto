@@ -16,40 +16,58 @@ import "google/api/field_behavior.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
-import "proto/core/_store/v1/store.proto";
+import "proto/core/_share/v1/share.proto";
 import "proto/core/asset/v1/asset.proto";
 import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/core/opinion/v1;opinion_pb";
+option go_package = "x-gwi/proto/core/opinion/v1;opinionpb";
 
-// OpinionAsset
-message OpinionAsset {
-  reserved 1, 2;
+// OpinionCore
+message OpinionCore {
+  reserved 1, 2, 4;
 
-  // id - User's Opinion Asset StoreIDX
-  proto.core._store.v1.StoreIDX id = 3 [
+  // qid - Favourite StoreQID
+  proto.core._share.v1.ShareQID qid = 3 [
     (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).message = { required: false, skip: false}
+    (validate.rules).message = { required: false, skip: false }
   ];
 
-  // id_user (from)
-  proto.core._store.v1.StoreIDX id_user = 4;
+  // md - MetaDescription
+  optional proto.core._share.v1.MetaDescription md = 5 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
 
-  // id_asset (to)
-  proto.core._store.v1.StoreIDX id_asset = 5;
+  // mmd - MetaMultiDescription
+  optional proto.core._share.v1.MetaMultiDescription mmd = 6 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
 
-  // md - User's Opinion Asset MetaData
-  optional proto.core.asset.v1.AssetMetaData md = 6;
+  // qid_from_user (from)
+  proto.core._share.v1.ShareQID qid_from_user = 7 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false }
+  ];
 
-
-  // asset - User's Opinion Asset Instance
-  optional proto.core.asset.v1.AssetInstance asset = 7;
+  // qid_to_asset (to)
+  proto.core._share.v1.ShareQID qid_to_asset = 8 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false }
+  ];
 
   // is_favourite
-  optional bool is_favourite = 8;
+  optional bool is_favourite = 9;
 
   // stars
-  optional int32 stars = 9;
+  optional int32 stars = 10 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).int32 = { ignore_empty: true, gte: 0, lte: 10 }
+  ];
 
-
+  // asset - REF User's Favourite Asset
+  optional proto.core.asset.v1.AssetCore asset = 11 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (google.api.field_behavior) = IMMUTABLE
+  ];
 }

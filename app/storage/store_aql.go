@@ -22,6 +22,7 @@ type AppStoreAQL struct {
 
 type ServiceStoreAQL struct {
 	inst *instance.Instance
+	apSt *AppStoreAQL
 	col  CollectionAQL
 	name service.CoreName
 }
@@ -101,6 +102,7 @@ func (st *AppStoreAQL) initDB(ctx context.Context) error {
 			st.stores[coreName] = new(ServiceStoreAQL)
 
 			st.stores[coreName].inst = st.inst
+			st.stores[coreName].apSt = st
 			st.stores[coreName].name = coreName
 		}
 
@@ -113,8 +115,8 @@ func (st *AppStoreAQL) initDB(ctx context.Context) error {
 }
 
 func (st *AppStoreAQL) initCollectionCore(ctx context.Context, coreName service.CoreName) error {
-	name := fmt.Sprintf("srv_core_%s", coreName)
-	// name := string(coreName)
+	// name := fmt.Sprintf("srv_core_%s", coreName)
+	name := string(coreName)
 
 	exists, err := st.db.CollectionExists(ctx, name)
 	if err != nil {
@@ -162,9 +164,25 @@ func (st *ServiceStoreAQL) ReadDocument(ctx context.Context, key string, result 
 	return meta, nil
 }
 
-// DocumentExists checks if a document with given key exists in the collection.
+// DocumentExists checks if a document with given key exists in the core collection.
 func (st *ServiceStoreAQL) DocumentExists(ctx context.Context, key string) (bool, error) {
 	exists, err := st.col.DocumentExists(ctx, key)
+	if err != nil {
+		return false, fmt.Errorf("col.DocumentExists: %w", err)
+	}
+
+	return exists, nil
+}
+
+// DocumentExists checks if a document with given key exists in other core collection.
+func (st *ServiceStoreAQL) OtherCoreDocumentExists(ctx context.Context, key string, coreName service.CoreName) (
+	bool, error) {
+	srvStoreAQL, ok := st.apSt.stores[coreName]
+	if !ok {
+		return false, fmt.Errorf("collectionCore doesn't exists") //nolint:goerr113
+	}
+
+	exists, err := srvStoreAQL.col.DocumentExists(ctx, key)
 	if err != nil {
 		return false, fmt.Errorf("col.DocumentExists: %w", err)
 	}

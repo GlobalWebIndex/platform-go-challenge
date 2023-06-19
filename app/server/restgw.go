@@ -14,14 +14,14 @@ import (
 
 	"x-gwi/app/logs"
 	"x-gwi/app/pki"
-	asset_srvpb "x-gwi/proto/serv/asset/v1"
-	asset_srvpb2 "x-gwi/proto/serv/asset/v2"
-	favourite_srvpb "x-gwi/proto/serv/favourite/v1"
-	favourite_srvpb2 "x-gwi/proto/serv/favourite/v2"
-	opinion_srvpb "x-gwi/proto/serv/opinion/v1"
-	opinion_srvpb2 "x-gwi/proto/serv/opinion/v2"
-	user_srvpb "x-gwi/proto/serv/user/v1"
-	user_srvpb2 "x-gwi/proto/serv/user/v2"
+	pbsrvuser "x-gwi/proto/serv/_user/v1"
+	pbsrvuser2 "x-gwi/proto/serv/_user/v2"
+	pbsrvasset "x-gwi/proto/serv/asset/v1"
+	pbsrvasset2 "x-gwi/proto/serv/asset/v2"
+	pbsrvfavourite "x-gwi/proto/serv/favourite/v1"
+	pbsrvfavourite2 "x-gwi/proto/serv/favourite/v2"
+	pbsrvopinion "x-gwi/proto/serv/opinion/v1"
+	pbsrvopinion2 "x-gwi/proto/serv/opinion/v2"
 )
 
 // asset user favourite opinion
@@ -59,52 +59,52 @@ func (s *RESTGW) initRESTGW(ctx context.Context, config *ConfigServer, pki *pki.
 
 	// register grpc rest gateway stubs (proto/serv/*/v*/*.pb.gw.go)
 
-	if err = asset_srvpb.RegisterAssetServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
+	if err = pbsrvasset.RegisterAssetServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
 		logs.Error().Err(err).Send()
 
-		return fmt.Errorf("auth_srvpb.RegisterAuthServiceHandlerFromEndpoint: %w", err)
+		return fmt.Errorf("auth_pbsrv.RegisterAuthServiceHandlerFromEndpoint: %w", err)
 	}
 
-	if err = asset_srvpb2.RegisterAssetServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
+	if err = pbsrvasset2.RegisterAssetServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
 		logs.Error().Err(err).Send()
 
-		return fmt.Errorf("auth_srvpb.RegisterAuthServiceHandlerFromEndpoint: %w", err)
+		return fmt.Errorf("auth_pbsrv.RegisterAuthServiceHandlerFromEndpoint: %w", err)
 	}
 
-	if err = user_srvpb.RegisterUserServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
+	if err = pbsrvuser.RegisterUserServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
 		logs.Error().Err(err).Send()
 
-		return fmt.Errorf("auth_srvpb.RegisterAuthServiceHandlerFromEndpoint: %w", err)
+		return fmt.Errorf("auth_pbsrv.RegisterAuthServiceHandlerFromEndpoint: %w", err)
 	}
 
-	if err = user_srvpb2.RegisterUserServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
+	if err = pbsrvuser2.RegisterUserServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
 		logs.Error().Err(err).Send()
 
-		return fmt.Errorf("auth_srvpb.RegisterAuthServiceHandlerFromEndpoint: %w", err)
+		return fmt.Errorf("auth_pbsrv.RegisterAuthServiceHandlerFromEndpoint: %w", err)
 	}
 
-	if err = favourite_srvpb.RegisterFavouriteServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
+	if err = pbsrvfavourite.RegisterFavouriteServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
 		logs.Error().Err(err).Send()
 
-		return fmt.Errorf("auth_srvpb.RegisterAuthServiceHandlerFromEndpoint: %w", err)
+		return fmt.Errorf("auth_pbsrv.RegisterAuthServiceHandlerFromEndpoint: %w", err)
 	}
 
-	if err = favourite_srvpb2.RegisterFavouriteServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
+	if err = pbsrvfavourite2.RegisterFavouriteServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
 		logs.Error().Err(err).Send()
 
-		return fmt.Errorf("auth_srvpb.RegisterAuthServiceHandlerFromEndpoint: %w", err)
+		return fmt.Errorf("auth_pbsrv.RegisterAuthServiceHandlerFromEndpoint: %w", err)
 	}
 
-	if err = opinion_srvpb.RegisterOpinionServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
+	if err = pbsrvopinion.RegisterOpinionServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
 		logs.Error().Err(err).Send()
 
-		return fmt.Errorf("auth_srvpb.RegisterAuthServiceHandlerFromEndpoint: %w", err)
+		return fmt.Errorf("auth_pbsrv.RegisterAuthServiceHandlerFromEndpoint: %w", err)
 	}
 
-	if err = opinion_srvpb2.RegisterOpinionServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
+	if err = pbsrvopinion2.RegisterOpinionServiceHandlerFromEndpoint(ctx, s.gwMux, s.config.GRPC.Address, s.grpcDialOpts); err != nil { //nolint:lll
 		logs.Error().Err(err).Send()
 
-		return fmt.Errorf("auth_srvpb.RegisterAuthServiceHandlerFromEndpoint: %w", err)
+		return fmt.Errorf("auth_pbsrv.RegisterAuthServiceHandlerFromEndpoint: %w", err)
 	}
 
 	return nil

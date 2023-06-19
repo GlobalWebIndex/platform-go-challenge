@@ -17,13 +17,13 @@ import "google/protobuf/field_mask.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
 // import "proto/core/asset/asset.proto";
-import "proto/core/_store/v1/store.proto";
+import "proto/core/_share/v1/share.proto";
 import "proto/core/favourite/v1/favourite.proto";
 // import "proto/core/user/user.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/serv/favourite/v1;favourite_srvpb";
+option go_package = "x-gwi/proto/serv/favourite/v1;pbsrvfavourite";
 
 // FavouriteService
 // a microservice to handle companies. It provides the following operations:
@@ -41,8 +41,8 @@ service FavouriteService {
   // Get
   rpc Get(GetRequest) returns (GetResponse) {
     option (google.api.http) = {
-      get: "/api/v1/favourite/get/{id.uuid}"
-      additional_bindings { post: "/api/v1/favourite/get" body: "id" }
+      get: "/api/v1/favourite/get/{qid.key}"
+      additional_bindings { post: "/api/v1/favourite/get" body: "qid" }
     };
   };
 
@@ -52,10 +52,10 @@ service FavouriteService {
   // Update
   rpc Update(UpdateRequest) returns (UpdateResponse) {
     option (google.api.http) = {
-      patch: "/api/v1/favourite/update/{favourite.id.uuid}/{favourite.id.rev}"
+      patch: "/api/v1/favourite/update/{favourite.qid.key}/{favourite.qid.rev}"
       body: "favourite"
       // additional_bindings {
-      //   put: "/api/v1/favourite/update/{id.uuid}/{id.rev}"
+      //   put: "/api/v1/favourite/update/{qid.key}/{qid.rev}"
       //   body: "favourite"
       // }
     };
@@ -64,14 +64,14 @@ service FavouriteService {
   // Delete
   rpc Delete(DeleteRequest) returns (DeleteResponse) {
     option (google.api.http) = {
-      delete: "/api/v1/favourite/delete/{id.uuid}"
+      delete: "/api/v1/favourite/delete/{qid.key}"
     };
   };
 
   // List - stream favourites of a user
   rpc List(ListRequest) returns (stream ListResponse) {
     option (google.api.http) = {
-      get: "/api/v1/favourite/list/user/{id_user.uuid}"
+      get: "/api/v1/favourite/list/user/{id_user.key}"
     };
   };
 }
@@ -81,7 +81,7 @@ message CreateRequest {
   reserved 1, 2, 3;
 
   // favourite
-  proto.core.favourite.v1.FavouriteAsset favourite = 4 [
+  proto.core.favourite.v1.FavouriteCore favourite = 4 [
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).message = { required: true, skip: false}
   ];
@@ -92,15 +92,15 @@ message CreateResponse {
   reserved 1, 2, 3;
 
   // favourite
-  optional proto.core.favourite.v1.FavouriteAsset favourite = 4;
+  optional proto.core.favourite.v1.FavouriteCore favourite = 4;
 }
 
 // GetRequest
 message GetRequest {
-  reserved 1, 2, 3;
+  reserved 1, 2;
 
-  // id
-  proto.core._store.v1.StoreIDX id = 4 [
+  // qid
+  proto.core._share.v1.ShareQID qid = 3 [
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).message = { required: true, skip: false}
   ];
@@ -111,7 +111,7 @@ message GetResponse {
   reserved 1, 2, 3;
 
   // favourite
-  optional proto.core.favourite.v1.FavouriteAsset favourite = 4;
+  optional proto.core.favourite.v1.FavouriteCore favourite = 4;
 }
 
 // UpdateRequest
@@ -119,7 +119,7 @@ message UpdateRequest {
   reserved 1, 2, 3;
 
   // favourite
-  proto.core.favourite.v1.FavouriteAsset favourite = 4 [
+  proto.core.favourite.v1.FavouriteCore favourite = 4 [
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).message = { required: true, skip: false}
   ];
@@ -134,15 +134,15 @@ message UpdateResponse {
   reserved 1, 2, 3;
 
   // favourite
-  optional proto.core.favourite.v1.FavouriteAsset favourite = 4;
+  optional proto.core.favourite.v1.FavouriteCore favourite = 4;
 }
 
 // DeleteRequest
 message DeleteRequest {
   reserved 1, 2;
 
-  // id
-  proto.core._store.v1.StoreIDX id = 3 [
+  // qid
+  proto.core._share.v1.ShareQID qid = 3 [
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).message = { required: true, skip: false}
   ];
@@ -153,7 +153,7 @@ message DeleteResponse {
   reserved 1, 2, 3;
 
   // favourite
-  optional proto.core.favourite.v1.FavouriteAsset favourite = 4;
+  optional proto.core.favourite.v1.FavouriteCore favourite = 4;
 }
 
 // ListRequest
@@ -161,7 +161,7 @@ message ListRequest {
   reserved 1, 2, 3;
 
   // id_user (from)
-  proto.core._store.v1.StoreIDX id_user = 5 [
+  proto.core._share.v1.ShareQID id_user = 5 [
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).message = { required: true, skip: false}
   ];
@@ -172,7 +172,7 @@ message ListResponse {
   reserved 1, 2, 3;
 
   // favourite
-  proto.core.favourite.v1.FavouriteAsset favourite = 4;
+  proto.core.favourite.v1.FavouriteCore favourite = 4;
 }
 
 // https://github.com/googleapis/googleapis/blob/master/google/api/serviceusage/v1/serviceusage.proto

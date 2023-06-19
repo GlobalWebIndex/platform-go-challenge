@@ -16,12 +16,12 @@ import "google/protobuf/field_mask.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
-import "proto/core/_store/v1/store.proto";
+import "proto/core/_share/v1/share.proto";
 import "proto/core/asset/v1/asset.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/serv/asset/v1;asset_srvpb";
+option go_package = "x-gwi/proto/serv/asset/v1;pbsrvasset";
 
 // AssetService
 // a microservice to handle companies. It provides the following operations:
@@ -39,8 +39,8 @@ service AssetService {
   // Get
   rpc Get(GetRequest) returns (GetResponse) {
     option (google.api.http) = {
-      get: "/api/v1/asset/get/{id.uuid}"
-      additional_bindings { post: "/api/v1/asset/get" body: "id" }
+      get: "/api/v1/asset/get/{qid.key}"
+      additional_bindings { post: "/api/v1/asset/get" body: "qid" }
     };
   };
 
@@ -50,10 +50,10 @@ service AssetService {
   // Update
   rpc Update(UpdateRequest) returns (UpdateResponse) {
     option (google.api.http) = {
-      patch: "/api/v1/asset/update/{asset.id.uuid}/{asset.id.rev}"
+      patch: "/api/v1/asset/update/{asset.qid.key}/{asset.qid.rev}"
       body: "asset"
       // additional_bindings {
-      //   put: "/api/v1/asset/update/{id.uuid}/{id.rev}"
+      //   put: "/api/v1/asset/update/{qid.key}/{qid.rev}"
       //   body: "asset"
       // }
     };
@@ -62,7 +62,7 @@ service AssetService {
   // Delete
   rpc Delete(DeleteRequest) returns (DeleteResponse) {
     option (google.api.http) = {
-      delete: "/api/v1/asset/delete/{id.uuid}"
+      delete: "/api/v1/asset/delete/{qid.key}"
     };
   };
 }
@@ -72,7 +72,7 @@ message CreateRequest {
   reserved 1, 2, 3;
 
   // asset
-  proto.core.asset.v1.AssetInstance asset = 4 [
+  proto.core.asset.v1.AssetCore asset = 4 [
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).message = { required: true, skip: false}
   ];
@@ -83,15 +83,15 @@ message CreateResponse {
   reserved 1, 2, 3;
 
   // asset
-  proto.core.asset.v1.AssetInstance asset = 4;
+  proto.core.asset.v1.AssetCore asset = 4;
 }
 
 // GetRequest
 message GetRequest {
   reserved 1, 2;
 
-  // id
-  proto.core._store.v1.StoreIDX id = 3 [
+  // qid
+  proto.core._share.v1.ShareQID qid = 3 [
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).message = { required: true, skip: false}
   ];
@@ -102,7 +102,7 @@ message GetResponse {
   reserved 1, 2, 3;
 
   // asset
-  proto.core.asset.v1.AssetInstance asset = 4;
+  proto.core.asset.v1.AssetCore asset = 4;
 }
 
 // UpdateRequest
@@ -110,7 +110,7 @@ message UpdateRequest {
   reserved 1, 2, 3;
 
   // asset
-  proto.core.asset.v1.AssetInstance asset = 4 [
+  proto.core.asset.v1.AssetCore asset = 4 [
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).message = { required: true, skip: false}
   ];
@@ -125,15 +125,15 @@ message UpdateResponse {
   reserved 1, 2, 3;
 
   // asset
-  proto.core.asset.v1.AssetInstance asset = 4;
+  proto.core.asset.v1.AssetCore asset = 4;
 }
 
 // DeleteRequest
 message DeleteRequest {
   reserved 1, 2;
 
-  // id
-  proto.core._store.v1.StoreIDX id = 3 [
+  // qid
+  proto.core._share.v1.ShareQID qid = 3 [
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).message = { required: true, skip: false}
   ];
@@ -144,7 +144,7 @@ message DeleteResponse {
   reserved 1, 2, 3;
 
   // asset
-  proto.core.asset.v1.AssetInstance asset = 4;
+  proto.core.asset.v1.AssetCore asset = 4;
 }
 
 // https://github.com/googleapis/googleapis/blob/master/google/api/serviceusage/v1/serviceusage.proto

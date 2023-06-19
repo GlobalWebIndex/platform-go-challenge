@@ -6,7 +6,7 @@
 // - protoc             v4.23.2
 // source: proto/serv/favourite/v1/favourite_srv.proto
 
-package favourite_srvpb
+package pbsrvfavourite
 
 import (
 	context "context"

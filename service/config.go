@@ -17,3 +17,7 @@ func CoreNames() []CoreName {
 		NameOpinion,
 	}
 }
+
+func (cn CoreName) String() string {
+	return string(cn)
+}

@@ -34,7 +34,7 @@ CreateRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| asset | [proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) |  | asset |
+| asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) |  | asset |
 
 
 
@@ -49,7 +49,7 @@ CreateResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| asset | [proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) |  | asset |
+| asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) |  | asset |
 
 
 
@@ -64,7 +64,7 @@ DeleteRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id |
+| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid |
 
 
 
@@ -79,7 +79,7 @@ DeleteResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| asset | [proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) |  | asset |
+| asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) |  | asset |
 
 
 
@@ -94,7 +94,7 @@ GetRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id |
+| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid |
 
 
 
@@ -109,7 +109,7 @@ GetResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| asset | [proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) |  | asset |
+| asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) |  | asset |
 
 
 
@@ -124,7 +124,7 @@ UpdateRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| asset | [proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) |  | asset |
+| asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) |  | asset |
 | update_mask | [google.protobuf.FieldMask](#google-protobuf-FieldMask) |  | update_mask https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature |
 
 
@@ -140,7 +140,7 @@ UpdateResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| asset | [proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) |  | asset |
+| asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) |  | asset |
 
 
 

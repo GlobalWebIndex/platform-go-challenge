@@ -16,86 +16,46 @@ import "google/protobuf/struct.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
-import "proto/core/_store/v1/store.proto";
+import "proto/core/_share/v1/share.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/core/asset/v1;asset_pb";
+option go_package = "x-gwi/proto/core/asset/v1;assetpb";
 
-// AssetInstance
-message AssetInstance {
-  reserved 1, 2;
+// AssetCore
+message AssetCore {
+  reserved 1, 2, 4;
 
-  // id - Asset StoreIDX
-  proto.core._store.v1.StoreIDX id = 3 [
+  // qid - Asset StoreQID
+  proto.core._share.v1.ShareQID qid = 3 [
     (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).message = { required: false, skip: false}
+    (validate.rules).message = { required: false, skip: false }
   ];
 
-  // md - AssetMetaData
-  optional AssetMetaData md = 4;
+  // md - MetaDescription
+  optional proto.core._share.v1.MetaDescription md = 5;
+
+  // mmd - MetaMultiDescription
+  optional proto.core._share.v1.MetaMultiDescription mmd = 6;
 
   // chart - Chart (that has a small title, axes titles and data)
-  optional AssetChart chart = 5;
+  optional AssetChart chart = 7;
 
   // insight - Insight (a small piece of text that provides some insight into a
   // topic, e.g. "40% of millenials spend more than 3hours on social media
   // daily")
-  optional AssetInsight insight = 6;
+  optional AssetInsight insight = 8;
 
   // audience - Audience (which is a series of characteristics, for that
   // exercise lets focus on gender (Male, Female), birth country, age groups,
   // hours spent daily on social media, number of purchases last month) e.g.
   // Males from 24-35 that spent more than 3 hours on social media daily.
-  optional AssetAudience audience = 7;
-}
-
-// AssetMetaData - title, topic, label, description, tags
-message AssetMetaData {
-  reserved 1, 2;
-
-  // title - (0-256 characters) optional
-  optional string title = 3 [
-    (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).string = { ignore_empty: true, max_len: 256 }
-  ];
-
-  // topic - (0-256 characters) optional
-  optional string topic = 4 [
-    (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).string = { ignore_empty: true, max_len: 256 }
-  ];
-
-  // label - (0-256 characters) optional
-  optional string label = 5 [
-    (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).string = { ignore_empty: true, max_len: 256 }
-  ];
-
-  // description - (0-1024 characters) optional
-  optional string description = 6 [
-    (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).string = { ignore_empty: true, max_len: 1024 }
-  ];
-
-  // tags - (0-32 elements, unique, tag max_len 32) optional
-  repeated string tags = 7 [
-    (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).repeated = {
-      ignore_empty: true,
-      max_items: 32,
-      unique: true,
-      items: { string: { max_len: 32 } }
-    }
-  ];
+  optional AssetAudience audience = 9;
 }
 
 // AssetChart - (that has a small title, axes titles and data)
 message AssetChart {
-  reserved 1, 2;
-
-  // md - Asset Chart MetaData
-  optional AssetMetaData md = 3;
+  reserved 1, 2, 3;
 
   // title - (0-256 characters) optional
   optional string title = 4 [
@@ -103,29 +63,38 @@ message AssetChart {
     (validate.rules).string = { ignore_empty: true, max_len: 256 }
   ];
 
+  // md - MetaDescription
+  optional proto.core._share.v1.MetaDescription md = 5;
+
+  // mmd - MetaMultiDescription
+  optional proto.core._share.v1.MetaMultiDescription mmd = 6;
+
   // data
-  optional google.protobuf.Struct data = 5;
+  optional google.protobuf.Struct data = 7;
 
   // data_raw - raw binary data (65536)
-  optional bytes data_raw = 6;
+  optional bytes data_raw = 8;
 
   // options
-  optional google.protobuf.Struct options = 7;
+  optional google.protobuf.Struct options = 9;
 }
 
 // AssetInsight - (a small piece of text that provides some insight into a
 // topic, e.g. "40% of millenials spend more than 3hours on social media daily")
 message AssetInsight {
-  reserved 1, 2;
-
-  // md - Asset Insight MetaData
-  optional AssetMetaData md = 3;
+  reserved 1, 2, 3;
 
   // sentence - (1-256 characters) required
   optional string sentence = 4 [
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string = { min_len: 1, max_len: 256 }
   ];
+
+  // md - MetaDescription
+  optional proto.core._share.v1.MetaDescription md = 5;
+
+  // mmd - MetaMultiDescription
+  optional proto.core._share.v1.MetaMultiDescription mmd = 6;
 }
 
 // AssetAudience -  (which is a series of characteristics, for that exercise
@@ -133,13 +102,16 @@ message AssetInsight {
 // daily on social media, number of purchases last month) e.g. Males from 24-35
 // that spent more than 3 hours on social media daily.
 message AssetAudience {
-  reserved 1, 2;
+  reserved 1, 2, 3, 4;
 
-  // md - Asset Audience MetaData
-  optional AssetMetaData md = 3;
+  // md - MetaDescription
+  optional proto.core._share.v1.MetaDescription md = 5;
+
+  // mmd - MetaMultiDescription
+  optional proto.core._share.v1.MetaMultiDescription mmd = 6;
 
   // gender - (male | female)
-  optional string gender = 4 [
+  optional string gender = 7 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string = {
       ignore_empty: true,
@@ -148,24 +120,24 @@ message AssetAudience {
   ];
 
   // genders - [](male, female)
-  repeated string genders = 5 [
+  repeated string genders = 8 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).repeated = {
       ignore_empty: true,
-      max_items: 300,
+      max_items: 30,
       unique: true,
-      items: { string: { in: [ "male", "female" ] } }
+      items: { string: { in: [ "", "male", "female" ] } }
     }
   ];
 
   // country_code - iso 2 birth country code (auto lowercase)
-  optional string country_code = 6 [
+  optional string country_code = 9 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string = { ignore_empty: true, len: 2 }
   ];
 
   // country_codes - [](0-300 elements, unique, code max_len 2) optional
-  repeated string country_codes = 7 [
+  repeated string country_codes = 10 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).repeated = {
       ignore_empty: true,
@@ -176,37 +148,37 @@ message AssetAudience {
   ];
 
   // age_min - age groups (1-100)
-  optional uint32 age_min = 8 [
+  optional uint32 age_min = 11 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 100 }
   ];
 
   // age_max - age groups (1-100)
-  optional uint32 age_max = 9 [
+  optional uint32 age_max = 12 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 100 }
   ];
 
   // hours_min - hours on social (1-24) hours spent daily on social media
-  optional uint32 hours_min = 10 [
+  optional uint32 hours_min = 13 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 24 }
   ];
 
   // hours_max - hours on social (1-24) hours spent daily on social media
-  optional uint32 hours_max = 11 [
+  optional uint32 hours_max = 14 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 24 }
   ];
 
   // purchases_min - (1-100_000) number of purchases last month
-  optional uint32 purchases_min = 12 [
+  optional uint32 purchases_min = 15 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 100000 }
   ];
 
   // purchases_max - (1-100_000) number of purchases last month
-  optional uint32 purchases_max = 13 [
+  optional uint32 purchases_max = 16 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 100000 }
   ];

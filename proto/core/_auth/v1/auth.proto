@@ -16,10 +16,43 @@ import "google/api/field_behavior.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
+import "proto/core/_share/v1/share.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/core/_auth/v1;auth_pb";
+option go_package = "x-gwi/proto/core/_auth/v1;authpb";
+
+// AccountCore
+message AccountCore {
+  reserved 1, 2, 4, 7;
+
+  // qid - Account StoreQID
+  proto.core._share.v1.ShareQID qid = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false}
+  ];
+
+  // md - MetaDescription
+  optional proto.core._share.v1.MetaDescription md = 5;
+
+  // mmd - MetaMultiDescription
+  optional proto.core._share.v1.MetaMultiDescription mmd = 6;
+
+  // basic_account - BasicAccount
+  optional BasicAccount basic_account = 8;
+}
+
+// BasicAccount
+message BasicAccount {
+  reserved 1, 2, 3;
+
+  // username - Name (1-256 characters) required
+  string username = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (google.api.field_behavior) = IMMUTABLE,
+    (validate.rules).string = { min_len: 1, max_len: 256 }
+  ];
+}
 
 // BasicAuth - username : password
 message BasicAuth {
@@ -35,6 +68,13 @@ message BasicAuth {
   string password = 5 [
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string = { min_len: 16, max_len: 72 }
+  ];
+
+  // passhash
+  string passhash = 6 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (google.api.field_behavior) = IMMUTABLE,
+    (validate.rules).string = { ignore_empty: true, min_len: 16, max_len: 256 }
   ];
 }
 

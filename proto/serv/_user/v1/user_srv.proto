@@ -1,0 +1,205 @@
+// proto/serv/_user/v1/user_srv.proto
+
+syntax = "proto3";
+
+package proto.serv._user.v1;
+
+// /usr/local/include/google/protobuf/
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+// import "google/api/http.proto";
+// import "google/protobuf/any.proto";
+// import "google/protobuf/duration.proto";
+// import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+// import "google/protobuf/struct.proto";
+// import "google/protobuf/timestamp.proto";
+// import "google/protobuf/wrappers.proto";
+// import "google/rpc/status.proto";
+import "proto/core/_share/v1/share.proto";
+import "proto/core/_user/v1/user.proto";
+import "proto/core/favourite/v1/favourite.proto";
+import "proto/core/opinion/v1/opinion.proto";
+// https://github.com/bufbuild/protoc-gen-validate
+import "validate/validate.proto";
+
+option go_package = "x-gwi/proto/serv/_user/v1;pbsrvuser";
+
+// UserService
+// a microservice to handle companies. It provides the following operations:
+// • Create, • Patch, • Delete, • Get (one)
+// standard methods: List, Get, Create, Update, and Delete
+service UserService {
+  // Create
+  rpc Create(CreateRequest) returns (CreateResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/user/create"
+      body: "user"
+    };
+  };
+
+  // Get
+  rpc Get(GetRequest) returns (GetResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/user/get/{qid.key}"
+      additional_bindings { post: "/api/v1/user/get" body: "qid" }
+    };
+  };
+
+  // Gett
+  rpc Gett(GetRequest) returns (GetResponse);
+
+  // Update
+  rpc Update(UpdateRequest) returns (UpdateResponse) {
+    option (google.api.http) = {
+      patch: "/api/v1/user/update/{user.qid.key}/{user.qid.rev}"
+      body: "user"
+      // additional_bindings {
+      //   put: "/api/v1/user/update/{qid.key}/{qid.rev}"
+      //   body: "user"
+      // }
+    };
+  };
+
+  // Delete
+  rpc Delete(DeleteRequest) returns (DeleteResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/user/delete/{qid.key}"
+    };
+  };
+
+  // ListFavourites - stream favourites of a user
+  rpc ListFavourites(ListFavouritesRequest) returns (stream ListFavouritesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/favourite/list/user/{id_user.key}"
+    };
+  };
+
+  // ListOpinions - stream opinions of a user
+  rpc ListOpinions(ListOpinionsRequest) returns (stream ListOpinionsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/opinion/list/user/{id_user.key}"
+    };
+  };
+}
+
+// CreateRequest
+message CreateRequest {
+  reserved 1, 2, 3;
+
+  // user
+  proto.core._user.v1.UserCore user = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+}
+
+// CreateResponse
+message CreateResponse {
+  reserved 1, 2, 3;
+
+  // user
+  optional proto.core._user.v1.UserCore user = 4;
+}
+
+// GetRequest
+message GetRequest {
+  reserved 1, 2;
+
+  // qid
+  proto.core._share.v1.ShareQID qid = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+}
+
+// GetResponse
+message GetResponse {
+  reserved 1, 2, 3;
+
+  // user
+  proto.core._user.v1.UserCore user = 4;
+}
+
+// UpdateRequest
+message UpdateRequest {
+  reserved 1, 2, 3;
+
+  // user
+  proto.core._user.v1.UserCore user = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+
+  // update_mask
+  // https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature
+  google.protobuf.FieldMask update_mask = 5;
+}
+
+// UpdateResponse
+message UpdateResponse {
+  reserved 1, 2, 3;
+
+  // user
+  proto.core._user.v1.UserCore user = 4;
+}
+
+// DeleteRequest
+message DeleteRequest {
+  reserved 1, 2;
+
+  // qid
+  proto.core._share.v1.ShareQID qid = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+}
+
+// DeleteResponse
+message DeleteResponse {
+  reserved 1, 2, 3;
+
+  // user
+  proto.core._user.v1.UserCore user = 4;
+}
+
+// ListFavouritesRequest
+message ListFavouritesRequest {
+  reserved 1, 2, 3;
+
+  // id_user (from)
+  proto.core._share.v1.ShareQID id_user = 5 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+}
+
+// ListFavouritesResponse
+message ListFavouritesResponse {
+  reserved 1, 2, 3;
+
+  // favourite
+  proto.core.favourite.v1.FavouriteCore favourite = 4;
+}
+
+// ListOpinionsRequest
+message ListOpinionsRequest {
+  reserved 1, 2, 3;
+
+  // id_user (from)
+  proto.core._share.v1.ShareQID id_user = 5 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+}
+
+// ListOpinionsResponse
+message ListOpinionsResponse {
+  reserved 1, 2, 3;
+
+  // opinion
+  proto.core.opinion.v1.OpinionCore opinion = 4;
+}
+
+// https://github.com/googleapis/googleapis/blob/master/google/api/serviceusage/v1/serviceusage.proto
+// post: "/v1/services/{sub_message}:check" :disable :enable :undelete

@@ -15,12 +15,12 @@ import "google/api/annotations.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
-import "proto/core/_store/v1/store.proto";
+import "proto/core/_share/v1/share.proto";
 import "proto/core/opinion/v1/opinion.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 // import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/serv/opinion/v2;opinion_srvpb";
+option go_package = "x-gwi/proto/serv/opinion/v2;pbsrvopinion";
 
 // OpinionService
 // a microservice to handle companies. It provides the following operations:
@@ -28,7 +28,7 @@ option go_package = "x-gwi/proto/serv/opinion/v2;opinion_srvpb";
 // standard methods: List, Get, Create, Update, and Delete
 service OpinionService {
   // Create
-  rpc Create(proto.core.opinion.v1.OpinionAsset) returns (proto.core.opinion.v1.OpinionAsset) {
+  rpc Create(proto.core.opinion.v1.OpinionCore) returns (proto.core.opinion.v1.OpinionCore) {
     option (google.api.http) = {
       post: "/api/v2/opinion/create"
       body: "*"
@@ -36,39 +36,39 @@ service OpinionService {
   };
 
   // Get
-  rpc Get(proto.core._store.v1.StoreIDX) returns (proto.core.opinion.v1.OpinionAsset) {
+  rpc Get(proto.core._share.v1.ShareQID) returns (proto.core.opinion.v1.OpinionCore) {
     option (google.api.http) = {
-      get: "/api/v2/opinion/get/{uuid}"
+      get: "/api/v2/opinion/get/{key}"
       additional_bindings { post: "/api/v2/opinion/get" body: "*" }
     };
   };
 
   // Gett
-  rpc Gett(proto.core._store.v1.StoreIDX) returns (proto.core.opinion.v1.OpinionAsset);
+  rpc Gett(proto.core._share.v1.ShareQID) returns (proto.core.opinion.v1.OpinionCore);
 
   // Update
-  rpc Update(proto.core.opinion.v1.OpinionAsset) returns (proto.core.opinion.v1.OpinionAsset) {
+  rpc Update(proto.core.opinion.v1.OpinionCore) returns (proto.core.opinion.v1.OpinionCore) {
     option (google.api.http) = {
-      patch: "/api/v2/opinion/update/{id.uuid}/{id.rev}"
+      patch: "/api/v2/opinion/update/{qid.key}/{qid.rev}"
       body: "*"
       // additional_bindings {
-      //   put: "/api/v2/opinion/update/{id.uuid}/{id.rev}"
+      //   put: "/api/v2/opinion/update/{qid.key}/{qid.rev}"
       //   body: "*"
       // }
     };
   };
 
   // Delete
-  rpc Delete(proto.core._store.v1.StoreIDX) returns (proto.core.opinion.v1.OpinionAsset) {
+  rpc Delete(proto.core._share.v1.ShareQID) returns (proto.core.opinion.v1.OpinionCore) {
     option (google.api.http) = {
-      delete: "/api/v2/opinion/delete/{uuid}"
+      delete: "/api/v2/opinion/delete/{key}"
     };
   };
 
   // List - stream opinins of a user
-  rpc List(proto.core._store.v1.StoreIDX) returns (stream proto.core.opinion.v1.OpinionAsset) {
+  rpc List(proto.core._share.v1.ShareQID) returns (stream proto.core.opinion.v1.OpinionCore) {
     option (google.api.http) = {
-      get: "/api/v2/opinion/list/user/{uuid}"
+      get: "/api/v2/opinion/list/user/{key}"
     };
   };
 }

@@ -1,79 +1,118 @@
-package favouritesrv2
+package apiv2favourite
 
 import (
 	"context"
 	"fmt"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"x-gwi/app/storage"
-	pb_idx "x-gwi/proto/core/_store/v1"
-	pb "x-gwi/proto/core/favourite/v1"
-	srvpb "x-gwi/proto/serv/favourite/v2"
+	sharepb "x-gwi/proto/core/_share/v1"
+	favouritepb "x-gwi/proto/core/favourite/v1"
+	pbsrv "x-gwi/proto/serv/favourite/v2"
 	"x-gwi/service/core/favourite"
 )
 
-type Service struct {
-	srvpb.UnimplementedFavouriteServiceServer
-	favourite *favourite.CoreFavourite
-	storage   *storage.ServiceStorage
+type ServiceAPI struct {
+	pbsrv.UnimplementedFavouriteServiceServer
+	favouriteCore *favourite.CoreFavourite
+	// storage   *storage.ServiceStorage
 }
 
-func RegisterGRPC(grpcServer *grpc.Server, storage *storage.ServiceStorage) (*Service, error) {
+func RegisterGRPC(grpcServer *grpc.Server, storage *storage.ServiceStorage) (*ServiceAPI, error) {
 	var err error
 
-	s := &Service{ //nolint:exhaustruct
-		storage: storage,
+	s := &ServiceAPI{ //nolint:exhaustruct
+		// storage: storage,
 	}
 
-	s.favourite, err = favourite.NewCore(s.storage)
+	s.favouriteCore, err = favourite.NewCore(storage)
 	if err != nil {
 		return nil, fmt.Errorf("favourite.NewCore: %w", err)
 	}
 
-	srvpb.RegisterFavouriteServiceServer(grpcServer, s)
+	pbsrv.RegisterFavouriteServiceServer(grpcServer, s)
 
 	return s, nil
 }
 
-func (s *Service) Create(ctx context.Context, in *pb.FavouriteAsset) (*pb.FavouriteAsset, error) {
-	_, _ = (srvpb.UnimplementedFavouriteServiceServer{}).Create(ctx, in)
+func (s *ServiceAPI) Create(ctx context.Context, in *favouritepb.FavouriteCore) (*favouritepb.FavouriteCore, error) {
+	_, _ = (pbsrv.UnimplementedFavouriteServiceServer{}).Create(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.create(ctx, in)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).Create(ctx, in) //nolint:wrapcheck
+	// 2. process by core
+	err := s.favouriteCore.Create(ctx, in)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "favouriteCore.Create: %v", err)
+	}
+
+	return in, nil
 }
 
-func (s *Service) Get(ctx context.Context, in *pb_idx.StoreIDX) (*pb.FavouriteAsset, error) {
-	_, _ = (srvpb.UnimplementedFavouriteServiceServer{}).Get(ctx, in)
+func (s *ServiceAPI) Get(ctx context.Context, in *sharepb.ShareQID) (*favouritepb.FavouriteCore, error) {
+	_, _ = (pbsrv.UnimplementedFavouriteServiceServer{}).Get(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.get(ctx, in)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).Get(ctx, in) //nolint:wrapcheck
+	// 2. adapt output to fill
+	out := &favouritepb.FavouriteCore{ //nolint:exhaustruct
+		Qid: in,
+	}
+
+	// 3. process by core
+	err := s.favouriteCore.Get(ctx, out)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "favouriteCore.Get: %v", err)
+	}
+
+	return out, nil
 }
 
-func (s *Service) Gett(ctx context.Context, in *pb_idx.StoreIDX) (*pb.FavouriteAsset, error) {
-	_, _ = (srvpb.UnimplementedFavouriteServiceServer{}).Gett(ctx, in)
+func (s *ServiceAPI) Gett(ctx context.Context, in *sharepb.ShareQID) (*favouritepb.FavouriteCore, error) {
+	_, _ = (pbsrv.UnimplementedFavouriteServiceServer{}).Gett(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.get(ctx, in)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).Gett(ctx, in) //nolint:wrapcheck
+	// 2. adapt output to fill
+	out := &favouritepb.FavouriteCore{ //nolint:exhaustruct
+		Qid: in,
+	}
+
+	// 3. process by core
+	err := s.favouriteCore.Get(ctx, out)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "favouriteCore.Get: %v", err)
+	}
+
+	return out, nil
 }
 
-func (s *Service) Update(ctx context.Context, in *pb.FavouriteAsset) (*pb.FavouriteAsset, error) {
-	_, _ = (srvpb.UnimplementedFavouriteServiceServer{}).Update(ctx, in)
+func (s *ServiceAPI) Update(ctx context.Context, in *favouritepb.FavouriteCore) (*favouritepb.FavouriteCore, error) {
+	_, _ = (pbsrv.UnimplementedFavouriteServiceServer{}).Update(ctx, in)
 
 	// return s.update(ctx, in)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).Update(ctx, in) //nolint:wrapcheck
+	return (pbsrv.UnimplementedFavouriteServiceServer{}).Update(ctx, in) //nolint:wrapcheck
 }
 
-func (s *Service) Delete(ctx context.Context, in *pb_idx.StoreIDX) (*pb.FavouriteAsset, error) {
-	_, _ = (srvpb.UnimplementedFavouriteServiceServer{}).Delete(ctx, in)
+func (s *ServiceAPI) Delete(ctx context.Context, in *sharepb.ShareQID) (*favouritepb.FavouriteCore, error) {
+	_, _ = (pbsrv.UnimplementedFavouriteServiceServer{}).Delete(ctx, in)
 
 	// return s.delete(ctx, in)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
+	return (pbsrv.UnimplementedFavouriteServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
 }
 
-func (s *Service) List(in *pb_idx.StoreIDX, stream srvpb.FavouriteService_ListServer) error {
-	_ = (srvpb.UnimplementedFavouriteServiceServer{}).List(in, stream)
+func (s *ServiceAPI) List(in *sharepb.ShareQID, stream pbsrv.FavouriteService_ListServer) error {
+	_ = (pbsrv.UnimplementedFavouriteServiceServer{}).List(in, stream)
 
 	// return s.list(in, stream)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).List(in, stream) //nolint:wrapcheck
+	return (pbsrv.UnimplementedFavouriteServiceServer{}).List(in, stream) //nolint:wrapcheck
 }

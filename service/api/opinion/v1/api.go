@@ -1,82 +1,128 @@
-package opinionsrv
+package apiv1opinion
 
 import (
 	"context"
 	"fmt"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"x-gwi/app/storage"
-	srvpb "x-gwi/proto/serv/opinion/v1"
+	opinionpb "x-gwi/proto/core/opinion/v1"
+	pbsrv "x-gwi/proto/serv/opinion/v1"
 	"x-gwi/service/core/opinion"
 )
 
-type Service struct {
-	srvpb.UnimplementedOpinionServiceServer
-	opinion *opinion.CoreOpinion
-	storage *storage.ServiceStorage
+type ServiceAPI struct {
+	pbsrv.UnimplementedOpinionServiceServer
+	opinionCore *opinion.CoreOpinion
+	// storage *storage.ServiceStorage
 }
 
-func RegisterGRPC(grpcServer *grpc.Server, storage *storage.ServiceStorage) (*Service, error) {
+func RegisterGRPC(grpcServer *grpc.Server, storage *storage.ServiceStorage) (*ServiceAPI, error) {
 	var err error
 
-	s := &Service{ //nolint:exhaustruct
-		storage: storage,
+	s := &ServiceAPI{ //nolint:exhaustruct
+		// storage: storage,
 	}
 
-	s.opinion, err = opinion.NewCore(s.storage)
+	s.opinionCore, err = opinion.NewCore(storage)
 	if err != nil {
 		return nil, fmt.Errorf("user.NewCore: %w", err)
 	}
 
-	srvpb.RegisterOpinionServiceServer(grpcServer, s)
+	pbsrv.RegisterOpinionServiceServer(grpcServer, s)
 
 	return s, nil
 }
 
-func (s *Service) Create(ctx context.Context, in *srvpb.CreateRequest) (*srvpb.CreateResponse, error) {
-	_, _ = (srvpb.UnimplementedOpinionServiceServer{}).Create(ctx, in)
+func (s *ServiceAPI) Create(ctx context.Context, in *pbsrv.CreateRequest) (*pbsrv.CreateResponse, error) {
+	_, _ = (pbsrv.UnimplementedOpinionServiceServer{}).Create(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return (srvpb.UnimplementedOpinionServiceServer{}).Create(ctx, in)
-	// return s.createJWT(ctx, in)
-	return (srvpb.UnimplementedOpinionServiceServer{}).Create(ctx, in) //nolint:wrapcheck
+	// 2. process by core
+	err := s.opinionCore.Create(ctx, in.GetOpinion())
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "opinionCore.Create: %v", err)
+	}
+
+	// 3. adapt output
+	out := &pbsrv.CreateResponse{
+		Opinion: in.GetOpinion(),
+	}
+
+	return out, nil
 }
 
-func (s *Service) Get(ctx context.Context, in *srvpb.GetRequest) (*srvpb.GetResponse, error) {
-	_, _ = (srvpb.UnimplementedOpinionServiceServer{}).Get(ctx, in)
+func (s *ServiceAPI) Get(ctx context.Context, in *pbsrv.GetRequest) (*pbsrv.GetResponse, error) {
+	_, _ = (pbsrv.UnimplementedOpinionServiceServer{}).Get(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return (srvpb.UnimplementedOpinionServiceServer{}).Create(ctx, in)
-	// return s.createJWT(ctx, in)
-	return (srvpb.UnimplementedOpinionServiceServer{}).Get(ctx, in) //nolint:wrapcheck
+	// 2. adapt output to fill
+	out := &pbsrv.GetResponse{
+		Opinion: &opinionpb.OpinionCore{ //nolint:exhaustruct
+			Qid: in.GetQid(),
+		},
+	}
+
+	// 3. process by core
+	err := s.opinionCore.Get(ctx, out.Opinion)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "opinionCore.Get: %v", err)
+	}
+
+	return out, nil
 }
 
-func (s *Service) Gett(ctx context.Context, in *srvpb.GetRequest) (*srvpb.GetResponse, error) {
-	_, _ = (srvpb.UnimplementedOpinionServiceServer{}).Gett(ctx, in)
+func (s *ServiceAPI) Gett(ctx context.Context, in *pbsrv.GetRequest) (*pbsrv.GetResponse, error) {
+	_, _ = (pbsrv.UnimplementedOpinionServiceServer{}).Gett(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return (srvpb.UnimplementedOpinionServiceServer{}).Create(ctx, in)
-	// return s.createJWT(ctx, in)
-	return (srvpb.UnimplementedOpinionServiceServer{}).Gett(ctx, in) //nolint:wrapcheck
+	// 2. adapt output to fill
+	out := &pbsrv.GetResponse{
+		Opinion: &opinionpb.OpinionCore{ //nolint:exhaustruct
+			Qid: in.GetQid(),
+		},
+	}
+
+	// 3. process by core
+	err := s.opinionCore.Get(ctx, out.Opinion)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "opinionCore.Get: %v", err)
+	}
+
+	return out, nil
 }
 
-func (s *Service) Update(ctx context.Context, in *srvpb.UpdateRequest) (*srvpb.UpdateResponse, error) {
-	_, _ = (srvpb.UnimplementedOpinionServiceServer{}).Update(ctx, in)
+func (s *ServiceAPI) Update(ctx context.Context, in *pbsrv.UpdateRequest) (*pbsrv.UpdateResponse, error) {
+	_, _ = (pbsrv.UnimplementedOpinionServiceServer{}).Update(ctx, in)
 
-	// return (srvpb.UnimplementedOpinionServiceServer{}).Create(ctx, in)
+	// return (pbsrv.UnimplementedOpinionServiceServer{}).Create(ctx, in)
 	// return s.createJWT(ctx, in)
-	return (srvpb.UnimplementedOpinionServiceServer{}).Update(ctx, in) //nolint:wrapcheck
+	return (pbsrv.UnimplementedOpinionServiceServer{}).Update(ctx, in) //nolint:wrapcheck
 }
 
-func (s *Service) Delete(ctx context.Context, in *srvpb.DeleteRequest) (*srvpb.DeleteResponse, error) {
-	_, _ = (srvpb.UnimplementedOpinionServiceServer{}).Delete(ctx, in)
+func (s *ServiceAPI) Delete(ctx context.Context, in *pbsrv.DeleteRequest) (*pbsrv.DeleteResponse, error) {
+	_, _ = (pbsrv.UnimplementedOpinionServiceServer{}).Delete(ctx, in)
 
-	// return (srvpb.UnimplementedOpinionServiceServer{}).Create(ctx, in)
+	// return (pbsrv.UnimplementedOpinionServiceServer{}).Create(ctx, in)
 	// return s.createJWT(ctx, in)
-	return (srvpb.UnimplementedOpinionServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
+	return (pbsrv.UnimplementedOpinionServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
 }
 
-func (s *Service) List(in *srvpb.ListRequest, stream srvpb.OpinionService_ListServer) error {
-	_ = (srvpb.UnimplementedOpinionServiceServer{}).List(in, stream)
+func (s *ServiceAPI) List(in *pbsrv.ListRequest, stream pbsrv.OpinionService_ListServer) error {
+	_ = (pbsrv.UnimplementedOpinionServiceServer{}).List(in, stream)
 
 	// return s.list(in, stream)
-	return (srvpb.UnimplementedOpinionServiceServer{}).List(in, stream) //nolint:wrapcheck
+	return (pbsrv.UnimplementedOpinionServiceServer{}).List(in, stream) //nolint:wrapcheck
 }

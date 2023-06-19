@@ -33,11 +33,11 @@ standard methods: List, Get, Create, Update, and Delete
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| Create | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Create |
-| Get | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Get |
-| Gett | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Gett |
-| Update | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Update |
-| Delete | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | Delete |
+| Create | [.proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | [.proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | Create |
+| Get | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | Get |
+| Gett | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | Gett |
+| Update | [.proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | [.proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | Update |
+| Delete | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | Delete |
 
  
 

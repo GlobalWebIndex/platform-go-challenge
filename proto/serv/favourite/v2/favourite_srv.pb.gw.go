@@ -2,17 +2,17 @@
 // source: proto/serv/favourite/v2/favourite_srv.proto
 
 /*
-Package favourite_srvpb is a reverse proxy.
+Package pbsrvfavourite is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package favourite_srvpb
+package pbsrvfavourite
 
 import (
 	"context"
 	"io"
 	"net/http"
-	"x-gwi/proto/core/_store/v1"
+	"x-gwi/proto/core/_share/v1"
 	"x-gwi/proto/core/favourite/v1"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -34,7 +34,7 @@ var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
 func request_FavouriteService_Create_0(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq favourite_pb.FavouriteAsset
+	var protoReq favouritepb.FavouriteCore
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -51,7 +51,7 @@ func request_FavouriteService_Create_0(ctx context.Context, marshaler runtime.Ma
 }
 
 func local_request_FavouriteService_Create_0(ctx context.Context, marshaler runtime.Marshaler, server FavouriteServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq favourite_pb.FavouriteAsset
+	var protoReq favouritepb.FavouriteCore
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -68,11 +68,11 @@ func local_request_FavouriteService_Create_0(ctx context.Context, marshaler runt
 }
 
 var (
-	filter_FavouriteService_Get_0 = &utilities.DoubleArray{Encoding: map[string]int{"uuid": 0}, Base: []int{1, 2, 0, 0}, Check: []int{0, 1, 2, 2}}
+	filter_FavouriteService_Get_0 = &utilities.DoubleArray{Encoding: map[string]int{"key": 0}, Base: []int{1, 2, 0, 0}, Check: []int{0, 1, 2, 2}}
 )
 
 func request_FavouriteService_Get_0(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq store_pb.StoreIDX
+	var protoReq sharepb.ShareQID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -82,14 +82,14 @@ func request_FavouriteService_Get_0(ctx context.Context, marshaler runtime.Marsh
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "key")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.Key, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "key", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -105,7 +105,7 @@ func request_FavouriteService_Get_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_FavouriteService_Get_0(ctx context.Context, marshaler runtime.Marshaler, server FavouriteServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq store_pb.StoreIDX
+	var protoReq sharepb.ShareQID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -115,14 +115,14 @@ func local_request_FavouriteService_Get_0(ctx context.Context, marshaler runtime
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "key")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.Key, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "key", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -138,7 +138,7 @@ func local_request_FavouriteService_Get_0(ctx context.Context, marshaler runtime
 }
 
 func request_FavouriteService_Get_1(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq store_pb.StoreIDX
+	var protoReq sharepb.ShareQID
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -155,7 +155,7 @@ func request_FavouriteService_Get_1(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_FavouriteService_Get_1(ctx context.Context, marshaler runtime.Marshaler, server FavouriteServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq store_pb.StoreIDX
+	var protoReq sharepb.ShareQID
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -172,7 +172,7 @@ func local_request_FavouriteService_Get_1(ctx context.Context, marshaler runtime
 }
 
 func request_FavouriteService_Gett_0(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq store_pb.StoreIDX
+	var protoReq sharepb.ShareQID
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -189,7 +189,7 @@ func request_FavouriteService_Gett_0(ctx context.Context, marshaler runtime.Mars
 }
 
 func local_request_FavouriteService_Gett_0(ctx context.Context, marshaler runtime.Marshaler, server FavouriteServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq store_pb.StoreIDX
+	var protoReq sharepb.ShareQID
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -206,7 +206,7 @@ func local_request_FavouriteService_Gett_0(ctx context.Context, marshaler runtim
 }
 
 func request_FavouriteService_Update_0(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq favourite_pb.FavouriteAsset
+	var protoReq favouritepb.FavouriteCore
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -224,24 +224,24 @@ func request_FavouriteService_Update_0(ctx context.Context, marshaler runtime.Ma
 		_   = err
 	)
 
-	val, ok = pathParams["id.uuid"]
+	val, ok = pathParams["qid.key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "qid.key")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "qid.key", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "qid.key", err)
 	}
 
-	val, ok = pathParams["id.rev"]
+	val, ok = pathParams["qid.rev"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.rev")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "qid.rev")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.rev", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "qid.rev", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.rev", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "qid.rev", err)
 	}
 
 	msg, err := client.Update(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -250,7 +250,7 @@ func request_FavouriteService_Update_0(ctx context.Context, marshaler runtime.Ma
 }
 
 func local_request_FavouriteService_Update_0(ctx context.Context, marshaler runtime.Marshaler, server FavouriteServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq favourite_pb.FavouriteAsset
+	var protoReq favouritepb.FavouriteCore
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -268,24 +268,24 @@ func local_request_FavouriteService_Update_0(ctx context.Context, marshaler runt
 		_   = err
 	)
 
-	val, ok = pathParams["id.uuid"]
+	val, ok = pathParams["qid.key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "qid.key")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.uuid", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "qid.key", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "qid.key", err)
 	}
 
-	val, ok = pathParams["id.rev"]
+	val, ok = pathParams["qid.rev"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id.rev")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "qid.rev")
 	}
 
-	err = runtime.PopulateFieldFromPath(&protoReq, "id.rev", val)
+	err = runtime.PopulateFieldFromPath(&protoReq, "qid.rev", val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id.rev", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "qid.rev", err)
 	}
 
 	msg, err := server.Update(ctx, &protoReq)
@@ -294,11 +294,11 @@ func local_request_FavouriteService_Update_0(ctx context.Context, marshaler runt
 }
 
 var (
-	filter_FavouriteService_Delete_0 = &utilities.DoubleArray{Encoding: map[string]int{"uuid": 0}, Base: []int{1, 2, 0, 0}, Check: []int{0, 1, 2, 2}}
+	filter_FavouriteService_Delete_0 = &utilities.DoubleArray{Encoding: map[string]int{"key": 0}, Base: []int{1, 2, 0, 0}, Check: []int{0, 1, 2, 2}}
 )
 
 func request_FavouriteService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq store_pb.StoreIDX
+	var protoReq sharepb.ShareQID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -308,14 +308,14 @@ func request_FavouriteService_Delete_0(ctx context.Context, marshaler runtime.Ma
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "key")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.Key, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "key", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -331,7 +331,7 @@ func request_FavouriteService_Delete_0(ctx context.Context, marshaler runtime.Ma
 }
 
 func local_request_FavouriteService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, server FavouriteServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq store_pb.StoreIDX
+	var protoReq sharepb.ShareQID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -341,14 +341,14 @@ func local_request_FavouriteService_Delete_0(ctx context.Context, marshaler runt
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "key")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.Key, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "key", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -364,11 +364,11 @@ func local_request_FavouriteService_Delete_0(ctx context.Context, marshaler runt
 }
 
 var (
-	filter_FavouriteService_List_0 = &utilities.DoubleArray{Encoding: map[string]int{"uuid": 0}, Base: []int{1, 2, 0, 0}, Check: []int{0, 1, 2, 2}}
+	filter_FavouriteService_List_0 = &utilities.DoubleArray{Encoding: map[string]int{"key": 0}, Base: []int{1, 2, 0, 0}, Check: []int{0, 1, 2, 2}}
 )
 
 func request_FavouriteService_List_0(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (FavouriteService_ListClient, runtime.ServerMetadata, error) {
-	var protoReq store_pb.StoreIDX
+	var protoReq sharepb.ShareQID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -378,14 +378,14 @@ func request_FavouriteService_List_0(ctx context.Context, marshaler runtime.Mars
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["key"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "key")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.Key, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "key", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -447,7 +447,7 @@ func RegisterFavouriteServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Get", runtime.WithHTTPPathPattern("/api/v2/favourite/get/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Get", runtime.WithHTTPPathPattern("/api/v2/favourite/get/{key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -522,7 +522,7 @@ func RegisterFavouriteServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Update", runtime.WithHTTPPathPattern("/api/v2/favourite/update/{id.uuid}/{id.rev}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Update", runtime.WithHTTPPathPattern("/api/v2/favourite/update/{qid.key}/{qid.rev}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -547,7 +547,7 @@ func RegisterFavouriteServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Delete", runtime.WithHTTPPathPattern("/api/v2/favourite/delete/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Delete", runtime.WithHTTPPathPattern("/api/v2/favourite/delete/{key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -640,7 +640,7 @@ func RegisterFavouriteServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Get", runtime.WithHTTPPathPattern("/api/v2/favourite/get/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Get", runtime.WithHTTPPathPattern("/api/v2/favourite/get/{key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -706,7 +706,7 @@ func RegisterFavouriteServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Update", runtime.WithHTTPPathPattern("/api/v2/favourite/update/{id.uuid}/{id.rev}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Update", runtime.WithHTTPPathPattern("/api/v2/favourite/update/{qid.key}/{qid.rev}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -728,7 +728,7 @@ func RegisterFavouriteServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Delete", runtime.WithHTTPPathPattern("/api/v2/favourite/delete/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/Delete", runtime.WithHTTPPathPattern("/api/v2/favourite/delete/{key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -750,7 +750,7 @@ func RegisterFavouriteServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/List", runtime.WithHTTPPathPattern("/api/v2/favourite/list/user/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/List", runtime.WithHTTPPathPattern("/api/v2/favourite/list/user/{key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -772,17 +772,17 @@ func RegisterFavouriteServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 var (
 	pattern_FavouriteService_Create_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v2", "favourite", "create"}, ""))
 
-	pattern_FavouriteService_Get_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v2", "favourite", "get", "uuid"}, ""))
+	pattern_FavouriteService_Get_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v2", "favourite", "get", "key"}, ""))
 
 	pattern_FavouriteService_Get_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v2", "favourite", "get"}, ""))
 
 	pattern_FavouriteService_Gett_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"proto.serv.favourite.v2.FavouriteService", "Gett"}, ""))
 
-	pattern_FavouriteService_Update_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v2", "favourite", "update", "id.uuid", "id.rev"}, ""))
+	pattern_FavouriteService_Update_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v2", "favourite", "update", "qid.key", "qid.rev"}, ""))
 
-	pattern_FavouriteService_Delete_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v2", "favourite", "delete", "uuid"}, ""))
+	pattern_FavouriteService_Delete_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v2", "favourite", "delete", "key"}, ""))
 
-	pattern_FavouriteService_List_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v2", "favourite", "list", "user", "uuid"}, ""))
+	pattern_FavouriteService_List_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v2", "favourite", "list", "user", "key"}, ""))
 )
 
 var (

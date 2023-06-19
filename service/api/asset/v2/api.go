@@ -1,72 +1,111 @@
-package assetsrv2
+package apiv2asset
 
 import (
 	"context"
 	"fmt"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"x-gwi/app/storage"
-	pb_idx "x-gwi/proto/core/_store/v1"
-	pb "x-gwi/proto/core/asset/v1"
-	srvpb "x-gwi/proto/serv/asset/v2"
+	sharepb "x-gwi/proto/core/_share/v1"
+	assetpb "x-gwi/proto/core/asset/v1"
+	pbsrv "x-gwi/proto/serv/asset/v2"
 	"x-gwi/service/core/asset"
 )
 
-type Service struct {
-	srvpb.UnimplementedAssetServiceServer
-	asset   *asset.CoreAsset
-	storage *storage.ServiceStorage
+type ServiceAPI struct {
+	pbsrv.UnimplementedAssetServiceServer
+	assetCore *asset.CoreAsset
+	// storage *storage.ServiceStorage
 }
 
-func RegisterGRPC(grpcServer *grpc.Server, storage *storage.ServiceStorage) (*Service, error) {
+func RegisterGRPC(grpcServer *grpc.Server, storage *storage.ServiceStorage) (*ServiceAPI, error) {
 	var err error
 
-	s := &Service{ //nolint:exhaustruct
-		storage: storage,
+	s := &ServiceAPI{ //nolint:exhaustruct
+		// storage: storage,
 	}
 
-	s.asset, err = asset.NewCore(s.storage)
+	s.assetCore, err = asset.NewCore(storage)
 	if err != nil {
 		return nil, fmt.Errorf("asset.NewCore: %w", err)
 	}
 
-	srvpb.RegisterAssetServiceServer(grpcServer, s)
+	pbsrv.RegisterAssetServiceServer(grpcServer, s)
 
 	return s, nil
 }
 
-func (s *Service) Create(ctx context.Context, in *pb.AssetInstance) (*pb.AssetInstance, error) {
-	_, _ = (srvpb.UnimplementedAssetServiceServer{}).Create(ctx, in)
+func (s *ServiceAPI) Create(ctx context.Context, in *assetpb.AssetCore) (*assetpb.AssetCore, error) {
+	_, _ = (pbsrv.UnimplementedAssetServiceServer{}).Create(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.create(ctx, in)
-	return (srvpb.UnimplementedAssetServiceServer{}).Create(ctx, in) //nolint:wrapcheck
+	// 2. process by core
+	err := s.assetCore.Create(ctx, in)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "assetCore.Create: %v", err)
+	}
+
+	return in, nil
 }
 
-func (s *Service) Get(ctx context.Context, in *pb_idx.StoreIDX) (*pb.AssetInstance, error) {
-	_, _ = (srvpb.UnimplementedAssetServiceServer{}).Get(ctx, in)
+func (s *ServiceAPI) Get(ctx context.Context, in *sharepb.ShareQID) (*assetpb.AssetCore, error) {
+	_, _ = (pbsrv.UnimplementedAssetServiceServer{}).Get(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.get(ctx, in)
-	return (srvpb.UnimplementedAssetServiceServer{}).Get(ctx, in) //nolint:wrapcheck
+	// 2. adapt output to fill
+	out := &assetpb.AssetCore{ //nolint:exhaustruct
+		Qid: in,
+	}
+
+	// 3. process by core
+	err := s.assetCore.Get(ctx, out)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "assetCore.Get: %v", err)
+	}
+
+	return out, nil
 }
 
-func (s *Service) Gett(ctx context.Context, in *pb_idx.StoreIDX) (*pb.AssetInstance, error) {
-	_, _ = (srvpb.UnimplementedAssetServiceServer{}).Gett(ctx, in)
+func (s *ServiceAPI) Gett(ctx context.Context, in *sharepb.ShareQID) (*assetpb.AssetCore, error) {
+	_, _ = (pbsrv.UnimplementedAssetServiceServer{}).Gett(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.get(ctx, in)
-	return (srvpb.UnimplementedAssetServiceServer{}).Gett(ctx, in) //nolint:wrapcheck
+	// 2. adapt output to fill
+	out := &assetpb.AssetCore{ //nolint:exhaustruct
+		Qid: in,
+	}
+
+	// 3. process by core
+	err := s.assetCore.Get(ctx, out)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "assetCore.Get: %v", err)
+	}
+
+	return out, nil
 }
 
-func (s *Service) Update(ctx context.Context, in *pb.AssetInstance) (*pb.AssetInstance, error) {
-	_, _ = (srvpb.UnimplementedAssetServiceServer{}).Update(ctx, in)
+func (s *ServiceAPI) Update(ctx context.Context, in *assetpb.AssetCore) (*assetpb.AssetCore, error) {
+	_, _ = (pbsrv.UnimplementedAssetServiceServer{}).Update(ctx, in)
 
 	// return s.update(ctx, in)
-	return (srvpb.UnimplementedAssetServiceServer{}).Update(ctx, in) //nolint:wrapcheck
+	return (pbsrv.UnimplementedAssetServiceServer{}).Update(ctx, in) //nolint:wrapcheck
 }
 
-func (s *Service) Delete(ctx context.Context, in *pb_idx.StoreIDX) (*pb.AssetInstance, error) {
-	_, _ = (srvpb.UnimplementedAssetServiceServer{}).Delete(ctx, in)
+func (s *ServiceAPI) Delete(ctx context.Context, in *sharepb.ShareQID) (*assetpb.AssetCore, error) {
+	_, _ = (pbsrv.UnimplementedAssetServiceServer{}).Delete(ctx, in)
 
 	// return s.delete(ctx, in)
-	return (srvpb.UnimplementedAssetServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
+	return (pbsrv.UnimplementedAssetServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
 }

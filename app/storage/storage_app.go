@@ -28,7 +28,7 @@ func NewAppStorage(ctx context.Context, config *ConfigAppStorage, inst *instance
 	}
 
 	if err := apSt.stAQL.initAppStoreAQL(ctx, apSt); err != nil {
-		// allows cache only in dev
+		// allows cache only (in dev)
 		if apSt.inst.Mode() != string(instance.ModeDev) {
 			return nil, fmt.Errorf("stAQL.initAppStoreAQL: %w", err)
 		}
@@ -60,14 +60,16 @@ func NewAppStorage(ctx context.Context, config *ConfigAppStorage, inst *instance
 			if !ok {
 				return nil, fmt.Errorf("apSt.stAQL.stores[coreName]") //nolint:goerr113
 			}
-		} else {
-			apSt.stores[coreName].noAQL = true
+
+			apSt.stores[coreName].isAQL = true
 		}
 
 		apSt.stores[coreName].sstKVBC, ok = apSt.stKVBC.stores[coreName]
 		if !ok {
 			return nil, fmt.Errorf("apSt.stKVBC.stores[coreName]") //nolint:goerr113
 		}
+
+		apSt.stores[coreName].isKVBC = true
 	}
 
 	return apSt, nil

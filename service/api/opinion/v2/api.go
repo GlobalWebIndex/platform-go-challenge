@@ -1,79 +1,118 @@
-package opinionsrv2
+package apiv2opinion
 
 import (
 	"context"
 	"fmt"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"x-gwi/app/storage"
-	pb_idx "x-gwi/proto/core/_store/v1"
-	pb "x-gwi/proto/core/opinion/v1"
-	srvpb "x-gwi/proto/serv/opinion/v2"
+	sharepb "x-gwi/proto/core/_share/v1"
+	opinionpb "x-gwi/proto/core/opinion/v1"
+	pbsrv "x-gwi/proto/serv/opinion/v2"
 	"x-gwi/service/core/opinion"
 )
 
-type Service struct {
-	srvpb.UnimplementedOpinionServiceServer
-	opinion *opinion.CoreOpinion
-	storage *storage.ServiceStorage
+type ServiceAPI struct {
+	pbsrv.UnimplementedOpinionServiceServer
+	opinionCore *opinion.CoreOpinion
+	// storage *storage.ServiceStorage
 }
 
-func RegisterGRPC(grpcServer *grpc.Server, storage *storage.ServiceStorage) (*Service, error) {
+func RegisterGRPC(grpcServer *grpc.Server, storage *storage.ServiceStorage) (*ServiceAPI, error) {
 	var err error
 
-	s := &Service{ //nolint:exhaustruct
-		storage: storage,
+	s := &ServiceAPI{ //nolint:exhaustruct
+		// storage: storage,
 	}
 
-	s.opinion, err = opinion.NewCore(s.storage)
+	s.opinionCore, err = opinion.NewCore(storage)
 	if err != nil {
 		return nil, fmt.Errorf("user.NewCore: %w", err)
 	}
 
-	srvpb.RegisterOpinionServiceServer(grpcServer, s)
+	pbsrv.RegisterOpinionServiceServer(grpcServer, s)
 
 	return s, nil
 }
 
-func (s *Service) Create(ctx context.Context, in *pb.OpinionAsset) (*pb.OpinionAsset, error) {
-	_, _ = (srvpb.UnimplementedOpinionServiceServer{}).Create(ctx, in)
+func (s *ServiceAPI) Create(ctx context.Context, in *opinionpb.OpinionCore) (*opinionpb.OpinionCore, error) {
+	_, _ = (pbsrv.UnimplementedOpinionServiceServer{}).Create(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.create(ctx, in)
-	return (srvpb.UnimplementedOpinionServiceServer{}).Create(ctx, in) //nolint:wrapcheck
+	// 2. process by core
+	err := s.opinionCore.Create(ctx, in)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "opinionCore.Create: %v", err)
+	}
+
+	return in, nil
 }
 
-func (s *Service) Get(ctx context.Context, in *pb_idx.StoreIDX) (*pb.OpinionAsset, error) {
-	_, _ = (srvpb.UnimplementedOpinionServiceServer{}).Get(ctx, in)
+func (s *ServiceAPI) Get(ctx context.Context, in *sharepb.ShareQID) (*opinionpb.OpinionCore, error) {
+	_, _ = (pbsrv.UnimplementedOpinionServiceServer{}).Get(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.get(ctx, in)
-	return (srvpb.UnimplementedOpinionServiceServer{}).Get(ctx, in) //nolint:wrapcheck
+	// 2. adapt output to fill
+	out := &opinionpb.OpinionCore{ //nolint:exhaustruct
+		Qid: in,
+	}
+
+	// 3. process by core
+	err := s.opinionCore.Get(ctx, out)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "opinionCore.Get: %v", err)
+	}
+
+	return out, nil
 }
 
-func (s *Service) Gett(ctx context.Context, in *pb_idx.StoreIDX) (*pb.OpinionAsset, error) {
-	_, _ = (srvpb.UnimplementedOpinionServiceServer{}).Gett(ctx, in)
+func (s *ServiceAPI) Gett(ctx context.Context, in *sharepb.ShareQID) (*opinionpb.OpinionCore, error) {
+	_, _ = (pbsrv.UnimplementedOpinionServiceServer{}).Gett(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.get(ctx, in)
-	return (srvpb.UnimplementedOpinionServiceServer{}).Gett(ctx, in) //nolint:wrapcheck
+	// 2. adapt output to fill
+	out := &opinionpb.OpinionCore{ //nolint:exhaustruct
+		Qid: in,
+	}
+
+	// 3. process by core
+	err := s.opinionCore.Get(ctx, out)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "opinionCore.Get: %v", err)
+	}
+
+	return out, nil
 }
 
-func (s *Service) Update(ctx context.Context, in *pb.OpinionAsset) (*pb.OpinionAsset, error) {
-	_, _ = (srvpb.UnimplementedOpinionServiceServer{}).Update(ctx, in)
+func (s *ServiceAPI) Update(ctx context.Context, in *opinionpb.OpinionCore) (*opinionpb.OpinionCore, error) {
+	_, _ = (pbsrv.UnimplementedOpinionServiceServer{}).Update(ctx, in)
 
 	// return s.update(ctx, in)
-	return (srvpb.UnimplementedOpinionServiceServer{}).Update(ctx, in) //nolint:wrapcheck
+	return (pbsrv.UnimplementedOpinionServiceServer{}).Update(ctx, in) //nolint:wrapcheck
 }
 
-func (s *Service) Delete(ctx context.Context, in *pb_idx.StoreIDX) (*pb.OpinionAsset, error) {
-	_, _ = (srvpb.UnimplementedOpinionServiceServer{}).Delete(ctx, in)
+func (s *ServiceAPI) Delete(ctx context.Context, in *sharepb.ShareQID) (*opinionpb.OpinionCore, error) {
+	_, _ = (pbsrv.UnimplementedOpinionServiceServer{}).Delete(ctx, in)
 
 	// return s.delete(ctx, in)
-	return (srvpb.UnimplementedOpinionServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
+	return (pbsrv.UnimplementedOpinionServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
 }
 
-func (s *Service) List(in *pb_idx.StoreIDX, stream srvpb.OpinionService_ListServer) error {
-	_ = (srvpb.UnimplementedOpinionServiceServer{}).List(in, stream)
+func (s *ServiceAPI) List(in *sharepb.ShareQID, stream pbsrv.OpinionService_ListServer) error {
+	_ = (pbsrv.UnimplementedOpinionServiceServer{}).List(in, stream)
 
 	// return s.list(in, stream)
-	return (srvpb.UnimplementedOpinionServiceServer{}).List(in, stream) //nolint:wrapcheck
+	return (pbsrv.UnimplementedOpinionServiceServer{}).List(in, stream) //nolint:wrapcheck
 }

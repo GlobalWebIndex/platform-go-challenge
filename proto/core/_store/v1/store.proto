@@ -16,54 +16,51 @@ import "google/api/field_behavior.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
+import "proto/core/_share/v1/share.proto";
+import "proto/core/_user/v1/user.proto";
+import "proto/core/asset/v1/asset.proto";
+import "proto/core/favourite/v1/favourite.proto";
+import "proto/core/opinion/v1/opinion.proto";
 import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/core/_store/v1;store_pb";
+option go_package = "x-gwi/proto/core/_store/v1;storepb";
 
-// StoreIDX (uuid, revision) optional
-message StoreIDX {
-  reserved 1, 2, 3;
+// Store
+message Store {
+  reserved 1, 2, 4, 5, 6, 7, 8, 9;
 
-  // kind
-  string kind = 4 [
+  // qid - StoreQID
+  proto.core._share.v1.ShareQID qid = 3 [
     (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+    (validate.rules).message = { required: false, skip: false }
   ];
 
-  // uid
-  string uid = 5 [
+  // user - UserCore
+  optional proto.core._user.v1.UserCore user = 10 [
     (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+    (validate.rules).message = { required: false, skip: false }
   ];
 
-  // rev - revision string
-  string rev = 6 [
-    json_name = "rev",
-    (google.api.field_behavior) = IMMUTABLE,
+  // asset - AssetCore
+  optional proto.core.asset.v1.AssetCore asset = 11 [
     (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+    (validate.rules).message = { required: false, skip: false }
   ];
 
-  // uuid
-  string uuid = 7 [
+  // favourite - FavouriteCore
+  optional proto.core.favourite.v1.FavouriteCore favourite = 12 [
     (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).string = { ignore_empty: true, uuid: true }
+    (validate.rules).message = { required: false, skip: false }
   ];
 
-  // rev_n - revision number
-  optional int64 rev_n = 8 [
-    (google.api.field_behavior) = IMMUTABLE,
-    (validate.rules).int64 = { ignore_empty: true, gte: 1 }
-  ];
-
-  // aql - MetaDocAQL
-  optional MetaDocAQL aql = 10 [
+  // opinion - OpinionCore
+  optional proto.core.opinion.v1.OpinionCore opinion = 13 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).message = { required: false, skip: false }
   ];
 }
 
-// MetaDocAQL - ArangoDB DocumentMeta
+// StoreAQL store Arango
 // DocumentMeta contains all meta data used to identifier a document.
 // type DocumentMeta struct {
 // 	Key    string     `json:"_key,omitempty"`
@@ -71,50 +68,81 @@ message StoreIDX {
 // 	Rev    string     `json:"_rev,omitempty"`
 // 	OldRev string     `json:"_oldRev,omitempty"`
 // }
-//
 // DocumentID references a document in a collection.
 // Format: collection/_key
 // type DocumentID string
-//
 // ArangoID is a generic Arango ID struct representation
 // type ArangoID struct {
-// 	ID               string `json:"id,omitempty"`
+// 	ID               string `json:"qid,omitempty"`
 // 	GloballyUniqueId string `json:"globallyUniqueId,omitempty"`
 // }
-//
 // REV rev = 4 [json_name = "_rev"];
-message MetaDocAQL {
-  reserved 1, 2, 3;
+// 
+// WARNING! generated pb files keep json_name for protobuf but not for json
+// want: json=_key,proto3" json:"_key (from json_name = "_key")
+// Key string `protobuf:"bytes,4,opt,name=key,json=_key,proto3" json:"_key,omitempty"`
+// got:  json=_key,proto3" json:"key  (from json_name = "_key")
+// Key string `protobuf:"bytes,4,opt,name=key,json=_key,proto3" json:"key,omitempty"`
+// solution: 1) edit generated proto/core/_store/v1/store.pb.go; 
+// or 2) synch dedicated type in app/storage/storepb2/storepb2.go
+message StoreAQL {
+  reserved 1, 2, 8, 9;
 
-  // key - _key
+  // key - AQL _key - doc storage key unique per db.collection
   string key = 4 [
     json_name = "_key",
-    (google.api.field_behavior) = IMMUTABLE,
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
   ];
 
-  // id - DocumentID string Format: collection/_key
+  // id - AQL _id - DocumentID string Format: collection/_key
   string id = 5 [
     json_name = "_id",
-    (google.api.field_behavior) = IMMUTABLE,
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
   ];
 
-  // rev - revision string
+  // rev - AQL _rev - revision string
   string rev = 6 [
     json_name = "_rev",
-    (google.api.field_behavior) = IMMUTABLE,
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
   ];
 
-  // old_rev - old revision string
+  // old_rev - AQL _oldRev old revision string
   string old_rev = 7 [
     json_name = "_oldRev",
-    (google.api.field_behavior) = IMMUTABLE,
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+
+  // qid - StoreQID
+  proto.core._share.v1.ShareQID qid = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // user - UserCore
+  optional proto.core._user.v1.UserCore user = 10 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // asset - AssetCore
+  optional proto.core.asset.v1.AssetCore asset = 11 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // favourite - FavouriteCore
+  optional proto.core.favourite.v1.FavouriteCore favourite = 12 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // opinion - OpinionCore
+  optional proto.core.opinion.v1.OpinionCore opinion = 13 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
   ];
 }

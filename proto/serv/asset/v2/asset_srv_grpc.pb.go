@@ -6,14 +6,14 @@
 // - protoc             v4.23.2
 // source: proto/serv/asset/v2/asset_srv.proto
 
-package asset_srvpb
+package pbsrvasset
 
 import (
 	context "context"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	v11 "x-gwi/proto/core/_store/v1"
+	v11 "x-gwi/proto/core/_share/v1"
 	v1 "x-gwi/proto/core/asset/v1"
 )
 
@@ -35,15 +35,15 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AssetServiceClient interface {
 	// Create
-	Create(ctx context.Context, in *v1.AssetInstance, opts ...grpc.CallOption) (*v1.AssetInstance, error)
+	Create(ctx context.Context, in *v1.AssetCore, opts ...grpc.CallOption) (*v1.AssetCore, error)
 	// Get
-	Get(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.AssetInstance, error)
+	Get(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (*v1.AssetCore, error)
 	// Gett
-	Gett(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.AssetInstance, error)
+	Gett(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (*v1.AssetCore, error)
 	// Update
-	Update(ctx context.Context, in *v1.AssetInstance, opts ...grpc.CallOption) (*v1.AssetInstance, error)
+	Update(ctx context.Context, in *v1.AssetCore, opts ...grpc.CallOption) (*v1.AssetCore, error)
 	// Delete
-	Delete(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.AssetInstance, error)
+	Delete(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (*v1.AssetCore, error)
 }
 
 type assetServiceClient struct {
@@ -54,8 +54,8 @@ func NewAssetServiceClient(cc grpc.ClientConnInterface) AssetServiceClient {
 	return &assetServiceClient{cc}
 }
 
-func (c *assetServiceClient) Create(ctx context.Context, in *v1.AssetInstance, opts ...grpc.CallOption) (*v1.AssetInstance, error) {
-	out := new(v1.AssetInstance)
+func (c *assetServiceClient) Create(ctx context.Context, in *v1.AssetCore, opts ...grpc.CallOption) (*v1.AssetCore, error) {
+	out := new(v1.AssetCore)
 	err := c.cc.Invoke(ctx, AssetService_Create_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -63,8 +63,8 @@ func (c *assetServiceClient) Create(ctx context.Context, in *v1.AssetInstance, o
 	return out, nil
 }
 
-func (c *assetServiceClient) Get(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.AssetInstance, error) {
-	out := new(v1.AssetInstance)
+func (c *assetServiceClient) Get(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (*v1.AssetCore, error) {
+	out := new(v1.AssetCore)
 	err := c.cc.Invoke(ctx, AssetService_Get_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -72,8 +72,8 @@ func (c *assetServiceClient) Get(ctx context.Context, in *v11.StoreIDX, opts ...
 	return out, nil
 }
 
-func (c *assetServiceClient) Gett(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.AssetInstance, error) {
-	out := new(v1.AssetInstance)
+func (c *assetServiceClient) Gett(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (*v1.AssetCore, error) {
+	out := new(v1.AssetCore)
 	err := c.cc.Invoke(ctx, AssetService_Gett_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -81,8 +81,8 @@ func (c *assetServiceClient) Gett(ctx context.Context, in *v11.StoreIDX, opts ..
 	return out, nil
 }
 
-func (c *assetServiceClient) Update(ctx context.Context, in *v1.AssetInstance, opts ...grpc.CallOption) (*v1.AssetInstance, error) {
-	out := new(v1.AssetInstance)
+func (c *assetServiceClient) Update(ctx context.Context, in *v1.AssetCore, opts ...grpc.CallOption) (*v1.AssetCore, error) {
+	out := new(v1.AssetCore)
 	err := c.cc.Invoke(ctx, AssetService_Update_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -90,8 +90,8 @@ func (c *assetServiceClient) Update(ctx context.Context, in *v1.AssetInstance, o
 	return out, nil
 }
 
-func (c *assetServiceClient) Delete(ctx context.Context, in *v11.StoreIDX, opts ...grpc.CallOption) (*v1.AssetInstance, error) {
-	out := new(v1.AssetInstance)
+func (c *assetServiceClient) Delete(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (*v1.AssetCore, error) {
+	out := new(v1.AssetCore)
 	err := c.cc.Invoke(ctx, AssetService_Delete_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -104,15 +104,15 @@ func (c *assetServiceClient) Delete(ctx context.Context, in *v11.StoreIDX, opts 
 // for forward compatibility
 type AssetServiceServer interface {
 	// Create
-	Create(context.Context, *v1.AssetInstance) (*v1.AssetInstance, error)
+	Create(context.Context, *v1.AssetCore) (*v1.AssetCore, error)
 	// Get
-	Get(context.Context, *v11.StoreIDX) (*v1.AssetInstance, error)
+	Get(context.Context, *v11.ShareQID) (*v1.AssetCore, error)
 	// Gett
-	Gett(context.Context, *v11.StoreIDX) (*v1.AssetInstance, error)
+	Gett(context.Context, *v11.ShareQID) (*v1.AssetCore, error)
 	// Update
-	Update(context.Context, *v1.AssetInstance) (*v1.AssetInstance, error)
+	Update(context.Context, *v1.AssetCore) (*v1.AssetCore, error)
 	// Delete
-	Delete(context.Context, *v11.StoreIDX) (*v1.AssetInstance, error)
+	Delete(context.Context, *v11.ShareQID) (*v1.AssetCore, error)
 	mustEmbedUnimplementedAssetServiceServer()
 }
 
@@ -120,19 +120,19 @@ type AssetServiceServer interface {
 type UnimplementedAssetServiceServer struct {
 }
 
-func (UnimplementedAssetServiceServer) Create(context.Context, *v1.AssetInstance) (*v1.AssetInstance, error) {
+func (UnimplementedAssetServiceServer) Create(context.Context, *v1.AssetCore) (*v1.AssetCore, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedAssetServiceServer) Get(context.Context, *v11.StoreIDX) (*v1.AssetInstance, error) {
+func (UnimplementedAssetServiceServer) Get(context.Context, *v11.ShareQID) (*v1.AssetCore, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedAssetServiceServer) Gett(context.Context, *v11.StoreIDX) (*v1.AssetInstance, error) {
+func (UnimplementedAssetServiceServer) Gett(context.Context, *v11.ShareQID) (*v1.AssetCore, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Gett not implemented")
 }
-func (UnimplementedAssetServiceServer) Update(context.Context, *v1.AssetInstance) (*v1.AssetInstance, error) {
+func (UnimplementedAssetServiceServer) Update(context.Context, *v1.AssetCore) (*v1.AssetCore, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedAssetServiceServer) Delete(context.Context, *v11.StoreIDX) (*v1.AssetInstance, error) {
+func (UnimplementedAssetServiceServer) Delete(context.Context, *v11.ShareQID) (*v1.AssetCore, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedAssetServiceServer) mustEmbedUnimplementedAssetServiceServer() {}
@@ -149,7 +149,7 @@ func RegisterAssetServiceServer(s grpc.ServiceRegistrar, srv AssetServiceServer)
 }
 
 func _AssetService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v1.AssetInstance)
+	in := new(v1.AssetCore)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -161,13 +161,13 @@ func _AssetService_Create_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: AssetService_Create_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetServiceServer).Create(ctx, req.(*v1.AssetInstance))
+		return srv.(AssetServiceServer).Create(ctx, req.(*v1.AssetCore))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _AssetService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.StoreIDX)
+	in := new(v11.ShareQID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -179,13 +179,13 @@ func _AssetService_Get_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: AssetService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetServiceServer).Get(ctx, req.(*v11.StoreIDX))
+		return srv.(AssetServiceServer).Get(ctx, req.(*v11.ShareQID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _AssetService_Gett_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.StoreIDX)
+	in := new(v11.ShareQID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -197,13 +197,13 @@ func _AssetService_Gett_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: AssetService_Gett_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetServiceServer).Gett(ctx, req.(*v11.StoreIDX))
+		return srv.(AssetServiceServer).Gett(ctx, req.(*v11.ShareQID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _AssetService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v1.AssetInstance)
+	in := new(v1.AssetCore)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -215,13 +215,13 @@ func _AssetService_Update_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: AssetService_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetServiceServer).Update(ctx, req.(*v1.AssetInstance))
+		return srv.(AssetServiceServer).Update(ctx, req.(*v1.AssetCore))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _AssetService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.StoreIDX)
+	in := new(v11.ShareQID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -233,7 +233,7 @@ func _AssetService_Delete_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: AssetService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetServiceServer).Delete(ctx, req.(*v11.StoreIDX))
+		return srv.(AssetServiceServer).Delete(ctx, req.(*v11.ShareQID))
 	}
 	return interceptor(ctx, in, info, handler)
 }

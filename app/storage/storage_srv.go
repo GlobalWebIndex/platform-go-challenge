@@ -10,7 +10,8 @@ type ServiceStorage struct {
 	sstAQL  *ServiceStoreAQL
 	sstKVBC *ServiceStoreKVBC
 	name    service.CoreName
-	noAQL   bool
+	isAQL   bool
+	isKVBC  bool
 }
 
 func (st *ServiceStorage) InstMode() string {
@@ -25,8 +26,16 @@ func (st *ServiceStorage) CoreName() service.CoreName {
 	return st.name
 }
 
+func (st *ServiceStorage) IsAQL() bool {
+	return st.isAQL
+}
+
 func (st *ServiceStorage) AQL() *ServiceStoreAQL {
 	return st.sstAQL
+}
+
+func (st *ServiceStorage) IsKVBC() bool {
+	return st.isKVBC
 }
 
 func (st *ServiceStorage) KVBC() *ServiceStoreKVBC {

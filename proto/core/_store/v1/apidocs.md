@@ -4,8 +4,8 @@
 ## Table of Contents
 
 - [proto/core/_store/v1/store.proto](#proto_core__store_v1_store-proto)
-    - [MetaDocAQL](#proto-core-_store-v1-MetaDocAQL)
-    - [StoreIDX](#proto-core-_store-v1-StoreIDX)
+    - [Store](#proto-core-_store-v1-Store)
+    - [StoreAQL](#proto-core-_store-v1-StoreAQL)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -18,10 +18,29 @@
 
 
 
-<a name="proto-core-_store-v1-MetaDocAQL"></a>
+<a name="proto-core-_store-v1-Store"></a>
 
-### MetaDocAQL
-MetaDocAQL - ArangoDB DocumentMeta
+### Store
+Store
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid - StoreQID |
+| user | [proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) | optional | user - UserCore |
+| asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | optional | asset - AssetCore |
+| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | optional | favourite - FavouriteCore |
+| opinion | [proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | optional | opinion - OpinionCore |
+
+
+
+
+
+
+<a name="proto-core-_store-v1-StoreAQL"></a>
+
+### StoreAQL
+StoreAQL store Arango
 DocumentMeta contains all meta data used to identifier a document.
 type DocumentMeta struct {
 	Key    string     `json:&#34;_key,omitempty&#34;`
@@ -29,46 +48,36 @@ type DocumentMeta struct {
 	Rev    string     `json:&#34;_rev,omitempty&#34;`
 	OldRev string     `json:&#34;_oldRev,omitempty&#34;`
 }
-
 DocumentID references a document in a collection.
 Format: collection/_key
 type DocumentID string
-
 ArangoID is a generic Arango ID struct representation
 type ArangoID struct {
-	ID               string `json:&#34;id,omitempty&#34;`
+	ID               string `json:&#34;qid,omitempty&#34;`
 	GloballyUniqueId string `json:&#34;globallyUniqueId,omitempty&#34;`
 }
-
 REV rev = 4 [json_name = &#34;_rev&#34;];
 
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  | key - _key |
-| id | [string](#string) |  | id - DocumentID string Format: collection/_key |
-| rev | [string](#string) |  | rev - revision string |
-| old_rev | [string](#string) |  | old_rev - old revision string |
-
-
-
-
-
-
-<a name="proto-core-_store-v1-StoreIDX"></a>
-
-### StoreIDX
-StoreIDX (uuid, revision) optional
+WARNING! generated pb files keep json_name for protobuf but not for json
+want: json=_key,proto3&#34; json:&#34;_key (from json_name = &#34;_key&#34;)
+Key string `protobuf:&#34;bytes,4,opt,name=key,json=_key,proto3&#34; json:&#34;_key,omitempty&#34;`
+got:  json=_key,proto3&#34; json:&#34;key  (from json_name = &#34;_key&#34;)
+Key string `protobuf:&#34;bytes,4,opt,name=key,json=_key,proto3&#34; json:&#34;key,omitempty&#34;`
+solution: 1) edit generated proto/core/_store/v1/store.pb.go; 
+or 2) synch dedicated type in app/storage/storepb2/storepb2.go
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| kind | [string](#string) |  | kind |
-| uid | [string](#string) |  | uid |
-| rev | [string](#string) |  | rev - revision string |
-| uuid | [string](#string) |  | uuid |
-| rev_n | [int64](#int64) | optional | rev_n - revision number |
-| aql | [MetaDocAQL](#proto-core-_store-v1-MetaDocAQL) | optional | aql - MetaDocAQL |
+| key | [string](#string) |  | key - AQL _key - doc storage key unique per db.collection |
+| id | [string](#string) |  | id - AQL _id - DocumentID string Format: collection/_key |
+| rev | [string](#string) |  | rev - AQL _rev - revision string |
+| old_rev | [string](#string) |  | old_rev - AQL _oldRev old revision string |
+| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid - StoreQID |
+| user | [proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) | optional | user - UserCore |
+| asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | optional | asset - AssetCore |
+| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | optional | favourite - FavouriteCore |
+| opinion | [proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | optional | opinion - OpinionCore |
 
 
 

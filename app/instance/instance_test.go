@@ -46,7 +46,7 @@ func ExampleInstance_PassVerifyHash() {
 	// fmt.Printf("passHash: %s\n", string(passHash))
 
 	// Output:
-	//
+	// -
 	// - i1
 	// i1.Valid(): bool: true
 	// i1.PassVerifyHash(i1h1): bool: true

@@ -15,12 +15,12 @@ import "google/api/annotations.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
-import "proto/core/_store/v1/store.proto";
+import "proto/core/_share/v1/share.proto";
 import "proto/core/asset/v1/asset.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 // import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/serv/asset/v2;asset_srvpb";
+option go_package = "x-gwi/proto/serv/asset/v2;pbsrvasset";
 
 // AssetService
 // a microservice to handle companies. It provides the following operations:
@@ -28,7 +28,7 @@ option go_package = "x-gwi/proto/serv/asset/v2;asset_srvpb";
 // standard methods: List, Get, Create, Update, and Delete
 service AssetService {
   // Create
-  rpc Create(proto.core.asset.v1.AssetInstance) returns (proto.core.asset.v1.AssetInstance) {
+  rpc Create(proto.core.asset.v1.AssetCore) returns (proto.core.asset.v1.AssetCore) {
     option (google.api.http) = {
       post: "/api/v2/asset/create"
       body: "*"
@@ -36,32 +36,32 @@ service AssetService {
   };
 
   // Get
-  rpc Get(proto.core._store.v1.StoreIDX) returns (proto.core.asset.v1.AssetInstance) {
+  rpc Get(proto.core._share.v1.ShareQID) returns (proto.core.asset.v1.AssetCore) {
     option (google.api.http) = {
-      get: "/api/v2/asset/get/{uuid}"
+      get: "/api/v2/asset/get/{key}"
       additional_bindings { post: "/api/v2/asset/get" body: "*" }
     };
   };
 
   // Gett
-  rpc Gett(proto.core._store.v1.StoreIDX) returns (proto.core.asset.v1.AssetInstance);
+  rpc Gett(proto.core._share.v1.ShareQID) returns (proto.core.asset.v1.AssetCore);
 
   // Update
-  rpc Update(proto.core.asset.v1.AssetInstance) returns (proto.core.asset.v1.AssetInstance) {
+  rpc Update(proto.core.asset.v1.AssetCore) returns (proto.core.asset.v1.AssetCore) {
     option (google.api.http) = {
-      patch: "/api/v2/asset/update/{id.uuid}/{id.rev}"
+      patch: "/api/v2/asset/update/{qid.key}/{qid.rev}"
       body: "*"
       // additional_bindings {
-      //   put: "/api/v2/asset/update/{id.uuid}/{id.rev}"
+      //   put: "/api/v2/asset/update/{qid.key}/{qid.rev}"
       //   body: "*"
       // }
     };
   };
 
   // Delete
-  rpc Delete(proto.core._store.v1.StoreIDX) returns (proto.core.asset.v1.AssetInstance) {
+  rpc Delete(proto.core._share.v1.ShareQID) returns (proto.core.asset.v1.AssetCore) {
     option (google.api.http) = {
-      delete: "/api/v2/asset/delete/{uuid}"
+      delete: "/api/v2/asset/delete/{key}"
     };
   };
 }

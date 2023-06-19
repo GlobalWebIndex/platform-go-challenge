@@ -33,12 +33,12 @@ standard methods: List, Get, Create, Update, and Delete
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| Create | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Create |
-| Get | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Get |
-| Gett | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Gett |
-| Update | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Update |
-| Delete | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) | Delete |
-| List | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.favourite.v1.FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset) stream | List - stream favourites of a user |
+| Create | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | Create |
+| Get | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | Get |
+| Gett | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | Gett |
+| Update | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | Update |
+| Delete | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | Delete |
+| List | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) stream | List - stream favourites of a user |
 
  
 

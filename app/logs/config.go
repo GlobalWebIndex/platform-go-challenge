@@ -3,6 +3,7 @@
 package logs
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -16,6 +17,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/rs/xid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/pkgerrors"
@@ -210,10 +212,17 @@ func LogTrace() (string, string) {
 	return "trace", fmt.Sprintf("%s:%d::%s()", filepath.Base(file), line, filepath.Base(f.Name()))
 }
 
+func LogTraceX(skip int) string {
+	_, tr := LogTrace2(skip)
+
+	return tr
+}
+
 //nolint:gomnd,funlen,nestif
-func LogTrace2() (string, string) {
+func LogTrace2(skip int) (string, string) {
 	pc := make([]uintptr, 10) // min 1
-	runtime.Callers(2, pc)
+	// runtime.Callers(2, pc)
+	runtime.Callers(skip, pc)
 	f := runtime.FuncForPC(pc[0])
 	file, line := f.FileLine(pc[0])
 
@@ -295,4 +304,31 @@ func XID() xid.ID {
 	// github.com/rs/xid guid := xid.New() xid: 12 bytes, 20 chars, configuration free, sortable
 	// guid := xid.New() guid.Machine() guid.Pid() guid.Time() guid.Counter() _ = xid.NilID()
 	return xid.New()
+}
+
+// gRPC
+
+// InterceptorLogger adapts zerolog logger to interceptor logger.
+// This code is simple enough to be copied and not imported.
+// https://github.com/grpc-ecosystem/go-grpc-middleware/blob/v2/interceptors/logging/examples/zerolog/example_test.go
+func InterceptorLogger(l zerolog.Logger) logging.Logger { //nolint:ireturn
+	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
+		log := l.With().Fields(fields).Logger()
+
+		switch lvl {
+		case logging.LevelDebug:
+			log.Debug().Msg(msg)
+		case logging.LevelInfo:
+			log.Info().Msg(msg)
+		case logging.LevelWarn:
+			log.Warn().Msg(msg)
+		case logging.LevelError:
+			log.Error().Msg(msg)
+		default:
+			// panic(fmt.Sprintf("unknown level %v", lvl))
+			log.Error().
+				Int("(panic:) unknown level", int(lvl)).
+				Msg(msg)
+		}
+	})
 }

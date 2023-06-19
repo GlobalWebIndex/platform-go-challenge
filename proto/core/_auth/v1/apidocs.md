@@ -4,6 +4,8 @@
 ## Table of Contents
 
 - [proto/core/_auth/v1/auth.proto](#proto_core__auth_v1_auth-proto)
+    - [AccountCore](#proto-core-_auth-v1-AccountCore)
+    - [BasicAccount](#proto-core-_auth-v1-BasicAccount)
     - [BasicAuth](#proto-core-_auth-v1-BasicAuth)
     - [JWT](#proto-core-_auth-v1-JWT)
   
@@ -18,6 +20,39 @@
 
 
 
+<a name="proto-core-_auth-v1-AccountCore"></a>
+
+### AccountCore
+AccountCore
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid - Account StoreQID |
+| md | [proto.core._share.v1.MetaDescription](#proto-core-_share-v1-MetaDescription) | optional | md - MetaDescription |
+| mmd | [proto.core._share.v1.MetaMultiDescription](#proto-core-_share-v1-MetaMultiDescription) | optional | mmd - MetaMultiDescription |
+| basic_account | [BasicAccount](#proto-core-_auth-v1-BasicAccount) | optional | basic_account - BasicAccount |
+
+
+
+
+
+
+<a name="proto-core-_auth-v1-BasicAccount"></a>
+
+### BasicAccount
+BasicAccount
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| username | [string](#string) |  | username - Name (1-256 characters) required |
+
+
+
+
+
+
 <a name="proto-core-_auth-v1-BasicAuth"></a>
 
 ### BasicAuth
@@ -28,6 +63,7 @@ BasicAuth - username : password
 | ----- | ---- | ----- | ----------- |
 | username | [string](#string) |  | username - Name (1-256 characters) required |
 | password | [string](#string) |  | password - (16-72 characters), required |
+| passhash | [string](#string) |  | passhash |
 
 
 

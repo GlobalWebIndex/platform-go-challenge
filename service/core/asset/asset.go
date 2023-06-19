@@ -5,23 +5,19 @@ import (
 	"fmt"
 
 	"x-gwi/app/storage"
-	store_pb "x-gwi/proto/core/_store/v1"
-	asset_pb "x-gwi/proto/core/asset/v1"
-	asset_srvpb "x-gwi/proto/serv/asset/v1"
+	"x-gwi/app/storage/storepb2"
+	"x-gwi/app/x/id"
+	assetpb "x-gwi/proto/core/asset/v1"
 	"x-gwi/service"
 )
 
-//nolint:unused
 type CoreAsset struct {
-	asset_srvpb.UnimplementedAssetServiceServer
-	idx      *store_pb.StoreIDX
 	storage  *storage.ServiceStorage
-	asset    *asset_pb.AssetInstance
 	coreName service.CoreName
 }
 
 func NewCore(storage *storage.ServiceStorage) (*CoreAsset, error) {
-	c := &CoreAsset{ //nolint:exhaustruct
+	c := &CoreAsset{
 		coreName: service.NameAsset,
 		storage:  storage,
 	}
@@ -33,7 +29,50 @@ func NewCore(storage *storage.ServiceStorage) (*CoreAsset, error) {
 	return c, nil
 }
 
-//nolint:nilnil,revive
-func (c *CoreAsset) Create(ctx context.Context, in *asset_pb.AssetInstance) (*store_pb.StoreIDX, error) {
-	return nil, nil
+func (c *CoreAsset) Create(ctx context.Context, in *assetpb.AssetCore) error {
+	in.Qid.Kind = c.storage.CoreName().String()
+	// in.Qid.Key = in.Qid.Key // use directly
+	in.Qid.Uid = id.XiD().String()
+	in.Qid.Uuid = id.UUID().String()
+
+	// if c.storage.IsAQL()
+	// "x-gwi/app/storage/storepb2"
+	//nolint:exhaustruct
+	dAQL := &storepb2.StoreAQL{
+		Key:   in.Qid.Key,
+		Qid:   in.Qid,
+		Asset: in,
+	}
+
+	m, err := c.storage.AQL().CreateDocument(ctx, dAQL)
+	if err != nil {
+		return fmt.Errorf("AQL().CreateDocument: %w", err)
+	}
+
+	// if m.Key != in.Qid.Key {todo delete wronk key}
+	in.Qid.Key = m.Key
+	in.Qid.Rev = m.Rev
+
+	return nil
+}
+
+func (c *CoreAsset) Get(ctx context.Context, in *assetpb.AssetCore) error {
+	// if c.storage.IsAQL()
+	// "x-gwi/app/storage/storepb2"
+	//nolint:exhaustruct
+	dAQL := &storepb2.StoreAQL{
+		// Key:  in.Qid.Key,
+		// Qid:  in.Qid,
+		Asset: in,
+	}
+
+	m, err := c.storage.AQL().ReadDocument(ctx, in.Qid.Key, dAQL)
+	if err != nil {
+		return fmt.Errorf("AQL().ReadDocument: %w", err)
+	}
+
+	// in.Qid.Key = m.Key
+	in.Qid.Rev = m.Rev
+
+	return nil
 }

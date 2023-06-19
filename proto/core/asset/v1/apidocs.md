@@ -6,9 +6,8 @@
 - [proto/core/asset/v1/asset.proto](#proto_core_asset_v1_asset-proto)
     - [AssetAudience](#proto-core-asset-v1-AssetAudience)
     - [AssetChart](#proto-core-asset-v1-AssetChart)
+    - [AssetCore](#proto-core-asset-v1-AssetCore)
     - [AssetInsight](#proto-core-asset-v1-AssetInsight)
-    - [AssetInstance](#proto-core-asset-v1-AssetInstance)
-    - [AssetMetaData](#proto-core-asset-v1-AssetMetaData)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -32,7 +31,8 @@ that spent more than 3 hours on social media daily.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| md | [AssetMetaData](#proto-core-asset-v1-AssetMetaData) | optional | md - Asset Audience MetaData |
+| md | [proto.core._share.v1.MetaDescription](#proto-core-_share-v1-MetaDescription) | optional | md - MetaDescription |
+| mmd | [proto.core._share.v1.MetaMultiDescription](#proto-core-_share-v1-MetaMultiDescription) | optional | mmd - MetaMultiDescription |
 | gender | [string](#string) | optional | gender - (male | female) |
 | genders | [string](#string) | repeated | genders - [](male, female) |
 | country_code | [string](#string) | optional | country_code - iso 2 birth country code (auto lowercase) |
@@ -57,11 +57,32 @@ AssetChart - (that has a small title, axes titles and data)
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| md | [AssetMetaData](#proto-core-asset-v1-AssetMetaData) | optional | md - Asset Chart MetaData |
 | title | [string](#string) | optional | title - (0-256 characters) optional |
+| md | [proto.core._share.v1.MetaDescription](#proto-core-_share-v1-MetaDescription) | optional | md - MetaDescription |
+| mmd | [proto.core._share.v1.MetaMultiDescription](#proto-core-_share-v1-MetaMultiDescription) | optional | mmd - MetaMultiDescription |
 | data | [google.protobuf.Struct](#google-protobuf-Struct) | optional | data |
 | data_raw | [bytes](#bytes) | optional | data_raw - raw binary data (65536) |
 | options | [google.protobuf.Struct](#google-protobuf-Struct) | optional | options |
+
+
+
+
+
+
+<a name="proto-core-asset-v1-AssetCore"></a>
+
+### AssetCore
+AssetCore
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid - Asset StoreQID |
+| md | [proto.core._share.v1.MetaDescription](#proto-core-_share-v1-MetaDescription) | optional | md - MetaDescription |
+| mmd | [proto.core._share.v1.MetaMultiDescription](#proto-core-_share-v1-MetaMultiDescription) | optional | mmd - MetaMultiDescription |
+| chart | [AssetChart](#proto-core-asset-v1-AssetChart) | optional | chart - Chart (that has a small title, axes titles and data) |
+| insight | [AssetInsight](#proto-core-asset-v1-AssetInsight) | optional | insight - Insight (a small piece of text that provides some insight into a topic, e.g. &#34;40% of millenials spend more than 3hours on social media daily&#34;) |
+| audience | [AssetAudience](#proto-core-asset-v1-AssetAudience) | optional | audience - Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month) e.g. Males from 24-35 that spent more than 3 hours on social media daily. |
 
 
 
@@ -77,46 +98,9 @@ topic, e.g. &#34;40% of millenials spend more than 3hours on social media daily&
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| md | [AssetMetaData](#proto-core-asset-v1-AssetMetaData) | optional | md - Asset Insight MetaData |
 | sentence | [string](#string) | optional | sentence - (1-256 characters) required |
-
-
-
-
-
-
-<a name="proto-core-asset-v1-AssetInstance"></a>
-
-### AssetInstance
-AssetInstance
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id - Asset StoreIDX |
-| md | [AssetMetaData](#proto-core-asset-v1-AssetMetaData) | optional | md - AssetMetaData |
-| chart | [AssetChart](#proto-core-asset-v1-AssetChart) | optional | chart - Chart (that has a small title, axes titles and data) |
-| insight | [AssetInsight](#proto-core-asset-v1-AssetInsight) | optional | insight - Insight (a small piece of text that provides some insight into a topic, e.g. &#34;40% of millenials spend more than 3hours on social media daily&#34;) |
-| audience | [AssetAudience](#proto-core-asset-v1-AssetAudience) | optional | audience - Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month) e.g. Males from 24-35 that spent more than 3 hours on social media daily. |
-
-
-
-
-
-
-<a name="proto-core-asset-v1-AssetMetaData"></a>
-
-### AssetMetaData
-AssetMetaData - title, topic, label, description, tags
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| title | [string](#string) | optional | title - (0-256 characters) optional |
-| topic | [string](#string) | optional | topic - (0-256 characters) optional |
-| label | [string](#string) | optional | label - (0-256 characters) optional |
-| description | [string](#string) | optional | description - (0-1024 characters) optional |
-| tags | [string](#string) | repeated | tags - (0-32 elements, unique, tag max_len 32) optional |
+| md | [proto.core._share.v1.MetaDescription](#proto-core-_share-v1-MetaDescription) | optional | md - MetaDescription |
+| mmd | [proto.core._share.v1.MetaMultiDescription](#proto-core-_share-v1-MetaMultiDescription) | optional | mmd - MetaMultiDescription |
 
 
 

@@ -6,7 +6,7 @@
 // - protoc             v4.23.2
 // source: proto/serv/opinion/v1/opinion_srv.proto
 
-package opinion_srvpb
+package pbsrvopinion
 
 import (
 	context "context"

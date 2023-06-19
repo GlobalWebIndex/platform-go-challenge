@@ -1,0 +1,276 @@
+// proto/core/_share/v1/share.proto
+
+syntax = "proto3";
+
+package proto.core._share.v1;
+
+// /usr/local/include/google/protobuf/
+// import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+// import "google/api/http.proto";
+// import "google/protobuf/any.proto";
+// import "google/protobuf/duration.proto";
+// import "google/protobuf/empty.proto";
+// import "google/protobuf/field_mask.proto";
+// import "google/protobuf/struct.proto";
+// import "google/protobuf/timestamp.proto";
+// import "google/protobuf/wrappers.proto";
+// import "google/rpc/status.proto";
+import "validate/validate.proto";
+
+option go_package = "x-gwi/proto/core/_share/v1;sharepb";
+
+// ShareQID (uuid, revision) optional
+message ShareQID {
+  reserved 1, 2, 3;
+
+  // kind
+  string kind = 4 [
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+
+  // key
+  string key = 5 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.field_behavior) = IMMUTABLE,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+
+  // uid
+  string uid = 6 [
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+
+  // uuid
+  string uuid = 7 [
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, uuid: true }
+  ];
+
+  // rev - revision string
+  string rev = 8 [
+    json_name = "rev",
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+}
+
+// MetaDescription - title, topic, label, description
+message MetaDescription {
+  reserved 1, 2, 3;
+
+  // title - (0-256 characters) optional
+  optional string title = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 256 }
+  ];
+
+  // topic - (0-256 characters) optional
+  optional string topic = 5 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 256 }
+  ];
+
+  // label - (0-256 characters) optional
+  optional string label = 6 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 256 }
+  ];
+
+  // description - (0-1024 characters) optional
+  optional string description = 7 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 1024 }
+  ];
+}
+
+// MetaMultiDescription - []labels, []tags
+message MetaMultiDescription {
+  reserved 1, 2, 3, 4, 5, 7;
+
+  // labels - (0-32 elements, unique, tag max_len 32) optional
+  repeated string labels = 6 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).repeated = {
+      ignore_empty: true,
+      max_items: 32,
+      unique: true,
+      items: { string: { max_len: 32 } }
+    }
+  ];
+
+  // tags - (0-32 elements, unique, tag max_len 32) optional
+  repeated string tags = 8 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).repeated = {
+      ignore_empty: true,
+      max_items: 32,
+      unique: true,
+      items: { string: { max_len: 32 } }
+    }
+  ];
+}
+
+/*
+// MetaDocAQL - ArangoDB DocumentMeta
+// DocumentMeta contains all meta data used to identifier a document.
+// type DocumentMeta struct {
+// 	Key    string     `json:"_key,omitempty"`
+// 	ID     DocumentID `json:"_id,omitempty"`
+// 	Rev    string     `json:"_rev,omitempty"`
+// 	OldRev string     `json:"_oldRev,omitempty"`
+// }
+//
+// DocumentID references a document in a collection.
+// Format: collection/_key
+// type DocumentID string
+//
+// ArangoID is a generic Arango ID struct representation
+// type ArangoID struct {
+// 	ID               string `json:"qid,omitempty"`
+// 	GloballyUniqueId string `json:"globallyUniqueId,omitempty"`
+// }
+//
+// REV rev = 4 [json_name = "_rev"];
+message MetaDocAQL {
+  reserved 1, 2, 3;
+
+  // key - _key
+  string key = 4 [
+    json_name = "_key",
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+
+  // qid - DocumentID string Format: collection/_key
+  string qid = 5 [
+    json_name = "_id",
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+
+  // rev - revision string
+  string rev = 6 [
+    json_name = "_rev",
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+
+  // old_rev - old revision string
+  string old_rev = 7 [
+    json_name = "_oldRev",
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+}
+*/
+
+// kind
+// string kind = 4 [
+//   (google.api.field_behavior) = OPTIONAL,
+//   (validate.rules).string = { ignore_empty: true, max_len: 128 }
+// ];
+//
+// uid
+// string uid = 5 [
+//   (google.api.field_behavior) = OPTIONAL,
+//   (validate.rules).string = { ignore_empty: true, max_len: 128 }
+// ];
+//
+// rev - revision string
+// string rev = 6 [
+//   json_name = "rev",
+//   (google.api.field_behavior) = IMMUTABLE,
+//   (google.api.field_behavior) = OPTIONAL,
+//   (validate.rules).string = { ignore_empty: true, max_len: 128 }
+// ];
+//
+// uuid
+// string uuid = 7 [
+//   (google.api.field_behavior) = OPTIONAL,
+//   (validate.rules).string = { ignore_empty: true, uuid: true }
+// ];
+//
+// rev_n - revision number
+// int64 rev_n = 8 [
+//   (google.api.field_behavior) = IMMUTABLE,
+//   (validate.rules).int64 = { ignore_empty: true, gte: 1 }
+// ];
+
+/*
+// IDX (uuid, revision) optional
+message IDX {
+  reserved 1, 2;
+
+  // idx - StoreIDX
+  // proto.core._store.v1.StoreIDX idx
+  StoreIDX idx = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // uuid
+  string uuid = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, uuid: true }
+  ];
+
+  // rev - revision
+  int64 rev = 5 [
+    (google.api.field_behavior) = IMMUTABLE,
+    (validate.rules).int64 = { ignore_empty: true, gte: 1 }
+  ];
+}
+
+// StoreIDX (uuid, revision) optional
+message StoreIDX {
+  reserved 1, 2;
+
+  // qid - StoreQID
+  optional StoreQID qid = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // aql - MetaDocAQL
+  optional MetaDocAQL aql = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+}
+
+// StoreQID (uuid, revision) optional
+message StoreQID {
+  reserved 1, 2, 3, 5, 8;
+
+  // kind
+  string kind = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+
+  // rev - revision string
+  string rev = 6 [
+    json_name = "rev",
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+
+  // uuid
+  string uuid = 7 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, uuid: true }
+  ];
+}
+ */

@@ -4,7 +4,7 @@
 ## Table of Contents
 
 - [proto/core/opinion/v1/opinion.proto](#proto_core_opinion_v1_opinion-proto)
-    - [OpinionAsset](#proto-core-opinion-v1-OpinionAsset)
+    - [OpinionCore](#proto-core-opinion-v1-OpinionCore)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -17,21 +17,22 @@
 
 
 
-<a name="proto-core-opinion-v1-OpinionAsset"></a>
+<a name="proto-core-opinion-v1-OpinionCore"></a>
 
-### OpinionAsset
-OpinionAsset
+### OpinionCore
+OpinionCore
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id - User&#39;s Opinion Asset StoreIDX |
-| id_user | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id_user (from) |
-| id_asset | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id_asset (to) |
-| md | [proto.core.asset.v1.AssetMetaData](#proto-core-asset-v1-AssetMetaData) | optional | md - User&#39;s Opinion Asset MetaData |
-| asset | [proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | optional | asset - User&#39;s Opinion Asset Instance |
+| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid - Favourite StoreQID |
+| md | [proto.core._share.v1.MetaDescription](#proto-core-_share-v1-MetaDescription) | optional | md - MetaDescription |
+| mmd | [proto.core._share.v1.MetaMultiDescription](#proto-core-_share-v1-MetaMultiDescription) | optional | mmd - MetaMultiDescription |
+| qid_from_user | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid_from_user (from) |
+| qid_to_asset | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid_to_asset (to) |
 | is_favourite | [bool](#bool) | optional | is_favourite |
 | stars | [int32](#int32) | optional | stars |
+| asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | optional | asset - REF User&#39;s Favourite Asset |
 
 
 

@@ -49,14 +49,14 @@ func NewConfigStorage() *ConfigAppStorage {
 				UserName: env.Env("APP_STORAGE_AQL_USERNAME", "arango"),
 				PassWord: env.Env("APP_STORAGE_AQL_PASSWORD", "arango"),
 			},
-			Endpoints: env.Envs("APP_STORAGE_AQL_ENDPOINTS", "http://localhost:8529"),
+			Endpoints: env.Envs("APP_STORAGE_AQL_ENDPOINTS", "http://192.168.1.15:8529,http://localhost:8529"),
 		},
 		/* 		CQL: ConfigCQL{
 		   			Credentials: CredentialsBasic{
 		   				UserName: env.Env("APP_STORAGE_CQL_USERNAME", "cassandra"),
 		   				PassWord: env.Env("APP_STORAGE_CQL_PASSWORD", "cassandra"),
 		   			},
-		   			Endpoints: env.Envs("APP_STORAGE_CQL_ENDPOINTS", "127.0.0.1,192.168.1.53"),
+		   			Endpoints: env.Envs("APP_STORAGE_CQL_ENDPOINTS", "127.0.0.1,192.168.1.15"),
 		   		},
 		   		SQL: ConfigSQL{
 		   			Credentials: CredentialsBasic{

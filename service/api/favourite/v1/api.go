@@ -1,82 +1,128 @@
-package favouritesrv
+package apiv1favourite
 
 import (
 	"context"
 	"fmt"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"x-gwi/app/storage"
-	srvpb "x-gwi/proto/serv/favourite/v1"
+	favouritepb "x-gwi/proto/core/favourite/v1"
+	pbsrv "x-gwi/proto/serv/favourite/v1"
 	"x-gwi/service/core/favourite"
 )
 
-type Service struct {
-	srvpb.UnimplementedFavouriteServiceServer
-	favourite *favourite.CoreFavourite
-	storage   *storage.ServiceStorage
+type ServiceAPI struct {
+	pbsrv.UnimplementedFavouriteServiceServer
+	favouriteCore *favourite.CoreFavourite
+	// storage   *storage.ServiceStorage
 }
 
-func RegisterGRPC(grpcServer *grpc.Server, storage *storage.ServiceStorage) (*Service, error) {
+func RegisterGRPC(grpcServer *grpc.Server, storage *storage.ServiceStorage) (*ServiceAPI, error) {
 	var err error
 
-	s := &Service{ //nolint:exhaustruct
-		storage: storage,
+	s := &ServiceAPI{ //nolint:exhaustruct
+		// storage: storage,
 	}
 
-	s.favourite, err = favourite.NewCore(s.storage)
+	s.favouriteCore, err = favourite.NewCore(storage)
 	if err != nil {
 		return nil, fmt.Errorf("favourite.NewCore: %w", err)
 	}
 
-	srvpb.RegisterFavouriteServiceServer(grpcServer, s)
+	pbsrv.RegisterFavouriteServiceServer(grpcServer, s)
 
 	return s, nil
 }
 
-func (s *Service) Create(ctx context.Context, in *srvpb.CreateRequest) (*srvpb.CreateResponse, error) {
-	_, _ = (srvpb.UnimplementedFavouriteServiceServer{}).Create(ctx, in)
+func (s *ServiceAPI) Create(ctx context.Context, in *pbsrv.CreateRequest) (*pbsrv.CreateResponse, error) {
+	_, _ = (pbsrv.UnimplementedFavouriteServiceServer{}).Create(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return (srvpb.UnimplementedFavouriteServiceServer{}).Create(ctx, in)
-	// return s.createJWT(ctx, in)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).Create(ctx, in) //nolint:wrapcheck
+	// 2. process by core
+	err := s.favouriteCore.Create(ctx, in.GetFavourite())
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "favouriteCore.Create: %v", err)
+	}
+
+	// 3. adapt output
+	out := &pbsrv.CreateResponse{
+		Favourite: in.GetFavourite(),
+	}
+
+	return out, nil
 }
 
-func (s *Service) Get(ctx context.Context, in *srvpb.GetRequest) (*srvpb.GetResponse, error) {
-	_, _ = (srvpb.UnimplementedFavouriteServiceServer{}).Get(ctx, in)
+func (s *ServiceAPI) Get(ctx context.Context, in *pbsrv.GetRequest) (*pbsrv.GetResponse, error) {
+	_, _ = (pbsrv.UnimplementedFavouriteServiceServer{}).Get(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return (srvpb.UnimplementedFavouriteServiceServer{}).Create(ctx, in)
-	// return s.createJWT(ctx, in)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).Get(ctx, in) //nolint:wrapcheck
+	// 2. adapt output to fill
+	out := &pbsrv.GetResponse{
+		Favourite: &favouritepb.FavouriteCore{ //nolint:exhaustruct
+			Qid: in.GetQid(),
+		},
+	}
+
+	// 3. process by core
+	err := s.favouriteCore.Get(ctx, out.Favourite)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "favouriteCore.Get: %v", err)
+	}
+
+	return out, nil
 }
 
-func (s *Service) Gett(ctx context.Context, in *srvpb.GetRequest) (*srvpb.GetResponse, error) {
-	_, _ = (srvpb.UnimplementedFavouriteServiceServer{}).Gett(ctx, in)
+func (s *ServiceAPI) Gett(ctx context.Context, in *pbsrv.GetRequest) (*pbsrv.GetResponse, error) {
+	_, _ = (pbsrv.UnimplementedFavouriteServiceServer{}).Gett(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return (srvpb.UnimplementedFavouriteServiceServer{}).Create(ctx, in)
-	// return s.createJWT(ctx, in)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).Gett(ctx, in) //nolint:wrapcheck
+	// 2. adapt output to fill
+	out := &pbsrv.GetResponse{
+		Favourite: &favouritepb.FavouriteCore{ //nolint:exhaustruct
+			Qid: in.GetQid(),
+		},
+	}
+
+	// 3. process by core
+	err := s.favouriteCore.Get(ctx, out.Favourite)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "favouriteCore.Get: %v", err)
+	}
+
+	return out, nil
 }
 
-func (s *Service) Update(ctx context.Context, in *srvpb.UpdateRequest) (*srvpb.UpdateResponse, error) {
-	_, _ = (srvpb.UnimplementedFavouriteServiceServer{}).Update(ctx, in)
+func (s *ServiceAPI) Update(ctx context.Context, in *pbsrv.UpdateRequest) (*pbsrv.UpdateResponse, error) {
+	_, _ = (pbsrv.UnimplementedFavouriteServiceServer{}).Update(ctx, in)
 
-	// return (srvpb.UnimplementedFavouriteServiceServer{}).Create(ctx, in)
+	// return (pbsrv.UnimplementedFavouriteServiceServer{}).Create(ctx, in)
 	// return s.createJWT(ctx, in)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).Update(ctx, in) //nolint:wrapcheck
+	return (pbsrv.UnimplementedFavouriteServiceServer{}).Update(ctx, in) //nolint:wrapcheck
 }
 
-func (s *Service) Delete(ctx context.Context, in *srvpb.DeleteRequest) (*srvpb.DeleteResponse, error) {
-	_, _ = (srvpb.UnimplementedFavouriteServiceServer{}).Delete(ctx, in)
+func (s *ServiceAPI) Delete(ctx context.Context, in *pbsrv.DeleteRequest) (*pbsrv.DeleteResponse, error) {
+	_, _ = (pbsrv.UnimplementedFavouriteServiceServer{}).Delete(ctx, in)
 
-	// return (srvpb.UnimplementedFavouriteServiceServer{}).Create(ctx, in)
+	// return (pbsrv.UnimplementedFavouriteServiceServer{}).Create(ctx, in)
 	// return s.createJWT(ctx, in)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
+	return (pbsrv.UnimplementedFavouriteServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
 }
 
-func (s *Service) List(in *srvpb.ListRequest, stream srvpb.FavouriteService_ListServer) error {
-	_ = (srvpb.UnimplementedFavouriteServiceServer{}).List(in, stream)
+func (s *ServiceAPI) List(in *pbsrv.ListRequest, stream pbsrv.FavouriteService_ListServer) error {
+	_ = (pbsrv.UnimplementedFavouriteServiceServer{}).List(in, stream)
 
 	// return s.list(in, stream)
-	return (srvpb.UnimplementedFavouriteServiceServer{}).List(in, stream) //nolint:wrapcheck
+	return (pbsrv.UnimplementedFavouriteServiceServer{}).List(in, stream) //nolint:wrapcheck
 }

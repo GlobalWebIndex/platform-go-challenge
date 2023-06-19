@@ -33,12 +33,12 @@ standard methods: List, Get, Create, Update, and Delete
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| Create | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Create |
-| Get | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Get |
-| Gett | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Gett |
-| Update | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Update |
-| Delete | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) | Delete |
-| List | [.proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) | [.proto.core.opinion.v1.OpinionAsset](#proto-core-opinion-v1-OpinionAsset) stream | List - stream opinins of a user |
+| Create | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | Create |
+| Get | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | Get |
+| Gett | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | Gett |
+| Update | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | Update |
+| Delete | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | Delete |
+| List | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) stream | List - stream opinins of a user |
 
  
 

@@ -4,7 +4,7 @@
 ## Table of Contents
 
 - [proto/core/favourite/v1/favourite.proto](#proto_core_favourite_v1_favourite-proto)
-    - [FavouriteAsset](#proto-core-favourite-v1-FavouriteAsset)
+    - [FavouriteCore](#proto-core-favourite-v1-FavouriteCore)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -17,19 +17,20 @@
 
 
 
-<a name="proto-core-favourite-v1-FavouriteAsset"></a>
+<a name="proto-core-favourite-v1-FavouriteCore"></a>
 
-### FavouriteAsset
-FavouriteAsset
+### FavouriteCore
+FavouriteCore
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id - User&#39;s Favourite Asset StoreIDX |
-| id_user | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id_user (from) |
-| id_asset | [proto.core._store.v1.StoreIDX](#proto-core-_store-v1-StoreIDX) |  | id_asset (to) |
-| md | [proto.core.asset.v1.AssetMetaData](#proto-core-asset-v1-AssetMetaData) | optional | md - User&#39;s Favourite Asset MetaData |
-| asset | [proto.core.asset.v1.AssetInstance](#proto-core-asset-v1-AssetInstance) | optional | asset - User&#39;s Favourite Asset Instance |
+| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid - Favourite StoreQID |
+| md | [proto.core._share.v1.MetaDescription](#proto-core-_share-v1-MetaDescription) | optional | md - MetaDescription |
+| mmd | [proto.core._share.v1.MetaMultiDescription](#proto-core-_share-v1-MetaMultiDescription) | optional | mmd - MetaMultiDescription |
+| qid_from_user | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid_from_user (from) |
+| qid_to_asset | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid_to_asset (to) |
+| asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | optional | asset - REF User&#39;s Favourite Asset |
 
 
 
