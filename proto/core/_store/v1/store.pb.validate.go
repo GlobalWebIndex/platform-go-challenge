@@ -316,11 +316,11 @@ func (m *StoreAQL) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetKey() != "" {
+	if m.GetXKey() != "" {
 
-		if utf8.RuneCountInString(m.GetKey()) > 128 {
+		if utf8.RuneCountInString(m.GetXKey()) > 128 {
 			err := StoreAQLValidationError{
-				field:  "Key",
+				field:  "XKey",
 				reason: "value length must be at most 128 runes",
 			}
 			if !all {
@@ -331,11 +331,11 @@ func (m *StoreAQL) validate(all bool) error {
 
 	}
 
-	if m.GetId() != "" {
+	if m.GetXId() != "" {
 
-		if utf8.RuneCountInString(m.GetId()) > 128 {
+		if utf8.RuneCountInString(m.GetXId()) > 128 {
 			err := StoreAQLValidationError{
-				field:  "Id",
+				field:  "XId",
 				reason: "value length must be at most 128 runes",
 			}
 			if !all {
@@ -346,11 +346,11 @@ func (m *StoreAQL) validate(all bool) error {
 
 	}
 
-	if m.GetRev() != "" {
+	if m.GetXRev() != "" {
 
-		if utf8.RuneCountInString(m.GetRev()) > 128 {
+		if utf8.RuneCountInString(m.GetXRev()) > 128 {
 			err := StoreAQLValidationError{
-				field:  "Rev",
+				field:  "XRev",
 				reason: "value length must be at most 128 runes",
 			}
 			if !all {
@@ -361,11 +361,41 @@ func (m *StoreAQL) validate(all bool) error {
 
 	}
 
-	if m.GetOldRev() != "" {
+	if m.GetXOldRev() != "" {
 
-		if utf8.RuneCountInString(m.GetOldRev()) > 128 {
+		if utf8.RuneCountInString(m.GetXOldRev()) > 128 {
 			err := StoreAQLValidationError{
-				field:  "OldRev",
+				field:  "XOldRev",
+				reason: "value length must be at most 128 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.GetXFrom() != "" {
+
+		if utf8.RuneCountInString(m.GetXFrom()) > 128 {
+			err := StoreAQLValidationError{
+				field:  "XFrom",
+				reason: "value length must be at most 128 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.GetXTo() != "" {
+
+		if utf8.RuneCountInString(m.GetXTo()) > 128 {
+			err := StoreAQLValidationError{
+				field:  "XTo",
 				reason: "value length must be at most 128 runes",
 			}
 			if !all {

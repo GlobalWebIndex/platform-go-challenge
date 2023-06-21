@@ -21,10 +21,11 @@ type AppStoreAQL struct {
 }
 
 type ServiceStoreAQL struct {
-	inst *instance.Instance
-	apSt *AppStoreAQL
-	col  CollectionAQL
-	name service.CoreName
+	inst   *instance.Instance
+	apSt   *AppStoreAQL
+	col    CollectionAQL
+	name   service.CoreName
+	isEdge bool
 }
 
 type ClientAQL = arango.Client
@@ -104,6 +105,7 @@ func (st *AppStoreAQL) initDB(ctx context.Context) error {
 			st.stores[coreName].inst = st.inst
 			st.stores[coreName].apSt = st
 			st.stores[coreName].name = coreName
+			st.stores[coreName].isEdge = coreName.IsEdge()
 		}
 
 		if err = st.initCollectionCore(ctxDB, coreName); err != nil {
@@ -123,13 +125,25 @@ func (st *AppStoreAQL) initCollectionCore(ctx context.Context, coreName service.
 		return fmt.Errorf("db.CollectionExists: %w", err)
 	}
 
-	if exists {
+	if exists { //nolint:nestif
 		if st.stores[coreName].col, err = st.db.Collection(ctx, name); err != nil {
 			return fmt.Errorf("db.Collection: %w", err)
 		}
 	} else {
-		if st.stores[coreName].col, err = st.db.CreateCollection(ctx, name, nil); err != nil {
-			return fmt.Errorf("db.CreateCollection: %w", err)
+		opts := &arango.CreateCollectionOptions{ //nolint:exhaustruct
+			CacheEnabled: func(b bool) *bool { return &b }(true),
+			WaitForSync:  true,
+		}
+
+		if st.stores[coreName].isEdge {
+			opts.Type = arango.CollectionTypeEdge
+			if st.stores[coreName].col, err = st.db.CreateCollection(ctx, name, opts); err != nil {
+				return fmt.Errorf("db.CreateCollection: %w", err)
+			}
+		} else {
+			if st.stores[coreName].col, err = st.db.CreateCollection(ctx, name, opts); err != nil {
+				return fmt.Errorf("db.CreateCollection: %w", err)
+			}
 		}
 	}
 

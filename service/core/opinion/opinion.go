@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	"x-gwi/app/storage"
-	"x-gwi/app/storage/storepb2"
 	"x-gwi/app/x/id"
 	sharepb "x-gwi/proto/core/_share/v1"
+	storepb "x-gwi/proto/core/_store/v1"
 	opinonpb "x-gwi/proto/core/opinion/v1"
 	"x-gwi/service"
 )
@@ -33,29 +33,29 @@ func NewCore(storage *storage.ServiceStorage) (*CoreOpinion, error) {
 	return c, nil
 }
 
-//nolint:nilnil,revive
-func (c *CoreOpinion) Create1(ctx context.Context, in *opinonpb.OpinionCore) (*sharepb.ShareQID, error) {
-	return nil, nil
-}
-
 func (c *CoreOpinion) Create(ctx context.Context, in *opinonpb.OpinionCore) error {
-	var err error
+	var (
+		err  error
+		from string
+		to   string
+	)
 	// check DocumentExists for from and to
 	in.Qid.Kind = c.storage.CoreName().String()
 	// in.Qid.Key = in.Qid.Key // use directly
 	in.Qid.Uid = id.XiD().String()
 	// in.Qid.Uuid = id.UUID().String() // lower size
 
-	in.Qid.Key, err = c.newKeyFromTo(ctx, in)
+	// c.storage.IsAQL()
+	// in.Qid.Key, from, to, err = c.edgeKeyFromTo(ctx, in)
+	in.Qid.Key, from, to, err = c.edgeKeyFromTo(ctx, in)
 	if err != nil {
-		return fmt.Errorf("c.newKeyFromTo: %w", err)
+		return fmt.Errorf("c.edgeKeyFromTo: %w", err)
 	}
 
-	// if c.storage.IsAQL()
-	// "x-gwi/app/storage/storepb2"
-	//nolint:exhaustruct
-	dAQL := &storepb2.StoreAQL{
-		Key:     in.Qid.Key,
+	dAQL := &storepb.StoreAQL{ //nolint:exhaustruct
+		XFrom:   from,
+		XTo:     to,
+		XKey:    in.Qid.Key,
 		Qid:     in.Qid,
 		Opinion: in,
 	}
@@ -73,12 +73,9 @@ func (c *CoreOpinion) Create(ctx context.Context, in *opinonpb.OpinionCore) erro
 }
 
 func (c *CoreOpinion) Get(ctx context.Context, in *opinonpb.OpinionCore) error {
-	// if c.storage.IsAQL()
-	// "x-gwi/app/storage/storepb2"
+	// c.storage.IsAQL()
 	//nolint:exhaustruct
-	dAQL := &storepb2.StoreAQL{
-		// Key:  in.Qid.Key,
-		// Qid:  in.Qid,
+	dAQL := &storepb.StoreAQL{
 		Opinion: in,
 	}
 
@@ -87,44 +84,48 @@ func (c *CoreOpinion) Get(ctx context.Context, in *opinonpb.OpinionCore) error {
 		return fmt.Errorf("AQL().ReadDocument: %w", err)
 	}
 
-	// in.Qid.Key = m.Key
 	in.Qid.Rev = m.Rev
 
 	return nil
 }
 
-func (c *CoreOpinion) newKeyFromTo(ctx context.Context, in *opinonpb.OpinionCore) (string, error) {
-	fromUser := in.GetQidFromUser().GetKey()
-	toAsset := in.GetQidToAsset().GetKey()
+func (c *CoreOpinion) edgeKeyFromTo(ctx context.Context, in *opinonpb.OpinionCore) (string, string, string, error) { //nolint:lll
+	from := in.GetQidFromUser().GetKey()
+	to := in.GetQidToAsset().GetKey()
 
-	if fromUser == "" {
-		return "", fmt.Errorf("missed QID fromUser") //nolint:goerr113
-	} else if toAsset == "" {
-		return "", fmt.Errorf("missed QID toAsset") //nolint:goerr113
+	in.Qid.Key = fmt.Sprintf("uao:(%s,%s)", from, to)
+
+	if from == "" {
+		return "", "", "", fmt.Errorf("missed QID fromUser") //nolint:goerr113
+	} else if to == "" {
+		return "", "", "", fmt.Errorf("missed QID toAsset") //nolint:goerr113
 	}
 
-	favouriteKey := fmt.Sprintf("oua_%s_%s", fromUser, toAsset)
+	key := fmt.Sprintf("uao:(%s,%s)", from, to)
 
-	exists, err := c.storage.AQL().DocumentExists(ctx, favouriteKey)
+	exists, err := c.storage.AQL().DocumentExists(ctx, key)
 	if err != nil {
-		return "", fmt.Errorf("AQL().DocumentExists: favourite %w", err)
+		return "", "", "", fmt.Errorf("AQL().DocumentExists: opinion %w", err)
 	} else if exists {
-		return "", fmt.Errorf("favourite key already exists") //nolint:goerr113
+		return "", "", "", fmt.Errorf("opinion key already exists") //nolint:goerr113
 	}
 
-	exists, err = c.storage.AQL().OtherCoreDocumentExists(ctx, fromUser, service.NameUser)
+	exists, err = c.storage.AQL().OtherCoreDocumentExists(ctx, from, service.NameUser)
 	if err != nil {
-		return "", fmt.Errorf("AQL().OtherCoreDocumentExists: user %w", err)
+		return "", "", "", fmt.Errorf("AQL().OtherCoreDocumentExists: user %w", err)
 	} else if !exists {
-		return "", fmt.Errorf("unknown user") //nolint:goerr113
+		return "", "", "", fmt.Errorf("unknown user") //nolint:goerr113
 	}
 
-	exists, err = c.storage.AQL().OtherCoreDocumentExists(ctx, toAsset, service.NameAsset)
+	exists, err = c.storage.AQL().OtherCoreDocumentExists(ctx, to, service.NameAsset)
 	if err != nil {
-		return "", fmt.Errorf("AQL().OtherCoreDocumentExists: asset %w", err)
+		return "", "", "", fmt.Errorf("AQL().OtherCoreDocumentExists: asset %w", err)
 	} else if !exists {
-		return "", fmt.Errorf("unknown asset") //nolint:goerr113
+		return "", "", "", fmt.Errorf("unknown asset") //nolint:goerr113
 	}
 
-	return favouriteKey, nil
+	from = fmt.Sprintf("%s/%s", service.NameUser, from)
+	to = fmt.Sprintf("%s/%s", service.NameAsset, to)
+
+	return key, from, to, nil
 }

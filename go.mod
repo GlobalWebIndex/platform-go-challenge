@@ -6,6 +6,7 @@ require (
 	github.com/VictoriaMetrics/fastcache v1.12.1
 	github.com/alexsergivan/transliterator v1.0.0
 	github.com/arangodb/go-driver v1.6.0
+	github.com/brianvoe/gofakeit/v6 v6.22.0
 	github.com/envoyproxy/protoc-gen-validate v1.0.1
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5

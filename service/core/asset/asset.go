@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"x-gwi/app/storage"
-	"x-gwi/app/storage/storepb2"
 	"x-gwi/app/x/id"
+	storepb "x-gwi/proto/core/_store/v1"
 	assetpb "x-gwi/proto/core/asset/v1"
 	"x-gwi/service"
 )
@@ -35,11 +35,10 @@ func (c *CoreAsset) Create(ctx context.Context, in *assetpb.AssetCore) error {
 	in.Qid.Uid = id.XiD().String()
 	in.Qid.Uuid = id.UUID().String()
 
-	// if c.storage.IsAQL()
-	// "x-gwi/app/storage/storepb2"
+	// c.storage.IsAQL()
 	//nolint:exhaustruct
-	dAQL := &storepb2.StoreAQL{
-		Key:   in.Qid.Key,
+	dAQL := &storepb.StoreAQL{
+		XKey:  in.Qid.Key,
 		Qid:   in.Qid,
 		Asset: in,
 	}
@@ -49,20 +48,14 @@ func (c *CoreAsset) Create(ctx context.Context, in *assetpb.AssetCore) error {
 		return fmt.Errorf("AQL().CreateDocument: %w", err)
 	}
 
-	// if m.Key != in.Qid.Key {todo delete wronk key}
-	in.Qid.Key = m.Key
 	in.Qid.Rev = m.Rev
 
 	return nil
 }
 
 func (c *CoreAsset) Get(ctx context.Context, in *assetpb.AssetCore) error {
-	// if c.storage.IsAQL()
-	// "x-gwi/app/storage/storepb2"
 	//nolint:exhaustruct
-	dAQL := &storepb2.StoreAQL{
-		// Key:  in.Qid.Key,
-		// Qid:  in.Qid,
+	dAQL := &storepb.StoreAQL{
 		Asset: in,
 	}
 
@@ -71,7 +64,6 @@ func (c *CoreAsset) Get(ctx context.Context, in *assetpb.AssetCore) error {
 		return fmt.Errorf("AQL().ReadDocument: %w", err)
 	}
 
-	// in.Qid.Key = m.Key
 	in.Qid.Rev = m.Rev
 
 	return nil

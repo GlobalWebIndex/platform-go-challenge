@@ -86,32 +86,46 @@ message Store {
 // solution: 1) edit generated proto/core/_store/v1/store.pb.go; 
 // or 2) synch dedicated type in app/storage/storepb2/storepb2.go
 message StoreAQL {
-  reserved 1, 2, 8, 9;
+  reserved 1, 2;
 
-  // key - AQL _key - doc storage key unique per db.collection
-  string key = 4 [
+  // _key - AQL _key - doc storage key unique per db.collection
+  string _key = 4 [
     json_name = "_key",
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
   ];
 
-  // id - AQL _id - DocumentID string Format: collection/_key
-  string id = 5 [
+  // _id - AQL _id - DocumentID string Format: collection/_key
+  string _id = 5 [
     json_name = "_id",
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
   ];
 
-  // rev - AQL _rev - revision string
-  string rev = 6 [
+  // _rev - AQL _rev - revision string
+  string _rev = 6 [
     json_name = "_rev",
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
   ];
 
-  // old_rev - AQL _oldRev old revision string
-  string old_rev = 7 [
+  // _oldRev - AQL _oldRev old revision string
+  string _oldRev = 7 [
     json_name = "_oldRev",
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+
+  // _from - AQL _from - edge storage
+  string _from = 8 [
+    json_name = "_from",
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 128 }
+  ];
+
+  // _to - AQL _to - edge storage
+  string _to = 9 [
+    json_name = "_to",
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
   ];

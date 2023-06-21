@@ -26,10 +26,10 @@ func (s *GRPC) initGRPC(config *ConfigServer, pki *pki.PKI) error { //nolint:unp
 	logger := logs.Logger
 	loggingOpts := []logging.Option{
 		logging.WithLogOnEvents(
-			// logging.StartCall,
-			// logging.FinishCall,
-			// logging.PayloadReceived,
-			logging.PayloadSent,
+		// logging.StartCall,
+		// logging.FinishCall,
+		// logging.PayloadReceived,
+		// logging.PayloadSent,
 		),
 	}
 	loggingOptsStream := []logging.Option{

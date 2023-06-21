@@ -2,6 +2,8 @@ package client
 
 import (
 	"context"
+	"crypto/tls"
+	"fmt"
 	"sync"
 	"time"
 
@@ -10,6 +12,10 @@ import (
 
 	"x-gwi/app/logs"
 	"x-gwi/app/pki"
+)
+
+const (
+	timeoutDial = 10 * time.Second
 )
 
 type GRPC struct {
@@ -52,7 +58,7 @@ func (c *GRPC) DialContext(ctx context.Context) bool {
 		ctxDial context.Context
 	)
 
-	ctxDial, c.cancel = context.WithTimeout(ctx, 10*time.Second) //nolint:gomnd
+	ctxDial, c.cancel = context.WithTimeout(ctx, timeoutDial)
 	c.grpcClientConn, err = grpc.DialContext(ctxDial, c.config.GRPC.Address, c.grpcDialOpts...)
 
 	if err != nil {
@@ -109,4 +115,35 @@ func (c *GRPC) ConnRPC(ctx context.Context) (context.Context, context.CancelFunc
 	// Create(rpcContext, &useraccountpb.CreateRequest{})
 
 	return rpcContext, rpcCancel, true
+}
+
+func InsecureClientConnGRPC(ctx context.Context, config *ConfigClient) (*grpc.ClientConn, context.CancelFunc, error) {
+	//nolint:exhaustruct,gosec
+	tlsConfig := &tls.Config{
+		// Certificates:       []tls.Certificate{certTLSdial},
+		MinVersion: tls.VersionTLS13,
+		// RootCAs:    p.CertPool(),
+		InsecureSkipVerify: true,
+	}
+
+	grpcDialOpts := []grpc.DialOption{
+		grpc.WithBlock(),
+		// grpc.WithTransportCredentials(insecure.NewCredentials()), // grpc.WithInsecure(),
+		// grpc.WithTransportCredentials(credentials.NewTLS(pki.TLSConfigDial())),
+		grpc.WithTransportCredentials(credentials.NewTLS(tlsConfig)),
+	}
+
+	t := time.Now()
+	ctxDial, cancelDial := context.WithTimeout(ctx, timeoutDial)
+	// defer cancelDial()
+
+	// config.GRPC.Address = "localhost:9090"
+	grpcClientConn, err := grpc.DialContext(ctxDial, config.GRPC.Address, grpcDialOpts...)
+	if err != nil {
+		cancelDial()
+
+		return nil, nil, fmt.Errorf("grpc.DialContext: (t: %v) %w", time.Since(t), err)
+	}
+
+	return grpcClientConn, cancelDial, nil
 }

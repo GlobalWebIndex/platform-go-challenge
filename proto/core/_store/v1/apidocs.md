@@ -69,10 +69,12 @@ or 2) synch dedicated type in app/storage/storepb2/storepb2.go
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  | key - AQL _key - doc storage key unique per db.collection |
-| id | [string](#string) |  | id - AQL _id - DocumentID string Format: collection/_key |
-| rev | [string](#string) |  | rev - AQL _rev - revision string |
-| old_rev | [string](#string) |  | old_rev - AQL _oldRev old revision string |
+| _key | [string](#string) |  | _key - AQL _key - doc storage key unique per db.collection |
+| _id | [string](#string) |  | _id - AQL _id - DocumentID string Format: collection/_key |
+| _rev | [string](#string) |  | _rev - AQL _rev - revision string |
+| _oldRev | [string](#string) |  | _oldRev - AQL _oldRev old revision string |
+| _from | [string](#string) |  | _from - AQL _from - edge storage |
+| _to | [string](#string) |  | _to - AQL _to - edge storage |
 | qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid - StoreQID |
 | user | [proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) | optional | user - UserCore |
 | asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | optional | asset - AssetCore |
