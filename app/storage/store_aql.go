@@ -35,6 +35,8 @@ type CollectionAQL = arango.Collection
 type GraphAQL = arango.Graph
 type SearchViewAQL = arango.ArangoSearchView
 type MetaDocAQL = arango.DocumentMeta
+type CursorAQL = arango.Cursor
+type BindVarsAQL map[string]interface{}
 
 func (st *AppStoreAQL) initAppStoreAQL(ctx context.Context, apSt *AppStorage) error {
 	t := time.Now()
@@ -107,7 +109,7 @@ func (st *AppStoreAQL) verifyEndpoints(_ context.Context, apSt *AppStorage) {
 }
 
 func (st *AppStoreAQL) initDB(ctx context.Context) error {
-	dbName := fmt.Sprintf("db_gwi_%s_%s", st.inst.Name(), st.inst.Mode())
+	dbName := fmt.Sprintf("db_%s_%s", st.inst.Name(), st.inst.Mode())
 	_ = dbName
 
 	// Using WithArangoQueueTimeout we get Timout error if not response after time specified in WithArangoQueueTime
@@ -238,3 +240,43 @@ func (st *ServiceStoreAQL) OtherCoreDocumentExists(ctx context.Context, key stri
 }
 
 // .WithRevision(
+
+/* insert some values for the @@collection and @value bind parameters
+uaf_favourite
+u_user/fk-u:390
+FOR doc IN @@collection
+FILTER doc._from == @value
+RETURN {
+_key: doc._key,
+_from: doc._from,
+_to: doc._to,
+_rev: doc._rev,
+md: doc.favourite.md,
+favourite: doc
+}
+
+FOR doc IN @@collection
+  FILTER doc._from == @value
+  LIMIT 2
+  RETURN {
+  _key: doc._key,
+  _from: doc._from,
+  _to: doc._to,
+  _rev: doc._rev,
+  md: doc.favourite.md,
+  favourite: doc
+  }
+
+  	Query(ctx context.Context, query string, bindVars map[string]interface{}) (arango.Cursor, error)
+	Query performs an AQL query, returning a cursor used to iterate over the returned documents.
+	Note that the returned Cursor must always be closed to avoid holding on to resources in the server
+	while they are no longer needed.
+	query := ""
+	bindVars := make(BindVarsAGL)
+	cursor, err := st.col.Database().Query(ctx, query, bindVars)
+	_ = cursor
+	_ = err
+	_ = cursor
+	defer cursor.Close()
+
+*/

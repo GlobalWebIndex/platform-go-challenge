@@ -47,7 +47,9 @@ func Example_protojson_Marshal() {
 	_ = b
 	fmt.Println(time.Since(t))
 
-	// Output:
+	// append : to Output to see struct
+
+	// Output
 }
 
 func Example_json_Marshal() {
@@ -76,7 +78,9 @@ func Example_json_Marshal() {
 	_ = b
 	fmt.Println(time.Since(t))
 
-	// Output:
+	// append : to Output to see struct
+
+	// Output
 }
 
 func Example_gRPC_Client_loading_fake_data() {
@@ -107,8 +111,8 @@ func Example_gRPC_Client_loading_fake_data() {
 	const (
 		xu int64 = 1_000
 		xa int64 = 4_000
-		xf int64 = 2_000
-		xo int64 = 2_000
+		xf int64 = 8_000
+		xo int64 = 8_000
 	)
 
 	var (
@@ -158,7 +162,7 @@ func Example_gRPC_Client_loading_fake_data() {
 	runtime.Gosched()
 	wg.Wait()
 
-	fmt.Printf("iu: %d, u: %d, eu: %d, ia: %d, a: %d, ea: %d, t: %v\n", iu-1, nu, eu, ia-1, na, ea, time.Since(t))
+	resultUA := fmt.Sprintf("iu: %d, u: %d, eu: %d, ia: %d, a: %d, ea: %d, t: %v\n", iu-1, nu, eu, ia-1, na, ea, time.Since(t))
 
 	var (
 		ifa, iop, efa, eop, nfa, nop int64
@@ -204,7 +208,20 @@ func Example_gRPC_Client_loading_fake_data() {
 	runtime.Gosched()
 	wg.Wait()
 
-	fmt.Printf("ifa: %d, fa: %d, efa: %d, iop: %d, op: %d, eop: %d, t2: %v, t: %v\n", ifa-1, nfa, efa, iop-1, nop, eop, time.Since(t2), time.Since(t))
+	resultFO := fmt.Sprintf("ifa: %d, fa: %d, efa: %d, iop: %d, op: %d, eop: %d, t2: %v, t: %v\n", ifa-1, nfa, efa, iop-1, nop, eop, time.Since(t2), time.Since(t))
+
+	_ = resultUA
+	_ = resultFO
+	// fmt.Printf("resultUA: %s", resultUA)
+	// fmt.Printf("resultFO: %s", resultFO)
+
+	processedUAFO := fmt.Sprintf("u: %d, a: %d, f: %d, o: %d\n", iu-1, ia-1, ifa-1, iop-1)
+	_ = processedUAFO
+	fmt.Printf("processedUAFO: %s", processedUAFO)
+
+	// (err by default to see stats)
 
 	// Output:
+	//
+	// processedUAFO: u: 1000, a: 4000, f: 8000, o: 8000
 }

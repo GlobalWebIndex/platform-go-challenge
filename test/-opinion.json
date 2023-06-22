@@ -1,0 +1,50 @@
+{
+  "qid": {
+    "kind": "uao_opinion",
+    "key": "uao:(fk-u:686,fk-a:3605)",
+    "uid": "cia3e4gj5l9pfeacoat0",
+    "uuid": "3b329379-9039-4640-b18e-dfd4460a4f0f",
+    "rev": "ctj5sl8se145"
+  },
+  "opinion": {
+    "qid": {
+      "kind": "uao_opinion",
+      "key": "uao:(fk-u:686,fk-a:3605)",
+      "uid": "cia3e4gj5l9pfeacoat0",
+      "uuid": "3b329379-9039-4640-b18e-dfd4460a4f0f",
+      "rev": "ctj5sl8se145"
+    },
+    "md": {
+      "title": "A garden highly awkwardly read a person vivaciously under the handsome clarity cruelly.",
+      "topic": "that's for me to know and you to find out",
+      "label": "heap",
+      "description": "Whatever synth everyday ramps migas crucifix twee gastropub tattooed."
+    },
+    "mmd": {
+      "labels": [
+        "advantage",
+        "notebook"
+      ],
+      "tags": [
+        "gossip",
+        "london"
+      ]
+    },
+    "qid_from_user": {
+      "kind": "u_user",
+      "key": "fk-u:686",
+      "uid": "cia3e4mn93j2moo4op7g",
+      "uuid": "c95f36c9-292c-4388-b70b-b7f0706dbf9d",
+      "rev": "ctj5sl8se2sc"
+    },
+    "qid_to_asset": {
+      "kind": "a_asset",
+      "key": "fk-a:3605",
+      "uid": "cia3e4mn93j2moo4op80",
+      "uuid": "81f21d26-c04a-4929-82b4-dbdc52cd8a1d",
+      "rev": "ctj5sl8se3wp"
+    },
+    "is_favourite": true,
+    "stars": 7
+  }
+}

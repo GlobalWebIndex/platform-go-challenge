@@ -1,10 +1,12 @@
-appname = app-gwi
+appname ?= app-gwi
 apptag = localhost/$(appname):latest
 
+source_dir := $(abspath $(dir $(lastword ${MAKEFILE_LIST})))
+
 # for container use podman or docker
-container = podman
+container ?= podman
 # Containerfile Dockerfile - are the same for now
-containerfile = Containerfile
+containerfile ?= Containerfile
 
 aqlV = 3.11.1
 dbaql = app-dbaql-$(aqlV)
@@ -259,8 +261,7 @@ container-4-build-app:
 .PHONY: container-5-run-app--rm
 container-5-run-app--rm:
 	@$(container) container ps
-	@echo "*** container-run ***"
-	@echo $(app_host)
+	@echo -e "\npassing host_ip to container $(app_host)\n" 
 	@-$(container) run --rm -i \
 	--name $(appname) \
 	-p 9090:9090 \
@@ -278,6 +279,12 @@ container-5-run-app--rm:
 	@$(container) image prune -f
 	@$(container) container ps
 	@$(container) image ls
+
+.PHONY: container-x-go-test-Example_gRPC_Client_loading_fake_data
+container-x-go-test-Example_gRPC_Client_loading_fake_data:
+	@go mod tidy
+	@go clean -testcache -fuzzcache -cache
+	@go test -v -timeout 5m $(source_dir)/test/fake
 
 .PHONY: container-x-run-app-once-no--rm
 container-x-run-app-once-no--rm:
