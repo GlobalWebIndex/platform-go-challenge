@@ -95,7 +95,10 @@ func initApp(ctx context.Context, config *Config) (*App, context.Context, error)
 		config: config,
 		inst:   config.Inst,
 	}
-	logs.Debug().Interface("config", app.config).Send()
+	if app.inst.Mode() == instance.ModeDev.String() ||
+		app.inst.Mode() == instance.ModeTest.String() {
+		logs.Debug().Interface("config", app.config).Send()
+	}
 	// 3
 	ctx, app.cancel = context.WithCancel(ctx)
 	// 4

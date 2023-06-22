@@ -1,13 +1,17 @@
 package storage
 
-import "x-gwi/app/x/env"
+import (
+	"x-gwi/app/x/env"
+)
 
 type ConfigAppStorage struct {
-	AQL ConfigAQL
+	HostIP []string
+	AQL    ConfigAQL
 	// CQL ConfigCQL
 	// SQL ConfigSQL
 }
 
+// APP_HOST: ${APP_HOST} \
 type ConfigAQL struct {
 	Credentials CredentialsBasic
 	// Endpoints holds 1 or more URL's used to connect to the database.
@@ -43,13 +47,21 @@ type CredentialsBasic struct {
 }
 
 func NewConfigStorage() *ConfigAppStorage {
+	// logs.Debug().Strs("env", os.Environ()).Send()
 	return &ConfigAppStorage{
+		HostIP: env.Envs("APP_HOST", ""),
 		AQL: ConfigAQL{
 			Credentials: CredentialsBasic{
 				UserName: env.Env("APP_STORAGE_AQL_USERNAME", "arango"),
 				PassWord: env.Env("APP_STORAGE_AQL_PASSWORD", "arango"),
 			},
-			Endpoints: env.Envs("APP_STORAGE_AQL_ENDPOINTS", "http://192.168.1.15:8529,http://localhost:8529"),
+			Endpoints: env.Envs("APP_STORAGE_AQL_ENDPOINTS", "http://localhost:8529"),
+			// in containers localhost of app is different than one of storage
+			// it is required to provide correct storage endpoint for containerized env
+			// in dev and test there is automation to build it from APP_HOST containing host ip added
+			// by makefile at container run command ip = $(shell hostname -I)
+			// there can be another automation in pods
+			// http://localhost:8529,http://app-dbaql-3.11.1:8529,http://app-dbaql-3.11.1-podified:8529
 		},
 		/* 		CQL: ConfigCQL{
 		   			Credentials: CredentialsBasic{

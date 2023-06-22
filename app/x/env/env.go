@@ -14,9 +14,19 @@ func Env(envField, defValue string) string {
 }
 
 func Envs(envField, defValues string) []string {
-	if os.Getenv(envField) != "" {
-		return strings.Split(os.Getenv(envField), ",")
+	s := os.Getenv(envField)
+	if s == "" {
+		if defValues == "" {
+			return []string{}
+		}
+
+		s = defValues
 	}
 
-	return strings.Split(defValues, ",")
+	s = strings.TrimSpace(s)
+	if strings.Contains(s, " ") {
+		s = strings.ReplaceAll(s, " ", ",")
+	}
+
+	return strings.Split(s, ",")
 }

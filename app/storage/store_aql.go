@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"fmt"
+	"net"
 	"time"
 
 	arango "github.com/arangodb/go-driver"
@@ -40,6 +41,8 @@ func (st *AppStoreAQL) initAppStoreAQL(ctx context.Context, apSt *AppStorage) er
 	st.inst = apSt.inst
 	st.stores = make(map[service.CoreName]*ServiceStoreAQL)
 
+	st.verifyEndpoints(ctx, apSt)
+
 	// connection to arango db cluster
 	conn, err := arhttp.NewConnection(arhttp.ConnectionConfig{ //nolint:exhaustruct
 		// Endpoints: []string{"http://localhost:8529"},
@@ -71,6 +74,36 @@ func (st *AppStoreAQL) initAppStoreAQL(ctx context.Context, apSt *AppStorage) er
 		Send()
 
 	return nil
+}
+
+// ads host ip in containerized env in dev and test modes
+func (st *AppStoreAQL) verifyEndpoints(_ context.Context, apSt *AppStorage) {
+	logs.Debug().
+		Strs("endpoints", apSt.config.AQL.Endpoints).
+		Strs("host_ip", apSt.config.HostIP).
+		Str("mode", st.inst.Mode()).
+		Send()
+
+	if (st.inst.Mode() == instance.ModeDev.String() || st.inst.Mode() == instance.ModeTest.String()) &&
+		len(apSt.config.HostIP) >= 1 &&
+		len(apSt.config.AQL.Endpoints) == 1 &&
+		apSt.config.AQL.Endpoints[0] == "http://localhost:8529" {
+		for i, v := range apSt.config.HostIP {
+			if v != "" {
+				v = fmt.Sprintf("http://%s", net.JoinHostPort(v, "8529"))
+				apSt.config.HostIP[i] = v
+			}
+		}
+
+		apSt.config.AQL.Endpoints = append(apSt.config.HostIP, apSt.config.AQL.Endpoints...)
+
+		if apSt.config.AQL.Endpoints[0] != "http://localhost:8529" {
+			logs.Debug().
+				Strs("endpoints", apSt.config.AQL.Endpoints).
+				Strs("host_ip", apSt.config.HostIP).
+				Msg("appended ip")
+		}
+	}
 }
 
 func (st *AppStoreAQL) initDB(ctx context.Context) error {

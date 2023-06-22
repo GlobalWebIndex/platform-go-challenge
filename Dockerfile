@@ -1,20 +1,20 @@
 # [1] build
 FROM docker.io/library/golang:1.20 AS build
 
-WORKDIR /src/app
+WORKDIR /app-src
 COPY . .
 
-RUN go mod tidy && go build -o /app
+ENV CGO_ENABLED=0
+RUN env && \
+    go mod tidy && \
+    go build -o /app-run
 
 # [2] run
 FROM scratch
-COPY --from=build /app /
+LABEL app.version="0.1.0"
 
-ENTRYPOINT ["/app"]
-LABEL app.version="0.0.1"
+COPY --from=build /app-run /
 
-ENV SERVER_GRPC_NETWORK: ${SERVER_GRPC_NETWORK:-tcp} \
-    SERVER_GRPC_ADDRESS: ${SERVER_GRPC_ADDRESS:-":9090"} \
-    SERVER_RESTGW_ADDRESS: ${SERVER_RESTGW_ADDRESS:-":9080"}
+ENTRYPOINT ["/app-run"]
 
-EXPOSE 8080 8090
+EXPOSE 9090 9080
