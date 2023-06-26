@@ -4,6 +4,11 @@ import (
 	"x-gwi/app/x/env"
 )
 
+const (
+	defPortAQL = "8529"
+	defAdrAQL  = "http://localhost:8529"
+)
+
 type ConfigAppStorage struct {
 	HostIP []string
 	AQL    ConfigAQL
@@ -55,7 +60,7 @@ func NewConfigStorage() *ConfigAppStorage {
 				UserName: env.Env("APP_STORAGE_AQL_USERNAME", "arango"),
 				PassWord: env.Env("APP_STORAGE_AQL_PASSWORD", "arango"),
 			},
-			Endpoints: env.Envs("APP_STORAGE_AQL_ENDPOINTS", "http://localhost:8529"),
+			Endpoints: env.Envs("APP_STORAGE_AQL_ENDPOINTS", defAdrAQL),
 			// in containers localhost of app is different than one of storage
 			// it is required to provide correct storage endpoint for containerized env
 			// in dev and test there is automation to build it from APP_HOST containing host ip added

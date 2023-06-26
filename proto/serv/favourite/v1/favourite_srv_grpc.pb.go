@@ -6,7 +6,7 @@
 // - protoc             v4.23.2
 // source: proto/serv/favourite/v1/favourite_srv.proto
 
-package pbsrvfavourite
+package favouritepbapiv1
 
 import (
 	context "context"
@@ -43,7 +43,7 @@ type FavouriteServiceClient interface {
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
 	// Delete
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
-	// List - stream favourites of a user
+	// List/Filter - stream favourites of a user
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (FavouriteService_ListClient, error)
 }
 
@@ -146,7 +146,7 @@ type FavouriteServiceServer interface {
 	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
 	// Delete
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
-	// List - stream favourites of a user
+	// List/Filter - stream favourites of a user
 	List(*ListRequest, FavouriteService_ListServer) error
 	mustEmbedUnimplementedFavouriteServiceServer()
 }

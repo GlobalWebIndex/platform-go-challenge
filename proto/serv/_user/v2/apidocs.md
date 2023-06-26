@@ -38,8 +38,7 @@ standard methods: List, Get, Create, Update, and Delete
 | Gett | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) | Gett |
 | Update | [.proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) | [.proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) | Update |
 | Delete | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) | Delete |
-| ListFavourites | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) stream | ListFavourites - stream favourites of a user |
-| ListOpinions | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) stream | ListOpinions - stream opinions of a user |
+| List | [.proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) | [.proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) stream | List/Filter - stream user matching request |
 
  
 

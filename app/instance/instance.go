@@ -18,10 +18,11 @@ type Instance struct {
 type InstMode string
 
 const (
-	ModeDev   InstMode = InstMode("dev")
-	ModeProd  InstMode = InstMode("prod")
-	ModeTest  InstMode = InstMode("test")
-	ModeStage InstMode = InstMode("stage")
+	DefAppName          = "app-gwi"
+	ModeDev    InstMode = InstMode("dev")
+	ModeProd   InstMode = InstMode("prod")
+	ModeTest   InstMode = InstMode("test")
+	ModeStage  InstMode = InstMode("stage")
 )
 
 func InstModes() []InstMode {
@@ -50,7 +51,7 @@ func (i InstMode) Valid() bool {
 func NewInstance() *Instance {
 	return &Instance{
 		id:   id.XiD(),
-		name: env.Env("APP_NAME", "app"),
+		name: env.Env("APP_NAME", DefAppName),
 		mode: InstMode(env.Env("APP_MODE", ModeDev.String())),
 		// TENANT
 	}

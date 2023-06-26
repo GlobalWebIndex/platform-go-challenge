@@ -17,6 +17,7 @@
 **/docker-compose*
 **/compose*
 **/Dockerfile*
+**/Containerfile
 **/node_modules
 **/npm-debug.log
 **/obj
@@ -26,3 +27,5 @@
 .vscode
 *.log
 public
+test/--*
+**/certs

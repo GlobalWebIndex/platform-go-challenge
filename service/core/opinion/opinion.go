@@ -4,17 +4,22 @@ import (
 	"context"
 	"fmt"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"x-gwi/app/storage"
 	"x-gwi/app/x/id"
 	sharepb "x-gwi/proto/core/_share/v1"
 	storepb "x-gwi/proto/core/_store/v1"
-	opinonpb "x-gwi/proto/core/opinion/v1"
+	opinion "x-gwi/proto/core/opinion/v1"
+	opinionpbapiv1 "x-gwi/proto/serv/opinion/v1"
+	opinionpbapiv2 "x-gwi/proto/serv/opinion/v2"
 	"x-gwi/service"
 )
 
 //nolint:unused
 type CoreOpinion struct {
-	opinon   *opinonpb.OpinionCore
+	opinon   *opinion.OpinionCore
 	idx      *sharepb.ShareQID
 	storage  *storage.ServiceStorage
 	coreName service.CoreName
@@ -33,7 +38,7 @@ func NewCore(storage *storage.ServiceStorage) (*CoreOpinion, error) {
 	return c, nil
 }
 
-func (c *CoreOpinion) Create(ctx context.Context, in *opinonpb.OpinionCore) error {
+func (c *CoreOpinion) Create(ctx context.Context, in *opinion.OpinionCore) error {
 	var (
 		err  error
 		from string
@@ -72,7 +77,7 @@ func (c *CoreOpinion) Create(ctx context.Context, in *opinonpb.OpinionCore) erro
 	return nil
 }
 
-func (c *CoreOpinion) Get(ctx context.Context, in *opinonpb.OpinionCore) error {
+func (c *CoreOpinion) Get(ctx context.Context, in *opinion.OpinionCore) error {
 	// c.storage.IsAQL()
 	//nolint:exhaustruct
 	dAQL := &storepb.StoreAQL{
@@ -89,7 +94,101 @@ func (c *CoreOpinion) Get(ctx context.Context, in *opinonpb.OpinionCore) error {
 	return nil
 }
 
-func (c *CoreOpinion) edgeKeyFromTo(ctx context.Context, in *opinonpb.OpinionCore) (string, string, string, error) { //nolint:lll
+// opinionpbapiv1 "x-gwi/proto/serv/opinion/v1"
+func (c *CoreOpinion) ListV1(in *opinion.OpinionCore, stream opinionpbapiv1.OpinionService_ListServer) error { //nolint:lll
+	keyFrom := in.GetQidFromUser().GetKey()
+	if keyFrom == "" {
+		return status.Errorf(codes.InvalidArgument, "missed qid_from_user.key")
+	}
+
+	cursor, count, err := c.storage.AQL().ListFrom(stream.Context(), keyFrom, service.NameUser)
+	if err != nil {
+		return fmt.Errorf("AQL().ListFrom: %w", err)
+	}
+	defer cursor.Close()
+
+	if count == 0 {
+		return nil
+	}
+
+	for cursor.HasMore() {
+		if stream.Context().Err() != nil {
+			return fmt.Errorf("stream.Context: %w", err)
+		}
+
+		dAQL := new(storepb.StoreAQL)
+
+		m, err := cursor.ReadDocument(stream.Context(), dAQL)
+		if err != nil {
+			return fmt.Errorf("cursor.ReadDocument: %w", err)
+		}
+
+		if m.Rev == "" {
+			return nil
+		}
+
+		o := dAQL.GetOpinion()
+		o.Qid.Rev = m.Rev
+
+		out := &opinionpbapiv1.ListResponse{
+			Opinion: o,
+		}
+
+		err = stream.Send(out)
+		if err != nil {
+			return fmt.Errorf("stream.Send: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// opinionpbapiv2 "x-gwi/proto/serv/opinion/v2"
+func (c *CoreOpinion) ListV2(in *opinion.OpinionCore, stream opinionpbapiv2.OpinionService_ListServer) error { //nolint:lll
+	keyFrom := in.GetQidFromUser().GetKey()
+	if keyFrom == "" {
+		return status.Errorf(codes.InvalidArgument, "missed qid_from_user.key")
+	}
+
+	cursor, count, err := c.storage.AQL().ListFrom(stream.Context(), keyFrom, service.NameUser)
+	if err != nil {
+		return fmt.Errorf("AQL().ListFrom: %w", err)
+	}
+	defer cursor.Close()
+
+	if count == 0 {
+		return nil
+	}
+
+	for cursor.HasMore() {
+		if stream.Context().Err() != nil {
+			return fmt.Errorf("stream.Context: %w", err)
+		}
+
+		dAQL := new(storepb.StoreAQL)
+
+		m, err := cursor.ReadDocument(stream.Context(), dAQL)
+		if err != nil {
+			return fmt.Errorf("cursor.ReadDocument: %w", err)
+		}
+
+		if m.Rev == "" {
+			return nil
+		}
+
+		o := dAQL.GetOpinion()
+		o.Qid.Rev = m.Rev
+
+		err = stream.Send(o)
+		if err != nil {
+			return fmt.Errorf("stream.Send: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (c *CoreOpinion) edgeKeyFromTo(ctx context.Context, in *opinion.OpinionCore) (string, string, string, error) { //nolint:lll
 	from := in.GetQidFromUser().GetKey()
 	to := in.GetQidToAsset().GetKey()
 

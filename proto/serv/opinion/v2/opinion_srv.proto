@@ -20,7 +20,7 @@ import "proto/core/opinion/v1/opinion.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 // import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/serv/opinion/v2;pbsrvopinion";
+option go_package = "x-gwi/proto/serv/opinion/v2;opinionpbapiv2";
 
 // OpinionService
 // a microservice to handle companies. It provides the following operations:
@@ -65,10 +65,13 @@ service OpinionService {
     };
   };
 
-  // List - stream opinins of a user
-  rpc List(proto.core._share.v1.ShareQID) returns (stream proto.core.opinion.v1.OpinionCore) {
+  // List/FilterList - stream opinions of a user
+  rpc List(proto.core.opinion.v1.OpinionCore)
+      returns (stream proto.core.opinion.v1.OpinionCore) {
     option (google.api.http) = {
-      get: "/api/v2/opinion/list/user/{key}"
+      post: "/api/v2/opinion/list"
+      body: "*"
+      additional_bindings { post: "/api/v2/opinion/filter" body: "*" }
     };
   };
 }

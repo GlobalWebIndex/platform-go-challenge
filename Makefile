@@ -12,8 +12,8 @@ aqlV = 3.11.1
 dbaql = app-dbaql-$(aqlV)
 # run -e ARANGO_NO_AUTH=1 
 
-ip = $(shell hostname -I)
-app_host = $(shell hostname -I)
+ip = $(shell hostname -i)
+app_host = $(shell hostname -i)
 HOSTNAME ?= $(shell hostname)
 APP_NAME ?= $(appname)
 APP_MODE ?= ""
@@ -245,10 +245,7 @@ container-3-start-db-aql:
 # docker build -f Containerfile .
 .PHONY: container-4-build-app
 container-4-build-app:
-	@echo $(appname)
-	@echo $(app_host)
-	@echo "*** container-build ***"
-	@$(container) system df
+	@echo "*** container-build - $(appname) ***"
 	@$(container) build --no-cache \
 	-t $(appname) \
 	-f $(containerfile) .

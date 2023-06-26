@@ -122,7 +122,16 @@ func (s *ServiceAPI) Delete(ctx context.Context, in *pbsrv.DeleteRequest) (*pbsr
 
 func (s *ServiceAPI) List(in *pbsrv.ListRequest, stream pbsrv.FavouriteService_ListServer) error {
 	_ = (pbsrv.UnimplementedFavouriteServiceServer{}).List(in, stream)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.list(in, stream)
-	return (pbsrv.UnimplementedFavouriteServiceServer{}).List(in, stream) //nolint:wrapcheck
+	// 2. process stream by core
+	err := s.favouriteCore.ListV1(in.GetFavourite(), stream)
+	if err != nil {
+		return status.Errorf(codes.Unknown, "favouriteCore.ListV1: %v", err)
+	}
+
+	return nil
 }

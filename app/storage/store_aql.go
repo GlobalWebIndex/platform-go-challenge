@@ -36,14 +36,29 @@ type GraphAQL = arango.Graph
 type SearchViewAQL = arango.ArangoSearchView
 type MetaDocAQL = arango.DocumentMeta
 type CursorAQL = arango.Cursor
-type BindVarsAQL map[string]interface{}
+type QueryAQL struct {
+	Bind  map[string]any
+	Query string
+}
 
 func (st *AppStoreAQL) initAppStoreAQL(ctx context.Context, apSt *AppStorage) error {
-	t := time.Now()
 	st.inst = apSt.inst
 	st.stores = make(map[service.CoreName]*ServiceStoreAQL)
 
+	var err error
+
+	t := time.Now()
+	l := logs.LogC3.With().
+		Str("mode", st.inst.Mode()).
+		Strs("host_ip", apSt.config.HostIP).
+		Strs("endpoints", apSt.config.AQL.Endpoints).
+		Dur("duration_ms", time.Since(t)).
+		Logger()
+
+	defer logs.DebugOnDefer(&l, t, err)
+
 	st.verifyEndpoints(ctx, apSt)
+	l = l.With().Strs("endpoints_ver", apSt.config.AQL.Endpoints).Logger()
 
 	// connection to arango db cluster
 	conn, err := arhttp.NewConnection(arhttp.ConnectionConfig{ //nolint:exhaustruct
@@ -69,41 +84,33 @@ func (st *AppStoreAQL) initAppStoreAQL(ctx context.Context, apSt *AppStorage) er
 	}
 
 	dbInfo, _ := st.db.Info(ctx)
-
-	logs.Debug().
-		Interface("dbInfo", dbInfo).
-		Dur("duration_ms", time.Since(t)).
-		Send()
+	l = l.With().Interface("dbInfo", dbInfo).Logger()
 
 	return nil
 }
 
 // ads host ip in containerized env in dev and test modes
 func (st *AppStoreAQL) verifyEndpoints(_ context.Context, apSt *AppStorage) {
-	logs.Debug().
-		Strs("endpoints", apSt.config.AQL.Endpoints).
-		Strs("host_ip", apSt.config.HostIP).
-		Str("mode", st.inst.Mode()).
-		Send()
-
 	if (st.inst.Mode() == instance.ModeDev.String() || st.inst.Mode() == instance.ModeTest.String()) &&
 		len(apSt.config.HostIP) >= 1 &&
 		len(apSt.config.AQL.Endpoints) == 1 &&
-		apSt.config.AQL.Endpoints[0] == "http://localhost:8529" {
-		for i, v := range apSt.config.HostIP {
+		apSt.config.AQL.Endpoints[0] == defAdrAQL {
+		hostIP := []string{}
+		emptyV := true
+
+		for _, v := range apSt.config.HostIP {
 			if v != "" {
-				v = fmt.Sprintf("http://%s", net.JoinHostPort(v, "8529"))
-				apSt.config.HostIP[i] = v
+				ip := net.ParseIP(v)
+				if ip != nil {
+					v = fmt.Sprintf("http://%s", net.JoinHostPort(ip.String(), defPortAQL))
+					hostIP = append(hostIP, v)
+					emptyV = false
+				}
 			}
 		}
 
-		apSt.config.AQL.Endpoints = append(apSt.config.HostIP, apSt.config.AQL.Endpoints...)
-
-		if apSt.config.AQL.Endpoints[0] != "http://localhost:8529" {
-			logs.Debug().
-				Strs("endpoints", apSt.config.AQL.Endpoints).
-				Strs("host_ip", apSt.config.HostIP).
-				Msg("appended ip")
+		if !emptyV {
+			apSt.config.AQL.Endpoints = append(apSt.config.AQL.Endpoints, hostIP...)
 		}
 	}
 }
@@ -185,6 +192,23 @@ func (st *AppStoreAQL) initCollectionCore(ctx context.Context, coreName service.
 	return nil
 }
 
+func (st *ServiceStoreAQL) CollectionName() string {
+	if st == nil || st.col == nil {
+		return ""
+	}
+
+	return st.col.Name()
+}
+
+func (st *ServiceStoreAQL) OtherCollectionName(coreName service.CoreName) string {
+	srvStoreAQL, ok := st.apSt.stores[coreName]
+	if ok {
+		return srvStoreAQL.CollectionName()
+	}
+
+	return ""
+}
+
 // CreateDocument creates a single document in the collection.
 // The document data is loaded from the given document, the document meta data is returned.
 // If the document data already contains a `_key` field, this will be used as key of the new document,
@@ -239,6 +263,71 @@ func (st *ServiceStoreAQL) OtherCoreDocumentExists(ctx context.Context, key stri
 	return exists, nil
 }
 
+func (st *ServiceStoreAQL) ListFrom(ctx context.Context, keyFrom string, coreFrom service.CoreName) (CursorAQL, int64, error) { //nolint:ireturn,lll
+	// FOR doc IN @@collection
+	// FILTER doc._from == @value
+	// RETURN doc
+	fromID := fmt.Sprintf("%s/%s", st.OtherCollectionName(coreFrom), keyFrom)
+	qu := fmt.Sprintf(`FOR doc IN %s FILTER doc._from == "%s" RETURN doc`, st.CollectionName(), fromID)
+	// bi := make(map[string]any)
+	// bi["fromUser"] = fromID
+
+	ctx = arango.WithQueryCount(ctx, true)
+
+	cursor, err := st.col.Database().Query(ctx, qu, nil)
+	if err != nil {
+		return nil, 0, fmt.Errorf("ListFrom_Query: %w", err)
+	}
+
+	return cursor, cursor.Count(), nil
+}
+
+func (st *ServiceStoreAQL) ListTo(ctx context.Context, keyTo string, coreTo service.CoreName) (CursorAQL, int64, error) { //nolint:ireturn,lll
+	// FOR doc IN @@collection
+	// FILTER doc._to == @value
+	// RETURN doc
+	fromID := fmt.Sprintf("%s/%s", st.OtherCollectionName(coreTo), keyTo)
+	qu := fmt.Sprintf(`FOR doc IN %s FILTER doc._to == "%s" RETURN doc`, st.CollectionName(), fromID)
+
+	ctx = arango.WithQueryCount(ctx, true)
+
+	cursor, err := st.col.Database().Query(ctx, qu, nil)
+	if err != nil {
+		return nil, 0, fmt.Errorf("ListTo_Query: %w", err)
+	}
+
+	return cursor, cursor.Count(), nil
+}
+
+func (st *ServiceStoreAQL) ListAll(ctx context.Context) (CursorAQL, int64, error) { //nolint:ireturn
+	// FOR doc IN @@collection
+	// RETURN doc
+	qu := fmt.Sprintf(`FOR doc IN %s RETURN doc`, st.CollectionName())
+
+	ctx = arango.WithQueryCount(ctx, true)
+
+	cursor, err := st.col.Database().Query(ctx, qu, nil)
+	if err != nil {
+		return nil, 0, fmt.Errorf("ListAll_Query: %w", err)
+	}
+
+	return cursor, cursor.Count(), nil
+}
+
+// Query performs an AQL query, returning a cursor used to iterate over the returned documents.
+// Note that the returned Cursor must always be closed to avoid holding on to resources in the server
+// while they are no longer needed - cursor.Close().
+func (st *ServiceStoreAQL) Query(ctx context.Context, q *QueryAQL) (CursorAQL, int64, error) { //nolint:ireturn
+	ctx = arango.WithQueryCount(ctx, true)
+
+	cursor, err := st.col.Database().Query(ctx, q.Query, q.Bind)
+	if err != nil {
+		return nil, 0, fmt.Errorf("col.Database().Query: %w", err)
+	}
+
+	return cursor, cursor.Count(), nil
+}
+
 // .WithRevision(
 
 /* insert some values for the @@collection and @value bind parameters
@@ -266,7 +355,27 @@ FOR doc IN @@collection
   md: doc.favourite.md,
   favourite: doc
   }
-
+*/
+/*
+//uaf_favourite
+//u_user/fk-u:390
+//FOR doc IN @@collection
+//FILTER doc._from == @value
+FOR doc IN uaf_favourite
+FILTER doc._from == 'u_user/fk-u:159'
+//FILTER doc._to == 'a_asset/fk-a:1050'
+RETURN doc
+/*
+RETURN {
+_key: doc._key,
+_from: doc._from,
+_to: doc._to,
+_rev: doc._rev,
+md: doc.favourite.md,
+favourite: doc
+}
+*/
+/*
   	Query(ctx context.Context, query string, bindVars map[string]interface{}) (arango.Cursor, error)
 	Query performs an AQL query, returning a cursor used to iterate over the returned documents.
 	Note that the returned Cursor must always be closed to avoid holding on to resources in the server

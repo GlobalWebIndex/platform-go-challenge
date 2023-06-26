@@ -4,11 +4,16 @@ import (
 	"context"
 	"fmt"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"x-gwi/app/storage"
 	"x-gwi/app/x/id"
 	sharepb "x-gwi/proto/core/_share/v1"
 	storepb "x-gwi/proto/core/_store/v1"
 	favouritepb "x-gwi/proto/core/favourite/v1"
+	favouritepbapiv1 "x-gwi/proto/serv/favourite/v1"
+	favouritepbapiv2 "x-gwi/proto/serv/favourite/v2"
 	"x-gwi/service"
 )
 
@@ -84,6 +89,100 @@ func (c *CoreFavourite) Get(ctx context.Context, in *favouritepb.FavouriteCore) 
 	}
 
 	in.Qid.Rev = m.Rev
+
+	return nil
+}
+
+// favouritepbapiv1 "x-gwi/proto/serv/favourite/v1"
+func (c *CoreFavourite) ListV1(in *favouritepb.FavouriteCore, stream favouritepbapiv1.FavouriteService_ListServer) error { //nolint:lll
+	keyFrom := in.GetQidFromUser().GetKey()
+	if keyFrom == "" {
+		return status.Errorf(codes.InvalidArgument, "missed qid_from_user.key")
+	}
+
+	cursor, count, err := c.storage.AQL().ListFrom(stream.Context(), keyFrom, service.NameUser)
+	if err != nil {
+		return fmt.Errorf("AQL().ListFrom: %w", err)
+	}
+	defer cursor.Close()
+
+	if count == 0 {
+		return nil
+	}
+
+	for cursor.HasMore() {
+		if stream.Context().Err() != nil {
+			return fmt.Errorf("stream.Context: %w", err)
+		}
+
+		dAQL := new(storepb.StoreAQL)
+
+		m, err := cursor.ReadDocument(stream.Context(), dAQL)
+		if err != nil {
+			return fmt.Errorf("cursor.ReadDocument: %w", err)
+		}
+
+		if m.Rev == "" {
+			return nil
+		}
+
+		f := dAQL.GetFavourite()
+		f.Qid.Rev = m.Rev
+
+		out := &favouritepbapiv1.ListResponse{
+			Favourite: f,
+		}
+
+		err = stream.Send(out)
+		if err != nil {
+			return fmt.Errorf("stream.Send: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// favouritepbapiv2 "x-gwi/proto/serv/favourite/v2"
+func (c *CoreFavourite) ListV2(in *favouritepb.FavouriteCore, stream favouritepbapiv2.FavouriteService_ListServer) error { //nolint:lll
+	keyFrom := in.GetQidFromUser().GetKey()
+	if keyFrom == "" {
+		return status.Errorf(codes.InvalidArgument, "missed qid_from_user.key")
+	}
+
+	cursor, count, err := c.storage.AQL().ListFrom(stream.Context(), keyFrom, service.NameUser)
+	if err != nil {
+		return fmt.Errorf("AQL().ListFrom: %w", err)
+	}
+	defer cursor.Close()
+
+	if count == 0 {
+		return nil
+	}
+
+	for cursor.HasMore() {
+		if stream.Context().Err() != nil {
+			return fmt.Errorf("stream.Context: %w", err)
+		}
+
+		dAQL := new(storepb.StoreAQL)
+
+		m, err := cursor.ReadDocument(stream.Context(), dAQL)
+		if err != nil {
+			return fmt.Errorf("cursor.ReadDocument: %w", err)
+		}
+
+		if m.Rev == "" {
+			return nil
+		}
+
+		f := dAQL.GetFavourite()
+		f.Qid.Rev = m.Rev
+
+		err = stream.Send(f)
+		if err != nil {
+			return fmt.Errorf("stream.Send: %w", err)
+		}
+	}
 
 	return nil
 }

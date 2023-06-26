@@ -17,12 +17,12 @@ import "google/api/annotations.proto";
 // import "google/rpc/status.proto";
 import "proto/core/_share/v1/share.proto";
 import "proto/core/_user/v1/user.proto";
-import "proto/core/favourite/v1/favourite.proto";
-import "proto/core/opinion/v1/opinion.proto";
+// import "proto/core/favourite/v1/favourite.proto";
+// import "proto/core/opinion/v1/opinion.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 // import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/serv/_user/v2;pbsrvuser";
+option go_package = "x-gwi/proto/serv/_user/v2;userpbapiv2";
 
 // UserService
 // a microservice to handle companies. It provides the following operations:
@@ -30,7 +30,8 @@ option go_package = "x-gwi/proto/serv/_user/v2;pbsrvuser";
 // standard methods: List, Get, Create, Update, and Delete
 service UserService {
   // Create
-  rpc Create(proto.core._user.v1.UserCore) returns (proto.core._user.v1.UserCore) {
+  rpc Create(proto.core._user.v1.UserCore)
+      returns (proto.core._user.v1.UserCore) {
     option (google.api.http) = {
       post: "/api/v2/user/create"
       body: "*"
@@ -38,7 +39,8 @@ service UserService {
   };
 
   // Get
-  rpc Get(proto.core._share.v1.ShareQID) returns (proto.core._user.v1.UserCore) {
+  rpc Get(proto.core._share.v1.ShareQID)
+      returns (proto.core._user.v1.UserCore) {
     option (google.api.http) = {
       get: "/api/v2/user/get/{key}"
       additional_bindings { post: "/api/v2/user/get" body: "*" }
@@ -46,10 +48,12 @@ service UserService {
   };
 
   // Gett
-  rpc Gett(proto.core._share.v1.ShareQID) returns (proto.core._user.v1.UserCore);
+  rpc Gett(proto.core._share.v1.ShareQID)
+      returns (proto.core._user.v1.UserCore);
 
   // Update
-  rpc Update(proto.core._user.v1.UserCore) returns (proto.core._user.v1.UserCore) {
+  rpc Update(proto.core._user.v1.UserCore)
+      returns (proto.core._user.v1.UserCore) {
     option (google.api.http) = {
       patch: "/api/v2/user/update/{qid.key}/{qid.rev}"
       body: "*"
@@ -61,23 +65,20 @@ service UserService {
   };
 
   // Delete
-  rpc Delete(proto.core._share.v1.ShareQID) returns (proto.core._user.v1.UserCore) {
+  rpc Delete(proto.core._share.v1.ShareQID)
+      returns (proto.core._user.v1.UserCore) {
     option (google.api.http) = {
       delete: "/api/v2/user/delete/{key}"
     };
   };
 
-  // ListFavourites - stream favourites of a user
-  rpc ListFavourites(proto.core._share.v1.ShareQID) returns (stream proto.core.favourite.v1.FavouriteCore) {
+  // List/Filter - stream user matching request
+  rpc List(proto.core._user.v1.UserCore)
+      returns (stream proto.core._user.v1.UserCore) {
     option (google.api.http) = {
-      get: "/api/v2/user/{key}/favourites"
-    };
-  };
-
-  // ListOpinions - stream opinions of a user
-  rpc ListOpinions(proto.core._share.v1.ShareQID) returns (stream proto.core.opinion.v1.OpinionCore) {
-    option (google.api.http) = {
-      get: "/api/v2/user/{key}/opinions"
+      post: "/api/v2/user/list"
+      body: "*"
+      additional_bindings { post: "/api/v2/user/filter" body: "*" }
     };
   };
 }

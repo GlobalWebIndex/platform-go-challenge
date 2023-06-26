@@ -20,7 +20,7 @@ import "proto/core/asset/v1/asset.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 // import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/serv/asset/v2;pbsrvasset";
+option go_package = "x-gwi/proto/serv/asset/v2;assetpbapiv2";
 
 // AssetService
 // a microservice to handle companies. It provides the following operations:

@@ -6,7 +6,7 @@
 // - protoc             v4.23.2
 // source: proto/serv/favourite/v2/favourite_srv.proto
 
-package pbsrvfavourite
+package favouritepbapiv2
 
 import (
 	context "context"
@@ -45,8 +45,8 @@ type FavouriteServiceClient interface {
 	Update(ctx context.Context, in *v1.FavouriteCore, opts ...grpc.CallOption) (*v1.FavouriteCore, error)
 	// Delete
 	Delete(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (*v1.FavouriteCore, error)
-	// List - stream favourites of a user
-	List(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (FavouriteService_ListClient, error)
+	// List/FilterList - stream favourites of a user
+	List(ctx context.Context, in *v1.FavouriteCore, opts ...grpc.CallOption) (FavouriteService_ListClient, error)
 }
 
 type favouriteServiceClient struct {
@@ -102,7 +102,7 @@ func (c *favouriteServiceClient) Delete(ctx context.Context, in *v11.ShareQID, o
 	return out, nil
 }
 
-func (c *favouriteServiceClient) List(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (FavouriteService_ListClient, error) {
+func (c *favouriteServiceClient) List(ctx context.Context, in *v1.FavouriteCore, opts ...grpc.CallOption) (FavouriteService_ListClient, error) {
 	stream, err := c.cc.NewStream(ctx, &FavouriteService_ServiceDesc.Streams[0], FavouriteService_List_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
@@ -148,8 +148,8 @@ type FavouriteServiceServer interface {
 	Update(context.Context, *v1.FavouriteCore) (*v1.FavouriteCore, error)
 	// Delete
 	Delete(context.Context, *v11.ShareQID) (*v1.FavouriteCore, error)
-	// List - stream favourites of a user
-	List(*v11.ShareQID, FavouriteService_ListServer) error
+	// List/FilterList - stream favourites of a user
+	List(*v1.FavouriteCore, FavouriteService_ListServer) error
 	mustEmbedUnimplementedFavouriteServiceServer()
 }
 
@@ -172,7 +172,7 @@ func (UnimplementedFavouriteServiceServer) Update(context.Context, *v1.Favourite
 func (UnimplementedFavouriteServiceServer) Delete(context.Context, *v11.ShareQID) (*v1.FavouriteCore, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedFavouriteServiceServer) List(*v11.ShareQID, FavouriteService_ListServer) error {
+func (UnimplementedFavouriteServiceServer) List(*v1.FavouriteCore, FavouriteService_ListServer) error {
 	return status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedFavouriteServiceServer) mustEmbedUnimplementedFavouriteServiceServer() {}
@@ -279,7 +279,7 @@ func _FavouriteService_Delete_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _FavouriteService_List_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(v11.ShareQID)
+	m := new(v1.FavouriteCore)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}

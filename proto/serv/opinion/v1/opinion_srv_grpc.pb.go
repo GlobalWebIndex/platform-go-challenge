@@ -6,7 +6,7 @@
 // - protoc             v4.23.2
 // source: proto/serv/opinion/v1/opinion_srv.proto
 
-package pbsrvopinion
+package opinionpbapiv1
 
 import (
 	context "context"
@@ -43,7 +43,7 @@ type OpinionServiceClient interface {
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
 	// Delete
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
-	// List - stream opinions of a user
+	// List/Filter - stream opinions of a user
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (OpinionService_ListClient, error)
 }
 
@@ -146,7 +146,7 @@ type OpinionServiceServer interface {
 	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
 	// Delete
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
-	// List - stream opinions of a user
+	// List/Filter - stream opinions of a user
 	List(*ListRequest, OpinionService_ListServer) error
 	mustEmbedUnimplementedOpinionServiceServer()
 }

@@ -126,7 +126,7 @@ ListRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id_user | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | id_user (from) |
+| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | optional | favourite |
 
 
 
@@ -191,7 +191,8 @@ UpdateResponse
 FavouriteService
 a microservice to handle companies. It provides the following operations:
 • Create, • Patch, • Delete, • Get (one)
-standard methods: List, Get, Create, Update, and Delete
+standard methods: List/Filter, Get, Create, Update, and Delete
+List
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
@@ -200,7 +201,7 @@ standard methods: List, Get, Create, Update, and Delete
 | Gett | [GetRequest](#proto-serv-favourite-v1-GetRequest) | [GetResponse](#proto-serv-favourite-v1-GetResponse) | Gett |
 | Update | [UpdateRequest](#proto-serv-favourite-v1-UpdateRequest) | [UpdateResponse](#proto-serv-favourite-v1-UpdateResponse) | Update |
 | Delete | [DeleteRequest](#proto-serv-favourite-v1-DeleteRequest) | [DeleteResponse](#proto-serv-favourite-v1-DeleteResponse) | Delete |
-| List | [ListRequest](#proto-serv-favourite-v1-ListRequest) | [ListResponse](#proto-serv-favourite-v1-ListResponse) stream | List - stream favourites of a user |
+| List | [ListRequest](#proto-serv-favourite-v1-ListRequest) | [ListResponse](#proto-serv-favourite-v1-ListResponse) stream | List/Filter - stream favourites of a user |
 
  
 

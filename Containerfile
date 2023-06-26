@@ -15,6 +15,6 @@ LABEL app.version="0.1.0"
 
 COPY --from=build /app-run /
 
-ENTRYPOINT ["/app-run"]
+CMD ["/app-run"]
 
 EXPOSE 9090 9080

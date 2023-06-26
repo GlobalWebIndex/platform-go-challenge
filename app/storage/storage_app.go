@@ -28,8 +28,9 @@ func NewAppStorage(ctx context.Context, config *ConfigAppStorage, inst *instance
 	}
 
 	if err := apSt.stAQL.initAppStoreAQL(ctx, apSt); err != nil {
-		// allows cache only (in dev)
-		if apSt.inst.Mode() != string(instance.ModeDev) {
+		// allows cache only (in dev & test)
+		if apSt.inst.Mode() != string(instance.ModeDev) &&
+			apSt.inst.Mode() != string(instance.ModeTest) {
 			return nil, fmt.Errorf("stAQL.initAppStoreAQL: %w", err)
 		}
 

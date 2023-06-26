@@ -110,9 +110,18 @@ func (s *ServiceAPI) Delete(ctx context.Context, in *sharepb.ShareQID) (*favouri
 	return (pbsrv.UnimplementedFavouriteServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
 }
 
-func (s *ServiceAPI) List(in *sharepb.ShareQID, stream pbsrv.FavouriteService_ListServer) error {
+func (s *ServiceAPI) List(in *favouritepb.FavouriteCore, stream pbsrv.FavouriteService_ListServer) error {
 	_ = (pbsrv.UnimplementedFavouriteServiceServer{}).List(in, stream)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.list(in, stream)
-	return (pbsrv.UnimplementedFavouriteServiceServer{}).List(in, stream) //nolint:wrapcheck
+	// 2. process stream by core
+	err := s.favouriteCore.ListV2(in, stream)
+	if err != nil {
+		return status.Errorf(codes.Unknown, "favouriteCore.ListV2: %v", err)
+	}
+
+	return nil
 }

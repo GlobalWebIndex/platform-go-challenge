@@ -23,12 +23,13 @@ import "proto/core/favourite/v1/favourite.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/serv/favourite/v1;pbsrvfavourite";
+option go_package = "x-gwi/proto/serv/favourite/v1;favouritepbapiv1";
 
 // FavouriteService
 // a microservice to handle companies. It provides the following operations:
 // • Create, • Patch, • Delete, • Get (one)
-// standard methods: List, Get, Create, Update, and Delete
+// standard methods: List/Filter, Get, Create, Update, and Delete
+// List
 service FavouriteService {
   // Create
   rpc Create(CreateRequest) returns (CreateResponse) {
@@ -68,10 +69,12 @@ service FavouriteService {
     };
   };
 
-  // List - stream favourites of a user
+  // List/Filter - stream favourites of a user
   rpc List(ListRequest) returns (stream ListResponse) {
     option (google.api.http) = {
-      get: "/api/v1/favourite/list/user/{id_user.key}"
+      post: "/api/v1/favourite/list"
+      body: "favourite"
+      additional_bindings { post: "/api/v1/favourite/filter" body: "favourite" }
     };
   };
 }
@@ -83,7 +86,7 @@ message CreateRequest {
   // favourite
   proto.core.favourite.v1.FavouriteCore favourite = 4 [
     (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
+    (validate.rules).message = { required: true, skip: false }
   ];
 }
 
@@ -102,7 +105,7 @@ message GetRequest {
   // qid
   proto.core._share.v1.ShareQID qid = 3 [
     (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
+    (validate.rules).message = { required: true, skip: false }
   ];
 }
 
@@ -121,7 +124,7 @@ message UpdateRequest {
   // favourite
   proto.core.favourite.v1.FavouriteCore favourite = 4 [
     (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
+    (validate.rules).message = { required: true, skip: false }
   ];
 
   // update_mask
@@ -144,7 +147,7 @@ message DeleteRequest {
   // qid
   proto.core._share.v1.ShareQID qid = 3 [
     (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
+    (validate.rules).message = { required: true, skip: false }
   ];
 }
 
@@ -160,11 +163,8 @@ message DeleteResponse {
 message ListRequest {
   reserved 1, 2, 3;
 
-  // id_user (from)
-  proto.core._share.v1.ShareQID id_user = 5 [
-    (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
-  ];
+  // favourite
+  optional proto.core.favourite.v1.FavouriteCore favourite = 4;
 }
 
 // ListResponse

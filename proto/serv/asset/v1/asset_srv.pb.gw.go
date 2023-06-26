@@ -2,11 +2,11 @@
 // source: proto/serv/asset/v1/asset_srv.proto
 
 /*
-Package pbsrvasset is a reverse proxy.
+Package assetpbapiv1 is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package pbsrvasset
+package assetpbapiv1
 
 import (
 	"context"

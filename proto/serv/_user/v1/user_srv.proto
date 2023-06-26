@@ -18,12 +18,12 @@ import "google/protobuf/field_mask.proto";
 // import "google/rpc/status.proto";
 import "proto/core/_share/v1/share.proto";
 import "proto/core/_user/v1/user.proto";
-import "proto/core/favourite/v1/favourite.proto";
-import "proto/core/opinion/v1/opinion.proto";
+// import "proto/core/favourite/v1/favourite.proto";
+// import "proto/core/opinion/v1/opinion.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/serv/_user/v1;pbsrvuser";
+option go_package = "x-gwi/proto/serv/_user/v1;userpbapiv1";
 
 // UserService
 // a microservice to handle companies. It provides the following operations:
@@ -68,17 +68,12 @@ service UserService {
     };
   };
 
-  // ListFavourites - stream favourites of a user
-  rpc ListFavourites(ListFavouritesRequest) returns (stream ListFavouritesResponse) {
+  // List/Filter - stream user matching request
+  rpc List(ListRequest) returns (stream ListResponse) {
     option (google.api.http) = {
-      get: "/api/v1/favourite/list/user/{id_user.key}"
-    };
-  };
-
-  // ListOpinions - stream opinions of a user
-  rpc ListOpinions(ListOpinionsRequest) returns (stream ListOpinionsResponse) {
-    option (google.api.http) = {
-      get: "/api/v1/opinion/list/user/{id_user.key}"
+      post: "/api/v1/user/list"
+      body: "user"
+      additional_bindings { post: "/api/v1/user/filter" body: "user" }
     };
   };
 }
@@ -90,7 +85,7 @@ message CreateRequest {
   // user
   proto.core._user.v1.UserCore user = 4 [
     (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
+    (validate.rules).message = { required: true, skip: false }
   ];
 }
 
@@ -109,7 +104,7 @@ message GetRequest {
   // qid
   proto.core._share.v1.ShareQID qid = 3 [
     (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
+    (validate.rules).message = { required: true, skip: false }
   ];
 }
 
@@ -128,7 +123,7 @@ message UpdateRequest {
   // user
   proto.core._user.v1.UserCore user = 4 [
     (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
+    (validate.rules).message = { required: true, skip: false }
   ];
 
   // update_mask
@@ -151,7 +146,7 @@ message DeleteRequest {
   // qid
   proto.core._share.v1.ShareQID qid = 3 [
     (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
+    (validate.rules).message = { required: true, skip: false }
   ];
 }
 
@@ -163,42 +158,20 @@ message DeleteResponse {
   proto.core._user.v1.UserCore user = 4;
 }
 
-// ListFavouritesRequest
-message ListFavouritesRequest {
+// ListRequest
+message ListRequest {
   reserved 1, 2, 3;
 
-  // id_user (from)
-  proto.core._share.v1.ShareQID id_user = 5 [
-    (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
-  ];
+  // user
+  proto.core._user.v1.UserCore user = 4;
 }
 
-// ListFavouritesResponse
-message ListFavouritesResponse {
+// ListResponse
+message ListResponse {
   reserved 1, 2, 3;
 
-  // favourite
-  proto.core.favourite.v1.FavouriteCore favourite = 4;
-}
-
-// ListOpinionsRequest
-message ListOpinionsRequest {
-  reserved 1, 2, 3;
-
-  // id_user (from)
-  proto.core._share.v1.ShareQID id_user = 5 [
-    (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
-  ];
-}
-
-// ListOpinionsResponse
-message ListOpinionsResponse {
-  reserved 1, 2, 3;
-
-  // opinion
-  proto.core.opinion.v1.OpinionCore opinion = 4;
+  // user
+  proto.core._user.v1.UserCore user = 4;
 }
 
 // https://github.com/googleapis/googleapis/blob/master/google/api/serviceusage/v1/serviceusage.proto

@@ -6,7 +6,7 @@
 // - protoc             v4.23.2
 // source: proto/serv/opinion/v2/opinion_srv.proto
 
-package pbsrvopinion
+package opinionpbapiv2
 
 import (
 	context "context"
@@ -45,8 +45,8 @@ type OpinionServiceClient interface {
 	Update(ctx context.Context, in *v1.OpinionCore, opts ...grpc.CallOption) (*v1.OpinionCore, error)
 	// Delete
 	Delete(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (*v1.OpinionCore, error)
-	// List - stream opinins of a user
-	List(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (OpinionService_ListClient, error)
+	// List/FilterList - stream opinions of a user
+	List(ctx context.Context, in *v1.OpinionCore, opts ...grpc.CallOption) (OpinionService_ListClient, error)
 }
 
 type opinionServiceClient struct {
@@ -102,7 +102,7 @@ func (c *opinionServiceClient) Delete(ctx context.Context, in *v11.ShareQID, opt
 	return out, nil
 }
 
-func (c *opinionServiceClient) List(ctx context.Context, in *v11.ShareQID, opts ...grpc.CallOption) (OpinionService_ListClient, error) {
+func (c *opinionServiceClient) List(ctx context.Context, in *v1.OpinionCore, opts ...grpc.CallOption) (OpinionService_ListClient, error) {
 	stream, err := c.cc.NewStream(ctx, &OpinionService_ServiceDesc.Streams[0], OpinionService_List_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
@@ -148,8 +148,8 @@ type OpinionServiceServer interface {
 	Update(context.Context, *v1.OpinionCore) (*v1.OpinionCore, error)
 	// Delete
 	Delete(context.Context, *v11.ShareQID) (*v1.OpinionCore, error)
-	// List - stream opinins of a user
-	List(*v11.ShareQID, OpinionService_ListServer) error
+	// List/FilterList - stream opinions of a user
+	List(*v1.OpinionCore, OpinionService_ListServer) error
 	mustEmbedUnimplementedOpinionServiceServer()
 }
 
@@ -172,7 +172,7 @@ func (UnimplementedOpinionServiceServer) Update(context.Context, *v1.OpinionCore
 func (UnimplementedOpinionServiceServer) Delete(context.Context, *v11.ShareQID) (*v1.OpinionCore, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedOpinionServiceServer) List(*v11.ShareQID, OpinionService_ListServer) error {
+func (UnimplementedOpinionServiceServer) List(*v1.OpinionCore, OpinionService_ListServer) error {
 	return status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedOpinionServiceServer) mustEmbedUnimplementedOpinionServiceServer() {}
@@ -279,7 +279,7 @@ func _OpinionService_Delete_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _OpinionService_List_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(v11.ShareQID)
+	m := new(v1.OpinionCore)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}

@@ -6,7 +6,7 @@
 // - protoc             v4.23.2
 // source: proto/serv/asset/v2/asset_srv.proto
 
-package pbsrvasset
+package assetpbapiv2
 
 import (
 	context "context"

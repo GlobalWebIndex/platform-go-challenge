@@ -24,4 +24,4 @@ go.work
 .vscode
 *.env
 test/--*
-test/certs
+certs/

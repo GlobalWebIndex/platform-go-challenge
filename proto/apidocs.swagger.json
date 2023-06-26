@@ -417,6 +417,49 @@
         ]
       }
     },
+    "/api/v1/favourite/filter": {
+      "post": {
+        "summary": "List/Filter - stream favourites of a user",
+        "operationId": "FavouriteService_List2",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/servfavouritev1ListResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of servfavouritev1ListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "favourite",
+            "description": "favourite",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteCore"
+            }
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
     "/api/v1/favourite/get": {
       "post": {
         "summary": "Get",
@@ -514,78 +557,9 @@
         ]
       }
     },
-    "/api/v1/favourite/list/user/{idUser.key_1}": {
-      "get": {
-        "summary": "ListFavourites - stream favourites of a user",
-        "operationId": "UserService_ListFavourites",
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "result": {
-                  "$ref": "#/definitions/v1ListFavouritesResponse"
-                },
-                "error": {
-                  "$ref": "#/definitions/rpcStatus"
-                }
-              },
-              "title": "Stream result of v1ListFavouritesResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "idUser.key_1",
-            "description": "key",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "idUser.kind",
-            "description": "kind",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.uid",
-            "description": "uid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.uuid",
-            "description": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.rev",
-            "description": "rev - revision string",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "UserService"
-        ]
-      }
-    },
-    "/api/v1/favourite/list/user/{idUser.key}": {
-      "get": {
-        "summary": "List - stream favourites of a user",
+    "/api/v1/favourite/list": {
+      "post": {
+        "summary": "List/Filter - stream favourites of a user",
         "operationId": "FavouriteService_List",
         "responses": {
           "200": {
@@ -612,39 +586,13 @@
         },
         "parameters": [
           {
-            "name": "idUser.key",
-            "description": "key",
-            "in": "path",
+            "name": "favourite",
+            "description": "favourite",
+            "in": "body",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "idUser.kind",
-            "description": "kind",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.uid",
-            "description": "uid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.uuid",
-            "description": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.rev",
-            "description": "rev - revision string",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteCore"
+            }
           }
         ],
         "tags": [
@@ -843,6 +791,49 @@
         ]
       }
     },
+    "/api/v1/opinion/filter": {
+      "post": {
+        "summary": "List/Filter - stream opinions of a user",
+        "operationId": "OpinionService_List2",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/servstdopinionv1ListResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of servstdopinionv1ListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "opinion",
+            "description": "opinion",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1OpinionCore"
+            }
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
     "/api/v1/opinion/get": {
       "post": {
         "summary": "Get",
@@ -937,78 +928,9 @@
         ]
       }
     },
-    "/api/v1/opinion/list/user/{idUser.key_1}": {
-      "get": {
-        "summary": "ListOpinions - stream opinions of a user",
-        "operationId": "UserService_ListOpinions",
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "result": {
-                  "$ref": "#/definitions/v1ListOpinionsResponse"
-                },
-                "error": {
-                  "$ref": "#/definitions/rpcStatus"
-                }
-              },
-              "title": "Stream result of v1ListOpinionsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "idUser.key_1",
-            "description": "key",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "idUser.kind",
-            "description": "kind",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.uid",
-            "description": "uid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.uuid",
-            "description": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.rev",
-            "description": "rev - revision string",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "UserService"
-        ]
-      }
-    },
-    "/api/v1/opinion/list/user/{idUser.key}": {
-      "get": {
-        "summary": "List - stream opinions of a user",
+    "/api/v1/opinion/list": {
+      "post": {
+        "summary": "List/Filter - stream opinions of a user",
         "operationId": "OpinionService_List",
         "responses": {
           "200": {
@@ -1035,39 +957,13 @@
         },
         "parameters": [
           {
-            "name": "idUser.key",
-            "description": "key",
-            "in": "path",
+            "name": "opinion",
+            "description": "opinion",
+            "in": "body",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "idUser.kind",
-            "description": "kind",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.uid",
-            "description": "uid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.uuid",
-            "description": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "idUser.rev",
-            "description": "rev - revision string",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/v1OpinionCore"
+            }
           }
         ],
         "tags": [
@@ -1275,6 +1171,49 @@
         ]
       }
     },
+    "/api/v1/user/filter": {
+      "post": {
+        "summary": "List/Filter - stream user matching request",
+        "operationId": "UserService_List2",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/serv_userv1ListResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of serv_userv1ListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user",
+            "description": "user",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UserCore"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/api/v1/user/get": {
       "post": {
         "summary": "Get",
@@ -1365,6 +1304,49 @@
             "in": "query",
             "required": false,
             "type": "string"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v1/user/list": {
+      "post": {
+        "summary": "List/Filter - stream user matching request",
+        "operationId": "UserService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/serv_userv1ListResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of serv_userv1ListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user",
+            "description": "user",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UserCore"
+            }
           }
         ],
         "tags": [
@@ -1820,6 +1802,48 @@
         ]
       }
     },
+    "/api/v2/favourite/filter": {
+      "post": {
+        "summary": "List/FilterList - stream favourites of a user",
+        "operationId": "FavouriteService_List2",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1FavouriteCore"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1FavouriteCore"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteCore"
+            }
+          }
+        ],
+        "tags": [
+          "FavouriteService"
+        ]
+      }
+    },
     "/api/v2/favourite/get": {
       "post": {
         "summary": "Get",
@@ -1913,9 +1937,9 @@
         ]
       }
     },
-    "/api/v2/favourite/list/user/{key}": {
-      "get": {
-        "summary": "List - stream favourites of a user",
+    "/api/v2/favourite/list": {
+      "post": {
+        "summary": "List/FilterList - stream favourites of a user",
         "operationId": "FavouriteService_List",
         "responses": {
           "200": {
@@ -1942,39 +1966,12 @@
         },
         "parameters": [
           {
-            "name": "key",
-            "description": "key",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "kind",
-            "description": "kind",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "uid",
-            "description": "uid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "uuid",
-            "description": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "rev",
-            "description": "rev - revision string",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/v1FavouriteCore"
+            }
           }
         ],
         "tags": [
@@ -2168,6 +2165,48 @@
         ]
       }
     },
+    "/api/v2/opinion/filter": {
+      "post": {
+        "summary": "List/FilterList - stream opinions of a user",
+        "operationId": "OpinionService_List2",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1OpinionCore"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1OpinionCore"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1OpinionCore"
+            }
+          }
+        ],
+        "tags": [
+          "OpinionService"
+        ]
+      }
+    },
     "/api/v2/opinion/get": {
       "post": {
         "summary": "Get",
@@ -2261,9 +2300,9 @@
         ]
       }
     },
-    "/api/v2/opinion/list/user/{key}": {
-      "get": {
-        "summary": "List - stream opinins of a user",
+    "/api/v2/opinion/list": {
+      "post": {
+        "summary": "List/FilterList - stream opinions of a user",
         "operationId": "OpinionService_List",
         "responses": {
           "200": {
@@ -2290,39 +2329,12 @@
         },
         "parameters": [
           {
-            "name": "key",
-            "description": "key",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "kind",
-            "description": "kind",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "uid",
-            "description": "uid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "uuid",
-            "description": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "rev",
-            "description": "rev - revision string",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/v1OpinionCore"
+            }
           }
         ],
         "tags": [
@@ -2525,6 +2537,48 @@
         ]
       }
     },
+    "/api/v2/user/filter": {
+      "post": {
+        "summary": "List/Filter - stream user matching request",
+        "operationId": "UserService_List2",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1UserCore"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1UserCore"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UserCore"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/api/v2/user/get": {
       "post": {
         "summary": "Get",
@@ -2618,6 +2672,48 @@
         ]
       }
     },
+    "/api/v2/user/list": {
+      "post": {
+        "summary": "List/Filter - stream user matching request",
+        "operationId": "UserService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1UserCore"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1UserCore"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UserCore"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/api/v2/user/update/{qid.key}/{qid.rev}": {
       "patch": {
         "summary": "Update",
@@ -2691,144 +2787,6 @@
               },
               "title": "UserCore\nuser - User\noptional User user = 2;"
             }
-          }
-        ],
-        "tags": [
-          "UserService"
-        ]
-      }
-    },
-    "/api/v2/user/{key}/favourites": {
-      "get": {
-        "summary": "ListFavourites - stream favourites of a user",
-        "operationId": "UserService_ListFavourites",
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "result": {
-                  "$ref": "#/definitions/v1FavouriteCore"
-                },
-                "error": {
-                  "$ref": "#/definitions/rpcStatus"
-                }
-              },
-              "title": "Stream result of v1FavouriteCore"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "key",
-            "description": "key",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "kind",
-            "description": "kind",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "uid",
-            "description": "uid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "uuid",
-            "description": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "rev",
-            "description": "rev - revision string",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "UserService"
-        ]
-      }
-    },
-    "/api/v2/user/{key}/opinions": {
-      "get": {
-        "summary": "ListOpinions - stream opinions of a user",
-        "operationId": "UserService_ListOpinions",
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "result": {
-                  "$ref": "#/definitions/v1OpinionCore"
-                },
-                "error": {
-                  "$ref": "#/definitions/rpcStatus"
-                }
-              },
-              "title": "Stream result of v1OpinionCore"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "key",
-            "description": "key",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "kind",
-            "description": "kind",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "uid",
-            "description": "uid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "uuid",
-            "description": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "rev",
-            "description": "rev - revision string",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -3190,6 +3148,16 @@
         }
       },
       "title": "GetResponse"
+    },
+    "serv_userv1ListResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1UserCore",
+          "title": "user"
+        }
+      },
+      "title": "ListResponse"
     },
     "serv_userv1UpdateResponse": {
       "type": "object",
@@ -3559,26 +3527,6 @@
         "qidFromUser",
         "qidToAsset"
       ]
-    },
-    "v1ListFavouritesResponse": {
-      "type": "object",
-      "properties": {
-        "favourite": {
-          "$ref": "#/definitions/v1FavouriteCore",
-          "title": "favourite"
-        }
-      },
-      "title": "ListFavouritesResponse"
-    },
-    "v1ListOpinionsResponse": {
-      "type": "object",
-      "properties": {
-        "opinion": {
-          "$ref": "#/definitions/v1OpinionCore",
-          "title": "opinion"
-        }
-      },
-      "title": "ListOpinionsResponse"
     },
     "v1MetaDescription": {
       "type": "object",

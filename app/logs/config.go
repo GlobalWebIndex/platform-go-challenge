@@ -22,6 +22,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/pkgerrors"
 
+	"x-gwi/app/instance"
 	"x-gwi/app/x/env"
 )
 
@@ -35,7 +36,7 @@ func init() {
 	// zerolog.SetGlobalLevel(zerolog.DebugLevel)
 
 	cfg := &Logs{
-		App: env.Env("APP_NAME", "app"),
+		App: env.Env("APP_NAME", instance.DefAppName),
 		Enable: EnableOutput{
 			SysLog:  false,
 			StdErr:  false,
@@ -166,18 +167,15 @@ func (c *Logs) SetOnce() {
 
 	LogC2 = Logger.With().
 		CallerWithSkipFrameCount(2).
-		// Int("pkg-logs", 1).
 		Logger()
 
 	LogC3 = Logger.With().
 		CallerWithSkipFrameCount(3).
-		// Int("pkg-logs", 1).
 		Logger()
 
 	log.SetFlags(0)
 	log.SetOutput(Logger.With().
 		CallerWithSkipFrameCount(5). // 4
-		// Int("pkg-log", 1).
 		Str("deprecated-log", "log").
 		Logger())
 
@@ -331,4 +329,21 @@ func InterceptorLogger(l zerolog.Logger) logging.Logger { //nolint:ireturn
 				Msg(msg)
 		}
 	})
+}
+
+// DebugOnDefer requires to use pointed logs.LogC3
+// example:
+// logger := logs.LogC3.With() ... and place like
+// defer logs.DebugOnDefer(&logger, startTime, err)
+func DebugOnDefer(logger *zerolog.Logger, startTime time.Time, err error) {
+	if err != nil {
+		logger.Error().Err(err).
+			Dur("duration_ms", time.Since(startTime)).
+			Send()
+
+		return
+	}
+
+	logger.Debug().
+		Dur("duration_ms", time.Since(startTime)).Send()
 }

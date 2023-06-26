@@ -110,9 +110,18 @@ func (s *ServiceAPI) Delete(ctx context.Context, in *sharepb.ShareQID) (*opinion
 	return (pbsrv.UnimplementedOpinionServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
 }
 
-func (s *ServiceAPI) List(in *sharepb.ShareQID, stream pbsrv.OpinionService_ListServer) error {
+func (s *ServiceAPI) List(in *opinionpb.OpinionCore, stream pbsrv.OpinionService_ListServer) error {
 	_ = (pbsrv.UnimplementedOpinionServiceServer{}).List(in, stream)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.list(in, stream)
-	return (pbsrv.UnimplementedOpinionServiceServer{}).List(in, stream) //nolint:wrapcheck
+	// 2. process stream by core
+	err := s.opinionCore.ListV2(in, stream)
+	if err != nil {
+		return status.Errorf(codes.Unknown, "opinionCore.ListV2: %v", err)
+	}
+
+	return nil
 }

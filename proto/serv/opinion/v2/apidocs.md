@@ -38,7 +38,7 @@ standard methods: List, Get, Create, Update, and Delete
 | Gett | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | Gett |
 | Update | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | Update |
 | Delete | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | Delete |
-| List | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) stream | List - stream opinins of a user |
+| List | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | [.proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) stream | List/FilterList - stream opinions of a user |
 
  
 

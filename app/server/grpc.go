@@ -40,7 +40,7 @@ func (s *GRPC) initGRPC(config *ConfigServer, pki *pki.PKI) error { //nolint:unp
 		// logging.PayloadSent,
 		),
 	}
-	// Define customfunc to handle panic
+	// Define custom func to handle panic
 	// api servive skip 12,
 	// return status.Errorf(codes.Unknown, "panic triggered: %v @at: %s", p, logs.LogTraceX(12))
 	// core method skip 11,

@@ -126,7 +126,7 @@ ListRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id_user | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | id_user (from) |
+| opinion | [proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | optional | opinion |
 
 
 
@@ -141,7 +141,7 @@ ListResponse
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| opinion | [proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) |  | opinion |
+| opinion | [proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | optional | opinion |
 
 
 
@@ -200,7 +200,7 @@ standard methods: List, Get, Create, Update, and Delete
 | Gett | [GetRequest](#proto-servstd-opinion-v1-GetRequest) | [GetResponse](#proto-servstd-opinion-v1-GetResponse) | Gett |
 | Update | [UpdateRequest](#proto-servstd-opinion-v1-UpdateRequest) | [UpdateResponse](#proto-servstd-opinion-v1-UpdateResponse) | Update |
 | Delete | [DeleteRequest](#proto-servstd-opinion-v1-DeleteRequest) | [DeleteResponse](#proto-servstd-opinion-v1-DeleteResponse) | Delete |
-| List | [ListRequest](#proto-servstd-opinion-v1-ListRequest) | [ListResponse](#proto-servstd-opinion-v1-ListResponse) stream | List - stream opinions of a user |
+| List | [ListRequest](#proto-servstd-opinion-v1-ListRequest) | [ListResponse](#proto-servstd-opinion-v1-ListResponse) stream | List/Filter - stream opinions of a user |
 
  
 

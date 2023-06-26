@@ -2,11 +2,11 @@
 // source: proto/serv/favourite/v2/favourite_srv.proto
 
 /*
-Package pbsrvfavourite is a reverse proxy.
+Package favouritepbapiv2 is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package pbsrvfavourite
+package favouritepbapiv2
 
 import (
 	"context"
@@ -363,35 +363,40 @@ func local_request_FavouriteService_Delete_0(ctx context.Context, marshaler runt
 
 }
 
-var (
-	filter_FavouriteService_List_0 = &utilities.DoubleArray{Encoding: map[string]int{"key": 0}, Base: []int{1, 2, 0, 0}, Check: []int{0, 1, 2, 2}}
-)
-
 func request_FavouriteService_List_0(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (FavouriteService_ListClient, runtime.ServerMetadata, error) {
-	var protoReq sharepb.ShareQID
+	var protoReq favouritepb.FavouriteCore
 	var metadata runtime.ServerMetadata
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["key"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "key")
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-
-	protoReq.Key, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "key", err)
-	}
-
-	if err := req.ParseForm(); err != nil {
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_FavouriteService_List_0); err != nil {
+
+	stream, err := client.List(ctx, &protoReq)
+	if err != nil {
+		return nil, metadata, err
+	}
+	header, err := stream.Header()
+	if err != nil {
+		return nil, metadata, err
+	}
+	metadata.HeaderMD = header
+	return stream, metadata, nil
+
+}
+
+func request_FavouriteService_List_1(ctx context.Context, marshaler runtime.Marshaler, client FavouriteServiceClient, req *http.Request, pathParams map[string]string) (FavouriteService_ListClient, runtime.ServerMetadata, error) {
+	var protoReq favouritepb.FavouriteCore
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -564,7 +569,14 @@ func RegisterFavouriteServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 
 	})
 
-	mux.Handle("GET", pattern_FavouriteService_List_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_FavouriteService_List_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
+		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+		return
+	})
+
+	mux.Handle("POST", pattern_FavouriteService_List_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
 		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -744,13 +756,13 @@ func RegisterFavouriteServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 
 	})
 
-	mux.Handle("GET", pattern_FavouriteService_List_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_FavouriteService_List_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/List", runtime.WithHTTPPathPattern("/api/v2/favourite/list/user/{key}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/List", runtime.WithHTTPPathPattern("/api/v2/favourite/list"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -763,6 +775,28 @@ func RegisterFavouriteServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		}
 
 		forward_FavouriteService_List_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_FavouriteService_List_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.serv.favourite.v2.FavouriteService/List", runtime.WithHTTPPathPattern("/api/v2/favourite/filter"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_FavouriteService_List_1(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_FavouriteService_List_1(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -782,7 +816,9 @@ var (
 
 	pattern_FavouriteService_Delete_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v2", "favourite", "delete", "key"}, ""))
 
-	pattern_FavouriteService_List_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v2", "favourite", "list", "user", "key"}, ""))
+	pattern_FavouriteService_List_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v2", "favourite", "list"}, ""))
+
+	pattern_FavouriteService_List_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v2", "favourite", "filter"}, ""))
 )
 
 var (
@@ -799,4 +835,6 @@ var (
 	forward_FavouriteService_Delete_0 = runtime.ForwardResponseMessage
 
 	forward_FavouriteService_List_0 = runtime.ForwardResponseStream
+
+	forward_FavouriteService_List_1 = runtime.ForwardResponseStream
 )

@@ -111,16 +111,9 @@ func (s *ServiceAPI) Delete(ctx context.Context, in *sharepb.ShareQID) (*userpb.
 	return (pbsrv.UnimplementedUserServiceServer{}).Delete(ctx, in) //nolint:wrapcheck
 }
 
-func (s *ServiceAPI) ListFavourites(in *sharepb.ShareQID, stream pbsrv.UserService_ListFavouritesServer) error {
-	_ = (pbsrv.UnimplementedUserServiceServer{}).ListFavourites(in, stream)
+func (s *ServiceAPI) List(in *userpb.UserCore, stream pbsrv.UserService_ListServer) error {
+	_ = (pbsrv.UnimplementedUserServiceServer{}).List(in, stream)
 
 	// return s.list(in, stream)
-	return (pbsrv.UnimplementedUserServiceServer{}).ListFavourites(in, stream) //nolint:wrapcheck
-}
-
-func (s *ServiceAPI) ListOpinions(in *sharepb.ShareQID, stream pbsrv.UserService_ListOpinionsServer) error {
-	_ = (pbsrv.UnimplementedUserServiceServer{}).ListOpinions(in, stream)
-
-	// return s.list(in, stream)
-	return (pbsrv.UnimplementedUserServiceServer{}).ListOpinions(in, stream) //nolint:wrapcheck
+	return (pbsrv.UnimplementedUserServiceServer{}).List(in, stream) //nolint:wrapcheck
 }

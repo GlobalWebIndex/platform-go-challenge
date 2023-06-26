@@ -38,7 +38,7 @@ standard methods: List, Get, Create, Update, and Delete
 | Gett | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | Gett |
 | Update | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | Update |
 | Delete | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | Delete |
-| List | [.proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) stream | List - stream favourites of a user |
+| List | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | [.proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) stream | List/FilterList - stream favourites of a user |
 
  
 

@@ -23,7 +23,7 @@ import "proto/core/opinion/v1/opinion.proto";
 // https://github.com/bufbuild/protoc-gen-validate
 import "validate/validate.proto";
 
-option go_package = "x-gwi/proto/serv/opinion/v1;pbsrvopinion";
+option go_package = "x-gwi/proto/serv/opinion/v1;opinionpbapiv1";
 
 // OpinionService
 // a microservice to handle companies. It provides the following operations:
@@ -68,10 +68,12 @@ service OpinionService {
     };
   };
 
-  // List - stream opinions of a user
+  // List/Filter - stream opinions of a user
   rpc List(ListRequest) returns (stream ListResponse) {
     option (google.api.http) = {
-      get: "/api/v1/opinion/list/user/{id_user.key}"
+      post: "/api/v1/opinion/list"
+      body: "opinion"
+      additional_bindings { post: "/api/v1/opinion/filter" body: "opinion" }
     };
   };
 }
@@ -157,11 +159,8 @@ message DeleteResponse {
 message ListRequest {
   reserved 1, 2, 3;
 
-  // id_user (from)
-  proto.core._share.v1.ShareQID id_user = 5 [
-    (google.api.field_behavior) = REQUIRED,
-    (validate.rules).message = { required: true, skip: false}
-  ];
+  // opinion
+  optional proto.core.opinion.v1.OpinionCore opinion = 4;
 }
 
 // ListResponse
@@ -169,7 +168,7 @@ message ListResponse {
   reserved 1, 2, 3;
 
   // opinion
-  proto.core.opinion.v1.OpinionCore opinion = 4;
+  optional proto.core.opinion.v1.OpinionCore opinion = 4;
 }
 
 // https://github.com/googleapis/googleapis/blob/master/google/api/serviceusage/v1/serviceusage.proto

@@ -10,10 +10,8 @@
     - [DeleteResponse](#proto-serv-_user-v1-DeleteResponse)
     - [GetRequest](#proto-serv-_user-v1-GetRequest)
     - [GetResponse](#proto-serv-_user-v1-GetResponse)
-    - [ListFavouritesRequest](#proto-serv-_user-v1-ListFavouritesRequest)
-    - [ListFavouritesResponse](#proto-serv-_user-v1-ListFavouritesResponse)
-    - [ListOpinionsRequest](#proto-serv-_user-v1-ListOpinionsRequest)
-    - [ListOpinionsResponse](#proto-serv-_user-v1-ListOpinionsResponse)
+    - [ListRequest](#proto-serv-_user-v1-ListRequest)
+    - [ListResponse](#proto-serv-_user-v1-ListResponse)
     - [UpdateRequest](#proto-serv-_user-v1-UpdateRequest)
     - [UpdateResponse](#proto-serv-_user-v1-UpdateResponse)
   
@@ -120,60 +118,30 @@ GetResponse
 
 
 
-<a name="proto-serv-_user-v1-ListFavouritesRequest"></a>
+<a name="proto-serv-_user-v1-ListRequest"></a>
 
-### ListFavouritesRequest
-ListFavouritesRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id_user | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | id_user (from) |
-
-
-
-
-
-
-<a name="proto-serv-_user-v1-ListFavouritesResponse"></a>
-
-### ListFavouritesResponse
-ListFavouritesResponse
+### ListRequest
+ListRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) |  | favourite |
+| user | [proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) |  | user |
 
 
 
 
 
 
-<a name="proto-serv-_user-v1-ListOpinionsRequest"></a>
+<a name="proto-serv-_user-v1-ListResponse"></a>
 
-### ListOpinionsRequest
-ListOpinionsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id_user | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | id_user (from) |
-
-
-
-
-
-
-<a name="proto-serv-_user-v1-ListOpinionsResponse"></a>
-
-### ListOpinionsResponse
-ListOpinionsResponse
+### ListResponse
+ListResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| opinion | [proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) |  | opinion |
+| user | [proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) |  | user |
 
 
 
@@ -232,8 +200,7 @@ standard methods: List, Get, Create, Update, and Delete
 | Gett | [GetRequest](#proto-serv-_user-v1-GetRequest) | [GetResponse](#proto-serv-_user-v1-GetResponse) | Gett |
 | Update | [UpdateRequest](#proto-serv-_user-v1-UpdateRequest) | [UpdateResponse](#proto-serv-_user-v1-UpdateResponse) | Update |
 | Delete | [DeleteRequest](#proto-serv-_user-v1-DeleteRequest) | [DeleteResponse](#proto-serv-_user-v1-DeleteResponse) | Delete |
-| ListFavourites | [ListFavouritesRequest](#proto-serv-_user-v1-ListFavouritesRequest) | [ListFavouritesResponse](#proto-serv-_user-v1-ListFavouritesResponse) stream | ListFavourites - stream favourites of a user |
-| ListOpinions | [ListOpinionsRequest](#proto-serv-_user-v1-ListOpinionsRequest) | [ListOpinionsResponse](#proto-serv-_user-v1-ListOpinionsResponse) stream | ListOpinions - stream opinions of a user |
+| List | [ListRequest](#proto-serv-_user-v1-ListRequest) | [ListResponse](#proto-serv-_user-v1-ListResponse) stream | List/Filter - stream user matching request |
 
  
 

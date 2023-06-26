@@ -6,7 +6,7 @@
 // - protoc             v4.23.2
 // source: proto/serv/_user/v1/user_srv.proto
 
-package pbsrvuser
+package userpbapiv1
 
 import (
 	context "context"
@@ -21,13 +21,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_Create_FullMethodName         = "/proto.serv._user.v1.UserService/Create"
-	UserService_Get_FullMethodName            = "/proto.serv._user.v1.UserService/Get"
-	UserService_Gett_FullMethodName           = "/proto.serv._user.v1.UserService/Gett"
-	UserService_Update_FullMethodName         = "/proto.serv._user.v1.UserService/Update"
-	UserService_Delete_FullMethodName         = "/proto.serv._user.v1.UserService/Delete"
-	UserService_ListFavourites_FullMethodName = "/proto.serv._user.v1.UserService/ListFavourites"
-	UserService_ListOpinions_FullMethodName   = "/proto.serv._user.v1.UserService/ListOpinions"
+	UserService_Create_FullMethodName = "/proto.serv._user.v1.UserService/Create"
+	UserService_Get_FullMethodName    = "/proto.serv._user.v1.UserService/Get"
+	UserService_Gett_FullMethodName   = "/proto.serv._user.v1.UserService/Gett"
+	UserService_Update_FullMethodName = "/proto.serv._user.v1.UserService/Update"
+	UserService_Delete_FullMethodName = "/proto.serv._user.v1.UserService/Delete"
+	UserService_List_FullMethodName   = "/proto.serv._user.v1.UserService/List"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -44,10 +43,8 @@ type UserServiceClient interface {
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
 	// Delete
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
-	// ListFavourites - stream favourites of a user
-	ListFavourites(ctx context.Context, in *ListFavouritesRequest, opts ...grpc.CallOption) (UserService_ListFavouritesClient, error)
-	// ListOpinions - stream opinions of a user
-	ListOpinions(ctx context.Context, in *ListOpinionsRequest, opts ...grpc.CallOption) (UserService_ListOpinionsClient, error)
+	// List/Filter - stream user matching request
+	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (UserService_ListClient, error)
 }
 
 type userServiceClient struct {
@@ -103,12 +100,12 @@ func (c *userServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts 
 	return out, nil
 }
 
-func (c *userServiceClient) ListFavourites(ctx context.Context, in *ListFavouritesRequest, opts ...grpc.CallOption) (UserService_ListFavouritesClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[0], UserService_ListFavourites_FullMethodName, opts...)
+func (c *userServiceClient) List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (UserService_ListClient, error) {
+	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[0], UserService_List_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceListFavouritesClient{stream}
+	x := &userServiceListClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -118,49 +115,17 @@ func (c *userServiceClient) ListFavourites(ctx context.Context, in *ListFavourit
 	return x, nil
 }
 
-type UserService_ListFavouritesClient interface {
-	Recv() (*ListFavouritesResponse, error)
+type UserService_ListClient interface {
+	Recv() (*ListResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceListFavouritesClient struct {
+type userServiceListClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceListFavouritesClient) Recv() (*ListFavouritesResponse, error) {
-	m := new(ListFavouritesResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *userServiceClient) ListOpinions(ctx context.Context, in *ListOpinionsRequest, opts ...grpc.CallOption) (UserService_ListOpinionsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[1], UserService_ListOpinions_FullMethodName, opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &userServiceListOpinionsClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type UserService_ListOpinionsClient interface {
-	Recv() (*ListOpinionsResponse, error)
-	grpc.ClientStream
-}
-
-type userServiceListOpinionsClient struct {
-	grpc.ClientStream
-}
-
-func (x *userServiceListOpinionsClient) Recv() (*ListOpinionsResponse, error) {
-	m := new(ListOpinionsResponse)
+func (x *userServiceListClient) Recv() (*ListResponse, error) {
+	m := new(ListResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -181,10 +146,8 @@ type UserServiceServer interface {
 	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
 	// Delete
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
-	// ListFavourites - stream favourites of a user
-	ListFavourites(*ListFavouritesRequest, UserService_ListFavouritesServer) error
-	// ListOpinions - stream opinions of a user
-	ListOpinions(*ListOpinionsRequest, UserService_ListOpinionsServer) error
+	// List/Filter - stream user matching request
+	List(*ListRequest, UserService_ListServer) error
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -207,11 +170,8 @@ func (UnimplementedUserServiceServer) Update(context.Context, *UpdateRequest) (*
 func (UnimplementedUserServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedUserServiceServer) ListFavourites(*ListFavouritesRequest, UserService_ListFavouritesServer) error {
-	return status.Errorf(codes.Unimplemented, "method ListFavourites not implemented")
-}
-func (UnimplementedUserServiceServer) ListOpinions(*ListOpinionsRequest, UserService_ListOpinionsServer) error {
-	return status.Errorf(codes.Unimplemented, "method ListOpinions not implemented")
+func (UnimplementedUserServiceServer) List(*ListRequest, UserService_ListServer) error {
+	return status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -316,45 +276,24 @@ func _UserService_Delete_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_ListFavourites_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ListFavouritesRequest)
+func _UserService_List_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ListRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(UserServiceServer).ListFavourites(m, &userServiceListFavouritesServer{stream})
+	return srv.(UserServiceServer).List(m, &userServiceListServer{stream})
 }
 
-type UserService_ListFavouritesServer interface {
-	Send(*ListFavouritesResponse) error
+type UserService_ListServer interface {
+	Send(*ListResponse) error
 	grpc.ServerStream
 }
 
-type userServiceListFavouritesServer struct {
+type userServiceListServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceListFavouritesServer) Send(m *ListFavouritesResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func _UserService_ListOpinions_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ListOpinionsRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(UserServiceServer).ListOpinions(m, &userServiceListOpinionsServer{stream})
-}
-
-type UserService_ListOpinionsServer interface {
-	Send(*ListOpinionsResponse) error
-	grpc.ServerStream
-}
-
-type userServiceListOpinionsServer struct {
-	grpc.ServerStream
-}
-
-func (x *userServiceListOpinionsServer) Send(m *ListOpinionsResponse) error {
+func (x *userServiceListServer) Send(m *ListResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -388,13 +327,8 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "ListFavourites",
-			Handler:       _UserService_ListFavourites_Handler,
-			ServerStreams: true,
-		},
-		{
-			StreamName:    "ListOpinions",
-			Handler:       _UserService_ListOpinions_Handler,
+			StreamName:    "List",
+			Handler:       _UserService_List_Handler,
 			ServerStreams: true,
 		},
 	},
