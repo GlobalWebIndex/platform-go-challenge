@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"sync"
 	"time"
 
 	"google.golang.org/grpc"
@@ -18,6 +17,44 @@ const (
 	timeoutDial = 10 * time.Second
 )
 
+func InternalClientConnGRPC(ctx context.Context, config *ConfigClient, pki *pki.PKI) (*grpc.ClientConn, context.CancelFunc, error) { //nolint:lll
+	grpcDialOpts := []grpc.DialOption{
+		grpc.WithBlock(),
+		// grpc.WithTransportCredentials(insecure.NewCredentials()), // grpc.WithInsecure(),
+		grpc.WithTransportCredentials(credentials.NewTLS(pki.TLSConfigDial())),
+	}
+
+	t := time.Now()
+	ctxDial, cancelDial := context.WithTimeout(ctx, timeoutDial)
+	// defer cancelDial()
+
+	// config.GRPC.Address = "localhost:9090"
+	grpcClientConn, err := grpc.DialContext(ctxDial, config.GRPC.Address, grpcDialOpts...)
+	if err != nil {
+		cancelDial()
+
+		return nil, nil, fmt.Errorf("grpc.DialContext: (t: %v) %w", time.Since(t), err)
+	}
+
+	return grpcClientConn, cancelDial, nil
+}
+
+func TryInternalConnGRPC(ctx context.Context, config *ConfigClient, pki *pki.PKI) bool {
+	_, cancelDial, err := InternalClientConnGRPC(ctx, config, pki)
+	if err != nil {
+		return false
+	}
+
+	defer cancelDial()
+
+	logs.Info().
+		Str("client-grpc", config.GRPC.Address).
+		Msg("OK")
+
+	return true
+}
+
+/*
 type GRPC struct {
 	config         *ConfigClient
 	grpcClientConn *grpc.ClientConn
@@ -93,7 +130,10 @@ func (c *GRPC) Close() {
 		c.grpcClientConn.Close()
 	}
 }
+*/
 
+//nolint:dupword
+/*
 func (c *GRPC) ConnRPC(ctx context.Context) (context.Context, context.CancelFunc, bool) {
 	if !c.ValidConnection() {
 		return nil, nil, false
@@ -116,6 +156,7 @@ func (c *GRPC) ConnRPC(ctx context.Context) (context.Context, context.CancelFunc
 
 	return rpcContext, rpcCancel, true
 }
+*/
 
 func InsecureClientConnGRPC(ctx context.Context, config *ConfigClient) (*grpc.ClientConn, context.CancelFunc, error) {
 	//nolint:exhaustruct,gosec

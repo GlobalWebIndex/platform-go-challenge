@@ -76,10 +76,12 @@ func NewAppStorage(ctx context.Context, config *ConfigAppStorage, inst *instance
 	return apSt, nil
 }
 
-func (s *AppStorage) Valid() bool {
-	return s.config.Valid() &&
-		s.inst.Valid()
-}
+/*
+	func (s *AppStorage) Valid() bool {
+		return s.config.Valid() &&
+			s.inst.Valid()
+	}
+*/
 
 func (s *AppStorage) ServiceStore(coreName service.CoreName) *ServiceStorage {
 	srvStore, ok := s.stores[coreName]

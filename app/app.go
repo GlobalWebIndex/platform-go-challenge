@@ -125,12 +125,14 @@ func initApp(ctx context.Context, config *Config) (*App, context.Context, error)
 	return app, ctx, nil
 }
 
+/*
 func (app *App) Valid() bool {
 	return app.config.Valid() &&
 		app.auth.Valid() &&
 		app.storage.Valid() &&
 		app.server.Valid()
 }
+*/
 
 func (app *App) interrupt(ctx context.Context) {
 	// app.chErr = make(chan error, 2)  //nolint:gomnd

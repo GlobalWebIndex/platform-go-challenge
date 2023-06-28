@@ -12,24 +12,22 @@ import (
 )
 
 type Server struct {
-	config  *ConfigServer
-	inst    *instance.Instance
-	gRPC    *GRPC
-	rESTGW  *RESTGW
-	cliGRPC *client.GRPC
-	cliHTTP *client.HTTP
+	config *ConfigServer
+	inst   *instance.Instance
+	pki    *pki.PKI
+	gRPC   *GRPC
+	rESTGW *RESTGW
 }
 
 func NewServer(ctx context.Context, config *ConfigServer, inst *instance.Instance, pki *pki.PKI) (*Server, error) {
 	var err error
 
 	s := &Server{
-		config:  config,
-		inst:    inst,
-		gRPC:    new(GRPC),
-		rESTGW:  new(RESTGW),
-		cliGRPC: nil, // new(client.GRPC),
-		cliHTTP: nil, // new(client.HTTP),
+		config: config,
+		inst:   inst,
+		pki:    pki,
+		gRPC:   new(GRPC),
+		rESTGW: new(RESTGW),
 	}
 
 	if err = s.gRPC.initGRPC(s.config, pki); err != nil {
@@ -39,10 +37,6 @@ func NewServer(ctx context.Context, config *ConfigServer, inst *instance.Instanc
 	if err = s.rESTGW.initRESTGW(ctx, s.config, pki); err != nil {
 		return nil, fmt.Errorf("s.newRESTGW: %w", err)
 	}
-
-	s.cliGRPC = client.NewGRPC(client.NewConfigClient(), pki)
-
-	s.cliHTTP = client.NewHTTP(client.NewConfigClient(), pki)
 
 	return s, nil
 }
@@ -59,7 +53,7 @@ func (s *Server) Serve(ctx context.Context) {
 func (s *Server) serve(ctx context.Context) {
 	go s.gRPC.serveGRPC()
 
-	_ = s.cliGRPC.DialContext(ctx)
+	_ = client.TryInternalConnGRPC(ctx, client.NewConfigClient(), s.pki)
 
 	go s.rESTGW.serveRESTGW(ctx)
 
@@ -69,25 +63,16 @@ func (s *Server) serve(ctx context.Context) {
 
 func (s *Server) Close(ctx context.Context) {
 	s.rESTGW.closeRESTGW(ctx)
-	s.cliGRPC.Close()
 	s.gRPC.closeGRPC()
 }
 
+/*
 func (s *Server) Valid() bool {
 	return s.config.Valid() &&
 		s.inst.Valid() &&
 		s.gRPC != nil &&
 		s.gRPC.netListener != nil &&
 		s.rESTGW != nil &&
-		s.rESTGW.httpServer != nil &&
-		s.cliGRPC != nil &&
-		s.cliGRPC.ValidConnection()
+		s.rESTGW.httpServer != nil
 }
-
-func (s *Server) ClientGRPC() *client.GRPC {
-	return s.cliGRPC
-}
-
-func (s *Server) ClientHTTP() *client.HTTP {
-	return s.cliHTTP
-}
+*/
