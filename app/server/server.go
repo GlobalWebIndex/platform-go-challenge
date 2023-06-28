@@ -53,7 +53,7 @@ func (s *Server) Serve(ctx context.Context) {
 func (s *Server) serve(ctx context.Context) {
 	go s.gRPC.serveGRPC()
 
-	_ = client.TryInternalConnGRPC(ctx, client.NewConfigClient(), s.pki)
+	_ = client.TryConnGRPC(ctx, client.NewConfigClient(), s.pki.TLSConfigDial())
 
 	go s.rESTGW.serveRESTGW(ctx)
 

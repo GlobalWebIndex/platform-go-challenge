@@ -87,7 +87,7 @@ func Example_gRPC_Client_loading_fake_data() {
 		timeoutgRPC = 5 * time.Minute
 	)
 
-	grpcClientConn, cancelDial, err := client.InsecureClientConnGRPC(context.Background(), client.NewConfigClient())
+	grpcClientConn, cancelDial, err := client.ConnGRPC(context.Background(), client.NewConfigClient(), nil)
 	defer cancelDial()
 	if err != nil {
 		logs.Error().Err(err).Send()

@@ -3,13 +3,12 @@ package client
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"time"
-
-	"x-gwi/app/pki"
 )
 
 type HTTP struct {
@@ -17,14 +16,25 @@ type HTTP struct {
 	httpClient *http.Client
 }
 
-func NewHTTP(config *ConfigClient, pki *pki.PKI) *HTTP {
+func NewHTTP(config *ConfigClient, tlsConfigDial *tls.Config) *HTTP {
+	if tlsConfigDial == nil {
+		//nolint:exhaustruct,gosec
+		tlsConfigDial = &tls.Config{
+			// Certificates:       []tls.Certificate{certTLSdial},
+			MinVersion: tls.VersionTLS13,
+			// RootCAs:    p.CertPool(),
+			InsecureSkipVerify: true,
+		}
+	}
+
 	//nolint:exhaustruct,gomnd
 	return &HTTP{
 		config: config,
 		httpClient: &http.Client{
 			Timeout: 20 * time.Second,
 			Transport: &http.Transport{
-				TLSClientConfig:     pki.TLSConfigDial(),
+				// TLSClientConfig:     pki.TLSConfigDial(),
+				TLSClientConfig:     tlsConfigDial,
 				TLSHandshakeTimeout: 5 * time.Second,
 			},
 		},
@@ -32,14 +42,9 @@ func NewHTTP(config *ConfigClient, pki *pki.PKI) *HTTP {
 }
 
 func (c *HTTP) Request(
-	ctx context.Context, serviceMethod ServiceMethod, bodyRaw []byte) (
+	ctx context.Context, method string, path string, bodyRaw []byte) (
 	[]byte, int, *http.Response, time.Duration, error) {
 	t := time.Now()
-
-	method, path, err := serviceMethod.HTTPMethodAndPath()
-	if err != nil {
-		return nil, 0, nil, time.Since(t), fmt.Errorf("error serviceMethod.HTTPMethodAndPath: %w", err)
-	}
 
 	u, err := url.Parse(fmt.Sprintf("https://%s", c.config.RESTGW.Address))
 	if err != nil {
