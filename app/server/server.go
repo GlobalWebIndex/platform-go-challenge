@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"fmt"
-	"runtime"
 
 	"google.golang.org/grpc"
 
@@ -55,16 +54,14 @@ func (s *Server) ServiceRegistrar() *grpc.Server {
 
 func (s *Server) Serve(ctx context.Context) {
 	go s.serve(ctx)
-	runtime.Gosched()
 }
 
 func (s *Server) serve(ctx context.Context) {
 	go s.gRPC.serveGRPC()
-	runtime.Gosched()
-	s.cliGRPC.DialContext(ctx)
+
+	_ = s.cliGRPC.DialContext(ctx)
 
 	go s.rESTGW.serveRESTGW(ctx)
-	runtime.Gosched()
 
 	<-ctx.Done()
 	s.Close(ctx)

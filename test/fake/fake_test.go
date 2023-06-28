@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
-	"runtime"
 	"sync"
 	"time"
 
@@ -109,7 +108,7 @@ func Example_gRPC_Client_loading_fake_data() {
 	defer cancelRPC()
 
 	const (
-		xu int64 = 1_000
+		xu int64 = 2_000
 		xa int64 = 4_000
 		xf int64 = 8_000
 		xo int64 = 8_000
@@ -123,8 +122,9 @@ func Example_gRPC_Client_loading_fake_data() {
 
 	t := time.Now()
 
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
+		defer wg.Done()
 		// u:
 		for iu = 1; iu <= xu; iu++ {
 			_, err := cliU2.Create(ctxRPC, fake.FakeUserCore(iu))
@@ -142,11 +142,11 @@ func Example_gRPC_Client_loading_fake_data() {
 			}
 
 		}
-		wg.Done()
 	}()
 
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
+		defer wg.Done()
 		// a:
 		for ia = 1; ia <= xa; ia++ {
 			_, err := cliA2.Create(ctxRPC, fake.FakeAssetCore(ia))
@@ -156,10 +156,8 @@ func Example_gRPC_Client_loading_fake_data() {
 				na++
 			}
 		}
-		wg.Done()
 	}()
 
-	runtime.Gosched()
 	wg.Wait()
 
 	resultUA := fmt.Sprintf("iu: %d, u: %d, eu: %d, ia: %d, a: %d, ea: %d, t: %v\n", iu-1, nu, eu, ia-1, na, ea, time.Since(t))
@@ -170,8 +168,9 @@ func Example_gRPC_Client_loading_fake_data() {
 
 	t2 := time.Now()
 
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
+		defer wg.Done()
 		rand.Seed(time.Now().UnixNano())
 		// fa:
 		for ifa = 1; ifa <= xf; ifa++ {
@@ -185,11 +184,11 @@ func Example_gRPC_Client_loading_fake_data() {
 				nfa++
 			}
 		}
-		wg.Done()
 	}()
 
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
+		defer wg.Done()
 		rand.Seed(time.Now().UnixNano())
 		// op:
 		for iop = 1; iop <= xo; iop++ {
@@ -202,10 +201,8 @@ func Example_gRPC_Client_loading_fake_data() {
 				nop++
 			}
 		}
-		wg.Done()
 	}()
 
-	runtime.Gosched()
 	wg.Wait()
 
 	resultFO := fmt.Sprintf("ifa: %d, fa: %d, efa: %d, iop: %d, op: %d, eop: %d, t2: %v, t: %v\n", ifa-1, nfa, efa, iop-1, nop, eop, time.Since(t2), time.Since(t))
@@ -223,5 +220,5 @@ func Example_gRPC_Client_loading_fake_data() {
 
 	// Output:
 	//
-	// processedUAFO: u: 1000, a: 4000, f: 8000, o: 8000
+	// processedUAFO: u: 2000, a: 4000, f: 8000, o: 8000
 }

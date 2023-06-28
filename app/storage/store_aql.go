@@ -263,7 +263,7 @@ func (st *ServiceStoreAQL) OtherCoreDocumentExists(ctx context.Context, key stri
 	return exists, nil
 }
 
-func (st *ServiceStoreAQL) ListFrom(ctx context.Context, keyFrom string, coreFrom service.CoreName) (CursorAQL, int64, error) { //nolint:ireturn,lll
+func (st *ServiceStoreAQL) ListFrom(ctx context.Context, keyFrom string, coreFrom service.CoreName) (CursorAQL, int64, error) { //nolint:ireturn,nolintlint,lll
 	// FOR doc IN @@collection
 	// FILTER doc._from == @value
 	// RETURN doc
@@ -282,7 +282,7 @@ func (st *ServiceStoreAQL) ListFrom(ctx context.Context, keyFrom string, coreFro
 	return cursor, cursor.Count(), nil
 }
 
-func (st *ServiceStoreAQL) ListTo(ctx context.Context, keyTo string, coreTo service.CoreName) (CursorAQL, int64, error) { //nolint:ireturn,lll
+func (st *ServiceStoreAQL) ListTo(ctx context.Context, keyTo string, coreTo service.CoreName) (CursorAQL, int64, error) { //nolint:ireturn,nolintlint,lll
 	// FOR doc IN @@collection
 	// FILTER doc._to == @value
 	// RETURN doc

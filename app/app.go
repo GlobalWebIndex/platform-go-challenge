@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"runtime"
 
 	"x-gwi/app/auth"
 	"x-gwi/app/instance"
@@ -24,8 +23,8 @@ type App struct {
 	server  *server.Server
 
 	cancel context.CancelFunc
-	chErr  chan error
-	chMsg  chan string
+	// chErr  chan error
+	// chMsg  chan string
 }
 
 func Main() {
@@ -45,16 +44,15 @@ func runApp(ctx context.Context, config *Config) error {
 	}
 
 	app.server.Serve(ctx)
-	runtime.Gosched()
 
-	app.testLoad(ctx, 3) //nolint:gomnd
+	// app.testLoad(ctx, 3) //nolint:gomnd
 
 	<-ctx.Done()
 
 	return nil
 }
 
-func (app *App) testLoad(ctx context.Context, xTimes int) { //nolint:revive
+func (app *App) testLoad(ctx context.Context, xTimes int) { //nolint:revive,unused
 	/* "x-gwi/test/load"
 	go func() {
 		time.Sleep(3 * time.Second) //nolint:gomnd // time to start server
@@ -103,7 +101,6 @@ func initApp(ctx context.Context, config *Config) (*App, context.Context, error)
 	ctx, app.cancel = context.WithCancel(ctx)
 	// 4
 	app.interrupt(ctx)
-	runtime.Gosched()
 	// 5
 	if app.pki, err = pki.NewPKI(); err != nil {
 		return nil, nil, fmt.Errorf("pki.NewPKI: %w", err)
@@ -136,9 +133,8 @@ func (app *App) Valid() bool {
 }
 
 func (app *App) interrupt(ctx context.Context) {
-	app.chErr = make(chan error, 2)  //nolint:gomnd
-	app.chMsg = make(chan string, 8) //nolint:gomnd
-
+	// app.chErr = make(chan error, 2)  //nolint:gomnd
+	// app.chMsg = make(chan string, 8) //nolint:gomnd
 	go func() {
 		chSig := make(chan os.Signal, 1)
 		signal.Notify(chSig, os.Interrupt)
@@ -156,14 +152,16 @@ func (app *App) interrupt(ctx context.Context) {
 				logs.Info().Msg("app.context.Done()")
 
 				return
-			case err := <-app.chErr:
-				logs.Error().Err(err).Msg("app.chErr")
-				app.closeApp(ctx)
+				/*
+					case err := <-app.chErr:
+						logs.Error().Err(err).Msg("app.chErr")
+						app.closeApp(ctx)
 
-				return
-			case msg := <-app.chMsg:
-				logs.Info().Msg(msg)
-			}
+						return
+					case msg := <-app.chMsg:
+						logs.Info().Msg(msg)
+				*/
+			} //nolint:wsl
 		}
 	}()
 }
