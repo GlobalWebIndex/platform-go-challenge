@@ -3,6 +3,7 @@ package repository
 import (
 	"ownify_api/internal/dto"
 	"ownify_api/internal/utils"
+	"time"
 )
 
 type PaymentQuery interface {
@@ -95,7 +96,8 @@ func (l *paymentQuery) VerifySubscriptionStatus(email string) bool {
 	var customerId string
 	var subscriptionId string
 	var priceId string
-	sql, err := sqlBuilder.Select(tableName, []string{"customer_id", "subscription_id", "price_id"}, []utils.Tuple{{Key: "email", Val: email}}, "=", "OR")
+	var endAt string
+	sql, err := sqlBuilder.Select(tableName, []string{"customer_id", "subscription_id", "price_id", "end_at"}, []utils.Tuple{{Key: "email", Val: email}}, "=", "OR")
 	if err != nil {
 		return false
 	}
@@ -103,12 +105,20 @@ func (l *paymentQuery) VerifySubscriptionStatus(email string) bool {
 		&customerId,
 		&subscriptionId,
 		&priceId,
+		&endAt,
 	)
 	if err != nil {
 		return false
 	}
-	if customerId == "" || subscriptionId == "" || priceId == "" {
+	if customerId == "" || subscriptionId == "" || priceId == "" || endAt == "" {
 		return false
 	}
-	return true
+	//2023-06-13 09:15:50
+	const layout = "2006-01-02 15:04:05"
+	t, err := time.Parse(layout, endAt)
+	if err != nil {
+		return false
+	}
+	now := time.Now()
+	return !t.After(now)
 }
