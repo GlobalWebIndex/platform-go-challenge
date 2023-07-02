@@ -16,7 +16,7 @@ type BriefBusiness struct {
 	Location     string `json:"location"`
 	PhoneNumber  string `json:"phone_number"`
 	IsApproved   bool   `json:"is_approved"`
-	IsSubscribed bool   `json:"is_subscribed"`
+	IsSubscribed string `json:"is_subscribed"`
 }
 
 func (b *BriefBusiness) Valid() bool {

@@ -6,6 +6,8 @@ import (
 	"ownify_api/internal/repository"
 	"strings"
 
+	desc "ownify_api/pkg"
+
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
 	"github.com/stripe/stripe-go/v74/customer"
@@ -21,7 +23,7 @@ type PaymentService interface {
 	UpdateSubscription(oldPriceID, newPriceId string) error
 	CancelSubscription(subscriptionID string) error
 
-	VerifySubscriptionStatus(email string) bool
+	VerifySubscriptionStatus(email string) desc.SubscriptionPaymentStatus
 	GetActiveProducts() ([]*stripe.Product, error)
 	CheckoutSession(sessionId string) error
 }
@@ -62,8 +64,11 @@ func (s *paymentService) CreateCheckoutSessionId(priceId string) (string, string
 	// 	log.Fatalln("cannot read from a config")
 	// }
 	// ownfiyUrl := viper.Get("ownify.client.url").(string)
-	successUrl := "https://did.ownify.org/subscription?session_id={CHECKOUT_SESSION_ID}"
-	cancelUrl := "https://did.ownify.org/subscription"
+	//successUrl := "https://did.ownify.org/subscription?session_id={CHECKOUT_SESSION_ID}"
+	//cancelUrl := "https://did.ownify.org/subscription"
+
+	successUrl := "http://localhost:3000/subscription?session_id={CHECKOUT_SESSION_ID}"
+	cancelUrl := "http://localhost:3000/subscription"
 	params := &stripe.CheckoutSessionParams{
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
@@ -153,8 +158,12 @@ func (s *paymentService) CancelSubscription(subscriptionID string) error {
 	return err
 }
 
-func (s *paymentService) VerifySubscriptionStatus(email string) bool {
-	return s.dbHandler.NewPaymentQuery().VerifySubscriptionStatus(email)
+func (s *paymentService) VerifySubscriptionStatus(email string) desc.SubscriptionPaymentStatus {
+	_, subscriptionId, err := s.dbHandler.NewPaymentQuery().VerifySubscriptionStatus(email)
+	if err != nil {
+		return desc.SubscriptionPaymentStatus_UNSPECIFIED
+	}
+	return getStripSubscriptionStatus(*subscriptionId)
 }
 
 func (s *paymentService) GetActiveProducts() ([]*stripe.Product, error) {
@@ -191,7 +200,8 @@ func (s *paymentService) CheckoutSession(sessionId string) error {
 		return err
 	}
 
-	if s.dbHandler.NewPaymentQuery().VerifySubscriptionStatus(customer.Email) {
+	subscriptionStatus := s.VerifySubscriptionStatus(customer.Email)
+	if subscriptionStatus == desc.SubscriptionPaymentStatus_ACTIVE {
 		return fmt.Errorf("[Err] Already registered this subscription")
 	}
 
@@ -204,7 +214,8 @@ func (s *paymentService) CheckoutSession(sessionId string) error {
 
 	customerID := customer.ID
 	subscriptionID := sub.ID
-	endedAt := sub.EndedAt
+	oneMonthInSeconds := int64(30.44 * 86400)
+	endedAt := sub.StartDate + oneMonthInSeconds
 	priceID := sub.Items.Data[0].Price.ID
 
 	if strings.TrimSpace(priceID) == "" || strings.TrimSpace(subscriptionID) == "" {
@@ -219,6 +230,27 @@ func (s *paymentService) CheckoutSession(sessionId string) error {
 		PriceId:        priceID,
 	}
 
-	err = s.dbHandler.NewPaymentQuery().CreateSubscription(subscription)
+	if subscriptionStatus == desc.SubscriptionPaymentStatus_UNSPECIFIED {
+		err = s.dbHandler.NewPaymentQuery().CreateSubscription(subscription)
+		return err
+	}
+	err = s.dbHandler.NewPaymentQuery().UpdateSubscription(customerID, priceID, subscriptionID, endedAt)
 	return err
+}
+
+func getStripSubscriptionStatus(subId string) desc.SubscriptionPaymentStatus {
+	subscriptionParams := &stripe.SubscriptionParams{}
+	subscriptionParams.AddExpand("items.data.price")
+	sub, err := sub.Get(subId, subscriptionParams)
+	if err != nil {
+		return desc.SubscriptionPaymentStatus_UNSPECIFIED
+	}
+	switch sub.Status {
+	case stripe.SubscriptionStatusActive:
+		return desc.SubscriptionPaymentStatus_ACTIVE
+	case stripe.SubscriptionStatusPastDue:
+		return desc.SubscriptionPaymentStatus_EXPIRED
+	default:
+		return desc.SubscriptionPaymentStatus_UNSPECIFIED
+	}
 }

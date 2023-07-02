@@ -96,7 +96,7 @@ func (m *MicroserviceServer) GetBusiness(ctx context.Context, req *desc.GetBusin
 
 	// check subscription status
 	isSubscription := m.paymentService.VerifySubscriptionStatus(req.Email)
-	data.IsSubscribed = isSubscription
+	data.IsSubscribed = isSubscription.String()
 	return BuildRes(data, "Here is your business info", true)
 }
 

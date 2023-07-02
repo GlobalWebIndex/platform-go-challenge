@@ -556,4 +556,8 @@ message CheckSessionIDRequest {
   string sessionId = 1;
 }
 
-
+enum SubscriptionPaymentStatus {
+  UNSPECIFIED = 0;
+  ACTIVE = 1;
+  EXPIRED = 2;
+}
