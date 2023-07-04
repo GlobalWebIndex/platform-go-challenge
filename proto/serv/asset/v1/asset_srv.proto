@@ -1,0 +1,151 @@
+// proto/serv/asset/v1/asset_srv.proto
+
+syntax = "proto3";
+
+package proto.serv.asset.v1;
+
+// /usr/local/include/google/protobuf/
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+// import "google/api/http.proto";
+// import "google/protobuf/any.proto";
+// import "google/protobuf/duration.proto";
+// import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+// import "google/protobuf/struct.proto";
+// import "google/protobuf/timestamp.proto";
+// import "google/protobuf/wrappers.proto";
+// import "google/rpc/status.proto";
+import "proto/core/_share/v1/share.proto";
+import "proto/core/asset/v1/asset.proto";
+// https://github.com/bufbuild/protoc-gen-validate
+import "validate/validate.proto";
+
+option go_package = "x-gwi/proto/serv/asset/v1;assetpbapiv1";
+
+// AssetService
+// a microservice to handle companies. It provides the following operations:
+// • Create, • Patch, • Delete, • Get (one)
+// standard methods: List, Get, Create, Update, and Delete
+service AssetService {
+  // Create
+  rpc Create(CreateRequest) returns (CreateResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/asset/create"
+      body: "asset"
+    };
+  };
+
+  // Get
+  rpc Get(GetRequest) returns (GetResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/asset/get/{qid.key}"
+      additional_bindings { post: "/api/v1/asset/get" body: "qid" }
+    };
+  };
+
+  // Gett
+  rpc Gett(GetRequest) returns (GetResponse);
+
+  // Update
+  rpc Update(UpdateRequest) returns (UpdateResponse) {
+    option (google.api.http) = {
+      patch: "/api/v1/asset/update/{asset.qid.key}/{asset.qid.rev}"
+      body: "asset"
+      // additional_bindings {
+      //   put: "/api/v1/asset/update/{qid.key}/{qid.rev}"
+      //   body: "asset"
+      // }
+    };
+  };
+
+  // Delete
+  rpc Delete(DeleteRequest) returns (DeleteResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/asset/delete/{qid.key}"
+    };
+  };
+}
+
+// CreateRequest
+message CreateRequest {
+  reserved 1, 2, 3;
+
+  // asset
+  proto.core.asset.v1.AssetCore asset = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+}
+
+// CreateResponse
+message CreateResponse {
+  reserved 1, 2, 3;
+
+  // asset
+  proto.core.asset.v1.AssetCore asset = 4;
+}
+
+// GetRequest
+message GetRequest {
+  reserved 1, 2;
+
+  // qid
+  proto.core._share.v1.ShareQID qid = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+}
+
+// GetResponse
+message GetResponse {
+  reserved 1, 2, 3;
+
+  // asset
+  proto.core.asset.v1.AssetCore asset = 4;
+}
+
+// UpdateRequest
+message UpdateRequest {
+  reserved 1, 2, 3;
+
+  // asset
+  proto.core.asset.v1.AssetCore asset = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+
+  // update_mask
+  // https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature
+  google.protobuf.FieldMask update_mask = 5;
+}
+
+// UpdateResponse
+message UpdateResponse {
+  reserved 1, 2, 3;
+
+  // asset
+  proto.core.asset.v1.AssetCore asset = 4;
+}
+
+// DeleteRequest
+message DeleteRequest {
+  reserved 1, 2;
+
+  // qid
+  proto.core._share.v1.ShareQID qid = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+}
+
+// DeleteResponse
+message DeleteResponse {
+  reserved 1, 2, 3;
+
+  // asset
+  proto.core.asset.v1.AssetCore asset = 4;
+}
+
+// https://github.com/googleapis/googleapis/blob/master/google/api/serviceusage/v1/serviceusage.proto
+// post: "/v1/services/{sub_message}:check" :disable :enable :undelete

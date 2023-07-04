@@ -1,0 +1,175 @@
+// proto/serv/opinion/v1/opinion_srv.proto
+
+syntax = "proto3";
+
+package proto.servstd.opinion.v1;
+
+// /usr/local/include/google/protobuf/
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+// import "google/api/http.proto";
+// import "google/protobuf/any.proto";
+// import "google/protobuf/duration.proto";
+// import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+// import "google/protobuf/struct.proto";
+// import "google/protobuf/timestamp.proto";
+// import "google/protobuf/wrappers.proto";
+// import "google/rpc/status.proto";
+// import "proto/core/asset/asset.proto";
+import "proto/core/_share/v1/share.proto";
+import "proto/core/opinion/v1/opinion.proto";
+// import "proto/core/user/user.proto";
+// https://github.com/bufbuild/protoc-gen-validate
+import "validate/validate.proto";
+
+option go_package = "x-gwi/proto/serv/opinion/v1;opinionpbapiv1";
+
+// OpinionService
+// a microservice to handle companies. It provides the following operations:
+// • Create, • Patch, • Delete, • Get (one)
+// standard methods: List, Get, Create, Update, and Delete
+service OpinionService {
+  // Create
+  rpc Create(CreateRequest) returns (CreateResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/opinion/create"
+      body: "opinion"
+    };
+  };
+
+  // Get
+  rpc Get(GetRequest) returns (GetResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/opinion/get/{qid.key}"
+      additional_bindings { post: "/api/v1/opinion/get" body: "qid" }
+    };
+  };
+
+  // Gett
+  rpc Gett(GetRequest) returns (GetResponse);
+
+  // Update
+  rpc Update(UpdateRequest) returns (UpdateResponse) {
+    option (google.api.http) = {
+      patch: "/api/v1/opinion/update/{opinion.qid.key}/{opinion.qid.rev}"
+      body: "opinion"
+      // additional_bindings {
+      //   put: "/api/v1/opinion/update/{qid.key}/{qid.rev}"
+      //   body: "opinion"
+      // }
+    };
+  };
+
+  // Delete
+  rpc Delete(DeleteRequest) returns (DeleteResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/opinion/delete/{qid.key}"
+    };
+  };
+
+  // List/Filter - stream opinions of a user
+  rpc List(ListRequest) returns (stream ListResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/opinion/list"
+      body: "opinion"
+      additional_bindings { post: "/api/v1/opinion/filter" body: "opinion" }
+    };
+  };
+}
+
+// CreateRequest
+message CreateRequest {
+  reserved 1, 2, 3;
+
+  // opinion
+  proto.core.opinion.v1.OpinionCore opinion = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+}
+
+// CreateResponse
+message CreateResponse {
+  reserved 1, 2, 3;
+
+  // opinion
+  optional proto.core.opinion.v1.OpinionCore opinion = 4;
+}
+
+// GetRequest
+message GetRequest {
+  reserved 1, 2;
+
+  // qid
+  proto.core._share.v1.ShareQID qid = 3;
+}
+
+// GetResponse
+message GetResponse {
+  reserved 1, 2, 3;
+
+  // opinion
+  optional proto.core.opinion.v1.OpinionCore opinion = 4;
+}
+
+// UpdateRequest
+message UpdateRequest {
+  reserved 1, 2, 3;
+
+  // opinion
+  proto.core.opinion.v1.OpinionCore opinion = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+
+  // update_mask
+  // https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature
+  google.protobuf.FieldMask update_mask = 5;
+}
+
+// UpdateResponse
+message UpdateResponse {
+  reserved 1, 2, 3;
+
+  // opinion
+  optional proto.core.opinion.v1.OpinionCore opinion = 4;
+}
+
+// DeleteRequest
+message DeleteRequest {
+  reserved 1, 2;
+
+  // qid
+  proto.core._share.v1.ShareQID qid = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false}
+  ];
+}
+
+// DeleteResponse
+message DeleteResponse {
+  reserved 1, 2, 3;
+
+  // opinion
+  optional proto.core.opinion.v1.OpinionCore opinion = 4;
+}
+
+// ListRequest
+message ListRequest {
+  reserved 1, 2, 3;
+
+  // opinion
+  optional proto.core.opinion.v1.OpinionCore opinion = 4;
+}
+
+// ListResponse
+message ListResponse {
+  reserved 1, 2, 3;
+
+  // opinion
+  optional proto.core.opinion.v1.OpinionCore opinion = 4;
+}
+
+// https://github.com/googleapis/googleapis/blob/master/google/api/serviceusage/v1/serviceusage.proto
+// post: "/v1/services/{sub_message}:check" :disable :enable :undelete

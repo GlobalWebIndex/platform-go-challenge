@@ -1,0 +1,99 @@
+{
+  "asset": {
+    "qid": {
+      "kind": "a_asset",
+      "key": "fk-a:3993",
+      "uid": "cia3e3gj5l9pfeacmcbg",
+      "uuid": "9f21563f-fbfa-4baa-b642-f00b4f7dce11",
+      "rev": "ctj5sje7zedo"
+    },
+    "md": {
+      "title": "College frankly ride a scold incredibly smoothly clearly.",
+      "topic": "this is the life",
+      "label": "air",
+      "description": "Pour-over skateboard authentic next level before they sold out irony twee shoreditch ugh."
+    },
+    "mmd": {
+      "labels": [
+        "luck",
+        "son"
+      ],
+      "tags": [
+        "failure",
+        "lamb"
+      ]
+    },
+    "chart": {
+      "title": "The magnificent failure clap case indeed kindly for hand.",
+      "md": {
+        "title": "Encouraging wit awfully loosely dig place totally courageously virtually cautiously.",
+        "topic": "I'm Jewish",
+        "label": "life",
+        "description": "Carry plaid fingerstache forage food truck cronut narwhal vinegar microdosing."
+      },
+      "mmd": {
+        "labels": [
+          "divorce",
+          "kangaroo"
+        ],
+        "tags": [
+          "advantage",
+          "lips"
+        ]
+      },
+      "data": {},
+      "options": {}
+    },
+    "insight": {
+      "sentence": "Heirloom trust fund distillery lo-fi DIY locavore offal microdosing scenester.",
+      "md": {
+        "title": "The pod utterly courageously sew.",
+        "topic": "you get that",
+        "label": "life",
+        "description": "Food truck scenester venmo asymmetrical Thundercats kale chips blog biodiesel hammock."
+      },
+      "mmd": {
+        "labels": [
+          "irritation",
+          "guitar"
+        ],
+        "tags": [
+          "elegance",
+          "veterinarian"
+        ]
+      }
+    },
+    "audience": {
+      "md": {
+        "title": "The gleaming fiction shake an open catalog.",
+        "topic": "you've got to laugh",
+        "label": "pleasure",
+        "description": "Artisan tousled iPhone slow-carb heirloom organic banh mi freegan iPhone."
+      },
+      "mmd": {
+        "labels": [
+          "dream",
+          "hair"
+        ],
+        "tags": [
+          "mercy",
+          "shower"
+        ]
+      },
+      "gender": "male",
+      "genders": [
+        "female"
+      ],
+      "country_code": "PR",
+      "country_codes": [
+        "FM"
+      ],
+      "age_min": 49,
+      "age_max": 74,
+      "hours_min": 9,
+      "hours_max": 14,
+      "purchases_min": 99875,
+      "purchases_max": 42434
+    }
+  }
+}

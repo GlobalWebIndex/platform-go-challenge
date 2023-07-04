@@ -1,0 +1,82 @@
+// proto/serv/favourite/v2/favourite_srv.proto
+
+syntax = "proto3";
+
+package proto.serv.favourite.v2;
+
+// /usr/local/include/google/protobuf/
+import "google/api/annotations.proto";
+// import "google/api/http.proto";
+// import "google/protobuf/any.proto";
+// import "google/protobuf/duration.proto";
+// import "google/protobuf/empty.proto";
+// import "google/protobuf/field_mask.proto";
+// import "google/protobuf/struct.proto";
+// import "google/protobuf/timestamp.proto";
+// import "google/protobuf/wrappers.proto";
+// import "google/rpc/status.proto";
+import "proto/core/_share/v1/share.proto";
+import "proto/core/favourite/v1/favourite.proto";
+// https://github.com/bufbuild/protoc-gen-validate
+// import "validate/validate.proto";
+
+option go_package = "x-gwi/proto/serv/favourite/v2;favouritepbapiv2";
+
+// FavouriteService
+// a microservice to handle companies. It provides the following operations:
+// • Create, • Patch, • Delete, • Get (one)
+// standard methods: List, Get, Create, Update, and Delete
+service FavouriteService {
+  // Create
+  rpc Create(proto.core.favourite.v1.FavouriteCore)
+      returns (proto.core.favourite.v1.FavouriteCore) {
+    option (google.api.http) = {
+      post: "/api/v2/favourite/create"
+      body: "*"
+    };
+  };
+
+  // Get
+  rpc Get(proto.core._share.v1.ShareQID)
+      returns (proto.core.favourite.v1.FavouriteCore) {
+    option (google.api.http) = {
+      get: "/api/v2/favourite/get/{key}"
+      additional_bindings { post: "/api/v2/favourite/get" body: "*" }
+    };
+  };
+
+  // Gett
+  rpc Gett(proto.core._share.v1.ShareQID)
+      returns (proto.core.favourite.v1.FavouriteCore);
+
+  // Update
+  rpc Update(proto.core.favourite.v1.FavouriteCore)
+      returns (proto.core.favourite.v1.FavouriteCore) {
+    option (google.api.http) = {
+      patch: "/api/v2/favourite/update/{qid.key}/{qid.rev}"
+      body: "*"
+      // additional_bindings {
+      //   put: "/api/v2/favourite/update/{qid.key}/{qid.rev}"
+      //   body: "*"
+      // }
+    };
+  };
+
+  // Delete
+  rpc Delete(proto.core._share.v1.ShareQID)
+      returns (proto.core.favourite.v1.FavouriteCore) {
+    option (google.api.http) = {
+      delete: "/api/v2/favourite/delete/{key}"
+    };
+  };
+
+  // List/FilterList - stream favourites of a user
+  rpc List(proto.core.favourite.v1.FavouriteCore)
+      returns (stream proto.core.favourite.v1.FavouriteCore) {
+    option (google.api.http) = {
+      post: "/api/v2/favourite/list"
+      body: "*"
+      additional_bindings { post: "/api/v2/favourite/filter" body: "*" }
+    };
+  };
+}

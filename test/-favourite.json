@@ -1,0 +1,41 @@
+{
+  "favourite": {
+    "qid": {
+      "kind": "uaf_favourite",
+      "key": "uaf:(fk-u:550,fk-a:3323)",
+      "uid": "cia3e4gj5l9pfeacoapg",
+      "uuid": "a226cc41-6f71-4749-9e5a-ad0943c1ac67",
+      "rev": "ctj5sl8oi7t1"
+    },
+    "md": {
+      "title": "The plain batch think greatly smoothly off a magic.",
+      "topic": "like a martin to his gourd",
+      "label": "bunch",
+      "description": "DIY food truck farm-to-table mustache taxidermy hella schlitz seitan locavore."
+    },
+    "mmd": {
+      "labels": [
+        "childhood",
+        "dolphin"
+      ],
+      "tags": [
+        "anger",
+        "lemon"
+      ]
+    },
+    "qid_from_user": {
+      "kind": "u_user",
+      "key": "fk-u:550",
+      "uid": "cia3e4mn93j2moo4oot0",
+      "uuid": "1dfaa037-4e64-4548-9ce0-0d45a56cccd1",
+      "rev": "ctj5sl8oi8yx"
+    },
+    "qid_to_asset": {
+      "kind": "a_asset",
+      "key": "fk-a:3323",
+      "uid": "cia3e4mn93j2moo4ootg",
+      "uuid": "95268e81-13ff-4940-8e01-487c41e0c03b",
+      "rev": "ctj5sl8oi9wq"
+    }
+  }
+}

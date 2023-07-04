@@ -1,0 +1,185 @@
+// proto/core/asset/v1/asset.proto
+
+syntax = "proto3";
+
+package proto.core.asset.v1;
+
+// /usr/local/include/google/protobuf/
+// import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+// import "google/api/http.proto";
+// import "google/protobuf/any.proto";
+// import "google/protobuf/duration.proto";
+// import "google/protobuf/empty.proto";
+// import "google/protobuf/field_mask.proto";
+import "google/protobuf/struct.proto";
+// import "google/protobuf/timestamp.proto";
+// import "google/protobuf/wrappers.proto";
+// import "google/rpc/status.proto";
+import "proto/core/_share/v1/share.proto";
+// https://github.com/bufbuild/protoc-gen-validate
+import "validate/validate.proto";
+
+option go_package = "x-gwi/proto/core/asset/v1;assetpb";
+
+// AssetCore
+message AssetCore {
+  reserved 1, 2, 4;
+
+  // qid - Asset StoreQID
+  proto.core._share.v1.ShareQID qid = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // md - MetaDescription
+  optional proto.core._share.v1.MetaDescription md = 5;
+
+  // mmd - MetaMultiDescription
+  optional proto.core._share.v1.MetaMultiDescription mmd = 6;
+
+  // chart - Chart (that has a small title, axes titles and data)
+  optional AssetChart chart = 7;
+
+  // insight - Insight (a small piece of text that provides some insight into a
+  // topic, e.g. "40% of millenials spend more than 3hours on social media
+  // daily")
+  optional AssetInsight insight = 8;
+
+  // audience - Audience (which is a series of characteristics, for that
+  // exercise lets focus on gender (Male, Female), birth country, age groups,
+  // hours spent daily on social media, number of purchases last month) e.g.
+  // Males from 24-35 that spent more than 3 hours on social media daily.
+  optional AssetAudience audience = 9;
+}
+
+// AssetChart - (that has a small title, axes titles and data)
+message AssetChart {
+  reserved 1, 2, 3;
+
+  // title - (0-256 characters) optional
+  optional string title = 4 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, max_len: 256 }
+  ];
+
+  // md - MetaDescription
+  optional proto.core._share.v1.MetaDescription md = 5;
+
+  // mmd - MetaMultiDescription
+  optional proto.core._share.v1.MetaMultiDescription mmd = 6;
+
+  // data
+  optional google.protobuf.Struct data = 7;
+
+  // data_raw - raw binary data (65536)
+  optional bytes data_raw = 8;
+
+  // options
+  optional google.protobuf.Struct options = 9;
+}
+
+// AssetInsight - (a small piece of text that provides some insight into a
+// topic, e.g. "40% of millenials spend more than 3hours on social media daily")
+message AssetInsight {
+  reserved 1, 2, 3;
+
+  // sentence - (1-256 characters) required
+  optional string sentence = 4 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).string = { min_len: 1, max_len: 256 }
+  ];
+
+  // md - MetaDescription
+  optional proto.core._share.v1.MetaDescription md = 5;
+
+  // mmd - MetaMultiDescription
+  optional proto.core._share.v1.MetaMultiDescription mmd = 6;
+}
+
+// AssetAudience -  (which is a series of characteristics, for that exercise
+// lets focus on gender (Male, Female), birth country, age groups, hours spent
+// daily on social media, number of purchases last month) e.g. Males from 24-35
+// that spent more than 3 hours on social media daily.
+message AssetAudience {
+  reserved 1, 2, 3, 4;
+
+  // md - MetaDescription
+  optional proto.core._share.v1.MetaDescription md = 5;
+
+  // mmd - MetaMultiDescription
+  optional proto.core._share.v1.MetaMultiDescription mmd = 6;
+
+  // gender - (male | female)
+  optional string gender = 7 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = {
+      ignore_empty: true,
+      in: [ "male", "female" ]
+    }
+  ];
+
+  // genders - [](male, female)
+  repeated string genders = 8 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).repeated = {
+      ignore_empty: true,
+      max_items: 30,
+      unique: true,
+      items: { string: { in: [ "", "male", "female" ] } }
+    }
+  ];
+
+  // country_code - iso 2 birth country code (auto lowercase)
+  optional string country_code = 9 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = { ignore_empty: true, len: 2 }
+  ];
+
+  // country_codes - [](0-300 elements, unique, code max_len 2) optional
+  repeated string country_codes = 10 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).repeated = {
+      ignore_empty: true,
+      max_items: 300,
+      unique: true,
+      items: { string: { max_len: 2 } }
+    }
+  ];
+
+  // age_min - age groups (1-100)
+  optional uint32 age_min = 11 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 100 }
+  ];
+
+  // age_max - age groups (1-100)
+  optional uint32 age_max = 12 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 100 }
+  ];
+
+  // hours_min - hours on social (1-24) hours spent daily on social media
+  optional uint32 hours_min = 13 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 24 }
+  ];
+
+  // hours_max - hours on social (1-24) hours spent daily on social media
+  optional uint32 hours_max = 14 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 24 }
+  ];
+
+  // purchases_min - (1-100_000) number of purchases last month
+  optional uint32 purchases_min = 15 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 100000 }
+  ];
+
+  // purchases_max - (1-100_000) number of purchases last month
+  optional uint32 purchases_max = 16 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).uint32 = { ignore_empty: true, gte: 1, lte: 100000 }
+  ];
+}

@@ -1,0 +1,64 @@
+// proto/core/favourite/v1/favourite.proto
+
+syntax = "proto3";
+
+package proto.core.favourite.v1;
+
+// /usr/local/include/google/protobuf/
+// import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+// import "google/api/http.proto";
+// import "google/protobuf/any.proto";
+// import "google/protobuf/duration.proto";
+// import "google/protobuf/empty.proto";
+// import "google/protobuf/field_mask.proto";
+// import "google/protobuf/struct.proto";
+// import "google/protobuf/timestamp.proto";
+// import "google/protobuf/wrappers.proto";
+// import "google/rpc/status.proto";
+import "proto/core/_share/v1/share.proto";
+import "proto/core/asset/v1/asset.proto";
+import "validate/validate.proto";
+
+option go_package = "x-gwi/proto/core/favourite/v1;favouritepb";
+
+// FavouriteCore
+message FavouriteCore {
+  reserved 1, 2, 4;
+
+  // qid - Favourite StoreQID
+  proto.core._share.v1.ShareQID qid = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // md - MetaDescription
+  optional proto.core._share.v1.MetaDescription md = 5 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // mmd - MetaMultiDescription
+  optional proto.core._share.v1.MetaMultiDescription mmd = 6 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // qid_from_user (from)
+  proto.core._share.v1.ShareQID qid_from_user = 7 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false }
+  ];
+
+  // qid_to_asset (to)
+  proto.core._share.v1.ShareQID qid_to_asset = 8 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message = { required: true, skip: false }
+  ];
+
+  // asset - REF User's Favourite Asset
+  optional proto.core.asset.v1.AssetCore asset = 9 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (google.api.field_behavior) = IMMUTABLE
+  ];
+}
