@@ -1,11 +1,4 @@
 {
-  "qid": {
-    "kind": "uaf_favourite",
-    "key": "uaf:(fk-u:550,fk-a:3323)",
-    "uid": "cia3e4gj5l9pfeacoapg",
-    "uuid": "a226cc41-6f71-4749-9e5a-ad0943c1ac67",
-    "rev": "ctj5sl8oi7t1"
-  },
   "favourite": {
     "qid": {
       "kind": "uaf_favourite",

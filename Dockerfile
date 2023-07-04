@@ -11,10 +11,11 @@ RUN env && \
 
 # [2] run
 FROM scratch
-LABEL app.version="0.1.0"
+LABEL app.version="0.0.0"
 
-COPY --from=build /app-run /
+COPY --from=build /app-run /usr/local/bin/
 
-CMD ["/app-run"]
+WORKDIR /root
+CMD ["app-run"]
 
 EXPOSE 9090 9080

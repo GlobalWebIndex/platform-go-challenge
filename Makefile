@@ -10,7 +10,19 @@ containerfile ?= Containerfile
 
 aqlV = 3.11.1
 dbaql = app-dbaql-$(aqlV)
+# 3.11.1
 # run -e ARANGO_NO_AUTH=1 
+
+cqlV = 5.3.0-rc0
+dbcql = app-dbcql-$(cqlV)
+# 5.2.3 5.3.0-rc0
+
+sqlV = 15.3
+dbsql = app-dbsql-$(sqlV)
+# 15.3 16beta1
+# run -e POSTGRES_PASSWORD=trust 
+POSTGRES_USER ?= postgres
+POSTGRES_PASSWORD ?= postgres
 
 ip = $(shell hostname -i)
 app_host = $(shell hostname -i)
@@ -200,6 +212,9 @@ container-0-check-host:
 	@echo HOSTNAME:		$(HOSTNAME)
 	@echo host_ips:		$(app_host)
 	@echo dbaql:		$(dbaql)
+	@echo dbcql:		$(dbcql)
+	@echo dbsql:		$(dbsql)
+	@$(container) container ps
 
 .PHONY: container-0-list-containers
 container-0-list-containers:
@@ -213,12 +228,13 @@ container-0-list-containers:
 .PHONY: container-1-run-db-aql-once
 container-1-run-db-aql-once:
 	@echo "preparing $(dbaql)"
-	@until $(container) run --name $(dbaql) \
+	@until $(container) run -d \
+	--name $(dbaql) \
+	--hostname arango \
 	-e ARANGO_NO_AUTH=1 \
 	-p 8529:8529 \
-	-d \
 	docker.io/arangodb/arangodb:$(aqlV) \
-	; do sleep 3; done
+	; do sleep 10; done
 	@echo
 	@$(container) ps
 	@echo -e "\nOK"
@@ -228,21 +244,104 @@ container-1-run-db-aql-once:
 .PHONY: container-2-stop-db-aql
 container-2-stop-db-aql:
 	@echo "stoping"
-	@until $(container) stop $(dbaql); do sleep 3; done
+	@until $(container) stop $(dbaql); do sleep 10; done
 	@$(container) container ls
 	@echo -e "\n$(dbaql) - stopped. you can start it by: make container-3-start-db-aql\n"
 
 .PHONY: container-3-start-db-aql
 container-3-start-db-aql:
 	@echo "starting"
-	@until $(container) start $(dbaql); do sleep 3; done
+	@until $(container) start $(dbaql); do sleep 10; done
 	@$(container) container ls
 	@echo -e "\n$(dbaql) - started. you can stop it by: make container-2-stop-db-aql"
 	@echo -e "open AQL UI http://localhost:8529/\n"
 
+.PHONY: container-1-run-db-cql-once
+container-1-run-db-cql-once:
+	@echo "preparing $(dbcql)"
+	@until $(container) run -d \
+	--name $(dbcql) \
+	--hostname scylla \
+	-p 10000:10000 \
+	-p 19042:19042 \
+	-p 19142:19142 \
+	-p 9042:9042 \
+	-p 9142:9142 \
+	-p 7000:7000 \
+	-p 7001:7001 \
+	-p 9180:9180 \
+	-p 9100:9100 \
+	docker.io/scylladb/scylla:$(cqlV) \
+	--smp 4 \
+	--developer-mode 1 \
+	--experimental 1 \
+	--api-address 0.0.0.0 \
+	; do sleep 10; done
+	@echo
+	@$(container) ps
+	@echo -e "\nOK"
+	@echo -e "\n$(dbcql) - prepared and started. you can stop it by: make container-2-stop-db-cql"
+	@echo -e "open CQL UI http://localhost:10000/\n"
+
+# --listen-address 0.0.0.0 \
+# --rpc-address 0.0.0.0 \
+# --api-address 0.0.0.0 \
+# --broadcast-rpc-address 0.0.0.0 \
+# --network=host \
+
+.PHONY: container-2-stop-db-cql
+container-2-stop-db-cql:
+	@echo "stoping"
+	@until $(container) stop $(dbcql); do sleep 10; done
+	@$(container) container ls
+	@echo -e "\n$(dbcql) - stopped. you can start it by: make container-3-start-db-cql\n"
+
+.PHONY: container-3-start-db-cql
+container-3-start-db-cql:
+	@echo "starting"
+	@until $(container) start $(dbcql); do sleep 10; done
+	@$(container) container ls
+	@echo -e "\n$(dbcql) - started. you can stop it by: make container-2-stop-db-cql"
+	@echo -e "open CQL UI http://localhost:10000/\n"
+
+.PHONY: container-1-run-db-sql-once
+container-1-run-db-sql-once:
+	@echo "preparing $(dbsql)"
+	@until $(container) run -d \
+	--name $(dbsql) \
+	--hostname postgres \
+	-e POSTGRES_USER=$(POSTGRES_USER) \
+	-e POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) \
+	-p 5432:5432 \
+	docker.io/library/postgres:$(sqlV) \
+	; do sleep 10; done
+	@echo
+	@$(container) ps
+	@echo -e "\nOK"
+	@echo -e "\n$(dbsql) - prepared and started. you can stop it by: make container-2-stop-db-sql"
+	@echo -e "open SQL at localhost:5432\n"
+
+# -e POSTGRES_PASSWORD=trust \
+# -c listen_addresses='*' \
+
+.PHONY: container-2-stop-db-sql
+container-2-stop-db-sql:
+	@echo "stoping"
+	@until $(container) stop $(dbsql); do sleep 10; done
+	@$(container) container ls
+	@echo -e "\n$(dbsql) - stopped. you can start it by: make container-3-start-db-sql\n"
+
+.PHONY: container-3-start-db-sql
+container-3-start-db-sql:
+	@echo "starting"
+	@until $(container) start $(dbsql); do sleep 10; done
+	@$(container) container ls
+	@echo -e "\n$(dbsql) - started. you can stop it by: make container-2-stop-db-sql"
+	@echo -e "open SQL UI http://localhost:8529/\n"
 
 # docker build -t localhost/app-gwi:latest .
 # docker build -f Containerfile .
+
 .PHONY: container-4-build-app
 container-4-build-app:
 	@echo "*** container-build - $(appname) ***"
@@ -259,8 +358,9 @@ container-4-build-app:
 container-5-run-app--rm:
 	@$(container) container ps
 	@echo -e "\npassing host_ip to container $(app_host)\n" 
-	@-$(container) run --rm -i \
+	@-$(container) run --rm \
 	--name $(appname) \
+	--hostname $(appname) \
 	-p 9090:9090 \
 	-p 9080:9080 \
 	-e APP_NAME=$(APP_NAME) \
@@ -277,6 +377,9 @@ container-5-run-app--rm:
 	@$(container) container ps
 	@$(container) image ls
 
+# --requires is supported by podman but not by docker
+# --requires $(dbaql) \
+
 .PHONY: container-x-go-test-Example_gRPC_Client_loading_fake_data
 container-x-go-test-Example_gRPC_Client_loading_fake_data:
 	@go mod tidy
@@ -287,8 +390,9 @@ container-x-go-test-Example_gRPC_Client_loading_fake_data:
 container-x-run-app-once-no--rm:
 	@$(container) container ps
 	@echo "*** container-run ***"
-	@-$(container) run -i \
+	@-$(container) run \
 	--name $(appname) \
+	--hostname $(appname) \
 	-p 9090:9090 \
 	-p 9080:9080 \
 	-e APP_NAME=$(APP_NAME) \
@@ -308,14 +412,14 @@ container-x-run-app-once-no--rm:
 .PHONY: container-x-stop-app
 container-x-stop-app:
 	@echo "stoping"
-	@until $(container) stop $(appname); do sleep 3; done
+	@until $(container) stop $(appname); do sleep 10; done
 	@$(container) container ls
 	@echo -e "\n$(appname) - stopped. you can start it by: make container-7-start-app\n"
 
 .PHONY: container-x-start-app
 container-x-start-app:
 	@echo "starting"
-	@until $(container) start -i $(appname); do sleep 3; done
+	@until $(container) start $(appname); do sleep 10; done
 	@$(container) container ls
 	@echo -e "\n$(appname) - started. you can stop it by: make container-6-stop-app\n"
 
@@ -348,10 +452,48 @@ container-x-remove-db-aql:
 	@echo
 	@$(container) container rm $(dbaql)
 	@echo -e "\nOK"
-	@$(container) image rm $(dbaql)
+	@$(container) image prune -f
+	@$(container) volume prune -f
+	@echo
+	@$(container) image ls
+
+.PHONY: container-x-nodetool-status-db-cql
+container-x-nodetool-status-db-cql:
+	@echo "*** $(container) exec -it $(dbcql) nodetool status ***"
+	@until $(container) exec -it $(dbcql) nodetool status; do sleep 10; done
+
+.PHONY: container-x-net-seeds-db-cql
+container-x-net-seeds-db-cql:
+	@echo "***  ***"
+	@$(container) inspect $(dbcql) -f '{{ .NetworkSettings.IPAddress }}'
+	@$(container) inspect $(dbcql) -f '{{ .NetworkSettings.Ports }}'
+
+# @$(container) inspect $(dbcql) -f '{{ .NetworkSettings.Ports }}'
+# @$(container) inspect $(dbcql) -f '{{ .NetworkSettings.IPAddress }} {{ .NetworkSettings.Ports }}'
+
+# podman inspect mysql -f '{{ .NetworkSettings.IPAddress }} {{ .NetworkSettings.Ports }}'
+# "$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' some-scylla)"
+
+.PHONY: container-x-remove-db-cql
+container-x-remove-db-cql:
+	@echo "*** container-remove ***"
+	@$(container) image ls
+	@echo
+	@$(container) container rm $(dbcql)
 	@echo -e "\nOK"
 	@$(container) image prune -f
 	@$(container) volume prune -f
 	@echo
 	@$(container) image ls
 
+.PHONY: container-x-remove-db-sql
+container-x-remove-db-sql:
+	@echo "*** container-remove ***"
+	@$(container) image ls
+	@echo
+	@$(container) container rm $(dbsql)
+	@echo -e "\nOK"
+	@$(container) image prune -f
+	@$(container) volume prune -f
+	@echo
+	@$(container) image ls

@@ -1,3 +1,4 @@
+//nolint:revive,exhaustruct,gomnd
 package fake
 
 import (
@@ -25,6 +26,7 @@ func FakeAssetCore(seed int64) *assetpb.AssetCore {
 	if seed == 0 {
 		return &assetpb.AssetCore{}
 	}
+
 	return &assetpb.AssetCore{
 		Qid:      FakeShareQID(seed, service.NameAsset, keyAsset(seed)),
 		Md:       FakeMetaDescription(seed),
@@ -40,7 +42,9 @@ func FakeAssetChart(seed int64) *assetpb.AssetChart {
 	if seed == 0 {
 		return &assetpb.AssetChart{}
 	}
+
 	f := gofakeit.New(seed + 41)
+
 	return &assetpb.AssetChart{
 		Title:   PtrStr(f.SentenceSimple()),
 		Md:      FakeMetaDescription(seed + 77),
@@ -56,7 +60,9 @@ func FakeAssetInsight(seed int64) *assetpb.AssetInsight {
 	if seed == 0 {
 		return &assetpb.AssetInsight{}
 	}
+
 	f := gofakeit.New(seed + 32)
+
 	return &assetpb.AssetInsight{
 		Sentence: PtrStr(f.HipsterSentence(9)),
 		Md:       FakeMetaDescription(seed + 64),
@@ -69,7 +75,9 @@ func FakeAssetAudience(seed int64) *assetpb.AssetAudience {
 	if seed == 0 {
 		return &assetpb.AssetAudience{}
 	}
+
 	f := gofakeit.New(seed + 25)
+
 	return &assetpb.AssetAudience{
 		Md:           FakeMetaDescription(seed + 53),
 		Mmd:          FakeMetaMultiDescription(seed + 87),

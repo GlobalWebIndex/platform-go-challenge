@@ -1,3 +1,4 @@
+//nolint:revive,exhaustruct,gomnd
 package fake
 
 import (
@@ -23,7 +24,9 @@ func FakeOpinionCore(seed, from, to int64) *opinionpb.OpinionCore {
 	if seed == 0 {
 		return &opinionpb.OpinionCore{}
 	}
+
 	f := gofakeit.NewCrypto()
+
 	return &opinionpb.OpinionCore{
 		Qid:         FakeShareQID(seed, service.NameOpinion, keyOpinion(from, to)),
 		QidFromUser: FakeShareQID(from, service.NameUser, keyUser(from)),

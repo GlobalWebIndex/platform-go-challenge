@@ -4,7 +4,6 @@
 ## Table of Contents
 
 - [proto/core/_store/v1/store.proto](#proto_core__store_v1_store-proto)
-    - [Store](#proto-core-_store-v1-Store)
     - [StoreAQL](#proto-core-_store-v1-StoreAQL)
   
 - [Scalar Value Types](#scalar-value-types)
@@ -15,25 +14,6 @@
 <p align="right"><a href="#top">Top</a></p>
 
 ## proto/core/_store/v1/store.proto
-
-
-
-<a name="proto-core-_store-v1-Store"></a>
-
-### Store
-Store
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid - StoreQID |
-| user | [proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) | optional | user - UserCore |
-| asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | optional | asset - AssetCore |
-| favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | optional | favourite - FavouriteCore |
-| opinion | [proto.core.opinion.v1.OpinionCore](#proto-core-opinion-v1-OpinionCore) | optional | opinion - OpinionCore |
-
-
-
 
 
 
@@ -60,11 +40,12 @@ REV rev = 4 [json_name = &#34;_rev&#34;];
 
 WARNING! generated pb files keep json_name for protobuf but not for json
 want: json=_key,proto3&#34; json:&#34;_key (from json_name = &#34;_key&#34;)
-Key string `protobuf:&#34;bytes,4,opt,name=key,json=_key,proto3&#34; json:&#34;_key,omitempty&#34;`
-got:  json=_key,proto3&#34; json:&#34;key  (from json_name = &#34;_key&#34;)
-Key string `protobuf:&#34;bytes,4,opt,name=key,json=_key,proto3&#34; json:&#34;key,omitempty&#34;`
-solution: 1) edit generated proto/core/_store/v1/store.pb.go; 
-or 2) synch dedicated type in app/storage/storepb2/storepb2.go
+Key string `protobuf:&#34;bytes,4,opt,name=key,json=_key,proto3&#34;
+json:&#34;_key,omitempty&#34;` got:  json=_key,proto3&#34; json:&#34;key  (from json_name =
+&#34;_key&#34;) Key string `protobuf:&#34;bytes,4,opt,name=key,json=_key,proto3&#34;
+json:&#34;key,omitempty&#34;` solution: 1) edit generated
+proto/core/_store/v1/store.pb.go; or 2) synch dedicated type in
+app/storage/storepb2/storepb2.go
 
 
 | Field | Type | Label | Description |
@@ -75,7 +56,6 @@ or 2) synch dedicated type in app/storage/storepb2/storepb2.go
 | _oldRev | [string](#string) |  | _oldRev - AQL _oldRev old revision string |
 | _from | [string](#string) |  | _from - AQL _from - edge storage |
 | _to | [string](#string) |  | _to - AQL _to - edge storage |
-| qid | [proto.core._share.v1.ShareQID](#proto-core-_share-v1-ShareQID) |  | qid - StoreQID |
 | user | [proto.core._user.v1.UserCore](#proto-core-_user-v1-UserCore) | optional | user - UserCore |
 | asset | [proto.core.asset.v1.AssetCore](#proto-core-asset-v1-AssetCore) | optional | asset - AssetCore |
 | favourite | [proto.core.favourite.v1.FavouriteCore](#proto-core-favourite-v1-FavouriteCore) | optional | favourite - FavouriteCore |

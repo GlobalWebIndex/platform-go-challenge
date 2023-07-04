@@ -277,15 +277,18 @@
                   "properties": {
                     "kind": {
                       "type": "string",
-                      "title": "kind"
+                      "title": "kind",
+                      "readOnly": true
                     },
                     "uid": {
                       "type": "string",
-                      "title": "uid"
+                      "title": "uid",
+                      "readOnly": true
                     },
                     "uuid": {
                       "type": "string",
-                      "title": "uuid"
+                      "title": "uuid",
+                      "readOnly": true
                     }
                   },
                   "title": "qid - Asset StoreQID"
@@ -646,15 +649,18 @@
                   "properties": {
                     "kind": {
                       "type": "string",
-                      "title": "kind"
+                      "title": "kind",
+                      "readOnly": true
                     },
                     "uid": {
                       "type": "string",
-                      "title": "uid"
+                      "title": "uid",
+                      "readOnly": true
                     },
                     "uuid": {
                       "type": "string",
-                      "title": "uuid"
+                      "title": "uuid",
+                      "readOnly": true
                     }
                   },
                   "title": "qid - Favourite StoreQID"
@@ -1017,15 +1023,18 @@
                   "properties": {
                     "kind": {
                       "type": "string",
-                      "title": "kind"
+                      "title": "kind",
+                      "readOnly": true
                     },
                     "uid": {
                       "type": "string",
-                      "title": "uid"
+                      "title": "uid",
+                      "readOnly": true
                     },
                     "uuid": {
                       "type": "string",
-                      "title": "uuid"
+                      "title": "uuid",
+                      "readOnly": true
                     }
                   },
                   "title": "qid - Favourite StoreQID"
@@ -1400,15 +1409,18 @@
                   "properties": {
                     "kind": {
                       "type": "string",
-                      "title": "kind"
+                      "title": "kind",
+                      "readOnly": true
                     },
                     "uid": {
                       "type": "string",
-                      "title": "uid"
+                      "title": "uid",
+                      "readOnly": true
                     },
                     "uuid": {
                       "type": "string",
-                      "title": "uuid"
+                      "title": "uuid",
+                      "readOnly": true
                     }
                   },
                   "title": "qid - User ShareQID"
@@ -1666,15 +1678,18 @@
                   "properties": {
                     "kind": {
                       "type": "string",
-                      "title": "kind"
+                      "title": "kind",
+                      "readOnly": true
                     },
                     "uid": {
                       "type": "string",
-                      "title": "uid"
+                      "title": "uid",
+                      "readOnly": true
                     },
                     "uuid": {
                       "type": "string",
-                      "title": "uuid"
+                      "title": "uuid",
+                      "readOnly": true
                     }
                   },
                   "title": "qid - Asset StoreQID"
@@ -2024,15 +2039,18 @@
                   "properties": {
                     "kind": {
                       "type": "string",
-                      "title": "kind"
+                      "title": "kind",
+                      "readOnly": true
                     },
                     "uid": {
                       "type": "string",
-                      "title": "uid"
+                      "title": "uid",
+                      "readOnly": true
                     },
                     "uuid": {
                       "type": "string",
-                      "title": "uuid"
+                      "title": "uuid",
+                      "readOnly": true
                     }
                   },
                   "title": "qid - Favourite StoreQID"
@@ -2387,15 +2405,18 @@
                   "properties": {
                     "kind": {
                       "type": "string",
-                      "title": "kind"
+                      "title": "kind",
+                      "readOnly": true
                     },
                     "uid": {
                       "type": "string",
-                      "title": "uid"
+                      "title": "uid",
+                      "readOnly": true
                     },
                     "uuid": {
                       "type": "string",
-                      "title": "uuid"
+                      "title": "uuid",
+                      "readOnly": true
                     }
                   },
                   "title": "qid - Favourite StoreQID"
@@ -2759,15 +2780,18 @@
                   "properties": {
                     "kind": {
                       "type": "string",
-                      "title": "kind"
+                      "title": "kind",
+                      "readOnly": true
                     },
                     "uid": {
                       "type": "string",
-                      "title": "uid"
+                      "title": "uid",
+                      "readOnly": true
                     },
                     "uuid": {
                       "type": "string",
-                      "title": "uuid"
+                      "title": "uuid",
+                      "readOnly": true
                     }
                   },
                   "title": "qid - User ShareQID"
@@ -3619,7 +3643,8 @@
       "properties": {
         "kind": {
           "type": "string",
-          "title": "kind"
+          "title": "kind",
+          "readOnly": true
         },
         "key": {
           "type": "string",
@@ -3627,11 +3652,13 @@
         },
         "uid": {
           "type": "string",
-          "title": "uid"
+          "title": "uid",
+          "readOnly": true
         },
         "uuid": {
           "type": "string",
-          "title": "uuid"
+          "title": "uuid",
+          "readOnly": true
         },
         "rev": {
           "type": "string",

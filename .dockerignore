@@ -29,3 +29,4 @@
 public
 test/--*
 **/certs
+.cassandraWorkbench**

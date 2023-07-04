@@ -66,8 +66,8 @@ func (s *ServiceAPI) Get(ctx context.Context, in *pbsrv.GetRequest) (*pbsrv.GetR
 	}
 
 	// 2. adapt output to fill
-	out := &pbsrv.GetResponse{ //nolint:exhaustruct
-		User: &userpb.UserCore{
+	out := &pbsrv.GetResponse{
+		User: &userpb.UserCore{ //nolint:exhaustruct
 			Qid: in.GetQid(),
 		},
 	}
@@ -106,10 +106,23 @@ func (s *ServiceAPI) Gett(ctx context.Context, in *pbsrv.GetRequest) (*pbsrv.Get
 
 func (s *ServiceAPI) Update(ctx context.Context, in *pbsrv.UpdateRequest) (*pbsrv.UpdateResponse, error) {
 	_, _ = (pbsrv.UnimplementedUserServiceServer{}).Update(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return (pbsrv.UnimplementedAuthServiceServer{}).Create(ctx, in)
-	// return s.createJWT(ctx, in)
-	return (pbsrv.UnimplementedUserServiceServer{}).Update(ctx, in) //nolint:wrapcheck
+	// 2. process by core
+	err := s.userCore.Update(ctx, in.User)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "userCore.Update: %v", err)
+	}
+
+	// 3. adapt output
+	out := &pbsrv.UpdateResponse{
+		User: in.User,
+	}
+
+	return out, nil
 }
 
 func (s *ServiceAPI) Delete(ctx context.Context, in *pbsrv.DeleteRequest) (*pbsrv.DeleteResponse, error) {

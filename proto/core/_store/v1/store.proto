@@ -16,7 +16,7 @@ import "google/api/field_behavior.proto";
 // import "google/protobuf/timestamp.proto";
 // import "google/protobuf/wrappers.proto";
 // import "google/rpc/status.proto";
-import "proto/core/_share/v1/share.proto";
+// import "proto/core/_share/v1/share.proto";
 import "proto/core/_user/v1/user.proto";
 import "proto/core/asset/v1/asset.proto";
 import "proto/core/favourite/v1/favourite.proto";
@@ -24,41 +24,6 @@ import "proto/core/opinion/v1/opinion.proto";
 import "validate/validate.proto";
 
 option go_package = "x-gwi/proto/core/_store/v1;storepb";
-
-// Store
-message Store {
-  reserved 1, 2, 4, 5, 6, 7, 8, 9;
-
-  // qid - StoreQID
-  proto.core._share.v1.ShareQID qid = 3 [
-    (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).message = { required: false, skip: false }
-  ];
-
-  // user - UserCore
-  optional proto.core._user.v1.UserCore user = 10 [
-    (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).message = { required: false, skip: false }
-  ];
-
-  // asset - AssetCore
-  optional proto.core.asset.v1.AssetCore asset = 11 [
-    (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).message = { required: false, skip: false }
-  ];
-
-  // favourite - FavouriteCore
-  optional proto.core.favourite.v1.FavouriteCore favourite = 12 [
-    (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).message = { required: false, skip: false }
-  ];
-
-  // opinion - OpinionCore
-  optional proto.core.opinion.v1.OpinionCore opinion = 13 [
-    (google.api.field_behavior) = OPTIONAL,
-    (validate.rules).message = { required: false, skip: false }
-  ];
-}
 
 // StoreAQL store Arango
 // DocumentMeta contains all meta data used to identifier a document.
@@ -77,16 +42,17 @@ message Store {
 // 	GloballyUniqueId string `json:"globallyUniqueId,omitempty"`
 // }
 // REV rev = 4 [json_name = "_rev"];
-// 
+//
 // WARNING! generated pb files keep json_name for protobuf but not for json
 // want: json=_key,proto3" json:"_key (from json_name = "_key")
-// Key string `protobuf:"bytes,4,opt,name=key,json=_key,proto3" json:"_key,omitempty"`
-// got:  json=_key,proto3" json:"key  (from json_name = "_key")
-// Key string `protobuf:"bytes,4,opt,name=key,json=_key,proto3" json:"key,omitempty"`
-// solution: 1) edit generated proto/core/_store/v1/store.pb.go; 
-// or 2) synch dedicated type in app/storage/storepb2/storepb2.go
+// Key string `protobuf:"bytes,4,opt,name=key,json=_key,proto3"
+// json:"_key,omitempty"` got:  json=_key,proto3" json:"key  (from json_name =
+// "_key") Key string `protobuf:"bytes,4,opt,name=key,json=_key,proto3"
+// json:"key,omitempty"` solution: 1) edit generated
+// proto/core/_store/v1/store.pb.go; or 2) synch dedicated type in
+// app/storage/storepb2/storepb2.go
 message StoreAQL {
-  reserved 1, 2;
+  reserved 1, 2, 3;
 
   // _key - AQL _key - doc storage key unique per db.collection
   string _key = 4 [
@@ -130,11 +96,42 @@ message StoreAQL {
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
   ];
 
-  // qid - StoreQID
-  proto.core._share.v1.ShareQID qid = 3 [
+  // user - UserCore
+  optional proto.core._user.v1.UserCore user = 10 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).message = { required: false, skip: false }
   ];
+
+  // asset - AssetCore
+  optional proto.core.asset.v1.AssetCore asset = 11 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // favourite - FavouriteCore
+  optional proto.core.favourite.v1.FavouriteCore favourite = 12 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+
+  // opinion - OpinionCore
+  optional proto.core.opinion.v1.OpinionCore opinion = 13 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).message = { required: false, skip: false }
+  ];
+}
+
+// qid - StoreQID
+// proto.core._share.v1.ShareQID qid = 3 [
+//   (google.api.field_behavior) = OPTIONAL,
+//   (validate.rules).message = { required: false, skip: false }
+// ];
+
+
+/* 
+// Store
+message Store {
+  reserved 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
   // user - UserCore
   optional proto.core._user.v1.UserCore user = 10 [
@@ -160,3 +157,4 @@ message StoreAQL {
     (validate.rules).message = { required: false, skip: false }
   ];
 }
+ */

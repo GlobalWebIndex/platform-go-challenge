@@ -1,11 +1,4 @@
 {
-  "qid": {
-    "kind": "a_asset",
-    "key": "fk-a:3993",
-    "uid": "cia3e3gj5l9pfeacmcbg",
-    "uuid": "9f21563f-fbfa-4baa-b642-f00b4f7dce11",
-    "rev": "ctj5sje7zedo"
-  },
   "asset": {
     "qid": {
       "kind": "a_asset",

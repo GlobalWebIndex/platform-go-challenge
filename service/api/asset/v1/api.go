@@ -106,10 +106,23 @@ func (s *ServiceAPI) Gett(ctx context.Context, in *pbsrv.GetRequest) (*pbsrv.Get
 
 func (s *ServiceAPI) Update(ctx context.Context, in *pbsrv.UpdateRequest) (*pbsrv.UpdateResponse, error) {
 	_, _ = (pbsrv.UnimplementedAssetServiceServer{}).Update(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return (pbsrv.UnimplementedAuthServiceServer{}).Create(ctx, in)
-	// return s.createJWT(ctx, in)
-	return (pbsrv.UnimplementedAssetServiceServer{}).Update(ctx, in) //nolint:wrapcheck
+	// 2. process by core
+	err := s.assetCore.Update(ctx, in.Asset)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "assetCore.Update: %v", err)
+	}
+
+	// 3. adapt output
+	out := &pbsrv.UpdateResponse{
+		Asset: in.Asset,
+	}
+
+	return out, nil
 }
 
 func (s *ServiceAPI) Delete(ctx context.Context, in *pbsrv.DeleteRequest) (*pbsrv.DeleteResponse, error) {

@@ -1,3 +1,4 @@
+//nolint:revive,exhaustruct
 package fake
 
 import (
@@ -22,6 +23,7 @@ func FakeUserCore(seed int64) *userpb.UserCore {
 	if seed == 0 {
 		return &userpb.UserCore{}
 	}
+
 	return &userpb.UserCore{
 		Qid:          FakeShareQID(seed, service.NameUser, keyUser(seed)),
 		Md:           FakeMetaDescription(seed),
@@ -35,6 +37,7 @@ func FakeBasicAccount(seed int64) *userpb.BasicAccount {
 	if seed == 0 {
 		return &userpb.BasicAccount{}
 	}
+
 	return &userpb.BasicAccount{
 		Username: keyUser(seed),
 	}

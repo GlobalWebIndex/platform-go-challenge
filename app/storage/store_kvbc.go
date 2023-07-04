@@ -40,31 +40,62 @@ func (st *AppStoreKVBC) initAppStoreKVBC(_ context.Context, apSt *AppStorage) er
 	return nil
 }
 
-/*
-func (st *ServiceStoreKVBC) CreateDocument(ctx context.Context, doc any) (MetaDocAQL, error) {
-	meta, err := st.col.CreateDocument(ctx, doc)
-	if err != nil {
-		return MetaDocAQL{}, fmt.Errorf("col.CreateDocument: %w", err)
+func (st *ServiceStoreKVBC) Create(key []byte, value []byte) error {
+	if len(key) > maxValueCreate {
+		return errTooBigValue
 	}
 
-	return meta, nil
-}
-
-func (st *ServiceStoreKVBC) ReadDocument(ctx context.Context, key string, result any) (MetaDocAQL, error) {
-	meta, err := st.col.ReadDocument(ctx, key, result)
-	if err != nil {
-		return MetaDocAQL{}, fmt.Errorf("col.ReadDocument: %w", err)
+	if st.cache.Has(key) {
+		return errAlreadyExists
 	}
 
-	return meta, nil
+	st.cache.Set(key, value)
+
+	return nil
 }
 
-func (st *ServiceStoreAQL) DocumentExists(ctx context.Context, key string) (bool, error) {
-	exists, err := st.col.DocumentExists(ctx, key)
-	if err != nil {
-		return false, fmt.Errorf("col.DocumentExists: %w", err)
+func (st *ServiceStoreKVBC) CreateBig(key []byte, value []byte) error {
+	if st.cache.Has(key) {
+		return errAlreadyExists
 	}
 
-	return exists, nil
+	st.cache.SetBig(key, value)
+
+	return nil
 }
-*/
+
+func (st *ServiceStoreKVBC) Exists(key []byte) bool {
+	return st.cache.Has(key)
+}
+
+func (st *ServiceStoreKVBC) Get(key []byte) ([]byte, error) {
+	if !st.cache.Has(key) {
+		return []byte{}, errNotFound
+	}
+
+	return st.cache.Get([]byte{}, key), nil
+}
+
+func (st *ServiceStoreKVBC) GetBig(key []byte) ([]byte, error) {
+	if !st.cache.Has(key) {
+		return []byte{}, errNotFound
+	}
+
+	return st.cache.GetBig([]byte{}, key), nil
+}
+
+func (st *ServiceStoreKVBC) GetOK(key []byte) ([]byte, bool) {
+	if !st.cache.Has(key) {
+		return []byte{}, false
+	}
+
+	return st.cache.Get([]byte{}, key), true
+}
+
+func (st *ServiceStoreKVBC) GetBigOK(key []byte) ([]byte, bool) {
+	if !st.cache.Has(key) {
+		return []byte{}, false
+	}
+
+	return st.cache.GetBig([]byte{}, key), true
+}

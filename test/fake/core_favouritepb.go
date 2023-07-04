@@ -1,3 +1,4 @@
+//nolint:revive,exhaustruct
 package fake
 
 import (
@@ -20,7 +21,9 @@ func FakeFavouriteCore(seed, from, to int64) *favouritepb.FavouriteCore {
 	if seed == 0 {
 		return &favouritepb.FavouriteCore{}
 	}
+
 	f := gofakeit.NewCrypto()
+
 	return &favouritepb.FavouriteCore{
 		Qid:         FakeShareQID(seed, service.NameFavourite, keyFavourite(from, to)),
 		QidFromUser: FakeShareQID(from, service.NameUser, keyUser(from)),

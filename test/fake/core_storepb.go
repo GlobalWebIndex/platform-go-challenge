@@ -1,3 +1,4 @@
+//nolint:revive,exhaustruct
 package fake
 
 import (
@@ -7,11 +8,13 @@ import (
 
 // storepb
 
+/*
 // Store
 func FakeStore(seed int64, cn service.CoreName) *storepb.Store {
 	if seed == 0 {
 		return &storepb.Store{}
 	}
+
 	return &storepb.Store{
 		// Qid: FakeShareQID(seed,cn,key),
 		User:  FakeUserCore(seed),
@@ -20,12 +23,14 @@ func FakeStore(seed int64, cn service.CoreName) *storepb.Store {
 		// Opinion: FakeOpinionCore(seed,from,to),
 	}
 }
+*/
 
 // StoreAQL
 func FakeStoreAQL(seed int64, cn service.CoreName) *storepb.StoreAQL {
 	if seed == 0 {
 		return &storepb.StoreAQL{}
 	}
+
 	return &storepb.StoreAQL{
 		XKey:    "",
 		XId:     "",

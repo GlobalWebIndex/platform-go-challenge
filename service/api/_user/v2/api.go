@@ -99,9 +99,18 @@ func (s *ServiceAPI) Gett(ctx context.Context, in *sharepb.ShareQID) (*userpb.Us
 
 func (s *ServiceAPI) Update(ctx context.Context, in *userpb.UserCore) (*userpb.UserCore, error) {
 	_, _ = (pbsrv.UnimplementedUserServiceServer{}).Update(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.update(ctx, in)
-	return (pbsrv.UnimplementedUserServiceServer{}).Update(ctx, in) //nolint:wrapcheck
+	// 2. process by core
+	err := s.userCore.Update(ctx, in)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "userCore.Update: %v", err)
+	}
+
+	return in, nil
 }
 
 func (s *ServiceAPI) Delete(ctx context.Context, in *sharepb.ShareQID) (*userpb.UserCore, error) {

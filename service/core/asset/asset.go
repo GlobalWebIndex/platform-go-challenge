@@ -39,11 +39,10 @@ func (c *CoreAsset) Create(ctx context.Context, in *assetpb.AssetCore) error {
 	//nolint:exhaustruct
 	dAQL := &storepb.StoreAQL{
 		XKey:  in.Qid.Key,
-		Qid:   in.Qid,
 		Asset: in,
 	}
 
-	m, err := c.storage.AQL().CreateDocument(ctx, dAQL)
+	m, err := c.storage.AQL().CreateDocument(ctx, dAQL, nil)
 	if err != nil {
 		return fmt.Errorf("AQL().CreateDocument: %w", err)
 	}
@@ -64,6 +63,25 @@ func (c *CoreAsset) Get(ctx context.Context, in *assetpb.AssetCore) error {
 		return fmt.Errorf("AQL().ReadDocument: %w", err)
 	}
 
+	in.Qid.Rev = m.Rev
+
+	return nil
+}
+
+func (c *CoreAsset) Update(ctx context.Context, in *assetpb.AssetCore) error {
+	// c.storage.IsAQL()
+	//nolint:exhaustruct
+	dAQL := &storepb.StoreAQL{
+		Asset: in,
+	}
+
+	m, err := c.storage.AQL().UpdateDocument(ctx, in.Qid.Key, in.Qid.Rev, dAQL, dAQL, nil)
+	if err != nil {
+		return fmt.Errorf("AQL().CreateDocument: %w", err)
+	}
+
+	// if m.Key != in.Qid.Key {todo delete wronk key}
+	in.Qid.Key = m.Key
 	in.Qid.Rev = m.Rev
 
 	return nil

@@ -1,3 +1,4 @@
+//nolint:revive,exhaustruct,gomnd
 package fake
 
 import (
@@ -15,15 +16,17 @@ func FakeShareQID(seed int64, cn service.CoreName, key string) *sharepb.ShareQID
 	if seed == 0 {
 		return &sharepb.ShareQID{}
 	}
+
 	// "github.com/brianvoe/gofakeit/v6"
 	// f := gofakeit.New(seed)
 	// f.UUID()
+
 	return &sharepb.ShareQID{
 		Kind: cn.String(),
 		Key:  key,
 		Uid:  id.XiD().String(),
 		Uuid: id.UUID().String(),
-		Rev:  id.Rev(),
+		Rev:  "", // id.Rev(),
 	}
 }
 
@@ -32,7 +35,9 @@ func FakeMetaDescription(seed int64) *sharepb.MetaDescription {
 	if seed == 0 {
 		return &sharepb.MetaDescription{}
 	}
+
 	f := gofakeit.New(seed)
+
 	return &sharepb.MetaDescription{
 		Title:       PtrStr(f.SentenceSimple()),
 		Topic:       PtrStr(f.Phrase()),
@@ -46,8 +51,10 @@ func FakeMetaMultiDescription(seed int64) *sharepb.MetaMultiDescription {
 	if seed == 0 {
 		return &sharepb.MetaMultiDescription{}
 	}
+
 	f := gofakeit.New(seed)
 	f2 := gofakeit.New(seed + 3)
+
 	return &sharepb.MetaMultiDescription{
 		Labels: []string{f.NounAbstract(), f2.NounConcrete()},
 		Tags:   []string{f2.NounAbstract(), f.NounConcrete()},

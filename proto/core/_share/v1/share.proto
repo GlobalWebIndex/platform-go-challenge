@@ -26,8 +26,9 @@ message ShareQID {
 
   // kind
   string kind = 4 [
-    (google.api.field_behavior) = IMMUTABLE,
     (google.api.field_behavior) = OPTIONAL,
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OUTPUT_ONLY,
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
   ];
 
@@ -40,23 +41,25 @@ message ShareQID {
 
   // uid
   string uid = 6 [
-    (google.api.field_behavior) = IMMUTABLE,
     (google.api.field_behavior) = OPTIONAL,
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OUTPUT_ONLY,
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
   ];
 
   // uuid
   string uuid = 7 [
-    (google.api.field_behavior) = IMMUTABLE,
     (google.api.field_behavior) = OPTIONAL,
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.field_behavior) = OUTPUT_ONLY,
     (validate.rules).string = { ignore_empty: true, uuid: true }
   ];
 
   // rev - revision string
   string rev = 8 [
     json_name = "rev",
-    (google.api.field_behavior) = IMMUTABLE,
     (google.api.field_behavior) = OPTIONAL,
+    (google.api.field_behavior) = IMMUTABLE,
     (validate.rules).string = { ignore_empty: true, max_len: 128 }
   ];
 }

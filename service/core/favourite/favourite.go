@@ -2,6 +2,7 @@ package favourite
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"google.golang.org/grpc/codes"
@@ -15,6 +16,10 @@ import (
 	favouritepbapiv1 "x-gwi/proto/serv/favourite/v1"
 	favouritepbapiv2 "x-gwi/proto/serv/favourite/v2"
 	"x-gwi/service"
+)
+
+var (
+	errKeyFromTo = errors.New("wrong key vs from to")
 )
 
 //nolint:unused
@@ -60,11 +65,10 @@ func (c *CoreFavourite) Create(ctx context.Context, in *favouritepb.FavouriteCor
 		XFrom:     from,
 		XTo:       to,
 		XKey:      in.Qid.Key,
-		Qid:       in.Qid,
 		Favourite: in,
 	}
 
-	m, err := c.storage.AQL().CreateDocument(ctx, dAQL)
+	m, err := c.storage.AQL().CreateDocument(ctx, dAQL, nil)
 	if err != nil {
 		return fmt.Errorf("AQL().CreateDocument: %w", err)
 	}
@@ -88,6 +92,29 @@ func (c *CoreFavourite) Get(ctx context.Context, in *favouritepb.FavouriteCore) 
 		return fmt.Errorf("AQL().ReadDocument: %w", err)
 	}
 
+	in.Qid.Rev = m.Rev
+
+	return nil
+}
+
+func (c *CoreFavourite) Update(ctx context.Context, in *favouritepb.FavouriteCore) error {
+	key, _, _ := c.keyFromTo(in)
+	if key != in.Qid.Key {
+		return errKeyFromTo
+	}
+	// c.storage.IsAQL()
+	//nolint:exhaustruct
+	dAQL := &storepb.StoreAQL{
+		Favourite: in,
+	}
+
+	m, err := c.storage.AQL().UpdateDocument(ctx, in.Qid.Key, in.Qid.Rev, dAQL, dAQL, nil)
+	if err != nil {
+		return fmt.Errorf("AQL().CreateDocument: %w", err)
+	}
+
+	// if m.Key != in.Qid.Key {todo delete wronk key}
+	in.Qid.Key = m.Key
 	in.Qid.Rev = m.Rev
 
 	return nil
@@ -187,19 +214,27 @@ func (c *CoreFavourite) ListV2(in *favouritepb.FavouriteCore, stream favouritepb
 	return nil
 }
 
-func (c *CoreFavourite) edgeKeyFromTo(ctx context.Context, in *favouritepb.FavouriteCore) (string, string, string, error) { //nolint:lll
+func (c *CoreFavourite) keyFromTo(in *favouritepb.FavouriteCore) (string, string, string) {
 	from := in.GetQidFromUser().GetKey()
 	to := in.GetQidToAsset().GetKey()
+	key := fmt.Sprintf("uaf:(%s,%s)", from, to)
 
-	in.Qid.Key = fmt.Sprintf("uaf:(%s,%s)", from, to)
+	return key, from, to
+}
+
+func (c *CoreFavourite) edgeKeyFromTo(ctx context.Context, in *favouritepb.FavouriteCore) (string, string, string, error) { //nolint:lll
+	// from := in.GetQidFromUser().GetKey()
+	// to := in.GetQidToAsset().GetKey()
+	// key := fmt.Sprintf("uaf:(%s,%s)", from, to)
+	key, from, to := c.keyFromTo(in)
+
+	in.Qid.Key = key
 
 	if from == "" {
 		return "", "", "", fmt.Errorf("missed QID fromUser") //nolint:goerr113
 	} else if to == "" {
 		return "", "", "", fmt.Errorf("missed QID toAsset") //nolint:goerr113
 	}
-
-	key := fmt.Sprintf("uaf:(%s,%s)", from, to)
 
 	exists, err := c.storage.AQL().DocumentExists(ctx, key)
 	if err != nil {

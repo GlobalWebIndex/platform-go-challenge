@@ -14,7 +14,7 @@ require (
 	github.com/rs/xid v1.5.0
 	github.com/rs/zerolog v1.29.1
 	golang.org/x/crypto v0.10.0
-	google.golang.org/genproto/googleapis/api v0.0.0-20230626202813-9b080da550b3
+	google.golang.org/genproto/googleapis/api v0.0.0-20230629202037-9506855d4529
 	google.golang.org/grpc v1.56.1
 	google.golang.org/protobuf v1.31.0
 )
@@ -31,6 +31,6 @@ require (
 	golang.org/x/net v0.11.0 // indirect
 	golang.org/x/sys v0.9.0 // indirect
 	golang.org/x/text v0.10.0 // indirect
-	google.golang.org/genproto v0.0.0-20230626202813-9b080da550b3 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20230626202813-9b080da550b3 // indirect
+	google.golang.org/genproto v0.0.0-20230629202037-9506855d4529 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20230629202037-9506855d4529 // indirect
 )

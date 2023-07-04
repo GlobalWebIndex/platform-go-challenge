@@ -1,19 +1,32 @@
 package storage
 
 import (
+	"errors"
+
 	"x-gwi/app/x/env"
 )
 
 const (
-	defPortAQL = "8529"
-	defAdrAQL  = "http://localhost:8529"
+	defPortAQL     = "8529"
+	defAdrAQL      = "http://localhost:8529"
+	defPortCQL     = "19042" // native_shard_aware_transport_port 19042, native_transport_port 9042
+	defAdrCQL      = "localhost"
+	defPortSQL     = "5432"
+	defAdrSQL      = "localhost"
+	maxValueCreate = 1 << 16
+)
+
+var (
+	errNotFound      = errors.New("not found")
+	errAlreadyExists = errors.New("already exists")
+	errTooBigValue   = errors.New("too big value")
 )
 
 type ConfigAppStorage struct {
 	HostIP []string
 	AQL    ConfigAQL
-	// CQL ConfigCQL
-	// SQL ConfigSQL
+	// CQL    ConfigCQL
+	// SQL    ConfigSQL
 }
 
 // APP_HOST: ${APP_HOST} \

@@ -79,6 +79,18 @@ func (st *AppStoreAQL) initAppStoreAQL(ctx context.Context, apSt *AppStorage) er
 		return fmt.Errorf("arango.NewClient: %w", err)
 	}
 
+	if err = st.cli.SynchronizeEndpoints(ctx); err != nil {
+		const waitForAQL = 1 * time.Second
+
+		time.Sleep(waitForAQL)
+
+		if err = st.cli.SynchronizeEndpoints(ctx); err != nil {
+			return fmt.Errorf("cli.SynchronizeEndpoints: %w", err)
+		}
+	}
+
+	l = l.With().Strs("endpoints_synch", st.cli.Connection().Endpoints()).Logger()
+
 	if err = st.initDB(ctx); err != nil {
 		return fmt.Errorf("st.initDB: %w", err)
 	}
@@ -216,7 +228,11 @@ func (st *ServiceStoreAQL) OtherCollectionName(coreName service.CoreName) string
 // other any other field violates an index constraint.
 // To return the NEW document, prepare a context with WithReturnNew. To wait until document has been synced to disk,
 // prepare a context with `WithWaitForSync`.
-func (st *ServiceStoreAQL) CreateDocument(ctx context.Context, doc any) (MetaDocAQL, error) {
+func (st *ServiceStoreAQL) CreateDocument(ctx context.Context, doc, result any) (MetaDocAQL, error) {
+	if result != nil {
+		ctx = arango.WithReturnNew(ctx, result)
+	}
+
 	meta, err := st.col.CreateDocument(ctx, doc)
 	if err != nil {
 		return MetaDocAQL{}, fmt.Errorf("col.CreateDocument: %w", err)
@@ -232,6 +248,76 @@ func (st *ServiceStoreAQL) ReadDocument(ctx context.Context, key string, result 
 	meta, err := st.col.ReadDocument(ctx, key, result)
 	if err != nil {
 		return MetaDocAQL{}, fmt.Errorf("col.ReadDocument: %w", err)
+	}
+
+	return meta, nil
+}
+
+// UpdateDocument updates a single document with given key in the collection.
+// The document meta data is returned.
+// To return the NEW document, prepare a context with `WithReturnNew`.
+// To return the OLD document, prepare a context with `WithReturnOld`.
+// To wait until document has been synced to disk, prepare a context with `WithWaitForSync`.
+// If no document exists with given key, a NotFoundError is returned.
+func (st *ServiceStoreAQL) UpdateDocument(ctx context.Context, key, rev string, update, result, old any) (MetaDocAQL, error) { //nolint:lll
+	if result != nil {
+		ctx = arango.WithReturnNew(ctx, result)
+	}
+
+	if old != nil {
+		ctx = arango.WithReturnOld(ctx, old)
+	}
+
+	ctx = arango.WithRevision(ctx, rev)
+
+	meta, err := st.col.UpdateDocument(ctx, key, update)
+	if err != nil {
+		return MetaDocAQL{}, fmt.Errorf("col.UpdateDocument: %w", err)
+	}
+
+	return meta, nil
+}
+
+// ReplaceDocument replaces a single document with given key in the collection with the document
+// given in the document argument.The document meta data is returned.
+// To return the NEW document, prepare a context with `WithReturnNew`.
+// To return the OLD document, prepare a context with `WithReturnOld`.
+// To wait until document has been synced to disk, prepare a context with `WithWaitForSync`.
+// If no document exists with given key, a NotFoundError is returned.
+func (st *ServiceStoreAQL) ReplaceDocument(ctx context.Context, key, rev string, replace, result, old any) (MetaDocAQL, error) { //nolint:lll
+	if result != nil {
+		ctx = arango.WithReturnNew(ctx, result)
+	}
+
+	if old != nil {
+		ctx = arango.WithReturnOld(ctx, old)
+	}
+
+	ctx = arango.WithRevision(ctx, rev)
+
+	meta, err := st.col.ReplaceDocument(ctx, key, replace)
+	if err != nil {
+		return MetaDocAQL{}, fmt.Errorf("col.ReplaceDocument: %w", err)
+	}
+
+	return meta, nil
+}
+
+// RemoveDocument removes a single document with given key from the collection.
+// The document meta data is returned.
+// To return the OLD document, prepare a context with `WithReturnOld`.
+// To wait until removal has been synced to disk, prepare a context with `WithWaitForSync`.
+// If no document exists with given key, a NotFoundError is returned.
+func (st *ServiceStoreAQL) RemoveDocument(ctx context.Context, key, rev string, old any) (MetaDocAQL, error) {
+	if old != nil {
+		arango.WithReturnOld(ctx, old)
+	}
+
+	ctx = arango.WithRevision(ctx, rev)
+
+	meta, err := st.col.RemoveDocument(ctx, key)
+	if err != nil {
+		return MetaDocAQL{}, fmt.Errorf("col.RemoveDocument: %w", err)
 	}
 
 	return meta, nil
@@ -299,7 +385,7 @@ func (st *ServiceStoreAQL) ListTo(ctx context.Context, keyTo string, coreTo serv
 	return cursor, cursor.Count(), nil
 }
 
-func (st *ServiceStoreAQL) ListAll(ctx context.Context) (CursorAQL, int64, error) { //nolint:ireturn
+func (st *ServiceStoreAQL) ListAll(ctx context.Context) (CursorAQL, int64, error) { //nolint:ireturn,nolintlint
 	// FOR doc IN @@collection
 	// RETURN doc
 	qu := fmt.Sprintf(`FOR doc IN %s RETURN doc`, st.CollectionName())
@@ -317,7 +403,7 @@ func (st *ServiceStoreAQL) ListAll(ctx context.Context) (CursorAQL, int64, error
 // Query performs an AQL query, returning a cursor used to iterate over the returned documents.
 // Note that the returned Cursor must always be closed to avoid holding on to resources in the server
 // while they are no longer needed - cursor.Close().
-func (st *ServiceStoreAQL) Query(ctx context.Context, q *QueryAQL) (CursorAQL, int64, error) { //nolint:ireturn
+func (st *ServiceStoreAQL) Query(ctx context.Context, q *QueryAQL) (CursorAQL, int64, error) { //nolint:ireturn,nolintlint,lll
 	ctx = arango.WithQueryCount(ctx, true)
 
 	cursor, err := st.col.Database().Query(ctx, q.Query, q.Bind)

@@ -1,11 +1,4 @@
 {
-  "qid": {
-    "kind": "uao_opinion",
-    "key": "uao:(fk-u:686,fk-a:3605)",
-    "uid": "cia3e4gj5l9pfeacoat0",
-    "uuid": "3b329379-9039-4640-b18e-dfd4460a4f0f",
-    "rev": "ctj5sl8se145"
-  },
   "opinion": {
     "qid": {
       "kind": "uao_opinion",

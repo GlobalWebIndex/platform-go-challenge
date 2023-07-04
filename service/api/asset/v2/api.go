@@ -98,9 +98,18 @@ func (s *ServiceAPI) Gett(ctx context.Context, in *sharepb.ShareQID) (*assetpb.A
 
 func (s *ServiceAPI) Update(ctx context.Context, in *assetpb.AssetCore) (*assetpb.AssetCore, error) {
 	_, _ = (pbsrv.UnimplementedAssetServiceServer{}).Update(ctx, in)
+	// 1. validate input
+	if err := in.ValidateAll(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
-	// return s.update(ctx, in)
-	return (pbsrv.UnimplementedAssetServiceServer{}).Update(ctx, in) //nolint:wrapcheck
+	// 2. process by core
+	err := s.assetCore.Update(ctx, in)
+	if err != nil {
+		return nil, status.Errorf(codes.Unknown, "assetCore.Update: %v", err)
+	}
+
+	return in, nil
 }
 
 func (s *ServiceAPI) Delete(ctx context.Context, in *sharepb.ShareQID) (*assetpb.AssetCore, error) {
