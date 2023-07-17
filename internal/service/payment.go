@@ -64,11 +64,11 @@ func (s *paymentService) CreateCheckoutSessionId(priceId string) (string, string
 	// 	log.Fatalln("cannot read from a config")
 	// }
 	// ownfiyUrl := viper.Get("ownify.client.url").(string)
-	successUrl := "https://did.ownify.org/subscription?session_id={CHECKOUT_SESSION_ID}"
-	cancelUrl := "https://did.ownify.org/subscription"
+	//successUrl := "https://did.ownify.org/subscription?session_id={CHECKOUT_SESSION_ID}"
+	//cancelUrl := "https://did.ownify.org/subscription"
 
-	//successUrl := "http://localhost:3000/subscription?session_id={CHECKOUT_SESSION_ID}"
-	//cancelUrl := "http://localhost:3000/subscription"
+	successUrl := "http://localhost:3000/subscription?session_id={CHECKOUT_SESSION_ID}"
+	cancelUrl := "http://localhost:3000/subscription"
 	params := &stripe.CheckoutSessionParams{
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
