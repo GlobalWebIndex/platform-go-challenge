@@ -1,5 +1,5 @@
 generate:
-	cd api; buf generate
+	cd api; buf generate; mv ../pkg/microservice.swagger.json ../static/swagger-ui/swagger.yaml
 
 run:
 	cd cmd; go run main.go

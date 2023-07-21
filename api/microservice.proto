@@ -14,6 +14,19 @@ import "google/protobuf/struct.proto";
 
 service Microservice {
 
+  rpc SignUp(SignUpRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/users/signup"
+      body: "*"
+    };
+  }
+
+  rpc SignIn(SignUpRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/users/signin"
+      body: "*"
+    };
+  }
   //Favorites
   rpc AddFavoites(AddFavoriteRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
@@ -22,17 +35,22 @@ service Microservice {
     };
   }
 
-
   rpc GetFavorites(GetFavoritesRequest) returns (NetWorkResponse) {
     option (google.api.http).get = "/v1/users/{id}/favorites";
   }
 
 }
 
+message SignUpRequest {
+  string email = 1;
+  string password = 2;
+}
+
+
 //business
 message AddFavoriteRequest {
-  uint64  userId = 1;
-  uint64  assestId = 2;
+  uint64  id = 1;
+  uint64  assetId = 2;
 }
 message GetFavoritesRequest {
   //string email = 1 [(validate.rules).string.email = true];

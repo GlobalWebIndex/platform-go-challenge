@@ -3,104 +3,71 @@ package repository
 import (
 	//"fmt"
 
-	"ownify_api/internal/dto"
-	"ownify_api/internal/utils"
+	"fmt"
+	"gwi_api/internal/dto"
 )
 
 type UserQuery interface {
 	CreateUser(
-		user dto.BriefUser,
-	) error
-	ValidUser(pubKey string, idFingerprint string) (*dto.BriefUser, error)
-	DeleteUser(pubKey string) error
-	VerifyUser(userId string, pubKey string) (*dto.BriefUser, error)
+		user dto.UserDto) (*uint64, error)
+
+	DeleteUser(userId uint64) error
+	GetUserPasswordByEmail(email string) (*string, error)
+	GetUserIdByEmail(email string) (*uint64, error)
 }
 
 type userQuery struct{}
 
+// GetUserIdByEmail implements UserQuery.
+func (u *userQuery) GetUserIdByEmail(email string) (*uint64, error) {
+	userId, found := DB.userEmails[email]
+	if !found {
+		return nil, fmt.Errorf("%s", "did not exist user")
+	}
+	return &userId, nil
+}
+
+// GetUserPasswordByEmail implements UserQuery.
+func (u *userQuery) GetUserPasswordByEmail(email string) (*string, error) {
+	userId, found := DB.userEmails[email]
+	if !found {
+		return nil, fmt.Errorf("%s", "did not exist user")
+	}
+
+	user, found := DB.users[userId]
+	if !found {
+		return nil, fmt.Errorf("%s", "did not exist user")
+	}
+	return &user.Password, nil
+}
+
 func (u *userQuery) CreateUser(
-	user dto.BriefUser) error {
-	if err := user.Valid(); err != nil {
-		return err
-	}
-
-	cols, values := utils.ConvertToEntity(&user)
-	sqlBuilder := utils.NewSqlBuilder()
-	query, err := sqlBuilder.Insert(UserTableName, cols, values)
-	if err != nil {
-		return err
-	}
-	_, err = DB.Exec(*query)
-	if err != nil {
-		return err
-	}
-	return nil
+	user dto.UserDto) (*uint64, error) {
+	return DB.RegisterUser(user)
 }
 
-func (u *userQuery) DeleteUser(pubKey string) error {
-	sqlBuilder := utils.NewSqlBuilder()
-	sql, err := sqlBuilder.Delete(UserTableName, []utils.Tuple{{Key: "pub_addr", Val: pubKey}}, "OR")
-	if err != nil {
-		return err
-	}
-	_, err = DB.Exec(*sql)
-	if err != nil {
-		return err
-	}
-	return nil
+func (u *userQuery) DeleteUser(userId uint64) error {
+	return DB.DeleteUser(userId)
 }
 
-func (u *userQuery) ValidUser(pubKey string, idFingerprint string) (*dto.BriefUser, error) {
+func (u *userQuery) ValidUser(pubKey string, idFingerprint string) (*dto.UserDto, error) {
 
-	var user dto.BriefUser
-	sqlBuilder := utils.NewSqlBuilder()
-	sql, err := sqlBuilder.Select(UserTableName, []string{
-		"first_name",
-		"last_name",
-		"birth_day",
-		"gender",
-		"nationality",
-	}, []utils.Tuple{{Key: "pub_addr", Val: pubKey}, {Key: "id_fingerprint", Val: idFingerprint}}, "=", "OR")
-	if err != nil {
-		return nil, err
-	}
-	err = DB.QueryRow(*sql).Scan(
-		&user.FirstName,
-		&user.LastName,
-		&user.BirthDay,
-		&user.Gender,
-		&user.Nationality,
-	)
-	if err != nil {
-		return nil, err
-	}
-	user.PubAddr = pubKey
-	return &user, nil
-}
+	var user dto.UserDto
+	// sqlBuilder := utils.NewSqlBuilder()
+	// // sql, err := sqlBuilder.Select(UserTableName, []string{
+	// // 	"first_name",
+	// // 	"last_name",
+	// // 	"birth_day",
+	// // 	"gender",
+	// // 	"nationality",
+	// // }, []utils.Tuple{{Key: "pub_addr", Val: pubKey}, {Key: "id_fingerprint", Val: idFingerprint}}, "=", "OR")
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-func (b *userQuery) VerifyUser(userId string, pubKey string) (*dto.BriefUser, error) {
-	var user dto.BriefUser
-	sqlBuilder := utils.NewSqlBuilder()
-	sql, err := sqlBuilder.Select(UserTableName, []string{
-		"first_name",
-		"last_name",
-		"birth_day",
-		"gender",
-		"nationality",
-	}, []utils.Tuple{{Key: "pub_addr", Val: pubKey}, {Key: "user_id", Val: userId}}, "=", "AND")
-	if err != nil {
-		return nil, err
-	}
-	err = DB.QueryRow(*sql).Scan(
-		&user.FirstName,
-		&user.LastName,
-		&user.BirthDay,
-		&user.Gender,
-		&user.Nationality,
-	)
-	if err != nil {
-		return nil, err
-	}
-	user.PubAddr = pubKey
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	return &user, nil
 }

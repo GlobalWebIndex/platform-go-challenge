@@ -7,8 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"ownify_api/internal/utils"
-	desc "ownify_api/pkg"
+	desc "gwi_api/pkg"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"golang.org/x/time/rate"
@@ -60,35 +59,35 @@ func HttpInterceptor() runtime.ServeMuxOption {
 func (m *MicroserviceServer) getUserIdFromToken(ctx context.Context) (string, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
 	token := md.Get("Authorization")
-
 	if token == nil {
 		return "", status.Errorf(codes.PermissionDenied, "user isn't authorized")
 	}
 	removeBearerFromToken := strings.Split(token[0], " ")
 	return removeBearerFromToken[1], nil
 }
-func (m *MicroserviceServer) getUserInfoFromApiKey(ctx context.Context) (string, string, error) {
-	md, _ := metadata.FromIncomingContext(ctx)
-	apiKey := md.Get("x-api-key")
-	if apiKey == nil {
-		return "", "", status.Errorf(codes.PermissionDenied, "user isn't authorized")
-	}
-	contents := strings.Split(apiKey[0], "-")
-	if len(contents) != 4 {
-		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
-	}
-	email, err := utils.Decrypt(contents[1], contents[3])
-	if err != nil {
-		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
-	}
-	userId, err := utils.Decrypt(contents[1], contents[3])
-	if err != nil {
-		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
-	}
-	return email, userId, nil
-}
 
-func (m *MicroserviceServer) TokenInterceptor(ctx context.Context) (*string, error) {
+// func (m *MicroserviceServer) getUserInfoFromApiKey(ctx context.Context) (string, string, error) {
+// 	md, _ := metadata.FromIncomingContext(ctx)
+// 	apiKey := md.Get("x-api-key")
+// 	if apiKey == nil {
+// 		return "", "", status.Errorf(codes.PermissionDenied, "user isn't authorized")
+// 	}
+// 	contents := strings.Split(apiKey[0], "-")
+// 	if len(contents) != 4 {
+// 		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
+// 	}
+// 	email, err := utils.Decrypt(contents[1], contents[3])
+// 	if err != nil {
+// 		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
+// 	}
+// 	userId, err := utils.Decrypt(contents[1], contents[3])
+// 	if err != nil {
+// 		return "", "", status.Errorf(codes.PermissionDenied, "invalid api key")
+// 	}
+// 	return email, userId, nil
+// }
+
+func (m *MicroserviceServer) TokenInterceptor(ctx context.Context) (*int64, error) {
 	// check rate limitation
 	if !limiter.Allow() {
 		return nil, status.Errorf(codes.ResourceExhausted, "Too many requests")
@@ -96,14 +95,10 @@ func (m *MicroserviceServer) TokenInterceptor(ctx context.Context) (*string, err
 	//validate token.
 	token, err := m.getUserIdFromToken(ctx)
 	if err != nil {
-		_, userId, err := m.getUserInfoFromApiKey(ctx)
-		if err != nil {
-			log.Println("user isn't authorized")
-			return nil, err
-		}
-		return &userId, err
+		return nil, err
 	}
-	uid, err := m.tokenManager.ValidateFirebase(token)
+
+	uid, err := m.authService.GetUserID(token)
 	if err != nil {
 		log.Println("user isn't authorized")
 		return nil, err

@@ -1,142 +1,86 @@
 package repository
 
 import (
-	"database/sql"
-	"log"
+	"fmt"
+	"gwi_api/internal/domain"
+	"gwi_api/internal/dto"
 
 	_ "github.com/go-sql-driver/mysql"
-
-	"github.com/spf13/viper"
 )
+
+type MemoryDB struct {
+	nextUserID  uint64
+	nextAssetID uint64
+	users       map[uint64]domain.User
+	userEmails  map[string]uint64
+	assets      map[uint64]domain.Asset
+}
+
+func (d *MemoryDB) IncreaseUserID() {
+	d.nextUserID += 1
+}
+
+func (d *MemoryDB) RegisterUser(user dto.UserDto) (*uint64, error) {
+	_, found := DB.userEmails[user.Email]
+	if found {
+		return nil, fmt.Errorf("already exist user")
+	}
+	id := d.nextUserID
+	DB.userEmails[user.Email] = id
+	DB.users[id] = domain.User{
+		ID:        id,
+		Password:  user.Password,
+		Email:     user.Email,
+		Favorites: make([]domain.Asset, 0),
+	}
+	d.IncreaseUserID()
+	return &id, nil
+}
+
+func (d *MemoryDB) DeleteUser(userId uint64) error {
+	user, found := DB.users[userId]
+	if !found {
+		return fmt.Errorf("[Err] user don't exist")
+	}
+	delete(DB.userEmails, user.Email)
+	delete(DB.users, userId)
+	return nil
+}
+
+func (d *MemoryDB) IncreaseAssetID() {
+	d.nextAssetID += 1
+}
+
+func NewMemoryDB() *MemoryDB {
+	return &MemoryDB{
+		nextUserID:  0,
+		nextAssetID: 0,
+		users:       make(map[uint64]domain.User),
+		userEmails:  make(map[string]uint64),
+		assets:      make(map[uint64]domain.Asset),
+	}
+}
 
 type DBHandler interface {
 	NewUserQuery() UserQuery
-	NewBusinessQuery() BusinessQuery
-	NewProductQuery() ProductQuery
-	NewAdminQuery() AdminQuery
-	NewloggerService() LoggerQuery
-	NewLicenseQuery() LicenseQuery
-	NewPaymentQuery() PaymentQuery
 }
 
 type dbHandler struct {
-	db *sql.DB
+	db *MemoryDB
 }
 
+var DB *MemoryDB
 
-
-var DB *sql.DB
-
-func NewDBHandler(db *sql.DB) DBHandler {
+func NewDBHandler(db *MemoryDB) DBHandler {
+	DB = db
 	return &dbHandler{db}
 }
 
-func NewDB(dbName string) (*sql.DB, error) {
-	// configPath, err := config.GetConfigPath()
-	// if err != nil {
-	// 	log.Fatalln("cannot determine config path")
-	// }
-	viper.AddConfigPath("../config")
-	viper.SetConfigName("config")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalln("cannot read from a config")
-	}
-	host := viper.Get("database.host").(string)
-	port := viper.Get("database.port").(string)
-	user := viper.Get("database.user").(string)
-	dbname := viper.Get(dbName).(string)
-	password := viper.Get("database.password").(string)
-
-	// Starting a database
-	connection := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname + "?parseTime=true"
-	DB, err = sql.Open("mysql", connection)
-	if err != nil {
-		return nil, err
-	}
-	return DB, nil
-}
-
-func NewTestDB() (*sql.DB, error) {
-	// configPath, err := config.GetConfigPath()
-	// if err != nil {
-	// 	log.Fatalln("cannot determine config path")
-	// }
-	// viper.AddConfigPath(configPath)
-
-	viper.AddConfigPath("../config")
-	viper.SetConfigName("config")
-	viper.SetConfigName("config")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalln("cannot read from a config")
-	}
-
-	host := viper.Get("database.test.host").(string)
-	port := viper.Get("database.test.port").(string)
-	user := viper.Get("database.test.user").(string)
-	dbname := viper.Get("database.test.dbname").(string)
-	password := viper.Get("database.test.password").(string)
-
-	// Starting a database
-	connection := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname + "?parseTime=true"
-	DB, err := sql.Open("mysql", connection)
-	if err != nil {
-		return nil, err
-	}
-	return DB, nil
-}
-
-func NewLogDB() (*sql.DB, error) {
-	viper.AddConfigPath("../config")
-	viper.SetConfigName("config")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalln("cannot read from a config")
-	}
-	host := viper.Get("database.test.host").(string)
-	port := viper.Get("database.test.port").(string)
-	user := viper.Get("database.test.user").(string)
-	dbname := viper.Get("database.test.dbname").(string)
-	password := viper.Get("database.test.password").(string)
-
-	// Starting a database
-	connection := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname + "?parseTime=true"
-	DB, err := sql.Open("mysql", connection)
-	if err != nil {
-		return nil, err
-	}
+func NewDB() (*MemoryDB, error) {
+	DB := NewMemoryDB()
 	return DB, nil
 }
 
 func (d *dbHandler) NewUserQuery() UserQuery {
 	return &userQuery{}
 }
-
-func (d *dbHandler) NewBusinessQuery() BusinessQuery {
-	return &businessQuery{}
-}
-
-func (d *dbHandler) NewProductQuery() ProductQuery {
-	return &productQuery{}
-}
-
-func (d *dbHandler) NewAdminQuery() AdminQuery {
-	return &adminQuery{}
-}
-
-// NewloggerService implements DBHandler
-func (*dbHandler) NewloggerService() LoggerQuery {
-	return &loggerQuery{}
-}
-
-// NewLicenseQuery implements DBHandler
-func (*dbHandler) NewLicenseQuery() LicenseQuery {
-	return &licenseQuery{}
-}
-
-// NewLicenseQuery implements DBHandler
-func (*dbHandler) NewPaymentQuery() PaymentQuery {
-	return &paymentQuery{}
-}
-

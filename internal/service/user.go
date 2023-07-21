@@ -1,16 +1,15 @@
 package service
 
 import (
-	"ownify_api/internal/dto"
-	"ownify_api/internal/repository"
+	"gwi_api/internal/dto"
+	"gwi_api/internal/repository"
 )
 
 type UserService interface {
 	CreateUser(
-		user dto.BriefUser,
-	) error
+		user dto.UserDto) (*uint64, error)
 
-	GetUser(userId string, pubKey string) (*dto.BriefUser, error)
+	GetUser(userId string, pubKey string) (*dto.UserDto, error)
 
 	DeleteUser(pubKey string) error
 }
@@ -24,14 +23,16 @@ func NewUserService(dbHandler repository.DBHandler) UserService {
 }
 
 func (u *userService) CreateUser(
-	user dto.BriefUser) error {
+	user dto.UserDto) (*uint64, error) {
 	return u.dbHandler.NewUserQuery().CreateUser(user)
 }
 
-func (a *userService) GetUser(userId string, pubKey string) (*dto.BriefUser, error) {
-	return a.dbHandler.NewUserQuery().VerifyUser(userId, pubKey)
+func (a *userService) GetUser(userId string, pubKey string) (*dto.UserDto, error) {
+	return nil, nil
+	//return a.dbHandler.NewUserQuery().VerifyUser(userId, pubKey)
 }
 
 func (u *userService) DeleteUser(pubKey string) error {
-	return u.dbHandler.NewUserQuery().DeleteUser(pubKey)
+	return nil
+	//return u.dbHandler.NewUserQuery().DeleteUser(pubKey)
 }

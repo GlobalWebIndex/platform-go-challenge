@@ -1,52 +1,23 @@
 package app
 
 import (
-	"ownify_api/internal/service"
-	desc "ownify_api/pkg"
+	"gwi_api/internal/service"
+	desc "gwi_api/pkg"
 )
 
 type MicroserviceServer struct {
 	desc.UnimplementedMicroserviceServer
-	adminService     service.AdminService
-	userService      service.UserService
-	businessService  service.BusinessService
-	ownershipService service.OwnershipService
-	authService      service.AuthService
-	tokenManager     service.TokenManager
-	productService   service.ProductService
-	walletService    service.WalletService
-	notifyService    service.NotifyService
-	logService       service.LoggerService
-	licenseService   service.LicenseService
-	paymentService   service.PaymentService
+	authService service.AuthService
+	userService service.UserService
 }
 
 func NewMicroservice(
-	adminService service.AdminService,
-	userService service.UserService,
-	businessService service.BusinessService,
-	ownershipService service.OwnershipService,
 	authService service.AuthService,
-	tokenManager service.TokenManager,
-	productService service.ProductService,
-	walletService service.WalletService,
-	notifyService service.NotifyService,
-	logService service.LoggerService,
-	licenseService service.LicenseService,
-	paymentService service.PaymentService,
+	userService service.UserService,
+
 ) *MicroserviceServer {
 	return &MicroserviceServer{
-		adminService:     adminService,
-		userService:      userService,
-		businessService:  businessService,
-		ownershipService: ownershipService,
-		authService:      authService,
-		tokenManager:     tokenManager,
-		productService:   productService,
-		walletService:    walletService,
-		notifyService:    notifyService,
-		logService:       logService,
-		licenseService:   licenseService,
-		paymentService:   paymentService,
+		authService: authService,
+		userService: userService,
 	}
 }

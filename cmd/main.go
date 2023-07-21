@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -14,45 +14,20 @@ import (
 	"golang.org/x/time/rate"
 	"google.golang.org/grpc"
 
-	"ownify_api/internal/app"
-	"ownify_api/internal/dto"
-	"ownify_api/internal/repository"
-	"ownify_api/internal/service"
-	desc "ownify_api/pkg"
-
-	"ownify_api/internal/config"
-
-	"github.com/ipinfo/go-ipinfo/ipinfo"
-)
-
-const (
-	DB_OWNIFY   = "database.ownify.dbname"
-	DB_USER_LOG = "database.log.dbname"
+	"gwi_api/internal/app"
+	"gwi_api/internal/config"
+	"gwi_api/internal/repository"
+	"gwi_api/internal/service"
+	desc "gwi_api/pkg"
+	appruntime "runtime"
 )
 
 func main() {
 	// Ownify DB
-	ownifydb, err := repository.NewDB(DB_OWNIFY)
+	gwidb, err := repository.NewDB()
 	if err != nil {
 		log.Fatalf("[ERR] cannot create database %s", err)
 		return
-	}
-
-	err = ownifydb.Ping()
-	if err != nil {
-		log.Fatalf("cannot ping db: %v", err)
-	}
-
-	// User Log DB
-	logdb, err := repository.NewDB(DB_USER_LOG)
-	if err != nil {
-		log.Fatalf("[ERR] cannot create database %s", err)
-		return
-	}
-
-	err = logdb.Ping()
-	if err != nil {
-		log.Fatalf("cannot ping db: %v", err)
 	}
 
 	// preparing config file
@@ -67,7 +42,7 @@ func main() {
 		log.Fatalln("cannot read from a config")
 	}
 
-	stripeKey := viper.Get("stripe.secret.key").(string)
+	//stripeKey := viper.Get("stripe.secret.key").(string)
 
 	// JWT
 	signedKeyJWT := viper.Get("jwt.signedKey").(string)
@@ -75,22 +50,11 @@ func main() {
 
 	// Register all services
 	//dbHandler := repository.NewDBHandler(db)
-	ownifyDBHandler := repository.NewDBHandler(ownifydb)
-	logDBHandler := repository.NewDBHandler(logdb)
+	gwiDB := repository.NewDBHandler(gwidb)
+	//logDBHandler := repository.NewDBHandler(logdb)
 
-	wallet := repository.NewAlgoHandler()
-
-	adminService := service.NewAdminService(ownifyDBHandler)
-	userService := service.NewUserService(ownifyDBHandler)
-	businessService := service.NewBusinessService(ownifyDBHandler)
-	ownershipService := service.NewOwnershipService(ownifyDBHandler)
-	authService := service.NewAuthService(ownifyDBHandler, tokenManager)
-	productService := service.NewProductService(ownifyDBHandler)
-	walletService := service.NewWalletService(wallet)
-	notifyService := service.NewNotifyService()
-	logService := service.NewloggerService(logDBHandler)
-	licenseService := service.NewLicenseService(ownifyDBHandler)
-	paymentService := service.NewPaymentService(ownifyDBHandler, stripeKey)
+	userService := service.NewUserService(gwiDB)
+	authService := service.NewAuthService(gwiDB, tokenManager)
 
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
@@ -107,18 +71,8 @@ func main() {
 		grpcServer := grpc.NewServer(grpcOpts)
 
 		desc.RegisterMicroserviceServer(grpcServer, app.NewMicroservice(
-			adminService,
-			userService,
-			businessService,
-			ownershipService,
 			authService,
-			tokenManager,
-			productService,
-			walletService,
-			notifyService,
-			logService,
-			licenseService,
-			paymentService,
+			userService,
 		))
 
 		err = grpcServer.Serve(listener)
@@ -128,30 +82,39 @@ func main() {
 	}()
 
 	// Starting HTTP server
-	mux := runtime.NewServeMux(httpOpts)
+	grpcMux := runtime.NewServeMux(httpOpts)
 
-	err = desc.RegisterMicroserviceHandlerServer(context.Background(), mux, app.NewMicroservice(
-		adminService,
-		userService,
-		businessService,
-		ownershipService,
+	err = desc.RegisterMicroserviceHandlerServer(context.Background(), grpcMux, app.NewMicroservice(
 		authService,
-		tokenManager,
-		productService,
-		walletService,
-		notifyService,
-		logService,
-		licenseService,
-		paymentService,
+		userService,
 	))
 	if err != nil {
 		log.Println("cannot register this service")
 	}
-	//log.Fatalln(http.ListenAndServe(":8901", setUserLog(addCORSHeaders(mux), logService)))
+
+	// Adjust the path to Swagger UI files
+	_, b, _, _ := appruntime.Caller(0)
+	basepath := filepath.Dir(b)
+	swaggerDir := filepath.Join(basepath, "..", "static", "swagger-ui")
+
+	standardMux := http.NewServeMux()
+	standardMux.Handle("/api/swagger-ui/", http.StripPrefix("/api/swagger-ui", http.FileServer(http.Dir(swaggerDir))))
+	standardMux.HandleFunc("/api/swagger.json", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, filepath.Join(basepath, "..", "pkg", "microservice.swagger.json"))
+	})
+
+	mux := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/api/swagger-ui") || r.URL.Path == "/api/swagger.json" {
+			standardMux.ServeHTTP(w, r)
+			return
+		}
+
+		grpcMux.ServeHTTP(w, r)
+	})
+
 	log.Fatalln(http.ListenAndServe(":8901", addCORSHeaders(mux)))
 }
 
-// addCORSHeaders is a middleware function that adds the necessary CORS headers to the HTTP response.
 // addCORSHeaders is a middleware function that adds the necessary CORS headers to the HTTP response.
 func addCORSHeaders(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -183,42 +146,4 @@ func rateLimitMiddleware(limiter *rate.Limiter) func(http.Handler) http.Handler 
 			next.ServeHTTP(w, r)
 		})
 	}
-}
-
-// Add User Session analysis
-func setUserLog(handler http.Handler, logger service.LoggerService) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logUserActivity(w, r, logger)
-		handler.ServeHTTP(w, r)
-	})
-}
-
-func logUserActivity(w http.ResponseWriter, r *http.Request, logger service.LoggerService) {
-
-	validIP, _, _ := net.SplitHostPort(getIP(r))
-	ip := net.ParseIP(validIP)
-	details, err := ipinfo.GetInfo(ip)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if strings.Contains(r.RequestURI, "product/verify") || strings.Contains(r.RequestURI, "ownership/") {
-		logger.LogUserActivity(dto.NewUserLogByIPInfo(details))
-	}
-
-	// Print the user's location information
-	//fmt.Println(w, "Your IP address is %s\n", ip.String())
-	fmt.Println(w, "Your location is %s, %s, %s\n", details.City, details.Region, details.Country)
-}
-
-func getIP(r *http.Request) string {
-	ip := r.Header.Get("X-Real-IP")
-	if ip == "" {
-		ip = r.Header.Get("X-Forwarded-For")
-		if ip == "" {
-			ip = r.RemoteAddr
-		}
-	}
-	return ip
 }

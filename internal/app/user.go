@@ -2,107 +2,51 @@ package app
 
 import (
 	"context"
-	"fmt"
-	"log"
+	//"fmt"
+	//"log"
 
-	"ownify_api/internal/constants"
-	"ownify_api/internal/dto"
-	"ownify_api/internal/utils"
-	desc "ownify_api/pkg"
+	//"gwi_api/internal/constants"
+	"gwi_api/internal/dto"
+	//"gwi_api/internal/utils"
+	desc "gwi_api/pkg"
 )
 
-func (m *MicroserviceServer) CreateUser(ctx context.Context, req *desc.CreateUserRequest) (*desc.NetWorkResponse, error) {
+func (m *MicroserviceServer) SignUp(ctx context.Context, req *desc.SignUpRequest) (*desc.NetWorkResponse, error) {
 
-	// validate token.
-	user_id, err := m.TokenInterceptor(ctx)
-	if err != nil {
-		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
-	}
-
-	isRegistered := m.authService.ValidUser(req.WalletAddress, req.IdFingerprint)
-	if isRegistered {
-		return nil, fmt.Errorf("[ERR] Already registered! with %s", req.WalletAddress)
-	}
-
-	user := dto.BriefUser{
-		PubAddr:       req.WalletAddress,
-		UserId:        *user_id,
-		FirstName:     req.FirstName,
-		LastName:      req.LastName,
-		BirthDay:      req.BirthDay,
-		Gender:        req.Gender,
-		Nationality:   req.Nationality,
-		IdFingerprint: req.IdFingerprint,
-	}
-	if err = user.Valid(); err != nil {
-		return nil, err
-	}
-	err = m.userService.CreateUser(user)
+	user := dto.UserDto{Email: req.Email, Password: req.Password}
+	userId, token, err := m.authService.SignUp(user)
 	if err != nil {
 		return nil, err
 	}
-	return &desc.NetWorkResponse{
-		Msg:     "Successfully verified",
-		Success: true,
-	}, nil
+
+	type SignUpResponse struct {
+		UserId int64
+		Token  string
+	}
+
+	data := SignUpResponse{
+		UserId: *userId,
+		Token:  *token,
+	}
+	return BuildRes[SignUpResponse](data, "successfully sign up", true)
 }
 
-func (m *MicroserviceServer) UpdateUser(ctx context.Context, req *desc.UpdateUserRequest) (*desc.UpdateUserResponse, error) {
-	_, err := m.TokenInterceptor(ctx)
-	if err != nil {
-		return nil, fmt.Errorf(constants.ErrInvalidUser, "raw message:%s", err)
-	}
+func (m *MicroserviceServer) SignIn(ctx context.Context, req *desc.SignUpRequest) (*desc.NetWorkResponse, error) {
+	//_, err := m.TokenInterceptor(ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	// updatedUser, err := m.userService.UpdateUser(dto.Person{
-	// 	ID:          userID,
-	// 	Email:       req.GetEmail(),
-	// 	FirstName:   req.GetFirstName(),
-	// 	LastName:    req.GetLastName(),
-	// 	PhoneNumber: req.GetPhoneNumber()})
-	if err != nil {
-		return nil, err
-	}
-	return nil, nil
-	// return &desc.UpdateUserResponse{Id: updatedUser.ID, FirstName: updatedUser.FirstName,
-	// 	LastName: updatedUser.LastName, Email: updatedUser.Email, PhoneNumber: updatedUser.PhoneNumber}, nil
-}
-
-func (m *MicroserviceServer) GetUser(ctx context.Context, req *desc.GetUserRequest) (*desc.NetWorkResponse, error) {
-	uid, err := m.TokenInterceptor(ctx)
+	token, err := m.authService.SignIn(req.Email, req.Password)
 	if err != nil {
 		return nil, err
 	}
 
-	err = utils.IsPubKey(req.WalletAddress)
-	if err != nil {
-		return nil, err
+	type SignInResponse struct {
+		Token string
 	}
-
-	user, err := m.userService.GetUser(*uid, req.WalletAddress)
-	if err != nil {
-		return nil, fmt.Errorf("[ERR] you can't access other's user information")
+	data := SignInResponse{
+		Token: *token,
 	}
-
-	return BuildRes(user, "Here is your business info", true)
-}
-
-func (m *MicroserviceServer) DeleteUser(ctx context.Context, req *desc.DeleteUserRequest) (*desc.NetWorkResponse, error) {
-	uid, err := m.TokenInterceptor(ctx)
-	if err != nil {
-		log.Println("user isn't authorized")
-	}
-
-	_, err = m.userService.GetUser(*uid, req.WalletAddress)
-	if err != nil {
-		return nil, fmt.Errorf("[ERR] you can't access other's user information")
-	}
-
-	err = m.userService.DeleteUser(req.WalletAddress)
-	if err != nil {
-		return nil, err
-	}
-	return &desc.NetWorkResponse{
-		Msg:     "Successfully deleted",
-		Success: true,
-	}, nil
+	return BuildRes[SignInResponse](data, "successfully login", true)
 }
