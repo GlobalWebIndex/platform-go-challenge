@@ -11,4 +11,4 @@ clean:
 	rm -rf pkg
 
 build:
-	go build -o ./build/ownify_crm ./cmd/main.go
+	go build -o ./build/gwoi_crm ./cmd/main.go

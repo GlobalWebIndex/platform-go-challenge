@@ -21,14 +21,32 @@ service Microservice {
     };
   }
 
-  rpc SignIn(SignUpRequest) returns (NetWorkResponse) {
+  rpc SignIn(SignInRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
       post: "/v1/users/signin"
       body: "*"
     };
   }
+
+  // Assets
+  rpc AddAsset(AddAssetRequest) returns (NetWorkResponse) {
+    option (google.api.http) = {
+      post: "/v1/assets/add"
+      body: "*"
+    };
+  }
+
+  rpc GetAssets(GetAssetRequest) returns (NetWorkResponse) {
+    option (google.api.http).get = "/v1/assets/list";
+  }
+
+  rpc DeleteAsset(DeleteAssetRequest) returns (NetWorkResponse) {
+    option (google.api.http).get = "/v1/assets/{id}";
+  }
+
+
   //Favorites
-  rpc AddFavoites(AddFavoriteRequest) returns (NetWorkResponse) {
+  rpc AddFavorites(AddFavoriteRequest) returns (NetWorkResponse) {
     option (google.api.http) = {
       post: "/v1/users/{id}/favorites/{assetId}"
       body: "*"
@@ -36,25 +54,54 @@ service Microservice {
   }
 
   rpc GetFavorites(GetFavoritesRequest) returns (NetWorkResponse) {
-    option (google.api.http).get = "/v1/users/{id}/favorites";
+    option (google.api.http).get = "/v1/users/favorites";
   }
 
 }
 
 message SignUpRequest {
+  string gender = 1;
+  string country = 2;
+  uint32 age = 3;
+  string email = 4;
+  string password = 5;
+}
+
+message SignInRequest {
   string email = 1;
   string password = 2;
 }
 
+// assets
+message AddAssetRequest {
+  uint32 createdBy   = 1;
+	string type        = 2;
+  string description  = 3;
+  bytes data         = 4;
+}
 
-//business
+message GetAssetRequest {
+  uint32 page = 1;
+  uint32 pageSize = 2;
+}
+
+message DeleteAssetRequest {
+  uint64 id = 1;
+}
+
+message PaginationParams {
+  uint32 page = 1;
+  uint32 pageSize = 2;
+}
+
+
+// favorites
 message AddFavoriteRequest {
   uint64  id = 1;
   uint64  assetId = 2;
 }
 message GetFavoritesRequest {
-  //string email = 1 [(validate.rules).string.email = true];
-  uint64 id = 1;
+  PaginationParams pagination  = 1;
 }
 
 

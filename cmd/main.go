@@ -23,7 +23,7 @@ import (
 )
 
 func main() {
-	// Ownify DB
+	// Gwi DB
 	gwidb, err := repository.NewDB()
 	if err != nil {
 		log.Fatalf("[ERR] cannot create database %s", err)
@@ -55,6 +55,8 @@ func main() {
 
 	userService := service.NewUserService(gwiDB)
 	authService := service.NewAuthService(gwiDB, tokenManager)
+	assetService := service.NewAssetService(gwiDB)
+	favoritesService := service.NewFavoritesService(gwiDB)
 
 	// Interceptors
 	grpcOpts := app.GrpcInterceptor()
@@ -73,6 +75,8 @@ func main() {
 		desc.RegisterMicroserviceServer(grpcServer, app.NewMicroservice(
 			authService,
 			userService,
+			assetService,
+			favoritesService,
 		))
 
 		err = grpcServer.Serve(listener)
@@ -87,6 +91,8 @@ func main() {
 	err = desc.RegisterMicroserviceHandlerServer(context.Background(), grpcMux, app.NewMicroservice(
 		authService,
 		userService,
+		assetService,
+		favoritesService,
 	))
 	if err != nil {
 		log.Println("cannot register this service")

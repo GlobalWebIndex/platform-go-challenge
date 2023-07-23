@@ -4,5 +4,5 @@ type User struct {
 	ID        uint64
 	Email     string
 	Password  string
-	Favorites []Asset
+	Favorites map[uint64]bool
 }

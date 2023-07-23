@@ -7,17 +7,23 @@ import (
 
 type MicroserviceServer struct {
 	desc.UnimplementedMicroserviceServer
-	authService service.AuthService
-	userService service.UserService
+	authService     service.AuthService
+	userService     service.UserService
+	assetService    service.AssetService
+	favoriteService service.FavoritesService
 }
 
 func NewMicroservice(
 	authService service.AuthService,
 	userService service.UserService,
+	assetService service.AssetService,
+	favoriteService service.FavoritesService,
 
 ) *MicroserviceServer {
 	return &MicroserviceServer{
-		authService: authService,
-		userService: userService,
+		authService:     authService,
+		userService:     userService,
+		assetService:    assetService,
+		favoriteService: favoriteService,
 	}
 }

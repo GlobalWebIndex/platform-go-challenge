@@ -19,9 +19,13 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MicroserviceClient interface {
 	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
-	SignIn(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	// Assets
+	AddAsset(ctx context.Context, in *AddAssetRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	GetAssets(ctx context.Context, in *GetAssetRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	DeleteAsset(ctx context.Context, in *DeleteAssetRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	// Favorites
-	AddFavoites(ctx context.Context, in *AddFavoriteRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
+	AddFavorites(ctx context.Context, in *AddFavoriteRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 	GetFavorites(ctx context.Context, in *GetFavoritesRequest, opts ...grpc.CallOption) (*NetWorkResponse, error)
 }
 
@@ -42,7 +46,7 @@ func (c *microserviceClient) SignUp(ctx context.Context, in *SignUpRequest, opts
 	return out, nil
 }
 
-func (c *microserviceClient) SignIn(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+func (c *microserviceClient) SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
 	out := new(NetWorkResponse)
 	err := c.cc.Invoke(ctx, "/gwi_api.v1.Microservice/SignIn", in, out, opts...)
 	if err != nil {
@@ -51,9 +55,36 @@ func (c *microserviceClient) SignIn(ctx context.Context, in *SignUpRequest, opts
 	return out, nil
 }
 
-func (c *microserviceClient) AddFavoites(ctx context.Context, in *AddFavoriteRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+func (c *microserviceClient) AddAsset(ctx context.Context, in *AddAssetRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
 	out := new(NetWorkResponse)
-	err := c.cc.Invoke(ctx, "/gwi_api.v1.Microservice/AddFavoites", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gwi_api.v1.Microservice/AddAsset", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) GetAssets(ctx context.Context, in *GetAssetRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/gwi_api.v1.Microservice/GetAssets", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) DeleteAsset(ctx context.Context, in *DeleteAssetRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/gwi_api.v1.Microservice/DeleteAsset", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *microserviceClient) AddFavorites(ctx context.Context, in *AddFavoriteRequest, opts ...grpc.CallOption) (*NetWorkResponse, error) {
+	out := new(NetWorkResponse)
+	err := c.cc.Invoke(ctx, "/gwi_api.v1.Microservice/AddFavorites", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -74,9 +105,13 @@ func (c *microserviceClient) GetFavorites(ctx context.Context, in *GetFavoritesR
 // for forward compatibility
 type MicroserviceServer interface {
 	SignUp(context.Context, *SignUpRequest) (*NetWorkResponse, error)
-	SignIn(context.Context, *SignUpRequest) (*NetWorkResponse, error)
+	SignIn(context.Context, *SignInRequest) (*NetWorkResponse, error)
+	// Assets
+	AddAsset(context.Context, *AddAssetRequest) (*NetWorkResponse, error)
+	GetAssets(context.Context, *GetAssetRequest) (*NetWorkResponse, error)
+	DeleteAsset(context.Context, *DeleteAssetRequest) (*NetWorkResponse, error)
 	// Favorites
-	AddFavoites(context.Context, *AddFavoriteRequest) (*NetWorkResponse, error)
+	AddFavorites(context.Context, *AddFavoriteRequest) (*NetWorkResponse, error)
 	GetFavorites(context.Context, *GetFavoritesRequest) (*NetWorkResponse, error)
 	mustEmbedUnimplementedMicroserviceServer()
 }
@@ -88,11 +123,20 @@ type UnimplementedMicroserviceServer struct {
 func (UnimplementedMicroserviceServer) SignUp(context.Context, *SignUpRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
 }
-func (UnimplementedMicroserviceServer) SignIn(context.Context, *SignUpRequest) (*NetWorkResponse, error) {
+func (UnimplementedMicroserviceServer) SignIn(context.Context, *SignInRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
 }
-func (UnimplementedMicroserviceServer) AddFavoites(context.Context, *AddFavoriteRequest) (*NetWorkResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddFavoites not implemented")
+func (UnimplementedMicroserviceServer) AddAsset(context.Context, *AddAssetRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddAsset not implemented")
+}
+func (UnimplementedMicroserviceServer) GetAssets(context.Context, *GetAssetRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAssets not implemented")
+}
+func (UnimplementedMicroserviceServer) DeleteAsset(context.Context, *DeleteAssetRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAsset not implemented")
+}
+func (UnimplementedMicroserviceServer) AddFavorites(context.Context, *AddFavoriteRequest) (*NetWorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddFavorites not implemented")
 }
 func (UnimplementedMicroserviceServer) GetFavorites(context.Context, *GetFavoritesRequest) (*NetWorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFavorites not implemented")
@@ -129,7 +173,7 @@ func _Microservice_SignUp_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _Microservice_SignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SignUpRequest)
+	in := new(SignInRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -141,25 +185,79 @@ func _Microservice_SignIn_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/gwi_api.v1.Microservice/SignIn",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroserviceServer).SignIn(ctx, req.(*SignUpRequest))
+		return srv.(MicroserviceServer).SignIn(ctx, req.(*SignInRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Microservice_AddFavoites_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Microservice_AddAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddAssetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).AddAsset(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gwi_api.v1.Microservice/AddAsset",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).AddAsset(ctx, req.(*AddAssetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_GetAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAssetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).GetAssets(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gwi_api.v1.Microservice/GetAssets",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).GetAssets(ctx, req.(*GetAssetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_DeleteAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAssetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroserviceServer).DeleteAsset(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gwi_api.v1.Microservice/DeleteAsset",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroserviceServer).DeleteAsset(ctx, req.(*DeleteAssetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Microservice_AddFavorites_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddFavoriteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MicroserviceServer).AddFavoites(ctx, in)
+		return srv.(MicroserviceServer).AddFavorites(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gwi_api.v1.Microservice/AddFavoites",
+		FullMethod: "/gwi_api.v1.Microservice/AddFavorites",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroserviceServer).AddFavoites(ctx, req.(*AddFavoriteRequest))
+		return srv.(MicroserviceServer).AddFavorites(ctx, req.(*AddFavoriteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -198,8 +296,20 @@ var Microservice_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Microservice_SignIn_Handler,
 		},
 		{
-			MethodName: "AddFavoites",
-			Handler:    _Microservice_AddFavoites_Handler,
+			MethodName: "AddAsset",
+			Handler:    _Microservice_AddAsset_Handler,
+		},
+		{
+			MethodName: "GetAssets",
+			Handler:    _Microservice_GetAssets_Handler,
+		},
+		{
+			MethodName: "DeleteAsset",
+			Handler:    _Microservice_DeleteAsset_Handler,
+		},
+		{
+			MethodName: "AddFavorites",
+			Handler:    _Microservice_AddFavorites_Handler,
 		},
 		{
 			MethodName: "GetFavorites",

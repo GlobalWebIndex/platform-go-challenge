@@ -2,18 +2,21 @@ package app
 
 import (
 	"context"
-	//"fmt"
-	//"log"
-
-	//"gwi_api/internal/constants"
 	"gwi_api/internal/dto"
-	//"gwi_api/internal/utils"
+
 	desc "gwi_api/pkg"
 )
 
 func (m *MicroserviceServer) SignUp(ctx context.Context, req *desc.SignUpRequest) (*desc.NetWorkResponse, error) {
 
-	user := dto.UserDto{Email: req.Email, Password: req.Password}
+	user := dto.UserDto{
+		Gender:   dto.Gender(req.Gender),
+		Country:  req.Country,
+		Age:      int(req.Age),
+		Email:    req.Email,
+		Password: req.Password,
+	}
+
 	userId, token, err := m.authService.SignUp(user)
 	if err != nil {
 		return nil, err
@@ -31,11 +34,7 @@ func (m *MicroserviceServer) SignUp(ctx context.Context, req *desc.SignUpRequest
 	return BuildRes[SignUpResponse](data, "successfully sign up", true)
 }
 
-func (m *MicroserviceServer) SignIn(ctx context.Context, req *desc.SignUpRequest) (*desc.NetWorkResponse, error) {
-	//_, err := m.TokenInterceptor(ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
+func (m *MicroserviceServer) SignIn(ctx context.Context, req *desc.SignInRequest) (*desc.NetWorkResponse, error) {
 
 	token, err := m.authService.SignIn(req.Email, req.Password)
 	if err != nil {

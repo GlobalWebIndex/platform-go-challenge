@@ -15,7 +15,7 @@ services:
       LICENSE_KEY: BDc0N2Y2YTQzZjM2MTQwYTM4MmFlNTJhOGI4Y2I2MGI1AAAAAAAAAAAEAAAAAAAAACgwNAIYMWL4bAtDSFFwpdt5xsVJwuo3/NM6n0ilAhgVC+he8d+tSaNqHwRtQZzvMyDlKwLn6ZYAAA==
       ROOT_PASSWORD: helloworld
       START_AFTER_INIT: Y
-  ownify-api:
+  gwi-api:
     build: ./
     ports:
       - 8900:8900
