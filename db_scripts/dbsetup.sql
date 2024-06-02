@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL,
+    password TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS assets (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    asset_id VARCHAR(255) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    description TEXT NOT NULL,
+    data TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);

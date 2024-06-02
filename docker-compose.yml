@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: user_favorites_db
+      POSTGRES_USER: user_favorites_user
+      POSTGRES_PASSWORD: mysecretpassword
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db_scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://user_favorites_user:mysecretpassword@db:5432/user_favorites_db
+      SECRET_KEY: mysecretkey
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  db_data:

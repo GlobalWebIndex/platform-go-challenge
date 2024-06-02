@@ -1,31 +1,163 @@
-# GlobalWebIndex Engineering Challenge
+# User Favorites API
 
-## Introduction
+This is a sample Go application that provides an API for managing user favorites. Users can register, login, and manage their favorite assets (charts, insights, and audiences). The API uses JWT for authentication.
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+## Project Structure
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+```
+user-favorites-api/
+├── Dockerfile
+├── docker-compose.yml
+├── go.mod
+├── go.sum
+├── handlers/
+│   └── handlers.go
+├── main.go
+├── models/
+│   └── models.go
+├── router/
+│   └── router.go
+├── store/
+│   └── store.go
+├── middleware/
+│   └── jwt.go
+├── db_scripts/
+│   └── dbsetup.sql
+└── README.md
+```
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+## Setup
 
-## Challenge
+### Prerequisites
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+- Docker
+- Docker Compose
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+### Running the Application
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+1. Ensure you have Docker and Docker Compose installed.
+2. Build and start the application using Docker Compose:
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+```sh
+docker-compose up --build --remove-orphans
+```
 
-It is appreciated, though not required, if a Dockerfile is included.
+This command will build the Go application image, start the PostgreSQL database, and then start the Go application. The application will be available at `http://localhost:8080`, and the PostgreSQL database will be available at `localhost:5432` with the credentials specified.
 
-## Submission
+## API Endpoints
 
-Just create a fork from the current repo and send it to us!
+### User Registration
 
-Good luck, potential colleague!
+- **URL:** `/register`
+- **Method:** `POST`
+- **Request Body:**
+
+```json
+{
+  "username": "john_doe",
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+- **Sample Request:**
+
+```sh
+curl -X POST http://localhost:8080/register -d '{"username":"john_doe","email":"john@example.com","password":"password123"}' -H "Content-Type: application/json"
+```
+
+### User Login
+
+- **URL:** `/login`
+- **Method:** `POST`
+- **Request Body:**
+
+```json
+{
+  "username": "john_doe",
+  "password": "password123"
+}
+```
+
+- **Sample Request:**
+
+```sh
+curl -X POST http://localhost:8080/login -d '{"username":"john_doe","password":"password123"}' -H "Content-Type: application/json"
+```
+
+- **Response:**
+
+```json
+{
+  "token": "your_jwt_token_here"
+}
+```
+
+### Get User Favorites
+
+- **URL:** `/api/favorites/{userID}`
+- **Method:** `GET`
+- **Headers:** `Authorization: Bearer your_jwt_token_here`
+- **Sample Request:**
+
+```sh
+curl -H "Authorization: Bearer your_jwt_token_here" http://localhost:8080/api/favorites/1
+```
+
+### Add Favorite
+
+- **URL:** `/api/favorites/{userID}`
+- **Method:** `POST`
+- **Headers:** `Authorization: Bearer your_jwt_token_here`
+- **Request Body:**
+
+```json
+{
+  "id": "1",
+  "type": "chart",
+  "description": "Test Chart",
+  "data": "Sample Data"
+}
+```
+
+- **Sample Request:**
+
+```sh
+curl -X POST -H "Authorization: Bearer your_jwt_token_here" -d '{"id":"1","type":"chart","description":"Test Chart","data":"Sample Data"}' -H "Content-Type: application/json" http://localhost:8080/api/favorites/1
+```
+
+### Remove Favorite
+
+- **URL:** `/api/favorites/{userID}/{assetID}`
+- **Method:** `DELETE`
+- **Headers:** `Authorization: Bearer your_jwt_token_here`
+- **Sample Request:**
+
+```sh
+curl -X DELETE -H "Authorization: Bearer your_jwt_token_here" http://localhost:8080/api/favorites/1/1
+```
+
+### Edit Favorite
+
+- **URL:** `/api/favorites/{userID}/{assetID}`
+- **Method:** `PUT`
+- **Headers:** `Authorization: Bearer your_jwt_token_here`
+- **Request Body:**
+
+```json
+{
+  "description": "Updated Chart Description",
+  "data": "Updated Sample Data"
+}
+```
+
+- **Sample Request:**
+
+```sh
+curl -X PUT -H "Authorization: Bearer your_jwt_token_here" -d '{"description":"Updated Chart Description","data":"Updated Sample Data"}' -H "Content-Type: application/json" http://localhost:8080/api/favorites/1/1
+```
+
+## Environment Variables
+
+- `DATABASE_URL`: The URL of the PostgreSQL database. Example: `postgresql://user_favorites_user:mysecretpassword@db:5432/user_favorites_db`
+- `SECRET_KEY`: The secret key used for signing JWT tokens. It should be a long and random string. Example: `my_super_secret_key_123`
