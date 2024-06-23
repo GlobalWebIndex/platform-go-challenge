@@ -1,31 +1,82 @@
-# GlobalWebIndex Engineering Challenge
+# NOTES
 
-## Introduction
+## Design
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+For the requirement a backend application with will implemented using Go. This backend will expose a RESTful API.
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+## Public API:
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+- `POST /users` -> user sign-up
+- `POST /tokens` -> user's login
 
-## Challenge
+## Protected API:
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+- `GET /assets` -> get all assets
+- `GET /assets/:assetId` -> get asset details
+- `PATCH /assets/:assetId` -> patch asset's description
+- `GET /assets/audiences` -> get all audiences
+- `GET /assets/charts` -> get all charts
+- `GET /assets/insights` -> get all insights
+- `GET /users/:userId/favorites` -> get all user's favorites
+- `POST /users/:userId/favorites` -> set user's favorite (add to favorites)
+- `DELETE /users/:userId/:favoriteId` -> delete user's favorite
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+## Models:
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+- User (passwords will be hashed using `bcrypt`)
+- Asset (`polymorphic` has-one relationship with Audience, Chart, Insight)
+- Audience (pseudo `enum`s should enforce properties like `gender` and `ageGroup`)
+- Chart
+- Insight
+- Favorite
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+Asset's foreign key will be the combination of `RelatedID` with `RelatedType` -> `RelatedType` could either be `charts` or `insights` or `audiences`
 
-It is appreciated, though not required, if a Dockerfile is included.
+## Various Decisions
 
-## Submission
+- To support efficiently a large amount of data, pagination should be used for all the relevant entities. The pattern should rely on query parameters of `page` and `limit`
 
-Just create a fork from the current repo and send it to us!
+- Caching layer should be introduced between server and database improve read operations and lift some height from the DB. The most potentially demanding query is to get user's favorites. Favorites could be stored in cache (Redis) using a key like `user:<userId>:favorites`.  
+  Additionally if we want to enhance this to support pagination then the cache key could become `user:<userId>:favorites:page:<pageNumber>:limit:<limitSize>`. However this is a bit problematic as if it is important to allow users to change frequently the page size the above key becomes useless. In this case we need to use `ZRANGE` (is we are storing sorted sets) or `LRANGE` (if we are storing lists) and the overall complexity of using the cache increases.
+  Invalidation of cache should happen when a user adds/removes favorites
 
-Good luck, potential colleague!
+* Seeding script should populate records in database
+
+### Backend (Golang with Gin and Gorm)
+
+#### Folder Structure:
+
+- cmd/api -> `main.go`, server start
+- internals/controllers -> application's controllers
+- internals/database -> connection to DB
+- internals/middlewares -> mainly auth logic for protected endpoints
+- internals/models -> application's models
+- internals/server -> init Gin server and application's routes declaration
+- internals/services -> application's logic used from controllers
+- internals/serializers -> map external entities to internal structures
+- internals/utils -> small functions for handling hashing, tokens
+- internals/helpers -> small reusable functions that interact with data layer
+
+### Backend (React app using Vite and Antd for the UI)
+
+Simple frontend which provides a login page and a dashboard
+
+### Docker
+
+Two containers, one for the frontend and one for the backend will be provided. Furthermore, compose files should make the boot of the application a breeze :)
+
+### Quick Start
+
+From the root of the cloned repo, one should execute
+`docker compose up` or `docker-compose up` depending on the version of `docker` installed on user's OS
+
+## TODOs
+
+- [x] implement dummy frontend
+- [x] implement backend models
+- [x] implement backend API
+- [x] implement proper frontend
+- [x] write OpenAPI spec
+- [ ] introduce a caching layer for caching users' favorites. This will improve response times of the main query which is responsible to fetch all the favorites of a logged-in user based on `userId`.
+- [ ] write unit tests for the backend to thoroughly test the behavior of controllers and services
+- [ ] implement validations of inputs in both frontend and backend

@@ -1,0 +1,9 @@
+.git
+.vscode
+.dockeringore
+.gitignore
+.env
+*.out
+vendor/
+Dockerfile
+tmp

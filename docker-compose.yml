@@ -1,0 +1,51 @@
+services:
+  client:
+    restart: unless-stopped
+    build:
+      context: ./packages/client
+      dockerfile: Dockerfile
+    ports:
+      - ${CLIENT_PORT:-4000}:8080
+    volumes:
+      - ./packages/client/src:/home/node/app/src
+      - ./packages/client/public:/home/node/app/public
+
+  server:
+    restart: unless-stopped
+    build:
+      context: ./packages/server
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-gwi_dev}
+      - DB_USERNAME=${DB_USERNAME:-gwi_dev_user}
+      - DB_PASSWORD=${DB_PASSWORD:-dev_user_password}
+      - SERVER_SECRET=${SERVER_SECRET:-superSecretValue}
+      - CLIENT_URL=${CLIENT_URL:-http://localhost:4000}
+    command: "make run"
+    ports:
+      - ${SERVER_PORT:-3000}:3000
+    volumes:
+      - ./packages/server/cmd:/home/go/server/cmd
+      - ./packages/server/internal:/home/go/server/internal
+      - ./packages/server/seeds:/home/go/server/seeds
+
+  db:
+    image: postgres:16.3-alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d gwi_dev -U gwi_dev_user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - ${DB_PORT:-5433}:5432
+    environment:
+      - POSTGRES_DB=${DB_NAME:-gwi_dev}
+      - POSTGRES_USER=${DB_USERNAME:-gwi_dev_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-dev_user_password}
+    volumes:
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
