@@ -1,0 +1,33 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: 'postgres:latest'
+    container_name: 'gwi-postgres'
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS} 
+      POSTGRES_DB: ${DB_NAME}
+
+  go-app:
+    build: .
+    container_name: 'go-app'
+    depends_on:
+      - db
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: db
+      DB_PORT: 5432
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+
+volumes:
+  dbdata:

@@ -1,31 +1,50 @@
-# GlobalWebIndex Engineering Challenge
+## Stivaktakis Giorgos - GWI test
 
-## Introduction
+This is a test for the GWI position. The task details can be found in the [task](task.md) file.
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+### Pre-requisites
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+- To init DB and the server you need to create a `.env` file in the root directory 
+it should be something like this:
+```shell
+FIBER_PORT=3000
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=gwi
+DB_PASS=gwi
+DB_NAME=gwi-db
+```
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+### To run the server and the DB
 
-## Challenge
+```shell
+docker-compose up -d
+```
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+### Endpoints
+base url: `http://127.0.0.1:3000`
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+- `GET /assets/:userId` - Get all the assets of a user (this asset struct contains the asset id, the user id, the type of the asset and the id of the object, also the description of the asset)
+- `GET /assets/objects/:userId` - Get all assets as objects of a user (this returns a responseAsset struct you can find it in the [response.go](/domain/response.go) file)
+- `DELETE /assets/:assetId` - Delete an asset by id
+- `POST /assets/` - Add an asset (it requires a json body with the asset struct)
+- `PUT /assets/` - Update an asset (it requires a json body with the asset struct)
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+### The project structure
 
-It is appreciated, though not required, if a Dockerfile is included.
+- main.go - The entry point of the application
+- server - The server setup and the endpoints also handles the recieving of the requests
+- repositories - The database queries as well as the connection to the DB
+- domain - The structs of the application
+- services - The core logic of the application
+- ports - The interfaces of the application
 
-## Submission
+### Extras
 
-Just create a fork from the current repo and send it to us!
+- The project uses the Fiber framework for the server
+- The project uses GORM for the ORM and postgres as the DB
+- The project uses the godotenv for the env variables
+- I didnt used any concarrency in the project because I didnt see the need for it (maybe when we get the Assets from the DB we could have a different go routine for each asset but I didnt see the need for it in this case)
 
-Good luck, potential colleague!
+Thank you for the opportunity!
