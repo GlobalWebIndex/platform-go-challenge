@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GWI Asset Management System API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+        }
+        .nav-menu {
+            width: 250px;
+            background-color: #191530;
+            color: #fff;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+        }
+        .nav-menu h3 {
+            color: #de1b76;
+            border-bottom: 1px solid #de1b76;
+            padding-bottom: 10px;
+        }
+        .nav-menu ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .nav-menu ul li {
+            margin-bottom: 10px;
+        }
+        .nav-menu ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .nav-menu ul li a:hover {
+            color: #de1b76;
+        }
+        .container {
+            flex-grow: 1;
+            margin-left: 300px;
+            padding: 20px 40px;
+            max-width: 1200px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #191530;
+            border-bottom: 2px solid #de1b76;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #de1b76;
+            margin-top: 30px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .endpoint {
+            background-color: #191530;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .feature {
+            background-color: #f0f8ff;
+            padding: 10px;
+            border-left: 4px solid #191530;
+            margin-bottom: 10px;
+        }
+        .signature {
+            text-align: right;
+            margin-top: 30px;
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            color: #191530;
+        }
+        a {
+            color: #de1b76;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-menu">
+        <h3>Navigation</h3>
+        <ul>
+            <li><a href="#top">Home</a></li>
+            <li><a href="#endpoints">API Endpoints</a></li>
+            <li><a href="#asset-types">Asset Types</a></li>
+            <li><a href="#features">Key Features</a></li>
+            <li><a href="#getting-started">Getting Started</a></li>
+            <li><a href="/docs">Docs</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 id="top">Welcome to the GWI Asset Management System API</h1>
+        <p>This powerful system enables efficient management of various asset types including Charts, Insights, and Audiences. Users can seamlessly add these assets to their favorites for quick and easy access.</p>
+        
+        <h2 id="endpoints">API Endpoints</h2>
+        <ul>
+            <li><span class="endpoint">GET /ping</span> - Health check endpoint</li>
+            <li><span class="endpoint">POST /assets/add</span> - Add a new asset (Chart, Insight, or Audience)</li>
+            <li><span class="endpoint">GET /assets/get</span> - Retrieve a specific asset by ID and type</li>
+            <li><span class="endpoint">PUT /assets/modify</span> - Modify an existing asset</li>
+            <li><span class="endpoint">DELETE /assets/delete</span> - Delete an asset</li>
+            <li><span class="endpoint">POST /user/add</span> - Add a new user to the system</li>
+            <li><span class="endpoint">POST /user/favorite/add</span> - Add an asset to a user's favorites</li>
+            <li><span class="endpoint">GET /user/favorites</span> - Get a list of a user's favorite assets</li>
+        </ul>
+        
+        <h2 id="asset-types">Asset Types</h2>
+        <ul>
+            <li><strong>Chart:</strong> Graphical representation of data with title, axis labels, and data points</li>
+            <li><strong>Insight:</strong> Textual information providing valuable market insights</li>
+            <li><strong>Audience:</strong> Demographic information about a specific group</li>
+        </ul>
+        
+        <h2 id="features">Key Features</h2>
+        <div class="feature">Concurrent processing of user favorites across multiple shards for improved performance</div>
+        <div class="feature">Secure user management system with authentication</div>
+        <div class="feature">Efficient data storage and retrieval using MySQL database</div>
+        <div class="feature">RESTful API for easy integration with front-end applications</div>
+        <div class="feature">Comprehensive logging and error handling</div>
+        
+        <h2 id="getting-started">Getting Started</h2>
+        <p>To start using the GWI Asset Management System API:</p>
+        <ol>
+            <li>Register a new user using the <span class="endpoint">POST /user/add</span> endpoint</li>
+            <li>Add assets using the <span class="endpoint">POST /assets/add</span> endpoint</li>
+            <li>Add favorites for a user with <span class="endpoint">POST /user/favorite/add</span></li>
+            <li>Retrieve user favorites using <span class="endpoint">GET /user/favorites</span> or <span class="endpoint">GET /user/favorites/detailed</span></li>
+        </ol>
+        
+        <p>For more detailed information on how to use these endpoints, please refer to the <a href="/docs">API documentation</a>.</p>
+
+        <div class="signature">
+            Powered by Nero
+        </div>
+    </div>
+</body>
+</html>

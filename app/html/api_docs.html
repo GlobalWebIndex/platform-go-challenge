@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GWI Asset Management System API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+        }
+        .nav-menu {
+            width: 250px;
+            background-color: #191530;
+            color: #fff;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+        }
+        .nav-menu h3 {
+            color: #de1b76;
+            border-bottom: 1px solid #de1b76;
+            padding-bottom: 10px;
+        }
+        .nav-menu ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .nav-menu ul li {
+            margin-bottom: 10px;
+        }
+        .nav-menu ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .nav-menu ul li a:hover {
+            color: #de1b76;
+        }
+        .container {
+            flex-grow: 1;
+            margin-left: 300px;
+            padding: 20px 40px;
+            max-width: 1200px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #191530;
+            border-bottom: 2px solid #de1b76;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #de1b76;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #191530;
+        }
+        pre {
+            background-color: #f0f8ff;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border-left: 4px solid #191530;
+        }
+        .endpoint {
+            background-color: #f0f8ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #de1b76;
+        }
+        .method {
+            font-weight: bold;
+            color: #191530;
+            background-color: #de1b76;
+            padding: 2px 5px;
+            border-radius: 3px;
+            color: white;
+        }
+        .signature {
+            text-align: right;
+            margin-top: 30px;
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            color: #191530;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-menu">
+        <h3>API Endpoints</h3>
+        <ul>
+            <li><a href="#ping">Ping Server</a></li>
+            <li><a href="#add-asset">Add Asset</a></li>
+            <li><a href="#get-asset">Get Asset</a></li>
+            <li><a href="#modify-asset">Modify Asset</a></li>
+            <li><a href="#delete-asset">Delete Asset</a></li>
+            <li><a href="#add-user">Add User</a></li>
+            <li><a href="#add-favorite">Add Favorite</a></li>
+            <li><a href="#get-favorites">Get User Favorites</a></li>
+            <li><a href="#error-responses">Error Responses</a></li>
+            <li><a href="#notes">Notes</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>GWI Asset Management System API Documentation</h1>
+
+        <h2 id="ping">1. Ping Server</h2>
+        <div class="endpoint">
+            <p><span class="method">GET</span> /ping</p>
+            <p>Check if the server is running.</p>
+            <h3>Response:</h3>
+            <p>Returns a simple "OK" response if the server is running.</p>
+        </div>
+
+        <h2 id="add-asset">2. Add Asset</h2>
+        <div class="endpoint">
+            <p><span class="method">POST</span> /assets/add</p>
+            <p>Add a new asset (Chart, Insight, or Audience).</p>
+            <h3>Request Body:</h3>
+            <pre>
+{
+    "type": "CHART",
+    "payload": {
+        "title": "Sample Chart",
+        "x_axis_title": "X Axis",
+        "y_axis_title": "Y Axis",
+        "data_points": [
+            {"x": 1, "y": 10},
+            {"x": 2, "y": 20},
+            {"x": 3, "y": 30}
+        ]
+    }
+}
+            </pre>
+            <h3>Response:</h3>
+            <pre>
+{
+    "id": 123,
+    "type": "CHART",
+    "title": "Sample Chart",
+    "x_axis_title": "X Axis",
+    "y_axis_title": "Y Axis",
+    "data_points": [
+        {"x": 1, "y": 10},
+        {"x": 2, "y": 20},
+        {"x": 3, "y": 30}
+    ]
+}
+            </pre>
+        </div>
+
+        <h2 id="get-asset">3. Get Asset</h2>
+        <div class="endpoint">
+            <p><span class="method">GET</span> /assets/get?type=ASSET_TYPE&id=ASSET_ID</p>
+            <p>Retrieve a specific asset by ID and type.</p>
+            <h3>Example:</h3>
+            <p>GET /assets/get?type=CHART&id=123</p>
+            <h3>Response:</h3>
+            <pre>
+{
+    "id": 123,
+    "type": "CHART",
+    "title": "Sample Chart",
+    "x_axis_title": "X Axis",
+    "y_axis_title": "Y Axis",
+    "data_points": [
+        {"x": 1, "y": 10},
+        {"x": 2, "y": 20},
+        {"x": 3, "y": 30}
+    ]
+}
+            </pre>
+        </div>
+
+        <h2 id="modify-asset">4. Modify Asset</h2>
+        <div class="endpoint">
+            <p><span class="method">PUT</span> /assets/modify</p>
+            <p>Modify an existing asset.</p>
+            <h3>Request Body:</h3>
+            <pre>
+{
+    "type": "CHART",
+    "payload": {
+        "id": 123,
+        "title": "Updated Chart Title",
+        "x_axis_title": "New X Axis",
+        "y_axis_title": "New Y Axis",
+        "data_points": [
+            {"x": 1, "y": 15},
+            {"x": 2, "y": 25},
+            {"x": 3, "y": 35}
+        ]
+    }
+}
+            </pre>
+            <h3>Response:</h3>
+            <pre>
+{
+    "id": 123,
+    "type": "CHART",
+    "title": "Updated Chart Title",
+    "x_axis_title": "New X Axis",
+    "y_axis_title": "New Y Axis",
+    "data_points": [
+        {"x": 1, "y": 15},
+        {"x": 2, "y": 25},
+        {"x": 3, "y": 35}
+    ]
+}
+            </pre>
+        </div>
+
+        <h2 id="delete-asset">5. Delete Asset</h2>
+        <div class="endpoint">
+            <p><span class="method">DELETE</span> /assets/delete?type=ASSET_TYPE&id=ASSET_ID</p>
+            <p>Delete an asset by ID and type.</p>
+            <h3>Example:</h3>
+            <p>DELETE /assets/delete?type=CHART&id=123</p>
+            <h3>Response:</h3>
+            <pre>
+{
+    "message": "Asset deleted successfully"
+}
+            </pre>
+        </div>
+
+        <h2 id="add-user">6. Add User</h2>
+        <div class="endpoint">
+            <p><span class="method">POST</span> /user/add</p>
+            <p>Add a new user to the system.</p>
+            <h3>Request Body:</h3>
+            <pre>
+{
+    "username": "john_doe",
+    "email": "john@example.com"
+}
+            </pre>
+            <h3>Response:</h3>
+            <pre>
+{
+    "id": 456,
+    "username": "john_doe",
+    "email": "john@example.com",
+    "status": "A"
+}
+            </pre>
+        </div>
+
+        <h2 id="add-favorite">7. Add Favorite</h2>
+        <div class="endpoint">
+            <p><span class="method">POST</span> /user/favorite/add</p>
+            <p>Add an asset to a user's favorites.</p>
+            <h3>Request Body:</h3>
+            <pre>
+{
+    "user_id": 456,
+    "favorites": [
+        {
+            "asset_type": "CHART",
+            "asset_id": 123
+        }
+    ]
+}
+            </pre>
+            <h3>Response:</h3>
+            <pre>
+{
+    "message": "Favorites added successfully"
+}
+            </pre>
+        </div>
+
+        <h2 id="get-favorites">8. Get User Favorites</h2>
+        <div class="endpoint">
+            <p><span class="method">GET</span> /user/favorites/detailed</p>
+            <p>Get detailed information about a user's favorite assets. This endpoint supports pagination.</p>
+        
+            <h3>Parameters:</h3>
+            <ul>
+                <li><code>user_id</code> (required): The ID of the user whose favorites are being retrieved.</li>
+                <li><code>page_num</code> (optional): The page number for pagination. If not provided, defaults to the first page.</li>
+            </ul>
+        
+            <h3>Example:</h3>
+            <p>GET /user/favorites/detailed?user_id=456&page_num=1</p>
+        
+            <h3>Response:</h3>
+            <pre>
+        {
+            "user_id": 456,
+            "favorites": [
+                {
+                    "id": 789,
+                    "asset_type": "CHART",
+                    "asset_id": 123,
+                    "asset": {
+                        "id": 123,
+                        "type": "CHART",
+                        "title": "Sample Chart",
+                        "x_axis_title": "X Axis",
+                        "y_axis_title": "Y Axis",
+                        "data_points": [
+                            {"x": 1, "y": 10},
+                            {"x": 2, "y": 20},
+                            {"x": 3, "y": 30}
+                        ]
+                    }
+                },
+                // ... more favorite items ...
+            ]
+        }
+            </pre>
+        
+            <h3>Pagination Details:</h3>
+            <ul>
+                <li>The number of items per page is fixed and set by the server.</li>
+                <li>If the requested page number exceeds the available pages, an empty favorites array will be returned.</li>
+            </ul>
+        
+            <h3>Notes:</h3>
+            <ul>
+                <li>If <code>page_num</code> is not provided, the all the results will be returned.</li>
+                <li>The API does not currently return the total number of pages or items. Clients should continue requesting subsequent pages until an empty favorites array is returned.</li>
+            </ul>
+        </div>
+
+
+
+        <h2 id="error-responses">Error Responses</h2>
+        <p>All endpoints may return the following error responses:</p>
+        <pre>
+400 Bad Request
+{
+    "error": "Description of the error"
+}
+
+401 Unauthorized
+{
+    "error": "User is not active or not authenticated"
+}
+
+404 Not Found
+{
+    "error": "Resource not found"
+}
+
+500 Internal Server Error
+{
+    "error": "Internal server error"
+}
+        </pre>
+
+        <h2 id="notes">Notes</h2>
+        <ul>
+            <li>All requests and responses are in JSON format, except for the ping endpoint which returns a simple "OK".</li>
+            <li>Authentication is handled by the UserStatusAuth middleware, which checks if the user is active.</li>
+            <li>The server uses concurrent processing for improved performance, especially for the detailed favorites endpoint.</li>
+        </ul>
+
+        <div class="signature">
+            Powered by Nero
+        </div>
+    </div>
+</body>
+</html>

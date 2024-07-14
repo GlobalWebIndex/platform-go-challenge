@@ -1,31 +1,180 @@
-# GlobalWebIndex Engineering Challenge
+# GWI Assets Platform
 
-## Introduction
+## Overview
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+GWI Platform is a robust web application that manages user data, assets, and favorites.
+It provides RESTful API endpoints for various operations including user management, asset handling, and user favorites.
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+## Features
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+- User management (add)
+- Asset management (add, delete, modify, get)
+- User favorites handling
+- Database integration with MySQL
+- Middleware for logging and user authentication
+- Graceful server shutdown
 
-## Challenge
+## Project Structure
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+gwi-platform/
+├── README.md
+├── app
+│   ├── Dockerfile
+│   ├── assets
+│   │   ├── asset.go
+│   │   ├── asset_test.go
+│   │   ├── audience.go
+│   │   ├── audience_test.go
+│   │   ├── chart.go
+│   │   ├── chart_test.go
+│   │   ├── insight.go
+│   │   ├── insight_test.go
+│   │   └── queries.go
+│   ├── auth
+│   │   └── auth.go
+│   ├── database
+│   │   └── database.go
+│   ├── go.mod
+│   ├── go.sum
+│   ├── handlers
+│   │   ├── asset_handlers.go
+│   │   ├── favorite_handlers.go
+│   │   ├── handlers.go
+│   │   ├── queries.go
+│   │   └── users_handlers.go
+│   ├── html
+│   │   ├── api_docs.html
+│   │   └── index.html
+│   ├── logs
+│   │   └── app.log
+│   ├── main.go
+│   ├── models
+│   │   └── models.go
+│   ├── server
+│   │   ├── app.go
+│   │   └── app_test.go
+│   └── utils
+│       └── utils.go
+├── db
+│   └── init.sql
+├── docker-compose.yml
+└── test
+├── Dockerfile
+├── go.mod
+└── main.go
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+## Prerequisites
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+- Go 1.20 or higher
+- MySQL 8.0 or higher
 
-It is appreciated, though not required, if a Dockerfile is included.
+## Setup
 
-## Submission
+1. Clone the repository:
+- git clone https://github.com/your-username/gwi-platform.git
+- cd gwi-platform
 
-Just create a fork from the current repo and send it to us!
+2. Set up the database:
+- Create a MySQL database
+- Update the database connection details in `database/database.go`
 
-Good luck, potential colleague!
+3. Install dependencies:
+- cd app
+- go mod tidy
+
+4. Build the application:
+- go build -o gwi-platform main.go
+
+5. Run the application:
+- ./gwi-platform
+
+## API Endpoints
+
+### User Management
+
+- `POST /user/add`: Add a new user
+
+### Asset Management
+
+- `POST /assets/add`: Add a new asset
+- `DELETE /assets/delete`: Delete an asset
+- `PUT /assets/modify`: Modify an existing asset
+- `GET /assets/get`: Retrieve an asset
+
+### User Favorites
+
+- `POST /user/favorite/add`: Add a favorite for a user
+- `GET /user/favorites/`: Get detailed favorites for a user
+
+### Other Endpoints
+
+- `GET /`: Home endpoint
+- `GET /docs`: Documentation endpoint
+- `GET /ping`: Health check endpoint
+
+## Authentication
+
+The application implements a basic authentication system through the `UserStatusAuth` middleware,
+located in the `auth` package. This middleware serves as a secondary authentication layer,
+focusing on user status verification rather than primary authentication,
+which should be another application eg a CAS.
+
+## Logging
+
+Request and response logging is implemented using the `LogHandler` middleware in the `utils` package.
+
+## Database
+
+The application uses MySQL for data persistence. Database operations are handled in the `database` package.
+
+### Docker Compose
+
+The `docker-compose.yml` file defines the services needed to run the application:
+
+- `app`: The main application service
+- `db`: MySQL database service
+- `test`: Service for running integration tests
+
+To start the services:
+- docker-compose up -d
+
+This will run the integration tests defined in `test/main.go` against the running application.
+
+The integration tests cover:
+- User creation
+- Asset management (creation, retrieval, modification, deletion)
+- User favorites operations
+
+These tests help ensure that all parts of the system are working together as expected in a new environment.
+
+
+## Future Work
+
+### Enhance Test Coverage
+1. **Unit Tests**
+   - Implement comprehensive unit tests for all packages
+
+2. **Integration Tests**
+   - Expand current integration test suite to cover more complex scenarios
+   - Introduce performance tests to ensure scalability
+   - Rewrite the current integration test suite using a BDD (Behavior-Driven Development).
+     eg
+     ```gherkin
+         Feature: User Favorites Management
+
+         Scenario: User adds an asset to favorites
+            Given a user {testUser} exists in the system
+            And an asset {testAsset} of type "CHART" exists
+            When the user adds the asset to their favorites
+            Then the asset should appear in the user's list of favorites
+            And the total count of user's favorites should increase by 1
+
+
+### Performance Optimization
+1. **Database Optimization**
+   - Introduce caching mechanisms for frequently accessed data
+
+### Documentation
+3. **API Documentation**
+   - Provide interactive API exploration tools (e.g., Swagger)
