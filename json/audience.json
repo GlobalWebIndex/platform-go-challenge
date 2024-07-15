@@ -1,0 +1,11 @@
+{
+    "id": 2,
+    "type": "Audience",
+    "description": "This audience is a 40 year old",
+    "age": 40,
+    "ageGroup": "25-45",
+    "gender": "Male",
+    "birthCountry": "USA",
+    "hoursSpentOnMedia": 4,
+    "numberOfPurchases": 10
+}
