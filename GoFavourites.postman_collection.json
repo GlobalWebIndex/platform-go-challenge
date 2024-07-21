@@ -1,0 +1,1745 @@
+{
+	"info": {
+		"_postman_id": "ba236aab-af2e-47db-81e1-3b4311ef4d9a",
+		"name": "GoFavourites",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4628226"
+	},
+	"item": [
+		{
+			"name": "Public",
+			"item": [
+				{
+					"name": "ping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ping",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List All Charts",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var obj = pm.response.json();",
+									"",
+									"pm.environment.set(\"__chart_id\", obj[obj.length-1].id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "file",
+							"file": {}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/charts",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"charts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List All Insights",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var obj = pm.response.json();",
+									"",
+									"pm.environment.set(\"__insight_id\", obj[obj.length-1].id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}/api/v1/insights",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"insights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List All Audiences",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var obj = pm.response.json();",
+									"",
+									"pm.environment.set(\"__audience_id\", obj[obj.length-1].id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}/api/v1/audiences",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"audiences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Insight by ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/insights/{{__insight_id}}",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"insights",
+								"{{__insight_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Audience by ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/audiences/{{__audience_id}}",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"audiences",
+								"{{__audience_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chart by ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/charts/{{__chart_id}}",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"charts",
+								"{{__chart_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User by Username",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "payload",
+									"value": "{\n    \"role\" : {{__token_role}},\n    \"exp\": {{__token_exp}},\n    \"sub\": {{__token_sub}}\n}",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "secret",
+									"value": "{{JWT_SECRET_KEY}}",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								},
+								{
+									"key": "header",
+									"value": "{}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/users/{{username}}",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Admin User SignUp",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"__user_count\", parseInt(pm.environment.get(\"__user_count\")) +1);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"username\", JSON.parse(pm.request.body).username);",
+											"pm.environment.set(\"password\", JSON.parse(pm.request.body).password);",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"user{{__user_count}}\",\n    \"password\": \"{{__user_count}}userPassword{{__user_count}}\",\n    \"role\"    : \"admin\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{domain}}/api/v1/users/signup",
+									"protocol": "http",
+									"host": [
+										"{{domain}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List All Users",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "jwt",
+									"jwt": [
+										{
+											"key": "payload",
+											"value": "{\n    \"role\" : \"{{__token_role}}\",\n    \"sub\": \"{{__token_sub}}\",\n    \"exp\": \"{{__token_exp}}\"\n}",
+											"type": "string"
+										},
+										{
+											"key": "algorithm",
+											"value": "HS256",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "isSecretBase64Encoded",
+											"value": false,
+											"type": "boolean"
+										},
+										{
+											"key": "secret",
+											"value": "{{JWT_SECRET_KEY}}",
+											"type": "string"
+										},
+										{
+											"key": "headerPrefix",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "queryParamKey",
+											"value": "token",
+											"type": "string"
+										},
+										{
+											"key": "header",
+											"value": "{}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{domain}}/api/v1/admin/users",
+									"protocol": "http",
+									"host": [
+										"{{domain}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admin",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Users (bulk)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"__user_count\", parseInt(pm.environment.get(\"__user_count\")) +1)"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "jwt",
+									"jwt": [
+										{
+											"key": "payload",
+											"value": "{\n    \"role\" : \"{{__token_role}}\",\n    \"sub\": \"{{__token_sub}}\",\n    \"exp\": \"{{__token_exp}}\"\n}",
+											"type": "string"
+										},
+										{
+											"key": "secret",
+											"value": "{{JWT_SECRET_KEY}}",
+											"type": "string"
+										},
+										{
+											"key": "algorithm",
+											"value": "HS256",
+											"type": "string"
+										},
+										{
+											"key": "isSecretBase64Encoded",
+											"value": false,
+											"type": "boolean"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "headerPrefix",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "queryParamKey",
+											"value": "token",
+											"type": "string"
+										},
+										{
+											"key": "header",
+											"value": "{}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \n   {\n      \"username\": \"lalala {{__user_count}}\",\n      \"password\": \"lalalapass{{__user_count}}\"\n    },\n    {\n      \"username\": \"lololo {{__user_count}}\",\n      \"password\": \"lololopass{{__user_count}}\"\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{domain}}/api/v1/admin/add-users-bulk",
+									"protocol": "http",
+									"host": [
+										"{{domain}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admin",
+										"add-users-bulk"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Charts (bulk)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"__insight_count\", parseInt(pm.environment.get(\"__insight_count\")) +1)"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "jwt",
+									"jwt": [
+										{
+											"key": "secret",
+											"value": "{{JWT_SECRET_KEY}}",
+											"type": "string"
+										},
+										{
+											"key": "isSecretBase64Encoded",
+											"value": false,
+											"type": "boolean"
+										},
+										{
+											"key": "payload",
+											"value": "{\n    \"role\" : \"{{__token_role}}\",\n    \"sub\": \"{{__token_sub}}\",\n    \"exp\": \"{{__token_exp}}\"\n}",
+											"type": "string"
+										},
+										{
+											"key": "algorithm",
+											"value": "HS256",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "headerPrefix",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "queryParamKey",
+											"value": "token",
+											"type": "string"
+										},
+										{
+											"key": "header",
+											"value": "{}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"title\": \"Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.\",\n        \"x_axis\": {\n            \"title\": \"lectus pellentesque\",\n            \"range\": {\n                \"from\": 268.19,\n                \"to\": 288.68\n            }\n        },\n        \"y_axis\": {\n            \"range\": {\n                \"from\": 213.19,\n                \"to\": 580.81\n            },\n            \"title\": \"morbi\"\n        },\n        \"points\": [\n            {\n                \"x\": 687.29,\n                \"y\": 951.22\n            },\n            {\n                \"x\": 75.34,\n                \"y\": 271.0\n            },\n            {\n                \"x\": 337.72,\n                \"y\": 29.48\n            },\n            {\n                \"x\": 304.29,\n                \"y\": 216.62\n            },\n            {\n                \"x\": 575.2,\n                \"y\": 46.05\n            },\n            {\n                \"x\": 81.12,\n                \"y\": 802.83\n            },\n            {\n                \"x\": 959.11,\n                \"y\": 200.4\n            },\n            {\n                \"x\": 634.86,\n                \"y\": 106.75\n            },\n            {\n                \"x\": 855.06,\n                \"y\": 721.97\n            }\n        ]\n    },\n    {\n        \"title\": \"Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.\",\n        \"x_axis\": {\n            \"title\": \"pede posuere nonummy\",\n            \"range\": {\n                \"from\": 246.98,\n                \"to\": 92.89\n            }\n        },\n        \"y_axis\": {\n            \"range\": {\n                \"from\": 434.22,\n                \"to\": 207.88\n            },\n            \"title\": \"parturient montes\"\n        },\n        \"points\": [\n            {\n                \"x\": 605.88,\n                \"y\": 159.09\n            },\n            {\n                \"x\": 453.96,\n                \"y\": 749.91\n            },\n            {\n                \"x\": 211.92,\n                \"y\": 952.3\n            }\n        ]\n    },\n    {\n        \"title\": \"Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.\",\n        \"x_axis\": {\n            \"title\": \"ac\",\n            \"range\": {\n                \"from\": 85.46,\n                \"to\": 932.64\n            }\n        },\n        \"y_axis\": {\n            \"range\": {\n                \"from\": 332.89,\n                \"to\": 159.87\n            },\n            \"title\": \"quam pharetra\"\n        },\n        \"points\": [\n            {\n                \"x\": 784.57,\n                \"y\": 164.7\n            },\n            {\n                \"x\": 306.78,\n                \"y\": 269.2\n            },\n            {\n                \"x\": 833.63,\n                \"y\": 981.58\n            },\n            {\n                \"x\": 543.55,\n                \"y\": 825.58\n            },\n            {\n                \"x\": 672.77,\n                \"y\": 658.97\n            },\n            {\n                \"x\": 646.5,\n                \"y\": 45.94\n            },\n            {\n                \"x\": 974.48,\n                \"y\": 568.86\n            },\n            {\n                \"x\": 342.43,\n                \"y\": 659.16\n            }\n        ]\n    },\n    {\n        \"title\": \"Nulla justo. Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis. Sed ante.\",\n        \"x_axis\": {\n            \"title\": \"eu pede\",\n            \"range\": {\n                \"from\": 532.25,\n                \"to\": 642.92\n            }\n        },\n        \"y_axis\": {\n            \"range\": {\n                \"from\": 528.25,\n                \"to\": 92.57\n            },\n            \"title\": \"duis\"\n        },\n        \"points\": [\n            {\n                \"x\": 210.04,\n                \"y\": 247.7\n            },\n            {\n                \"x\": 393.89,\n                \"y\": 292.58\n            },\n            {\n                \"x\": 473.11,\n                \"y\": 517.26\n            },\n            {\n                \"x\": 274.41,\n                \"y\": 461.95\n            },\n            {\n                \"x\": 9.9,\n                \"y\": 606.91\n            },\n            {\n                \"x\": 420.98,\n                \"y\": 783.89\n            }\n        ]\n    },\n    {\n        \"title\": \"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl. Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.\",\n        \"x_axis\": {\n            \"title\": \"tincidunt\",\n            \"range\": {\n                \"from\": 519.13,\n                \"to\": 540.52\n            }\n        },\n        \"y_axis\": {\n            \"range\": {\n                \"from\": 396.68,\n                \"to\": 728.86\n            },\n            \"title\": \"ipsum\"\n        },\n        \"points\": [\n            {\n                \"x\": 642.71,\n                \"y\": 656.02\n            },\n            {\n                \"x\": 808.94,\n                \"y\": 105.89\n            }\n        ]\n    },\n    {\n        \"title\": \"Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque. Duis bibendum.\",\n        \"x_axis\": {\n            \"title\": \"quam sollicitudin vitae\",\n            \"range\": {\n                \"from\": 970.78,\n                \"to\": 399.96\n            }\n        },\n        \"y_axis\": {\n            \"range\": {\n                \"from\": 958.93,\n                \"to\": 974.78\n            },\n            \"title\": \"quis orci\"\n        },\n        \"points\": [\n            {\n                \"x\": 776.65,\n                \"y\": 701.29\n            },\n            {\n                \"x\": 235.26,\n                \"y\": 924.51\n            },\n            {\n                \"x\": 607.77,\n                \"y\": 368.26\n            },\n            {\n                \"x\": 958.34,\n                \"y\": 765.28\n            },\n            {\n                \"x\": 62.89,\n                \"y\": 403.6\n            },\n            {\n                \"x\": 103.7,\n                \"y\": 73.13\n            }\n        ]\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{domain}}/api/v1/admin/add-charts-bulk",
+									"protocol": "http",
+									"host": [
+										"{{domain}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admin",
+										"add-charts-bulk"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Insights (bulk)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"__insight_count\", parseInt(pm.environment.get(\"__insight_count\")) +1)"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"text\": \"Donec diam neque, vestibulum ddeget, vulputate ut, ultrices vel, augue. Vestibulum ante itae nisi.\"\n    },\n    {\n        \"text\": \"Donec diam neque, vestibulum eget, vulputddate ut, ultrices vel, augue. Vestibulum ante itae nisi.\"\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{domain}}/api/v1/admin/add-insights-bulk",
+									"protocol": "http",
+									"host": [
+										"{{domain}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admin",
+										"add-insights-bulk"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Audiences (bulk)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"__insight_count\", parseInt(pm.environment.get(\"__insight_count\")) +1)"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "jwt",
+									"jwt": [
+										{
+											"key": "secret",
+											"value": "{{JWT_SECRET_KEY}}",
+											"type": "string"
+										},
+										{
+											"key": "isSecretBase64Encoded",
+											"value": false,
+											"type": "boolean"
+										},
+										{
+											"key": "payload",
+											"value": "{\n    \"role\" : \"{{__token_role}}\",\n    \"sub\": \"{{__token_sub}}\",\n    \"exp\": \"{{__token_exp}}\"\n}",
+											"type": "string"
+										},
+										{
+											"key": "algorithm",
+											"value": "HS256",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "headerPrefix",
+											"value": "Bearer",
+											"type": "string"
+										},
+										{
+											"key": "queryParamKey",
+											"value": "token",
+											"type": "string"
+										},
+										{
+											"key": "header",
+											"value": "{}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"name\": \"Proin interdum mauris non ligula pellentesque ultrices.\",\n        \"gender\": \"Male\",\n        \"age_groups\": {\n            \"from\": 30,\n            \"to\": 34\n        },\n        \"birth_country\": \"France\"\n    },\n    {\n        \"name\": \"Donec quis orci eget orci vehicula condimentum. Curabitur in libero ut massa voeuismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.\",\n        \"gender\": \"Male\",\n        \"age_groups\": {\n            \"from\": 15,\n            \"to\": 55\n        },\n        \"birth_country\": \"Peru\"\n    },\n    {\n        \"name\": \"Integer a nibh. In quis justo.\",\n        \"gender\": \"Female\",\n        \"age_groups\": {\n            \"from\": 8,\n            \"to\": 55\n        },\n        \"birth_country\": \"Finland\"\n    },\n    {\n        \"name\": \"Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus. Pellentesque at nulla. Suspendisse potenti.\",\n        \"gender\": \"Female\",\n        \"age_groups\": {\n            \"from\": 42,\n            \"to\": 38\n        },\n        \"birth_country\": \"China\"\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{domain}}/api/v1/admin/add-audiences-bulk",
+									"protocol": "http",
+									"host": [
+										"{{domain}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admin",
+										"add-audiences-bulk"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User SignUp",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"__user_count\", parseInt(pm.environment.get(\"__user_count\")) +1);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"username\", JSON.parse(pm.request.body).username);",
+									"pm.environment.set(\"password\", JSON.parse(pm.request.body).password);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"lalala{{__user_count}}\",\n    \"password\": \"lalalallalal222a\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/users/signup",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let CryptoJs = require('crypto-js');",
+									"",
+									"",
+									"pm.environment.set(\"__token\", pm.cookies.get('token'));",
+									"a =  pm.cookies.get('token').split(\".\");",
+									"var words = CryptoJs.enc.Base64.parse(a[1]);",
+									"var textString = CryptoJs.enc.Utf8.stringify(words);",
+									"var payload = JSON.parse(textString);",
+									"pm.environment.set(\"__token_exp\",payload.exp );",
+									"pm.environment.set(\"__token_sub\",payload.sub );",
+									"pm.environment.set(\"__token_role\",payload.role );"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/users/login",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Favourite Chart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"__favourite_count\",",
+									"parseInt(pm.environment.get (\"__favourite_count\"))+1)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "secret",
+									"value": "{{JWT_SECRET_KEY}}",
+									"type": "string"
+								},
+								{
+									"key": "payload",
+									"value": "{{__token}}",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								},
+								{
+									"key": "header",
+									"value": "{}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \n\"title\" : \"favoured item {{__favourite_count}}\",\n\"description\" : \"description {{__favourite_count}}\",\n\"asset_type\" : \"Chart\",\n\"asset_id\": \"{{__chart_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/users/favourites/add",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"favourites",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Favourite Insight",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"__favourite_count\",",
+									"parseInt(pm.environment.get (\"__favourite_count\"))+1)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "secret",
+									"value": "{{JWT_SECRET_KEY}}",
+									"type": "string"
+								},
+								{
+									"key": "payload",
+									"value": "{{__token}}",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								},
+								{
+									"key": "header",
+									"value": "{}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \n\"title\" : \"favoured item {{__favourite_count}}\",\n\"description\" : \"description {{__favourite_count}}\",\n\"asset_type\" : \"Insight\",\n\"asset_id\": \"{{__insight_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/users/favourites/add",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"favourites",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Favourite Audience",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"__favourite_count\",",
+									"parseInt(pm.environment.get (\"__favourite_count\"))+1)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "secret",
+									"value": "{{JWT_SECRET_KEY}}",
+									"type": "string"
+								},
+								{
+									"key": "payload",
+									"value": "{{__token}}",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								},
+								{
+									"key": "header",
+									"value": "{}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \n\"title\" : \"favoured item {{__favourite_count}}\",\n\"description\" : \"description {{__favourite_count}}\",\n\"asset_type\" : \"Audience\",\n\"asset_id\": \"{{__audience_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/users/favourites/add",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"favourites",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List User's Favourites",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var obj = pm.response.json();",
+									"",
+									"pm.environment.set(\"__favourite_id\", obj[obj.length-1].id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "secret",
+									"value": "{{JWT_SECRET_KEY}}",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "payload",
+									"value": "{\n    \"role\" : \"{{__token_role}}\",\n    \"sub\": \"{{__token_sub}}\",\n    \"exp\": \"{{__token_exp}}\"\n}",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								},
+								{
+									"key": "header",
+									"value": "{}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}/api/v1/users/favourites",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"favourites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Favourite by ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "payload",
+									"value": "{\n    \"role\" : \"{{__token_role}}\",\n    \"sub\": \"{{__token_sub}}\",\n    \"exp\": \"{{__token_exp}}\"\n}",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "secret",
+									"value": "{{JWT_SECRET_KEY}}",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								},
+								{
+									"key": "header",
+									"value": "{}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/users/favourites/{{__favourite_id}}",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"favourites",
+								"{{__favourite_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Favourite",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "payload",
+									"value": "{\n    \"role\" : \"{{__token_role}}\",\n    \"sub\": \"{{__token_sub}}\",\n    \"exp\": \"{{__token_exp}}\"\n}",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "secret",
+									"value": "{{JWT_SECRET_KEY}}",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								},
+								{
+									"key": "header",
+									"value": "{}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}/api/v1/users/favourites/delete?id={{__favourite_id}}",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"favourites",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{__favourite_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "payload",
+									"value": "{{__token}}",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "secret",
+									"value": "{{JWT_SECRET_KEY}}",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								},
+								{
+									"key": "header",
+									"value": "{}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}/api/v1/users/logout",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,45 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      MONGODB: "mongodb://mongodb:27017"
+      DB_NAME: "${DB_NAME}"
+      JWT_SECRET_KEY: "${JWT_SECRET_KEY}"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: ./
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - '27017:27017'
+
+#  swagger:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-swagger
+#    ports:
+#      - "6060:6060"
+#    tty: true
+#    restart: unless-stopped
+#    develop:
+#      watch:
+#        - action: sync
+#          path: .
+#          target: ./
+#    depends_on:
+#      - app

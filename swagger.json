@@ -1,0 +1,257 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Documentation of an awesome API.",
+    "title": "Asset API.",
+    "version": "1.0.0"
+  },
+  "host": "localhost:6060",
+  "basePath": "/api/v1",
+  "paths": {
+    "/users/login": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "User Login",
+        "operationId": "Login",
+        "responses": {
+          "200": {
+            "description": "Successful login"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/users/{username}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "Get a user's details by username",
+        "operationId": "GetByUsername",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "The username of the user to get",
+            "name": "username",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested user's details",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "The requested user was not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AssetInterface": {
+      "type": "object",
+      "properties": {
+        "Description": {
+          "type": "string"
+        },
+        "GetAssetType": {
+          "$ref": "#/definitions/AssetInterface"
+        },
+        "GetId": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "favourites/models"
+    },
+    "Axis": {
+      "type": "object",
+      "properties": {
+        "range": {
+          "$ref": "#/definitions/Range"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        }
+      },
+      "x-go-package": "favourites/models"
+    },
+    "Chart": {
+      "description": "Chart Chart is one of the available assets",
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "CreatedAt"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "modified_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "ModifiedAt"
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Point"
+          },
+          "x-go-name": "Points"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        },
+        "x_axis": {
+          "$ref": "#/definitions/Axis"
+        },
+        "y_axis": {
+          "$ref": "#/definitions/Axis"
+        }
+      },
+      "x-go-package": "favourites/models"
+    },
+    "Favourite": {
+      "description": "Favourite A Favourite asset of the user",
+      "type": "object",
+      "properties": {
+        "asset": {
+          "$ref": "#/definitions/AssetInterface"
+        },
+        "asset_id": {
+          "type": "string",
+          "x-go-name": "AssetId"
+        },
+        "asset_type": {
+          "type": "string",
+          "x-go-name": "AssetType"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "CreatedAt"
+        },
+        "description": {
+          "type": "string",
+          "x-go-name": "Description"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "modified_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "ModifiedAt"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        }
+      },
+      "x-go-package": "favourites/models"
+    },
+    "Point": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "X"
+        },
+        "y": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "Y"
+        }
+      },
+      "x-go-package": "favourites/models"
+    },
+    "Range": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "From"
+        },
+        "to": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "To"
+        }
+      },
+      "x-go-package": "favourites/models"
+    },
+    "User": {
+      "description": "for both admins and plain users",
+      "type": "object",
+      "title": "User model",
+      "properties": {
+        "_id": {
+          "description": "ID of the User\nin: string",
+          "type": "string",
+          "x-go-name": "ID",
+          "example": "669c34226029d2ef83fc38f8"
+        },
+        "created_at": {
+          "description": "CreatedAt is the date-time of user's creation",
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "CreatedAt"
+        },
+        "modified_at": {
+          "description": "ModifiedAt is the date-time of user's last modification",
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "ModifiedAt"
+        },
+        "password": {
+          "description": "Hashed Password of the User",
+          "type": "string",
+          "x-go-name": "Password"
+        },
+        "role": {
+          "description": "Role of the User",
+          "type": "string",
+          "x-go-name": "Role"
+        },
+        "username": {
+          "description": "Username of the User",
+          "type": "string",
+          "x-go-name": "Username"
+        }
+      },
+      "x-go-package": "favourites/models"
+    }
+  }
+}

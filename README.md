@@ -1,31 +1,125 @@
-# GlobalWebIndex Engineering Challenge
+# Asset API
+
+This is just another API, or is it?
 
 ## Introduction
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+This API is designed to allow users to interact with Asset data (stored in a MongoDB).
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+### Asset Types
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+There are three asset types in this API at the moment;
+Charts, Insights and Audiences.
 
-## Challenge
+Each of them has its own characteristics but the can all be favoured by any user,
+and fetched under the same favourites list.
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+### Roles
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+The users in this concept have roles assigned to them.
+The roles determined which endpoints they can use from the API, 
+and the information displayed in each.
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+There are two roles currently existing; admin and user.
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+## Usage
 
-It is appreciated, though not required, if a Dockerfile is included.
+### Running the API
 
-## Submission
+There are two ways to run this application;
 
-Just create a fork from the current repo and send it to us!
+1. Docker Compose (includes a MongoDB)
+2. Go Run (along with a MongoDB).
 
-Good luck, potential colleague!
+Specifically:
+
+1. For both approaches we need an `.env` file in the root directory of the project
+   (same level with this `README.md` and `main.go` file). Please don't commit this file.
+    ```ini
+    MONGODB=mongodb://localhost:27017
+    DB_NAME=favourites
+    JWT_SECRET_KEY=SOOOOOO_SECRET_KEY
+   ```
+   where:
+    * `MONGODB` is the URI of the MongoDB
+    * `DB_NAME` is the name of the database to be used by the application
+    * `JWT_SECRET_KEY` is the Secret Key used to sign the Json Web Token
+      used during authentication and authorization
+2. A Postman installation (see [official instructions here](https://www.postman.com/downloads/))
+    1. Import the [GoFavourites.postman_environment.json](GoFavourites.postman_environment.json).
+        Once imported update the `JWT_SECRET_KEY` to match the `.env` one.
+    2. import [GoFavourites.postman_collection.json](GoFavourites.postman_collection.json)
+3. Then we can either:
+   1. (Recommended) Run with Docker Compose
+      1. Have Docker and Docker Compose installed
+         (see [official instructions here](https://docs.docker.com/compose/install/)).
+      2. Then open a terminal, navigate in this directory and
+      3. run `docker compose up`
+         4. Depending on your system and version may be `docker-compose up`
+   2. Run using Go Run for which we need to
+      1. have set `GOROOT`, `GOPATH`
+      2. Have a working MongoDB running (and the URI in `.env` file)
+      3. Then open a terminal, navigate in this directory
+      4. Run `go run main.go`
+
+
+##  Documentation
+### Postman Collection Usage
+Since swagger turned out to be not that practical for displaying purposes.
+A set of environment and postman collection along with some docs should do the trick.
+
+The requests play around with environment variables for ease of using the entire collection.
+
+#### Creating Assets via Admin user
+First we need an admin user, 
+to insert all the asset data 
+available to the rest of the users to favourite,
+thus we should create one.
+
+1. Create an admin user: `User/Admin/Admin User SignUp` POST request
+2. Login with this user: `User/Login` POST request
+3. To add assets copy values from [INSIGHT_MOCK_DATA.json](INSIGHT_MOCK_DATA.json),
+[CHARTS_MOCK_DATA.json](CHARTS_MOCK_DATA.json) and
+[AUDIENCE_MOCK_DATA.json](AUDIENCE_MOCK_DATA.json) and paste it in requests:
+   1. `User/Admin/Add Insights (bulk)` POST request
+   2. `User/Admin/Add Charts (bulk)` POST request 
+   3. `User/Admin/Add Audiences (bulk)` POST request 
+4. Admin can also bulk add users and see all users:
+   1. `User/Admin/Add Users (bulk)` POST request
+   2. `User/Admin/List All Users` GET request
+
+#### Viewing public assets 
+After their creation assets are available to all, 
+i.e. no authentication is required to view them.
+1. To view them:
+    1. `Public/List All Charts` GET request
+    2. `Public/List All Insights` GET request
+    3. `Public/List All Audiences` GET request
+2. To view a specific Asset by its ID:
+   1. `Public/Chart by ID` GET request
+   1. `Public/Insight by ID` GET request
+   1. `Public/Audience by ID` GET request
+
+#### Creating a user and adding to favourites
+1. Create a user: `User/User SignUp` POST request
+2. Login with this user: `User/Login` POST request
+3. Now user can add to Favourites: 
+   1. `User/Add Favourite Chart` POST request
+      2. if the flow has been followed as in this file, 
+      a random ID from the Add requests should be in place.
+   2. `User/Add Favourite Insight` POST request
+   2. `User/Add Favourite Audience` POST request
+4. Now that user has favourites (so that we don't get an empty list):
+   1. we can list them `User/List User's Favourites` and then
+   1. Fetch one by its ID `User/Favourite by ID`
+   2. We can also remove it `User/Remove Favourite`.
+      However this will empty the variable of the ID so try to add more
+        and list them to populate it again.
+5. Lastly the users can logout by `User/Logout` request
+
+Have fun!
+
+## Other Info
+
+1. Based on [Instructions of the challenge](Instructions.md)
+2. Let me know your thoughts!
