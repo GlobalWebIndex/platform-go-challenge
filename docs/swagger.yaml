@@ -1,0 +1,161 @@
+basePath: /
+definitions:
+  models.Asset:
+    description: Asset represents an asset with a type, description, and data
+    properties:
+      data: {}
+      description:
+        example: Sample Chart
+        type: string
+      id:
+        example: "1"
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/models.AssetType'
+        example: chart
+    type: object
+  models.AssetType:
+    description: AssetType represents the type of asset
+    enum:
+    - chart
+    - insight
+    - audience
+    type: string
+    x-enum-varnames:
+    - ChartAsset
+    - InsightAsset
+    - AudienceAsset
+host: localhost:8080
+info:
+  contact:
+    email: youremail@domain.com
+    name: API Support
+  description: This is a sample server for the GWI Challenge API.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: GWI Challenge API
+  version: "1.0"
+paths:
+  /users/{id}/favourites:
+    get:
+      consumes:
+      - application/json
+      description: Get the list of user's favourite assets
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Asset'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user's favourites
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Add an asset to the user's list of favourite assets
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Asset
+        in: body
+        name: asset
+        required: true
+        schema:
+          $ref: '#/definitions/models.Asset'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Asset'
+            type: array
+      summary: Add asset to user's favourites
+      tags:
+      - users
+  /users/{id}/favourites/{asset_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove an asset from the user's list of favourite assets
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Asset ID
+        in: path
+        name: asset_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Asset'
+            type: array
+      summary: Remove asset from user's favourites
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Edit the description of an asset in the user's list of favourite
+        assets
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Asset ID
+        in: path
+        name: asset_id
+        required: true
+        type: string
+      - description: Asset
+        in: body
+        name: asset
+        required: true
+        schema:
+          $ref: '#/definitions/models.Asset'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Asset'
+            type: array
+      summary: Edit asset description
+      tags:
+      - users
+swagger: "2.0"
