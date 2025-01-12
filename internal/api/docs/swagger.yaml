@@ -1,0 +1,195 @@
+basePath: /
+definitions:
+  handlers.UpdateDescriptionRequest:
+    properties:
+      description:
+        type: string
+    type: object
+  types.APIError:
+    properties:
+      code:
+        type: string
+      field:
+        type: string
+      message:
+        type: string
+    type: object
+  types.APIResponse:
+    properties:
+      data: {}
+      error:
+        $ref: '#/definitions/types.APIError'
+      meta:
+        $ref: '#/definitions/types.MetaData'
+      success:
+        type: boolean
+    type: object
+  types.MetaData:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      request_id:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+  description: API for managing user favorite assets including charts, insights, and
+    audiences
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Favorites Service API
+  version: "1.0"
+paths:
+  /favorites:
+    get:
+      consumes:
+      - application/json
+      description: Get list of user's favorite assets with pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+      security:
+      - Bearer: []
+      summary: List user favorites
+      tags:
+      - favorites
+  /favorites/{assetId}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove an asset from user's favorites
+      parameters:
+      - description: Asset ID
+        in: path
+        name: assetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+      security:
+      - Bearer: []
+      summary: Remove favorite
+      tags:
+      - favorites
+    post:
+      consumes:
+      - application/json
+      description: Add an asset to user's favorites
+      parameters:
+      - description: Asset ID
+        in: path
+        name: assetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+      security:
+      - Bearer: []
+      summary: Add favorite
+      tags:
+      - favorites
+  /favorites/{assetId}/description:
+    patch:
+      consumes:
+      - application/json
+      description: Update description of a favorite asset
+      parameters:
+      - description: Asset ID
+        in: path
+        name: assetId
+        required: true
+        type: string
+      - description: Update description request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateDescriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.APIResponse'
+      security:
+      - Bearer: []
+      summary: Update description
+      tags:
+      - favorites
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

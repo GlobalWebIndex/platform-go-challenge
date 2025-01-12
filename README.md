@@ -1,31 +1,108 @@
-# GlobalWebIndex Engineering Challenge
+## Prerequisites
 
-## Introduction
+- Go 1.23 or higher
+- Make (optional, for using Makefile commands)
+- Docker (optional, for containerized deployment)
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+## Quick Start
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+1. Build and run: 
+    ```bash
+    make docker-run
+    ```
+    the service recreates the db on startup with two tables 
+    - assets 
+    - favorites (with data for three users (user1,user2,user3))
+    
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+2. Select user:
+   ```bash
+   make use-user1
+   ```
 
-## Challenge
+3. Get favorites:
+    ```bash
+    make api-list PAGE=2 LIMIT=10
+    
+    ```
+4. Remove favorite
+    ```bash
+    make api-remove ASSET_ID=<id>
+    
+    ```
+5. Update Desc
+    ```bash
+    make api-update ASSET_ID=<id> DESC="test"
+    
+    ```
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+6. You can access the db by running
+    ```bash
+    make exec-sql
+    ```
+    query examples:
+    ```sql
+    SELECT * FROM favorites;
+    SELECT * FROM assets;
+    ```
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+## API Endpoints
 
-It is appreciated, though not required, if a Dockerfile is included.
+### Authentication
+All endpoints except /swagger require a valid JWT token in the Authorization header:
+```
+Authorization: Bearer <your-jwt-token>
+```
 
-## Submission
+### Available Endpoints
+- **GET /swagger**
 
-Just create a fork from the current repo and send it to us!
+- **GET /favorites**
+  - List user's favorites with pagination
+  - Query parameters: 
+    - page (default: 1)
+    - limit (default: 20)
 
-Good luck, potential colleague!
+- **POST /favorites/{assetId}**
+  - Add an asset to favorites
+
+- **DELETE /favorites/{assetId}**
+  - Remove an asset from favorites
+
+- **PATCH /favorites/{assetId}/description**
+  - Update asset description
+  - Body: `{"description": "new description"}`
+
+## Testing
+
+Run the test suite:
+```bash
+go test ./...
+```
+Run all curl requests:
+```bash
+make api-test-all PAGE=2 LIMIT=10 ASSET_ID=<id> DESC="test"
+```
+
+## Project Structure
+
+```
+├── cmd
+│   └── challenge
+├── internal
+│   ├── api
+│   │   ├── docs
+│   │   ├── handlers
+│   │   ├── middleware
+│   │   └── types
+│   ├── app
+│   ├── domain
+│   ├── repository
+│   │   └── testdata
+│   └── service
+│       └── types
+└── tools
+    └── jwt
+```
