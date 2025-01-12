@@ -6,7 +6,12 @@
 
 ## Quick Start
 
-1. Build and run: 
+1. Select user:
+   ```bash
+   make use-user1
+   ```
+
+2. Build and run: 
     ```bash
     make docker-run
     ```
@@ -15,10 +20,6 @@
     - favorites (with data for three users (user1,user2,user3))
     
 
-2. Select user:
-   ```bash
-   make use-user1
-   ```
 
 3. Get favorites:
     ```bash
