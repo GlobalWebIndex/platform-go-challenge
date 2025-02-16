@@ -1,31 +1,217 @@
-# GlobalWebIndex Engineering Challenge
+GWI Favorites API – Engineering Challenge Submission
 
-## Introduction
+This project is a solution for the GWI Engineering Challenge, implementing a secure and performant web API for managing user favorite assets, built using Go.
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+Features Implemented
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+Full CRUD Operations: Comprehensive support for adding, retrieving, editing, and deleting user favorite assets.
+Concurrency Handling: Parallel retrieval of assets to ensure fast responses, utilizing sync.WaitGroup and sync.Mutex.
+Secure JWT Authentication: Secure token-based authentication with middleware for protected endpoints. Ensures that only authorized users can access the API.
+Token Management: Implemented a mechanism to store and invalidate tokens, ensuring that each user has only one valid token at a time.
+HTTPS Support: Configured HTTPS at the code level using self-signed certificates (for development purposes only), ensuring secure communication. 
+Robust Error Handling and Input Validation: Detailed error responses with checks for user existence, asset duplication, and proper input format.
+Dockerization: Provided a Dockerfile for easy containerized deployment of the API. Dockerized deployment also supports HTTPS, with clear instructions provided for generating certificates and running the app securely.
+Commented Proxy Code: Added commented-out code for proxy trust settings to defend against IP spoofing if needed.
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+API Endpoints
 
-## Challenge
+POST /login – Generates a JWT token for authentication.
+GET /favorites/:user_id – Retrieves all favorite assets for a user concurrently.
+POST /favorites – Adds a new favorite asset for a user with type-based validation.
+DELETE /favorites/:user_id/:asset_id – Removes a favorite asset, checking for user and asset existence.
+PUT /favorites/:user_id/:asset_id – Edits the description of a favorite asset, with checks for existence and valid input.
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+Technologies Used
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+Go 1.24 – For building the web API.
+Gin Framework – Lightweight HTTP web framework.
+JWT (github.com/dgrijalva/jwt-go) – For authentication.
+Docker – For containerization.
+Postman – For API testing.
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+Running the Application
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+HTTPS Support
+This application supports HTTPS both when running locally and inside Docker. To enable HTTPS, you need to generate self-signed certificates:
 
-It is appreciated, though not required, if a Dockerfile is included.
+Run the following command in your terminal or PowerShell:
 
-## Submission
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
 
-Just create a fork from the current repo and send it to us!
+req: Request a new certificate.
+-x509: Create a self-signed certificate.
+-newkey rsa:4096: Generate a new RSA key (4096 bits).
+-keyout key.pem: Save the private key as key.pem.
+-out cert.pem: Save the certificate as cert.pem.
+-days 365: Certificate valid for 1 year.
+-nodes: No password for the private key.
+Follow the prompts, fill in the required details, and the process will generate:
 
-Good luck, potential colleague!
+cert.pem (certificate)
+key.pem (private key)
+Place these two files in the project root directory (same level as main.go).
+
+Without Docker:
+go run main.go
+Access the API at https://localhost:8080.
+
+With Docker:
+docker build -t gwi-favorites-api .
+docker run -d -p 8080:8080 --name gwi-container gwi-favorites-api
+Note: The Docker build uses the same cert.pem and key.pem files from the project root directory to enable HTTPS.
+
+Testing
+
+Run the provided unit tests with:
+go test ./tests -v
+
+API Testing Instructions and Payloads
+You can use tools like Postman to test the API. Below are the instructions and example payloads for each endpoint:
+
+1. Login Endpoint
+   URL: POST https://localhost:8080/login
+
+No additional headers needed when using form-data.
+Body (form-data): user_id=123
+Response:
+{
+"token": "your_jwt_token_here"
+}
+
+Use the returned token for authentication in all subsequent requests by adding it as a Bearer token in the Authorization header.
+
+2. Add Favorite Endpoint
+   URL: POST https://localhost:8080/favorites
+   Headers:
+
+Content-Type: application/json
+Authorization: Bearer your_jwt_token_here
+
+Payloads:
+Chart Example:
+{
+"user_id": "123",
+"asset": {
+"id": "201",
+"type": "chart",
+"description": "Tech Stocks",
+"title": "Tech Market Overview",
+"axes_titles": ["Time", "Price"],
+"data": [3500, 3600]
+}
+}
+
+Insight Example:
+{
+"user_id": "123",
+"asset": {
+"id": "202",
+"type": "insight",
+"description": "50% of users spend 5+ hours online daily"
+}
+}
+
+Audience Example:
+{
+"user_id": "123",
+"asset": {
+"id": "203",
+"type": "audience",
+"description": "Target Audience",
+"gender": "Male",
+"birth_country": "Greece",
+"age_group": "24-35",
+"hours_spent_daily_on_social_media": 4,
+"purchases_last_month": 5
+}
+}
+
+3. Get Favorites Endpoint
+   URL: GET https://localhost:8080/favorites/123
+   Headers:
+
+Authorization: Bearer your_jwt_token_here
+
+Response Example:
+
+{
+"favorites": [
+{
+"id": "201",
+"type": "chart",
+"description": "Tech Stocks",
+"title": "Tech Market Overview",
+"axes_titles": ["Time", "Price"],
+"data": [3500, 3600]
+},
+{
+"id": "202",
+"type": "insight",
+"description": "50% of users spend 5+ hours online daily"
+}
+]
+}
+
+4. Edit Favorite Endpoint
+   URL: PUT https://localhost:8080/favorites/123/201
+   Headers:
+
+Content-Type: application/json
+Authorization: Bearer your_jwt_token_here
+
+Payload:
+{
+"new_description": "Updated Tech Stocks Overview"
+}
+
+Response:
+{
+"message": "Asset updated"
+}
+
+5. Remove Favorite Endpoint
+   URL: DELETE https://localhost:8080/favorites/123/201
+   Headers:
+
+Authorization: Bearer your_jwt_token_here
+
+Response:
+{
+"message": "Asset removed"
+}
+
+
+Notes
+
+HTTPS is enabled for local development using self-signed certificates.
+JWT tokens are managed to prevent multiple active tokens per user.
+JWT authentication middleware is implemented, handling token validation for all protected routes.
+Concurrency is handled in asset retrieval to ensure optimal performance.
+Dockerization is provided for easy deployment.
+Detailed error handling ensures clarity in API responses.
+No Database Used. An in-memory map is used for asset storage for simplicity and demonstration purposes.
+
+Potential Storage Options (SQL Focused)
+Given the requirement for user-specific favorites, a relational database such as PostgreSQL, MySQL, or SQLite would be an ideal choice due to its robustness, scalability, and widespread use in production environments.
+
+Advantages of SQL Databases for This Project:
+
+Relational Integrity: Ensures relationships between users and their favorite assets are well-maintained.
+Indexing Support: Indexes can be created on frequently queried fields (such as user_id and asset_type) for faster lookups.
+Transactions: Supports ACID properties, ensuring data integrity during concurrent operations.
+Scalability: Can handle growing datasets efficiently through proper indexing and sharding strategies.
+Familiarity: SQL is widely used and supported, making it an optimal choice for maintainability and long-term scaling.
+
+Note: This project was my first experience writing Go. It was my honor to embrace the challenge and familiarize myself with the language.
+
+Final Thoughts
+
+Every design choice was made with care, ensuring a clean, efficient, and maintainable codebase.
+I trust that this submission demonstrates both my technical proficiency and commitment to delivering high-quality solutions.
+Thank you for the opportunity to showcase my skills — I look forward to the possibility of contributing to the GWI team.
+
+
+
+
+
+
