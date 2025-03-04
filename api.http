@@ -1,0 +1,33 @@
+GET http://localhost:8080/assets
+Content-Type: application/json
+
+###
+
+PATCH http://localhost:8080/assets/67c221f27bbfaaf9ef51e944
+Content-Type: application/json
+
+{
+    "description": "chart-1"
+}
+
+###
+
+GET http://localhost:8080/users/67c2231929cbd5cc6e49738c/favorites
+Content-Type: application/json
+
+###
+
+POST http://localhost:8080/users/67c2231929cbd5cc6e49738c/favorites
+Content-Type: application/json
+
+{
+    "assetId": "67c221f27bbfaaf9ef51e944"
+}
+
+###
+
+DELETE http://localhost:8080/users/67c2231929cbd5cc6e49738c/favorites/67c32489dcb9a23540981d73
+Content-Type: application/json
+
+###
+

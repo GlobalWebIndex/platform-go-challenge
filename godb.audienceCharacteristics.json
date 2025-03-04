@@ -1,0 +1,40 @@
+[{
+  "_id": {
+    "$oid": "67c221f27bbfaaf9ef51e949"
+  },
+  "assetId": "67c221f27bbfaaf9ef51e947",
+  "characteristicId": 1,
+  "characteristicValue": 1
+},
+{
+  "_id": {
+    "$oid": "67c221f27bbfaaf9ef51e94a"
+  },
+  "assetId": "67c221f27bbfaaf9ef51e948",
+  "characteristicId": 1,
+  "characteristicValue": 2
+},
+{
+  "_id": {
+    "$oid": "67c221f27bbfaaf9ef51e94b"
+  },
+  "assetId": "67c221f27bbfaaf9ef51e948",
+  "characteristicId": 2,
+  "characteristicValue": 300
+},
+{
+  "_id": {
+    "$oid": "67c221f27bbfaaf9ef51e94c"
+  },
+  "assetId": "67c221f27bbfaaf9ef51e948",
+  "characteristicId": 4,
+  "characteristicValue": 4
+},
+{
+  "_id": {
+    "$oid": "67c221f27bbfaaf9ef51e94d"
+  },
+  "assetId": "67c221f27bbfaaf9ef51e948",
+  "characteristicId": 5,
+  "characteristicValue": 4200
+}]

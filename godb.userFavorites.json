@@ -1,0 +1,28 @@
+[{
+  "_id": {
+    "$oid": "67c2233a29cbd5cc6e497390"
+  },
+  "userId": "67c222ff29cbd5cc6e49738b",
+  "assetId": "67c221f27bbfaaf9ef51e944"
+},
+{
+  "_id": {
+    "$oid": "67c2235829cbd5cc6e497391"
+  },
+  "userId": "67c222ff29cbd5cc6e49738b",
+  "assetId": "67c221f27bbfaaf9ef51e946"
+},
+{
+  "_id": {
+    "$oid": "67c2235c29cbd5cc6e497392"
+  },
+  "userId": "67c2231929cbd5cc6e49738c",
+  "assetId": "67c221f27bbfaaf9ef51e945"
+},
+{
+  "_id": {
+    "$oid": "67c2236229cbd5cc6e497393"
+  },
+  "userId": "67c2231929cbd5cc6e49738c",
+  "assetId": "67c221f27bbfaaf9ef51e948"
+}]

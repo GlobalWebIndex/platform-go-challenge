@@ -1,0 +1,42 @@
+[{
+  "_id": {
+    "$oid": "67c221f27bbfaaf9ef51e944"
+  },
+  "description": "chart-1",
+  "type": 1,
+  "title": "chart-1-title",
+  "axesTitles": "chart-1-axes-titles",
+  "plotData": "chart-1-plot-data"
+},
+{
+  "_id": {
+    "$oid": "67c221f27bbfaaf9ef51e945"
+  },
+  "description": "chart-2",
+  "type": 1,
+  "title": "chart-2-title",
+  "axesTitles": "chart-2-axes-titles",
+  "plotData": "chart-2-plot-data"
+},
+{
+  "_id": {
+    "$oid": "67c221f27bbfaaf9ef51e946"
+  },
+  "description": "insight-1",
+  "type": 2,
+  "text": "insight-1-text"
+},
+{
+  "_id": {
+    "$oid": "67c221f27bbfaaf9ef51e947"
+  },
+  "description": "audience-1",
+  "type": 3
+},
+{
+  "_id": {
+    "$oid": "67c221f27bbfaaf9ef51e948"
+  },
+  "description": "audience-2",
+  "type": 3
+}]

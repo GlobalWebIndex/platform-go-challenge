@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+  db:
+    image: mongo:8.0.5
+    container_name: go-mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=godb
+    volumes:
+      - db-data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - network1
+
+  app:
+    build: ./app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    volumes:
+      - app-data:/data/app
+    networks:
+      - network1
+
+volumes:
+  db-data:
+  app-data:
+
+networks:
+  network1:
