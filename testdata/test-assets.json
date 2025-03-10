@@ -1,0 +1,623 @@
+{
+  "audiences": [
+    {
+      "gender": "Females",
+      "ageFrom": 8,
+      "ageTo": 9,
+      "country": "COG",
+      "dailyHoursOnSocialMedia": 2,
+      "numPurchasesLastMonth": 3
+    },
+    {
+      "gender": "Males",
+      "ageFrom": 31,
+      "ageTo": 42,
+      "country": "AGO",
+      "dailyHoursOnSocialMedia": -1,
+      "numPurchasesLastMonth": 13
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 6,
+      "ageTo": 59,
+      "country": "TUR",
+      "dailyHoursOnSocialMedia": 12,
+      "numPurchasesLastMonth": 13
+    },
+    {
+      "gender": "Males",
+      "ageFrom": 0,
+      "ageTo": 20,
+      "country": "BRN",
+      "dailyHoursOnSocialMedia": -1,
+      "numPurchasesLastMonth": 16
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 17,
+      "ageTo": 18,
+      "country": "LIE",
+      "dailyHoursOnSocialMedia": 7,
+      "numPurchasesLastMonth": -1
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 7,
+      "ageTo": 25,
+      "country": "EGY",
+      "dailyHoursOnSocialMedia": 0,
+      "numPurchasesLastMonth": -1
+    },
+    {
+      "gender": "Males",
+      "ageFrom": 14,
+      "ageTo": 39,
+      "country": "COG",
+      "dailyHoursOnSocialMedia": -1,
+      "numPurchasesLastMonth": 16
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 42,
+      "ageTo": 44,
+      "country": "MNP",
+      "dailyHoursOnSocialMedia": -1,
+      "numPurchasesLastMonth": 11
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 11,
+      "ageTo": 11,
+      "country": "SPM",
+      "dailyHoursOnSocialMedia": 15,
+      "numPurchasesLastMonth": 15
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 42,
+      "ageTo": 46,
+      "country": "ESP",
+      "dailyHoursOnSocialMedia": 4,
+      "numPurchasesLastMonth": -1
+    },
+    {
+      "gender": "Males",
+      "ageFrom": 25,
+      "ageTo": 57,
+      "country": "NLD",
+      "dailyHoursOnSocialMedia": 10,
+      "numPurchasesLastMonth": 16
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 28,
+      "ageTo": 53,
+      "country": "MNP",
+      "dailyHoursOnSocialMedia": -1,
+      "numPurchasesLastMonth": 21
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 26,
+      "ageTo": 59,
+      "country": "MDV",
+      "dailyHoursOnSocialMedia": -1,
+      "numPurchasesLastMonth": 28
+    },
+    {
+      "gender": "Males",
+      "ageFrom": 30,
+      "ageTo": 72,
+      "country": "SHN",
+      "dailyHoursOnSocialMedia": 9,
+      "numPurchasesLastMonth": 29
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 19,
+      "ageTo": 31,
+      "country": "LIE",
+      "dailyHoursOnSocialMedia": -1,
+      "numPurchasesLastMonth": 19
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 48,
+      "ageTo": 64,
+      "country": "SVK",
+      "dailyHoursOnSocialMedia": -1,
+      "numPurchasesLastMonth": 14
+    },
+    {
+      "gender": "Males",
+      "ageFrom": 48,
+      "ageTo": 76,
+      "country": "FLK",
+      "dailyHoursOnSocialMedia": 13,
+      "numPurchasesLastMonth": 3
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 38,
+      "ageTo": 42,
+      "country": "SGS",
+      "dailyHoursOnSocialMedia": -1,
+      "numPurchasesLastMonth": 9
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 33,
+      "ageTo": 40,
+      "country": "NRU",
+      "dailyHoursOnSocialMedia": 6,
+      "numPurchasesLastMonth": 5
+    },
+    {
+      "gender": "Females",
+      "ageFrom": 37,
+      "ageTo": 41,
+      "country": "MYT",
+      "dailyHoursOnSocialMedia": 9,
+      "numPurchasesLastMonth": -1
+    }
+  ],
+  "insights": [
+    {
+      "text": "When a tree bears much fruit, it bends low."
+    },
+    {
+      "text": "rc: Usage: whatis name ...: fd out of range or not open"
+    },
+    {
+      "text": "Smooth rotation butters no parsnips.  -J. W. Tukey"
+    },
+    {
+      "text": "Save the dot files!"
+    },
+    {
+      "text": "Humans are not pigs; they'll eat anything."
+    },
+    {
+      "text": "Coffin-makers love the plague."
+    },
+    {
+      "text": "Here we have twenty-eight letters."
+    },
+    {
+      "text": "debug1: Miscellaneous failure"
+    },
+    {
+      "text": "Elvis is alive and designed the Z80000"
+    },
+    {
+      "text": "To the foulish words, no answer."
+    },
+    {
+      "text": "To make paps for the cats."
+    },
+    {
+      "text": "I will inform you soon later."
+    },
+    {
+      "text": "There is a fly on your nose."
+    },
+    {
+      "text": "A penny in hand worth a pound in hope."
+    },
+    {
+      "text": "When marriage is outlawed, only outlaws will have inlaws."
+    },
+    {
+      "text": "usend: /usr/asp/spool filesystem is exhausted"
+    },
+    {
+      "text": "Der Herrgott wurfelt nicht. -A. Einstein"
+    },
+    {
+      "text": "Things are more like they used to be than they are new."
+    },
+    {
+      "text": "Don't pay for the fur while the weasel's still holed up."
+    },
+    {
+      "text": "Even when he falls he doesn't get up empty-handed."
+    }
+  ],
+  "charts": [
+    {
+      "title": "Astatine/Fluorine with 0 points",
+      "axes": [
+        "Astatine",
+        "Fluorine"
+      ],
+      "data": []
+    },
+    {
+      "title": "Samarium/Gold with 18 points",
+      "axes": [
+        "Samarium",
+        "Gold"
+      ],
+      "data": [
+        0.47354943,
+        0.0048437985,
+        0.085880995,
+        0.19431412,
+        0.12980632,
+        0.5300234,
+        0.007417054,
+        0.9557581,
+        0.7520637,
+        0.15459302,
+        0.24424912,
+        0.84621423,
+        0.15886909,
+        0.17245091,
+        0.4956669,
+        0.23996338,
+        0.69675446,
+        0.7345749
+      ]
+    },
+    {
+      "title": "Tungsten/Fermium with 10 points",
+      "axes": [
+        "Tungsten",
+        "Fermium"
+      ],
+      "data": [
+        0.49704665,
+        0.16428772,
+        0.62586385,
+        0.54381865,
+        0.64468336,
+        0.75455266,
+        0.24874039,
+        0.6022389,
+        0.9138336,
+        0.26482454
+      ]
+    },
+    {
+      "title": "Nobelium/Strontium with 13 points",
+      "axes": [
+        "Nobelium",
+        "Strontium"
+      ],
+      "data": [
+        0.1646183,
+        0.7860381,
+        0.3554968,
+        0.92659676,
+        0.06197057,
+        0.19303712,
+        0.90351313,
+        0.8753712,
+        0.5781672,
+        0.86999017,
+        0.0845418,
+        0.8778774,
+        0.046719175
+      ]
+    },
+    {
+      "title": "Nickel/Holmium with 12 points",
+      "axes": [
+        "Nickel",
+        "Holmium"
+      ],
+      "data": [
+        0.01618686,
+        0.9430194,
+        0.23891918,
+        0.47918078,
+        0.31439593,
+        0.6216298,
+        0.26655054,
+        0.4696818,
+        0.6141242,
+        0.8355827,
+        0.7644303,
+        0.7925818
+      ]
+    },
+    {
+      "title": "Strontium/Bromine with 12 points",
+      "axes": [
+        "Strontium",
+        "Bromine"
+      ],
+      "data": [
+        0.9120606,
+        0.36153343,
+        0.07230335,
+        0.5268641,
+        0.24761093,
+        0.9876582,
+        0.1829085,
+        0.98454887,
+        0.60678273,
+        0.54654306,
+        0.36113206,
+        0.93917507
+      ]
+    },
+    {
+      "title": "Mercury/Thorium with 10 points",
+      "axes": [
+        "Mercury",
+        "Thorium"
+      ],
+      "data": [
+        0.74497986,
+        0.959217,
+        0.19772068,
+        0.34413442,
+        0.18453068,
+        0.11848113,
+        0.42571494,
+        0.613904,
+        0.2871305,
+        0.50909805
+      ]
+    },
+    {
+      "title": "Flerovium/Indium with 9 points",
+      "axes": [
+        "Flerovium",
+        "Indium"
+      ],
+      "data": [
+        0.29677004,
+        0.89613605,
+        0.14023705,
+        0.5124944,
+        0.17292136,
+        0.10098748,
+        0.8502581,
+        0.7232087,
+        0.09925922
+      ]
+    },
+    {
+      "title": "Mercury/Neptunium with 11 points",
+      "axes": [
+        "Mercury",
+        "Neptunium"
+      ],
+      "data": [
+        0.22115825,
+        0.6319901,
+        0.45681706,
+        0.11985071,
+        0.5617706,
+        0.6104216,
+        0.5520395,
+        0.9987017,
+        0.3727934,
+        0.042752896,
+        0.06466843
+      ]
+    },
+    {
+      "title": "Praseodymium/Barium with 14 points",
+      "axes": [
+        "Praseodymium",
+        "Barium"
+      ],
+      "data": [
+        0.7541617,
+        0.90032035,
+        0.6632499,
+        0.3418981,
+        0.75933033,
+        0.58080983,
+        0.24896605,
+        0.2559493,
+        0.22798781,
+        0.6932291,
+        0.041834082,
+        0.81881714,
+        0.015749505,
+        0.6014795
+      ]
+    },
+    {
+      "title": "Indium/Tennessine with 11 points",
+      "axes": [
+        "Indium",
+        "Tennessine"
+      ],
+      "data": [
+        0.3568487,
+        0.15889056,
+        0.84894824,
+        0.6300997,
+        0.450217,
+        0.23779626,
+        0.83855987,
+        0.8010629,
+        0.54249984,
+        0.3377897,
+        0.3061235
+      ]
+    },
+    {
+      "title": "Dubnium/Uranium with 19 points",
+      "axes": [
+        "Dubnium",
+        "Uranium"
+      ],
+      "data": [
+        0.19862744,
+        0.8851056,
+        0.8302345,
+        0.18190344,
+        0.31189,
+        0.04302989,
+        0.9630096,
+        0.79526776,
+        0.7068289,
+        0.59527826,
+        0.1520975,
+        0.3491611,
+        0.20316613,
+        0.6760721,
+        0.48344398,
+        0.46211904,
+        0.12618618,
+        0.071789145,
+        0.60262203
+      ]
+    },
+    {
+      "title": "Fluorine/Zirconium with 18 points",
+      "axes": [
+        "Fluorine",
+        "Zirconium"
+      ],
+      "data": [
+        0.061360758,
+        0.8552546,
+        0.88382524,
+        0.32160577,
+        0.7145203,
+        0.48096108,
+        0.039590083,
+        0.011364027,
+        0.39427528,
+        0.1698447,
+        0.3116641,
+        0.49639973,
+        0.56331426,
+        0.36079064,
+        0.010107662,
+        0.72299737,
+        0.38457206,
+        0.24595734
+      ]
+    },
+    {
+      "title": "Samarium/Europium with 8 points",
+      "axes": [
+        "Samarium",
+        "Europium"
+      ],
+      "data": [
+        0.3051253,
+        0.7006766,
+        0.6963726,
+        0.42830095,
+        0.62970394,
+        0.47887737,
+        0.1941862,
+        0.5232945
+      ]
+    },
+    {
+      "title": "Nihonium/Astatine with 1 points",
+      "axes": [
+        "Nihonium",
+        "Astatine"
+      ],
+      "data": [
+        0.17156848
+      ]
+    },
+    {
+      "title": "Oganesson/Gold with 8 points",
+      "axes": [
+        "Oganesson",
+        "Gold"
+      ],
+      "data": [
+        0.67188627,
+        0.47538152,
+        0.3208349,
+        0.04706747,
+        0.76328385,
+        0.08377926,
+        0.7154327,
+        0.3452655
+      ]
+    },
+    {
+      "title": "Neptunium/Cadmium with 1 points",
+      "axes": [
+        "Neptunium",
+        "Cadmium"
+      ],
+      "data": [
+        0.7136632
+      ]
+    },
+    {
+      "title": "Strontium/Seaborgium with 6 points",
+      "axes": [
+        "Strontium",
+        "Seaborgium"
+      ],
+      "data": [
+        0.84002775,
+        0.039711922,
+        0.750162,
+        0.94989806,
+        0.7952842,
+        0.4722658
+      ]
+    },
+    {
+      "title": "Dysprosium/Thorium with 17 points",
+      "axes": [
+        "Dysprosium",
+        "Thorium"
+      ],
+      "data": [
+        0.086761594,
+        0.54587823,
+        0.002695237,
+        0.70997965,
+        0.6254597,
+        0.017189685,
+        0.46533823,
+        0.16148391,
+        0.64038074,
+        0.684402,
+        0.5593361,
+        0.30569607,
+        0.20917475,
+        0.7274839,
+        0.20863676,
+        0.14935063,
+        0.3294214
+      ]
+    },
+    {
+      "title": "Iodine/Rhenium with 18 points",
+      "axes": [
+        "Iodine",
+        "Rhenium"
+      ],
+      "data": [
+        0.03175555,
+        0.22870018,
+        0.045127977,
+        0.71090555,
+        0.11064455,
+        0.43319955,
+        0.685337,
+        0.978915,
+        0.4804514,
+        0.20209445,
+        0.40848687,
+        0.040982664,
+        0.99000263,
+        0.72470385,
+        0.97445846,
+        0.5802189,
+        0.99026406,
+        0.8575945
+      ]
+    }
+  ]
+}
