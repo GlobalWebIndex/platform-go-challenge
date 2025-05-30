@@ -1,0 +1,23 @@
+name: GWI CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.24
+
+      - name: Run tests
+        env:
+          DOCKER_HOST: unix:///var/run/docker.sock
+        run: go test -cover ./... -v -timeout 5m
