@@ -1,0 +1,57 @@
+services:
+  init:
+    image: alpine:3.21
+    command: >
+      /bin/sh -c "apk add --no-cache gettext && ls /root && echo $PORT_API && /root/init.sh"
+    environment:
+      - PORT_API=${PORT_API:-8082}
+    volumes:
+      - ./mounts/swagger:/foo
+      - ./scripts/init.sh:/root/init.sh
+
+  swaggerAPI:
+    image: swaggerapi/swagger-ui:v5.17.14
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    ports:
+      - "${PORT_SWAGGER:-80}:8080"
+    volumes:
+      - ./mounts/swagger:/foo
+    environment:
+      - SWAGGER_JSON=/foo/swagger-ready.yaml
+      - BASE_URL=/swagger
+
+  mongoDB:
+    image: mongo:7.0.17-jammy 
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME:-gwiusr}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD:-gwipwd}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE:-GwiDB}
+    ports:
+      - "27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+    volumes:
+      - ./mounts/mongo/data:/data/db:cached
+      - ./mounts/mongo/init:/docker-entrypoint-initdb.d 
+
+  api:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    image: gwi-api:latest
+    depends_on:
+      mongoDB:
+        condition: service_healthy
+      swaggerAPI:
+        condition: service_started
+    ports:
+      - "${PORT_API:-8082}:8082"
+    volumes:
+      - ./mounts/config:/app/config
+      - ./mounts/cert:/app/cert
+
+
+
+

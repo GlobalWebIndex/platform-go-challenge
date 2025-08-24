@@ -1,31 +1,124 @@
-# GlobalWebIndex Engineering Challenge
+# Gwi API
 
-## Introduction
+## Table Of Contents
+- [Description](#description)
+- [Mongo](#mongo)
+    * [Schema](#schema)
+    * [Mongo Image](#mongo-image)
+    * [Mongo Initialization](#mongo-initialization)
+- [Swagger](#swagger)
+- [API](#api)
+    * [Image](#image)
+    * [Configuration](#configuration)
+    * [Deployment](#deployment)
+    * [Tests](#tests)
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+### Description 
+The backend of the `GWI` platform, where `Dashboard` interacts on the following entities:
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+1. assets
+2. favourites
+3. users
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+### Mongo
 
-## Challenge
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+### Schema 
+The schema of the `Mongo` database can be found at [MongoSchema](docs/GwiDatabaseMongo.md)
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+#### Mongo Image
+Mongo image used is declared in the [compose.yml](deployments/compose.yml#L26)
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+#### Mongo Initialization
+The necessary collections as documented in the [MongoSchema](docs/GwiDatabaseMongo.md) are initialized via the [init script](deployments/mounts/mongo/init/0-init.sh)</br>
+The `init script` is passed as a volume in the associated service via the [compose.yml](deployments/compose.yml#L37)
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+### Swagger
+The [swagger](./deployments/mounts/swagger/swagger.yaml) is used to document the functionality of the endpoints as well as the information schema inputs and outputs.
 
-It is appreciated, though not required, if a Dockerfile is included.
+`Swagger UI` is deployed as a dedicated `container service`. </br>
+The service can be found in the [compose](deployments/compose.yml#L34). </br>
+The aforementioned service depends on the [init service](deployments/compose.yml#L12), responsible for generating the `swagger.yaml`, containing the appropriate url as declared in the `.env` file via `PORT_API` environmental variable.</br>
 
-## Submission
+Then `init` service uses the [init.sh](scripts/init.sh) to create the needed files for the swagger-UI and logging as it will be explained in a later section.
 
-Just create a fork from the current repo and send it to us!
+### API
 
-Good luck, potential colleague!
+#### Image
+Image is built based on the [Dockerfile](./Dockerfile).
+
+#### Configuration
+Configuration needed is given via the following template and is passed via a config file which can be found [here](./deployments/mounts/config/config.yml)
+
+The aforementioned file is responsible for configuring the `logger`, the `mongo database` and the `API` TLS.
+
+#### Deployment
+
+- Local
+
+    From the `/deployments` directory the following command needs to be executed
+
+    ```bash
+    docker compose up --build -d
+    ```
+
+    The aforementioned command will also build the image based on the [Dockerfile](./Dockerfile) as documented in the [compose](./deployments/compose.yml#L42) file
+
+    The [compose](./deployments/compose.yml) file deploys the following container services 
+
+        1. api
+        2. swaggerAPI
+        3. mongoDB
+
+#### Tests
+
+Tests can be found under the `./tests` directory.</br>
+This repo supports support testing for the first two endpoints.
+
+The following command needs to be executed in the aforementioned directory:
+
+```
+go test -v
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

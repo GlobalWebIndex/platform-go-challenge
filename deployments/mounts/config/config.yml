@@ -1,0 +1,9 @@
+logs:
+  logsDir: "/app/logs/application.log"
+database:
+  mongoURI: "mongodb://gwiusr:gwipwd@mongoDB:27017"
+  dbName: "gw"
+  favCollection: "favourites"
+  assetsCollection: "assets"
+server:
+  tls: false

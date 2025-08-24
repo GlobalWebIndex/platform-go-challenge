@@ -1,0 +1,241 @@
+openapi: 3.0.0
+info:
+  title: GWI Platform API
+  description: This a GWI API 
+  version: 1.0.0
+servers:
+  - url: http://0.0.0.0:8082
+
+tags:
+- name: favourites
+  description: Favourite assets management operations
+- name: favourites
+
+paths:
+  /users/{userId}/favourites:
+    get:
+      tags:
+        - favourites
+      summary: Get User Favourites 
+      description: This endpoint returns favourite assets of a user.
+      operationId: getUserFavourites
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number to retrieve
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          description: The number of items to return per page
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: A list of favourite assets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserFavouritesResponse'
+        '404':
+          description: User not found
+        '500':
+          description: Internal server error
+  /users/{userId}/favourites/{assetId}:
+    post:
+      tags:
+        - favourites
+      summary: Add Favourite Asset
+      description: This endpoint allows a user to add an asset to their favourites.
+      parameters:
+        - name: userId
+          description: The ID of the user
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "user42"
+        - name: assetId
+          description: The ID of the asset to be added to favourites
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "d9a972b5-2783-4b72-9cec-5f3031d61ab5"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assetType:
+                  type: string
+                  enum: [chart, insight, audience]
+                  example: insight 
+                description:
+                  type: string
+                  example: "A brief description of why this asset is a favourite"
+      responses:
+        '200':
+          description: Asset added to favourites successfully
+        '404':
+          description: User or asset not found
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+        - favourites
+      summary: Remove Favourite Asset
+      description: This endpoint allows a user to remove an asset from their favourites.
+      parameters:
+        - name: userId
+          description: The ID of the user
+          in: path
+          required: true
+          schema:
+            type: string
+            example: user42
+        - name: assetId
+          description: The ID of the asset to be removed from favourites
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 3fa85f64-5717-4562-b3fc-2c963f66afa7
+      responses:
+        '200':
+          description: Asset removed from favourites successfully
+        '404':
+          description: User or asset not found
+        '500':
+          description: Internal server error
+    patch:
+      tags:
+        - favourites
+      summary: Update Favourite Asset
+      description: This endpoint allows a user to update the details of a favourite asset.
+      parameters:
+        - name: userId
+          description: The ID of the user
+          in: path
+          required: true
+          schema:
+            type: string
+            example: user42
+        - name: assetId
+          description: The ID of the asset to be updated
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 3fa85f64-5717-4562-b3fc-2c963f66afa7
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  example: "Updated description of the asset"
+      responses:
+        '200':
+          description: Asset updated successfully
+        '404':
+          description: User or asset not found
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+
+    GetUserFavouritesResponse:
+      type: object
+      properties:
+        favourites:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ChartAsset'
+              - $ref: '#/components/schemas/InsightAsset'
+              - $ref: '#/components/schemas/AudienceAsset'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    ChartAsset:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+
+    InsightAsset:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+
+    AudienceAsset:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        gender:
+          type: string 
+          enum: [male, female]
+        ageGroups:
+          type: array
+          items:
+            type: string
+            enum: [18-24, 25-34, 35-44, 45-54, 55-64, 65+]
+        dailyHours:
+          type: integer
+        purchases:
+          type: integer
+
+    Pagination:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+          example: 1
+        totalPages:
+          type: integer
+          example: 5
+        itemsPerPage:
+          type: integer
+          example: 10
+        totalItems:
+          type: integer
+          example: 50
+    

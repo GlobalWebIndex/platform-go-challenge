@@ -1,0 +1,4 @@
+logs:
+  logsDir: "/app/logs/application.log"
+database:
+  mongoURI: "mongodb://"
