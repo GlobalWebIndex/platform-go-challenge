@@ -86,4 +86,7 @@ func Seed(ctx context.Context, repo repository.Repository, logger *zap.Logger) {
 	logger.Info("seeding complete", zap.Int("users", 2), zap.Int("assets", 3))
 	logger.Info(fmt.Sprintf("Test User 1 ID: %s", user1.GetID()))
 	logger.Info(fmt.Sprintf("Test User 2 ID: %s", user2.GetID()))
+	logger.Info(fmt.Sprintf("Audience ID: %s", audienceAsset.GetID()))
+	logger.Info(fmt.Sprintf("Chart ID: %s", chartAsset.GetID()))
+	logger.Info(fmt.Sprintf("Insight ID: %s", insightAsset.GetID()))
 }

@@ -30,29 +30,29 @@ func (s *FavouriteService) GetFavourites(ctx context.Context, userID string, pag
 	return result
 }
 
-func (s *FavouriteService) AddFavourite(ctx context.Context, userID string, assetId string) error {
+func (s *FavouriteService) AddFavourite(ctx context.Context, userID string, assetID string) error {
 	s.logger.Info("adding favourite", zap.String("userID", userID), zap.String("assetID", ""))
 	// A real implementation would call the repository here.
-	// if err := s.repo.AddFavourite(ctx, userID, asset); err != nil {
-	//    return err
-	// }
+	if err := s.repo.AddFavourite(userID, assetID); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (s *FavouriteService) UpdateFavouriteDescription(ctx context.Context, userID string, assetID string, description string) error {
 	s.logger.Info("updating favourite description", zap.String("userID", userID), zap.String("assetID", assetID))
-	// A real implementation would call the repository here.
-	// if err := s.repo.UpdateFavouriteDescription(ctx, userID, assetID, description); err != nil {
-	//    return err
-	// }
+
+	if err := s.repo.UpdateFavouriteDescription(userID, assetID, description); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (s *FavouriteService) RemoveFavourite(ctx context.Context, userID string, assetID string) error {
 	s.logger.Info("removing favourite", zap.String("userID", userID), zap.String("assetID", assetID))
-	// A real implementation would call the repository here.
-	// if err := s.repo.RemoveFavourite(ctx, userID, assetID); err != nil {
-	//    return err
-	// }
+
+	if err := s.repo.RemoveFavourite(userID, assetID); err != nil {
+		return err
+	}
 	return nil
 }

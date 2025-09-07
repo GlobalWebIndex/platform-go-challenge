@@ -22,7 +22,15 @@ func NewFavouriteHandler(s *service.FavouriteService) *FavouriteHandler {
 	}
 }
 
-// GetFavourites handles the GET request to retrieve a user's favourites.
+// @Summary Get a user's favourites
+// @Description Retrieves a list of all favourite assets for a given user.
+// @Tags favourites
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Success 200 {array} entities.Asset
+// @Failure 500 {object} gin.H
+// @Router /favourites [get]
 func (h *FavouriteHandler) GetFavourites(c *gin.Context) {
 	userID := c.Param("userID")
 
@@ -42,7 +50,17 @@ func (h *FavouriteHandler) GetFavourites(c *gin.Context) {
 	c.JSON(http.StatusOK, favourites)
 }
 
-// AddFavourite handles the POST request to add an asset to a user's favourites.
+// @Summary Add an asset to a user's favourites
+// @Description Adds a new asset to a user's favourites list.
+// @Tags favourites
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param request body requests.AddFavouriteRequest true "Add Favourite Request"
+// @Success 201 {object} gin.H
+// @Failure 400 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /favourites [post]
 func (h *FavouriteHandler) AddFavourite(c *gin.Context) {
 	userID := c.Param("userID")
 	if userID == "" {
@@ -71,7 +89,18 @@ func (h *FavouriteHandler) AddFavourite(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "favourite added successfully"})
 }
 
-// UpdateFavouriteDescription handles the PUT request to edit a favourite's description.
+// @Summary Update a favourite's description
+// @Description Updates the description of a specific favourite asset.
+// @Tags favourites
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param assetID path string true "Asset ID"
+// @Param request body requests.UpdateFavouriteRequest true "Update Description"
+// @Success 200 {object} gin.H
+// @Failure 400 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /favourites/{assetID} [patch]
 func (h *FavouriteHandler) UpdateFavouriteDescription(c *gin.Context) {
 	userID := c.Param("userID")
 	assetID := c.Param("assetID")
@@ -96,7 +125,16 @@ func (h *FavouriteHandler) UpdateFavouriteDescription(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "favourite description updated successfully"})
 }
 
-// DeleteFavourite handles the DELETE request to remove a favourite.
+// @Summary Remove a favourite asset
+// @Description Removes a specific asset from a user's favourites list.
+// @Tags favourites
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer"
+// @Param assetID path string true "Asset ID"
+// @Success 200 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /favourites/{assetID} [delete]
 func (h *FavouriteHandler) DeleteFavourite(c *gin.Context) {
 	userID := c.Param("userID")
 	assetID := c.Param("assetID")

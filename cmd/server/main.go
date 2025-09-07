@@ -1,3 +1,10 @@
+// @title GWI Favourite Assets API
+// @version 1.0
+// @description This is a simple API for managing user favourite assets.
+// @contact.name F. Daniil
+// @contact.email daniilfanis@gmail.com
+// @host localhost:8080
+// @BasePath /
 package main
 
 import (
@@ -13,6 +20,8 @@ import (
 	"platform-go-challenge/routes"
 	"syscall"
 	"time"
+
+	"platform-go-challenge/docs" // This import is crucial!
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

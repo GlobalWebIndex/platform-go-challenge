@@ -5,6 +5,9 @@ import (
 	"platform-go-challenge/internal/service"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/swag/example/basic/docs"
 )
 
 func NewRouter(s *service.FavouriteService) *gin.Engine {
@@ -21,6 +24,10 @@ func NewRouter(s *service.FavouriteService) *gin.Engine {
 		favorites.DELETE("/:assetID", favouritesHandler.DeleteFavourite)
 		favorites.PATCH("/:assetID", favouritesHandler.UpdateFavouriteDescription)
 	}
+
+	// Serve the Swagger UI
+	docs.SwaggerInfo.BasePath = "/"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return router
 }
