@@ -4,10 +4,11 @@ import (
 	"platform-go-challenge/internal/handlers"
 	"platform-go-challenge/internal/service"
 
+	"platform-go-challenge/docs"
+
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/swag/example/basic/docs"
 )
 
 func NewRouter(s *service.FavouriteService) *gin.Engine {

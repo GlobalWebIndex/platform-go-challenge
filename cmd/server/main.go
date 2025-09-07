@@ -21,8 +21,6 @@ import (
 	"syscall"
 	"time"
 
-	"platform-go-challenge/docs" // This import is crucial!
-
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

@@ -3,7 +3,8 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"platform-go-challenge/internal/errors"
+	"platform-go-challenge/internal/domain/dto"
+	"platform-go-challenge/internal/middleware"
 	"platform-go-challenge/internal/service"
 	"strconv"
 
@@ -23,14 +24,18 @@ func NewFavouriteHandler(s *service.FavouriteService) *FavouriteHandler {
 }
 
 // @Summary Get a user's favourites
-// @Description Retrieves a list of all favourite assets for a given user.
+// @Description Retrieves a paginated list of all favourite assets for a given user.
 // @Tags favourites
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer"
+// @Param Authorization header string true "Bearer token"
+// @Param userID path string true "User ID"
+// @Param page query int false "Page number (default: 1)"
+// @Param size query int false "Page size (default: 10)"
 // @Success 200 {array} entities.Asset
-// @Failure 500 {object} gin.H
-// @Router /favourites [get]
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{userID}/favourites [get]
 func (h *FavouriteHandler) GetFavourites(c *gin.Context) {
 	userID := c.Param("userID")
 
@@ -40,9 +45,10 @@ func (h *FavouriteHandler) GetFavourites(c *gin.Context) {
 	}
 
 	if userID == "" {
-		c.Error(errors.NewCustomError(http.StatusBadRequest, "user_id", "userID is required"))
+		c.Error(middleware.NewAPIError(http.StatusBadRequest, "userID is required", "userID"))
 		return
 	}
+
 	ctx := c.Request.Context()
 	// Call the service layer to get the data.
 	favourites := h.FavouriteService.GetFavourites(ctx, userID, page, size)
@@ -55,25 +61,24 @@ func (h *FavouriteHandler) GetFavourites(c *gin.Context) {
 // @Tags favourites
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer"
-// @Param request body requests.AddFavouriteRequest true "Add Favourite Request"
-// @Success 201 {object} gin.H
-// @Failure 400 {object} gin.H
-// @Failure 500 {object} gin.H
-// @Router /favourites [post]
+// @Param Authorization header string true "Bearer token"
+// @Param userID path string true "User ID"
+// @Param request body dto.AddFavouriteRequest true "Favourite request payload"
+// @Success 201 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{userID}/favourites [post]
 func (h *FavouriteHandler) AddFavourite(c *gin.Context) {
 	userID := c.Param("userID")
 	if userID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "userID is required"})
+		c.Error(middleware.NewAPIError(http.StatusBadRequest, "userID is required", "userID"))
 		return
 	}
 
-	var reqBody struct {
-		AssetID string `json:"assetID" binding:"required"`
-	}
+	var reqBody dto.AddFavouriteRequest
 
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Error(middleware.NewAPIError(http.StatusBadRequest, "invalid json body", ""))
 		return
 	}
 
@@ -81,8 +86,7 @@ func (h *FavouriteHandler) AddFavourite(c *gin.Context) {
 	// Call the service layer to perform the business logic.
 	err := h.FavouriteService.AddFavourite(ctx, userID, reqBody.AssetID)
 	if err != nil {
-		log.Printf("Error adding favourite for user %s, asset %s: %v", userID, reqBody.AssetID, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to add favourite"})
+		c.Error(middleware.NewAPIError(http.StatusInternalServerError, "error adding favourite", ""))
 		return
 	}
 
@@ -94,19 +98,19 @@ func (h *FavouriteHandler) AddFavourite(c *gin.Context) {
 // @Tags favourites
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer"
+// @Param Authorization header string true "Bearer token"
+// @Param userID path string true "User ID"
 // @Param assetID path string true "Asset ID"
-// @Param request body requests.UpdateFavouriteRequest true "Update Description"
-// @Success 200 {object} gin.H
-// @Failure 400 {object} gin.H
-// @Router /favourites/{assetID} [patch]
+// @Param request body dto.UpdateFavouriteDescriptionRequest true "Update description payload"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{userID}/favourites/{assetID} [patch]
 func (h *FavouriteHandler) UpdateFavouriteDescription(c *gin.Context) {
 	userID := c.Param("userID")
 	assetID := c.Param("assetID")
 
-	var reqBody struct {
-		Description string `json:"description" binding:"required"`
-	}
+	var reqBody dto.UpdateFavouriteDescriptionRequest
 
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -114,7 +118,7 @@ func (h *FavouriteHandler) UpdateFavouriteDescription(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	err := h.FavouriteService.UpdateFavouriteDescription(ctx, userID, assetID, reqBody.Description)
+	err := h.FavouriteService.UpdateFavouriteDescription(ctx, userID, assetID, reqBody.GetDescription())
 	if err != nil {
 		log.Printf("Error updating favourite for user %s, asset %s: %v", userID, assetID, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update favourite"})
@@ -129,11 +133,13 @@ func (h *FavouriteHandler) UpdateFavouriteDescription(c *gin.Context) {
 // @Tags favourites
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer"
+// @Param Authorization header string true "Bearer token"
+// @Param userID path string true "User ID"
 // @Param assetID path string true "Asset ID"
-// @Success 200 {object} gin.H
-// @Failure 500 {object} gin.H
-// @Router /favourites/{assetID} [delete]
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{userID}/favourites/{assetID} [delete]
 func (h *FavouriteHandler) DeleteFavourite(c *gin.Context) {
 	userID := c.Param("userID")
 	assetID := c.Param("assetID")
