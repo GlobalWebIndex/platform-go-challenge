@@ -99,7 +99,6 @@ func (h *FavouriteHandler) AddFavourite(c *gin.Context) {
 // @Param request body requests.UpdateFavouriteRequest true "Update Description"
 // @Success 200 {object} gin.H
 // @Failure 400 {object} gin.H
-// @Failure 500 {object} gin.H
 // @Router /favourites/{assetID} [patch]
 func (h *FavouriteHandler) UpdateFavouriteDescription(c *gin.Context) {
 	userID := c.Param("userID")
