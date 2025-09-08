@@ -20,13 +20,14 @@ func NewFavouriteService(r repository.Repository, l *zap.Logger) *FavouriteServi
 	}
 }
 
+// TODO check what Ill do with the ctx context.Context
 // GetFavourites now returns a slice of a different type and an error.
 func (s *FavouriteService) GetFavourites(ctx context.Context, userID string, page, size int) []entities.Asset {
 	// A real implementation would call the repository here.
 	s.logger.Info("retrieving favourites", zap.String("userID", userID))
 
 	// For now, it returns a dummy value.
-	result, _ := s.repo.GetFavourites(userID)
+	result, _ := s.repo.GetFavourites(userID, page, size)
 	return result
 }
 

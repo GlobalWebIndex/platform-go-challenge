@@ -18,6 +18,55 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/jwt": {
+            "post": {
+                "description": "Creates a new JSON Web Token for authentication.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create a new JWT",
+                "parameters": [
+                    {
+                        "description": "User ID for token generation",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.JWTPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful token creation",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid JSON body",
+                        "schema": {
+                            "$ref": "#/definitions/middleware.APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to create token",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users/{userID}/favourites": {
             "get": {
                 "description": "Retrieves a paginated list of all favourite assets for a given user.",
@@ -309,6 +358,17 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.JWTPayload": {
+            "type": "object",
+            "required": [
+                "userID"
+            ],
+            "properties": {
+                "userID": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.UpdateFavouriteDescriptionRequest": {
             "type": "object",
             "required": [
@@ -316,6 +376,20 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "middleware.APIError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "field": {
+                    "type": "string"
+                },
+                "message": {
                     "type": "string"
                 }
             }

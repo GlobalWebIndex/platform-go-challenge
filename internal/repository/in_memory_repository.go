@@ -5,11 +5,13 @@ import (
 	_ "go/ast"
 	_ "net/netip"
 	"platform-go-challenge/internal/domain/entities"
+	"platform-go-challenge/internal/utils"
 	"sync"
 )
 
 var FavouriteNotFoundError = errors.New("favourite not found")
 var AssetNotFoundError = errors.New("asset not found")
+var UserNotFoundError = errors.New("user not found")
 
 // InMemoryRepository is a simple in-memory implementation of the Repository interface.
 // It uses a mutex to ensure concurrent access is safe.
@@ -45,7 +47,7 @@ func (r *InMemoryRepository) GetAsset(assetID string) *entities.Asset {
 }
 
 // GetFavourites retrieves all favourite assets for a given user.
-func (r *InMemoryRepository) GetFavourites(userID string) ([]entities.Asset, error) {
+func (r *InMemoryRepository) GetFavourites(userID string, page, size int) ([]entities.Asset, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
@@ -61,13 +63,17 @@ func (r *InMemoryRepository) GetFavourites(userID string) ([]entities.Asset, err
 		assets = append(assets, asset)
 	}
 
-	return assets, nil
+	return utils.PaginatedResult(assets, page, size), nil
 }
 
 // AddFavourite adds an asset to a user's favourites.
 func (r *InMemoryRepository) AddFavourite(userID string, assetID string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+
+	if _, ok := r.users[userID]; !ok {
+		return UserNotFoundError
+	}
 
 	// Ensure the user's favourites map exists
 	if _, ok := r.userFavourites[userID]; !ok {
@@ -93,6 +99,10 @@ func (r *InMemoryRepository) AddFavourite(userID string, assetID string) error {
 func (r *InMemoryRepository) UpdateFavouriteDescription(userID string, assetID string, newDescription string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+
+	if _, ok := r.users[userID]; !ok {
+		return UserNotFoundError
+	}
 
 	userFavs, ok := r.userFavourites[userID]
 	if !ok {

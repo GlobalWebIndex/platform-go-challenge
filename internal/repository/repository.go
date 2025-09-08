@@ -5,7 +5,7 @@ import (
 )
 
 type Repository interface {
-	GetFavourites(userID string) ([]entities.Asset, error)
+	GetFavourites(userID string, page, size int) ([]entities.Asset, error)
 	AddFavourite(userID string, assetID string) error
 	RemoveFavourite(userID string, assetID string) error
 	UpdateFavouriteDescription(userID string, assetID string, newDescription string) error

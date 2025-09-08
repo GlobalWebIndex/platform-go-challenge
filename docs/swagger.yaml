@@ -7,12 +7,28 @@ definitions:
     required:
     - assetID
     type: object
+  dto.JWTPayload:
+    properties:
+      userID:
+        type: string
+    required:
+    - userID
+    type: object
   dto.UpdateFavouriteDescriptionRequest:
     properties:
       description:
         type: string
     required:
     - description
+    type: object
+  middleware.APIError:
+    properties:
+      code:
+        type: integer
+      field:
+        type: string
+      message:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -23,6 +39,38 @@ info:
   title: GWI Favourite Assets API
   version: "1.0"
 paths:
+  /jwt:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new JSON Web Token for authentication.
+      parameters:
+      - description: User ID for token generation
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.JWTPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful token creation
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid JSON body
+          schema:
+            $ref: '#/definitions/middleware.APIError'
+        "500":
+          description: Failed to create token
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new JWT
   /users/{userID}/favourites:
     get:
       consumes:

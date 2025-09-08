@@ -12,12 +12,3 @@ Once you have this `Dockerfile` in the root of your project, you can build and r
 
     ```sh
     docker run -p 8080:8080 gwi-favourites
-
-### Step 2: Run a Local Check
-
-Before you try to build the image again, you should run `go mod tidy` locally in your project's root directory.
-
-Open a new terminal, navigate to your project, and run:
-
-```sh
-go mod tidy

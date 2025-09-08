@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"platform-go-challenge/internal/domain/dto"
 	"platform-go-challenge/internal/middleware"
@@ -86,7 +85,7 @@ func (h *FavouriteHandler) AddFavourite(c *gin.Context) {
 	// Call the service layer to perform the business logic.
 	err := h.FavouriteService.AddFavourite(ctx, userID, reqBody.AssetID)
 	if err != nil {
-		c.Error(middleware.NewAPIError(http.StatusInternalServerError, "error adding favourite", ""))
+		c.Error(middleware.NewAPIError(http.StatusInternalServerError, err.Error(), ""))
 		return
 	}
 
@@ -113,15 +112,14 @@ func (h *FavouriteHandler) UpdateFavouriteDescription(c *gin.Context) {
 	var reqBody dto.UpdateFavouriteDescriptionRequest
 
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Error(middleware.NewAPIError(http.StatusBadRequest, "invalid json body", ""))
 		return
 	}
 
 	ctx := c.Request.Context()
 	err := h.FavouriteService.UpdateFavouriteDescription(ctx, userID, assetID, reqBody.GetDescription())
 	if err != nil {
-		log.Printf("Error updating favourite for user %s, asset %s: %v", userID, assetID, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update favourite"})
+		c.Error(middleware.NewAPIError(http.StatusInternalServerError, err.Error(), ""))
 		return
 	}
 
@@ -147,8 +145,7 @@ func (h *FavouriteHandler) DeleteFavourite(c *gin.Context) {
 	ctx := c.Request.Context()
 	err := h.FavouriteService.RemoveFavourite(ctx, userID, assetID)
 	if err != nil {
-		log.Printf("Error deleting favourite for user %s, asset %s: %v", userID, assetID, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete favourite"})
+		c.Error(middleware.NewAPIError(http.StatusInternalServerError, err.Error(), ""))
 		return
 	}
 
