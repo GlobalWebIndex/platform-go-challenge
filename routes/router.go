@@ -28,7 +28,7 @@ func NewRouter(s *service.FavouriteService, secretValue string) *gin.Engine {
 
 	favorites := router.Group("/users/:userID/favourites")
 	{
-		favorites.Use(middleware.JWT("fanis"))
+		favorites.Use(middleware.JWT(secretValue))
 		favorites.GET("", favouritesHandler.GetFavourites)
 		favorites.POST("", favouritesHandler.AddFavourite)
 		favorites.DELETE("/:assetID", favouritesHandler.DeleteFavourite)

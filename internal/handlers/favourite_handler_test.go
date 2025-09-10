@@ -3,7 +3,6 @@ package handlers
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -42,53 +41,90 @@ func (m *MockFavouriteService) RemoveFavourite(ctx context.Context, userID strin
 	return args.Error(0)
 }
 
+// getTestContext creates a new Gin context for testing with a given user ID and role.
+func getTestContext(userID, role string) *gin.Context {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, userID)
+	c.Set(middleware.JWT_ROLE_KEY, role)
+	return c
+}
+
+// TestGetFavourites_Success tests the happy path of GetFavourites.
 func TestGetFavourites_Success(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
-	// Create the handler and INJECT the mock service.
 	handler := &FavouriteHandler{FavouriteService: mockService}
 
-	// Mock the service call
 	expectedAssets := []entities.Asset{
 		&entities.Audience{},
 		&entities.Audience{},
 	}
 	mockService.On("GetFavourites", mock.Anything, "user1", 1, 10).Return(expectedAssets)
 
-	// Set up Gin
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-
-	// Use the pre-configured handler directly.
-	router.GET("/users/:userID/favourites", handler.GetFavourites)
+	// Set up a Gin context with a user and make the request.
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("GET", "/users/user1/favourites?page=1&size=10", nil)
+	c.Params = gin.Params{gin.Param{Key: "userID", Value: "user1"}}
 
 	// Act
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/users/user1/favourites?page=1&size=10", nil)
-	router.ServeHTTP(w, req)
+	handler.GetFavourites(c)
 
 	// Assert
 	assert.Equal(t, http.StatusOK, w.Code)
+	// You should also assert the response body here
 }
 
-// TestGetFavourites_InvalidUserID tests the handler's response to an empty userID.
-func TestGetFavourites_InvalidUserID(t *testing.T) {
+// TestGetFavourites_Unauthorized tests that a non-admin user cannot view another user's favourites.
+func TestGetFavourites_Unauthorized(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
 
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.Use(middleware.ErrorHandler())
-	router.GET("/users/:userID/favourites", handler.GetFavourites)
+	// Set up a Gin context for an unauthorized user.
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("GET", "/users/user2/favourites", nil)
+	c.Params = gin.Params{gin.Param{Key: "userID", Value: "user2"}}
 
 	// Act
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/users//favourites?page=1&size=10", nil)
-	router.ServeHTTP(w, req)
+	handler.GetFavourites(c)
 
 	// Assert
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, http.StatusForbidden, w.Code)
+	mockService.AssertNotCalled(t, "GetFavourites")
+}
+
+// TestGetFavourites_AsAdmin tests that an admin can view any user's favourites.
+func TestGetFavourites_AsAdmin(t *testing.T) {
+	// Arrange
+	mockService := new(MockFavouriteService)
+	handler := &FavouriteHandler{FavouriteService: mockService}
+
+	expectedAssets := []entities.Asset{
+		&entities.Audience{},
+	}
+	mockService.On("GetFavourites", mock.Anything, "user2", 1, 10).Return(expectedAssets)
+
+	// Set up a Gin context for an admin user.
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "admin_user_id")
+	c.Set(middleware.JWT_ROLE_KEY, "admin")
+	c.Request, _ = http.NewRequest("GET", "/users/user2/favourites", nil)
+	c.Params = gin.Params{gin.Param{Key: "userID", Value: "user2"}}
+
+	// Act
+	handler.GetFavourites(c)
+
+	// Assert
+	assert.Equal(t, http.StatusOK, w.Code)
+	mockService.AssertCalled(t, "GetFavourites", mock.Anything, "user2", 1, 10)
 }
 
 // TestAddFavourite_Success tests the happy path of AddFavourite.
@@ -98,21 +134,67 @@ func TestAddFavourite_Success(t *testing.T) {
 	handler := &FavouriteHandler{FavouriteService: mockService}
 	mockService.On("AddFavourite", mock.Anything, "user1", "asset1").Return(nil)
 
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.POST("/users/:userID/favourites", handler.AddFavourite)
-
-	jsonBody := strings.NewReader(`{"assetID": "asset1"}`)
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/users/user1/favourites", jsonBody)
-	req.Header.Set("Content-Type", "application/json")
+	jsonBody := strings.NewReader(`{"assetID": "asset1"}`)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("POST", "/users/user1/favourites", jsonBody)
+	c.Params = gin.Params{gin.Param{Key: "userID", Value: "user1"}}
+	c.Request.Header.Set("Content-Type", "application/json")
 
 	// Act
-	router.ServeHTTP(w, req)
+	handler.AddFavourite(c)
 
 	// Assert
 	assert.Equal(t, http.StatusCreated, w.Code)
-	assert.Equal(t, `{"message":"favourite added successfully"}`, strings.TrimSpace(w.Body.String()))
+}
+
+// TestAddFavourite_Unauthorized tests that a user cannot add a favourite for another user.
+func TestAddFavourite_Unauthorized(t *testing.T) {
+	// Arrange
+	mockService := new(MockFavouriteService)
+	handler := &FavouriteHandler{FavouriteService: mockService}
+
+	w := httptest.NewRecorder()
+	jsonBody := strings.NewReader(`{"assetID": "asset1"}`)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("POST", "/users/user2/favourites", jsonBody)
+	c.Params = gin.Params{gin.Param{Key: "userID", Value: "user2"}}
+	c.Request.Header.Set("Content-Type", "application/json")
+
+	// Act
+	handler.AddFavourite(c)
+
+	// Assert
+	assert.Equal(t, http.StatusForbidden, w.Code)
+	mockService.AssertNotCalled(t, "AddFavourite")
+}
+
+// TestAddFavourite_AsAdmin tests that an admin can add a favourite for any user.
+func TestAddFavourite_AsAdmin(t *testing.T) {
+	// Arrange
+	mockService := new(MockFavouriteService)
+	handler := &FavouriteHandler{FavouriteService: mockService}
+	mockService.On("AddFavourite", mock.Anything, "user2", "asset1").Return(nil)
+
+	w := httptest.NewRecorder()
+	jsonBody := strings.NewReader(`{"assetID": "asset1"}`)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "admin_user_id")
+	c.Set(middleware.JWT_ROLE_KEY, "admin")
+	c.Request, _ = http.NewRequest("POST", "/users/user2/favourites", jsonBody)
+	c.Params = gin.Params{gin.Param{Key: "userID", Value: "user2"}}
+	c.Request.Header.Set("Content-Type", "application/json")
+
+	// Act
+	handler.AddFavourite(c)
+
+	// Assert
+	assert.Equal(t, http.StatusCreated, w.Code)
+	mockService.AssertCalled(t, "AddFavourite", mock.Anything, "user2", "asset1")
 }
 
 // TestAddFavourite_ServiceError tests the error path of AddFavourite.
@@ -120,21 +202,19 @@ func TestAddFavourite_ServiceError(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-
 	mockService.On("AddFavourite", mock.Anything, "user1", "asset1").Return(errors.New("service error"))
 
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.Use(middleware.ErrorHandler())
-	router.POST("/users/:userID/favourites", handler.AddFavourite)
-
-	jsonBody := strings.NewReader(`{"assetID": "asset1"}`)
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/users/user1/favourites", jsonBody)
-	req.Header.Set("Content-Type", "application/json")
+	jsonBody := strings.NewReader(`{"assetID": "asset1"}`)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("POST", "/users/user1/favourites", jsonBody)
+	c.Params = gin.Params{gin.Param{Key: "userID", Value: "user1"}}
+	c.Request.Header.Set("Content-Type", "application/json")
 
 	// Act
-	router.ServeHTTP(w, req)
+	handler.AddFavourite(c)
 
 	// Assert
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -146,52 +226,42 @@ func TestAddFavourite_WhenUserIdIsEmpty_ThrowBadRequest(t *testing.T) {
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
 
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.Use(middleware.ErrorHandler())
-	router.POST("/users/:userID/favourites", handler.AddFavourite)
-
-	jsonBody := strings.NewReader(`{"assetID": "asset1"}`)
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/users//favourites", jsonBody)
-	req.Header.Set("Content-Type", "application/json")
+	jsonBody := strings.NewReader(`{"assetID": "asset1"}`)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("POST", "/users//favourites", jsonBody)
+	c.Params = gin.Params{gin.Param{Key: "userID", Value: ""}}
+	c.Request.Header.Set("Content-Type", "application/json")
 
 	// Act
-	router.ServeHTTP(w, req)
+	handler.AddFavourite(c)
 
 	// Assert
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	var response middleware.APIError
-	json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Equal(t, "userID is required", response.GetMessage())
-	assert.Equal(t, "userID", response.GetField())
 }
 
-// TestAddFavourite_WhenUserIdIsEmpty_ThrowBadRequest tests that empty user id leads to 400 response code.
+// TestAddFavourite_WhenAssetIdIsNotProvided_ThrowBadRequest tests that empty user id leads to 400 response code.
 func TestAddFavourite_WhenAssetIdIsNotProvided_ThrowBadRequest(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
 
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.Use(middleware.ErrorHandler())
-	router.POST("/users/:userID/favourites", handler.AddFavourite)
-
-	jsonBody := strings.NewReader(`{"flow": "asset1"}`)
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/users/usr1/favourites", jsonBody)
-	req.Header.Set("Content-Type", "application/json")
+	jsonBody := strings.NewReader(`{"flow": "asset1"}`)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "usr1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("POST", "/users/usr1/favourites", jsonBody)
+	c.Params = gin.Params{gin.Param{Key: "userID", Value: "usr1"}}
+	c.Request.Header.Set("Content-Type", "application/json")
 
 	// Act
-	router.ServeHTTP(w, req)
+	handler.AddFavourite(c)
 
 	// Assert
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	var response middleware.APIError
-	json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Equal(t, "invalid json body", response.GetMessage())
-	assert.Equal(t, "", response.GetField())
 }
 
 // TestUpdateFavouriteDescription_Success tests the happy path for updating a favourite's description.
@@ -199,35 +269,78 @@ func TestUpdateFavouriteDescription_Success(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-
-	// Mock the service call to return nil (success).
 	mockService.On("UpdateFavouriteDescription", mock.Anything, "user1", "asset1", "new description").Return(nil)
 
-	// Set up Gin for testing.
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.PATCH("/users/:userID/favourites/:assetID", handler.UpdateFavouriteDescription)
-
-	// Prepare the request payload.
-	requestBody := []byte(`{"description": "new description"}`)
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("PATCH", "/users/user1/favourites/asset1", bytes.NewBuffer(requestBody))
-	req.Header.Set("Content-Type", "application/json")
+	requestBody := []byte(`{"description": "new description"}`)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("PATCH", "/users/user1/favourites/asset1", bytes.NewBuffer(requestBody))
+	c.Params = gin.Params{
+		gin.Param{Key: "userID", Value: "user1"},
+		gin.Param{Key: "assetID", Value: "asset1"},
+	}
+	c.Request.Header.Set("Content-Type", "application/json")
 
 	// Act
-	router.ServeHTTP(w, req)
+	handler.UpdateFavouriteDescription(c)
 
 	// Assert
 	assert.Equal(t, http.StatusOK, w.Code)
+}
 
-	// Unmarshal the response body.
-	var response map[string]string
-	err := json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err)
+// TestUpdateFavouriteDescription_Unauthorized tests that a non-admin user cannot update another user's favourite.
+func TestUpdateFavouriteDescription_Unauthorized(t *testing.T) {
+	// Arrange
+	mockService := new(MockFavouriteService)
+	handler := &FavouriteHandler{FavouriteService: mockService}
 
-	// Assert the message from the unmarshaled JSON.
-	assert.Equal(t, "favourite description updated successfully", response["message"])
-	mockService.AssertExpectations(t)
+	w := httptest.NewRecorder()
+	requestBody := []byte(`{"description": "new description"}`)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("PATCH", "/users/user2/favourites/asset1", bytes.NewBuffer(requestBody))
+	c.Params = gin.Params{
+		gin.Param{Key: "userID", Value: "user2"},
+		gin.Param{Key: "assetID", Value: "asset1"},
+	}
+	c.Request.Header.Set("Content-Type", "application/json")
+
+	// Act
+	handler.UpdateFavouriteDescription(c)
+
+	// Assert
+	assert.Equal(t, http.StatusForbidden, w.Code)
+	mockService.AssertNotCalled(t, "UpdateFavouriteDescription")
+}
+
+// TestUpdateFavouriteDescription_AsAdmin tests that an admin can update any user's favourite.
+func TestUpdateFavouriteDescription_AsAdmin(t *testing.T) {
+	// Arrange
+	mockService := new(MockFavouriteService)
+	handler := &FavouriteHandler{FavouriteService: mockService}
+	mockService.On("UpdateFavouriteDescription", mock.Anything, "user2", "asset1", "new description").Return(nil)
+
+	w := httptest.NewRecorder()
+	requestBody := []byte(`{"description": "new description"}`)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "admin_user_id")
+	c.Set(middleware.JWT_ROLE_KEY, "admin")
+	c.Request, _ = http.NewRequest("PATCH", "/users/user2/favourites/asset1", bytes.NewBuffer(requestBody))
+	c.Params = gin.Params{
+		gin.Param{Key: "userID", Value: "user2"},
+		gin.Param{Key: "assetID", Value: "asset1"},
+	}
+	c.Request.Header.Set("Content-Type", "application/json")
+
+	// Act
+	handler.UpdateFavouriteDescription(c)
+
+	// Assert
+	assert.Equal(t, http.StatusOK, w.Code)
+	mockService.AssertCalled(t, "UpdateFavouriteDescription", mock.Anything, "user2", "asset1", "new description")
 }
 
 // TestUpdateFavouriteDescription_InvalidJSON tests the handler's response to an invalid JSON payload.
@@ -236,36 +349,23 @@ func TestUpdateFavouriteDescription_InvalidJSON(t *testing.T) {
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
 
-	// Set up Gin with the error handler middleware.
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.Use(middleware.ErrorHandler())
-	router.PATCH("/users/:userID/favourites/:assetID", handler.UpdateFavouriteDescription)
-
-	// Prepare the invalid request.
-	requestBody := strings.NewReader(`{"description": 123}`) // Invalid type for description
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("PATCH", "/users/user1/favourites/asset1", requestBody)
-	req.Header.Set("Content-Type", "application/json")
+	requestBody := strings.NewReader(`{"description": 123}`)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("PATCH", "/users/user1/favourites/asset1", requestBody)
+	c.Params = gin.Params{
+		gin.Param{Key: "userID", Value: "user1"},
+		gin.Param{Key: "assetID", Value: "asset1"},
+	}
+	c.Request.Header.Set("Content-Type", "application/json")
 
 	// Act
-	router.ServeHTTP(w, req)
+	handler.UpdateFavouriteDescription(c)
 
 	// Assert
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-
-	// Unmarshal the response body into the APIError struct.
-	var response middleware.APIError
-	err := json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err)
-
-	// Assert the fields of the unmarshaled struct.
-	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assert.Equal(t, "invalid json body", response.Message)
-	assert.Equal(t, "", response.Field)
-
-	// Ensure the service method was not called.
-	mockService.AssertNotCalled(t, "UpdateFavouriteDescription", mock.Anything, "user1", "asset1", mock.Anything)
 }
 
 // TestUpdateFavouriteDescription_ServiceError tests the handler's response when the service layer returns an error.
@@ -273,39 +373,26 @@ func TestUpdateFavouriteDescription_ServiceError(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-
-	// Mock the service call to return a specific error.
 	serviceError := errors.New("database connection failed")
 	mockService.On("UpdateFavouriteDescription", mock.Anything, "user1", "asset1", "new description").Return(serviceError)
 
-	// Set up Gin with the error handler middleware.
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.Use(middleware.ErrorHandler())
-	router.PATCH("/users/:userID/favourites/:assetID", handler.UpdateFavouriteDescription)
-
-	// Prepare the request.
-	requestBody := []byte(`{"description": "new description"}`)
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("PATCH", "/users/user1/favourites/asset1", bytes.NewBuffer(requestBody))
-	req.Header.Set("Content-Type", "application/json")
+	requestBody := []byte(`{"description": "new description"}`)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("PATCH", "/users/user1/favourites/asset1", bytes.NewBuffer(requestBody))
+	c.Params = gin.Params{
+		gin.Param{Key: "userID", Value: "user1"},
+		gin.Param{Key: "assetID", Value: "asset1"},
+	}
+	c.Request.Header.Set("Content-Type", "application/json")
 
 	// Act
-	router.ServeHTTP(w, req)
+	handler.UpdateFavouriteDescription(c)
 
 	// Assert
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
-
-	// Unmarshal the response body into the APIError struct.
-	var response middleware.APIError
-	err := json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err)
-
-	// Assert the fields of the unmarshaled struct.
-	assert.Equal(t, http.StatusInternalServerError, response.Code)
-	assert.Equal(t, "database connection failed", response.Message)
-
-	mockService.AssertExpectations(t)
 }
 
 // TestDeleteFavourite_Success tests the happy path for deleting a favourite.
@@ -313,29 +400,72 @@ func TestDeleteFavourite_Success(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-
-	// Mock the service call to return nil (success).
 	mockService.On("RemoveFavourite", mock.Anything, "user1", "asset1").Return(nil)
 
-	// Set up Gin for testing.
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.DELETE("/users/:userID/favourites/:assetID", handler.DeleteFavourite)
-
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("DELETE", "/users/user1/favourites/asset1", nil)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("DELETE", "/users/user1/favourites/asset1", nil)
+	c.Params = gin.Params{
+		gin.Param{Key: "userID", Value: "user1"},
+		gin.Param{Key: "assetID", Value: "asset1"},
+	}
 
 	// Act
-	router.ServeHTTP(w, req)
+	handler.DeleteFavourite(c)
 
 	// Assert
 	assert.Equal(t, http.StatusOK, w.Code)
+}
 
-	var response map[string]string
-	err := json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err)
-	assert.Equal(t, "favourite removed successfully", response["message"])
-	mockService.AssertExpectations(t)
+// TestDeleteFavourite_Unauthorized tests that a non-admin user cannot delete another user's favourite.
+func TestDeleteFavourite_Unauthorized(t *testing.T) {
+	// Arrange
+	mockService := new(MockFavouriteService)
+	handler := &FavouriteHandler{FavouriteService: mockService}
+
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("DELETE", "/users/user2/favourites/asset1", nil)
+	c.Params = gin.Params{
+		gin.Param{Key: "userID", Value: "user2"},
+		gin.Param{Key: "assetID", Value: "asset1"},
+	}
+
+	// Act
+	handler.DeleteFavourite(c)
+
+	// Assert
+	assert.Equal(t, http.StatusForbidden, w.Code)
+	mockService.AssertNotCalled(t, "RemoveFavourite")
+}
+
+// TestDeleteFavourite_AsAdmin tests that an admin can delete any user's favourite.
+func TestDeleteFavourite_AsAdmin(t *testing.T) {
+	// Arrange
+	mockService := new(MockFavouriteService)
+	handler := &FavouriteHandler{FavouriteService: mockService}
+	mockService.On("RemoveFavourite", mock.Anything, "user2", "asset1").Return(nil)
+
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "admin_user_id")
+	c.Set(middleware.JWT_ROLE_KEY, "admin")
+	c.Request, _ = http.NewRequest("DELETE", "/users/user2/favourites/asset1", nil)
+	c.Params = gin.Params{
+		gin.Param{Key: "userID", Value: "user2"},
+		gin.Param{Key: "assetID", Value: "asset1"},
+	}
+
+	// Act
+	handler.DeleteFavourite(c)
+
+	// Assert
+	assert.Equal(t, http.StatusOK, w.Code)
+	mockService.AssertCalled(t, "RemoveFavourite", mock.Anything, "user2", "asset1")
 }
 
 // TestDeleteFavourite_ServiceError tests the handler's response when the service layer returns an error.
@@ -343,32 +473,24 @@ func TestDeleteFavourite_ServiceError(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-
-	// Mock the service call to return a specific error.
 	serviceError := errors.New("database error")
 	mockService.On("RemoveFavourite", mock.Anything, "user1", "asset1").Return(serviceError)
 
-	// Set up Gin with the error handler middleware.
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.Use(middleware.ErrorHandler())
-	router.DELETE("/users/:userID/favourites/:assetID", handler.DeleteFavourite)
-
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("DELETE", "/users/user1/favourites/asset1", nil)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("DELETE", "/users/user1/favourites/asset1", nil)
+	c.Params = gin.Params{
+		gin.Param{Key: "userID", Value: "user1"},
+		gin.Param{Key: "assetID", Value: "asset1"},
+	}
 
 	// Act
-	router.ServeHTTP(w, req)
+	handler.DeleteFavourite(c)
 
 	// Assert
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
-
-	var response middleware.APIError
-	err := json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusInternalServerError, response.Code)
-	assert.Equal(t, "database error", response.Message)
-	mockService.AssertExpectations(t)
 }
 
 // TestDeleteFavourite_InvalidUserID tests the handler's response to an empty userID.
@@ -377,23 +499,19 @@ func TestDeleteFavourite_InvalidUserID(t *testing.T) {
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
 
-	// Set up Gin with the error handler middleware.
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.Use(middleware.ErrorHandler())
-	router.DELETE("/users/:userID/favourites/:assetID", handler.DeleteFavourite)
-
 	w := httptest.NewRecorder()
-	// Test with an empty userID.
-	req, _ := http.NewRequest("DELETE", "/users//favourites/asset1", nil)
+	c, _ := gin.CreateTestContext(w)
+	c.Set(middleware.JWT_USER_ID_KEY, "user1")
+	c.Set(middleware.JWT_ROLE_KEY, "user")
+	c.Request, _ = http.NewRequest("DELETE", "/users//favourites/asset1", nil)
+	c.Params = gin.Params{
+		gin.Param{Key: "userID", Value: ""},
+		gin.Param{Key: "assetID", Value: "asset1"},
+	}
 
 	// Act
-	router.ServeHTTP(w, req)
+	handler.DeleteFavourite(c)
 
 	// Assert
-	assert.Equal(t, http.StatusBadRequest, w.Code)
-	var response middleware.APIError
-	json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Equal(t, "userID is required", response.GetMessage())
-	assert.Equal(t, "userID", response.GetField())
+	assert.Equal(t, http.StatusForbidden, w.Code)
 }

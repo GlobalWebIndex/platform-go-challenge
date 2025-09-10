@@ -33,11 +33,19 @@ func NewJWT(secretKey string) gin.HandlerFunc {
 			return
 		}
 
+		var role string
+		if reqBody.GetUserID() == "admin_user_id" {
+			role = "admin"
+		} else {
+			role = "user"
+		}
+
 		// Define the JWT claims.
 		claims := jwt.MapClaims{
-			"sub": reqBody.GetUserID(),
-			"exp": time.Now().Add(time.Hour * 24).Unix(), // Token expires in 24 hours.
-			"iat": time.Now().Unix(),
+			"sub":  reqBody.GetUserID(),
+			"role": role,
+			"exp":  time.Now().Add(time.Hour * 24).Unix(), // Token expires in 24 hours.
+			"iat":  time.Now().Unix(),
 		}
 
 		// Create the token.

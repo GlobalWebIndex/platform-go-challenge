@@ -22,10 +22,8 @@ func LoadConfig() (*Config, error) {
 	viper.SetDefault("read_timeout", 10*time.Second)
 	viper.SetDefault("write_timeout", 10*time.Second)
 	viper.SetDefault("idle_timeout", 60*time.Second)
-
-	// Automatically read matching environment variables (e.g., APP_JWT_SECRET).
-	viper.SetEnvPrefix("APP")
 	viper.AutomaticEnv()
+	viper.BindEnv("jwt_secret", "JWT_SECRET")
 
 	// Read the config file. If it doesn't exist, Viper will use the defaults and env vars.
 	if err := viper.ReadInConfig(); err != nil {
@@ -46,6 +44,8 @@ func LoadConfig() (*Config, error) {
 	if cfg.JWTSecret == "" {
 		log.Fatal("JWT_SECRET environment variable or config value is required.")
 	}
+
+	log.Println("Loaded config:", cfg)
 
 	return &cfg, nil
 }

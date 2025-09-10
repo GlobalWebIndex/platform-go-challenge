@@ -7,13 +7,13 @@ import (
 // Config represents the application's configuration settings.
 // 'mapstructure' tags are used to map fields from Viper to the struct.
 type Config struct {
-	JWTSecret         string        `mapstructure:"jwt_secret"`
-	ServerAddr        string        `mapstructure:"server_addr"`
-	ShutdownTimeout   time.Duration `mapstructure:"shutdown_timeout"`
-	ReadHeaderTimeout time.Duration `mapstructure:"read_header_timeout"`
-	ReadTimeout       time.Duration `mapstructure:"read_timeout"`
-	WriteTimeout      time.Duration `mapstructure:"write_timeout"`
-	IdleTimeout       time.Duration `mapstructure:"idle_timeout"`
+	JWTSecret         string        `mapstructure:"JWT_SECRET" json:"jwt_secret"`
+	ServerAddr        string        `mapstructure:"SERVER_ADDR" json:"server_addr"`
+	ShutdownTimeout   time.Duration `mapstructure:"SHUTDOWN_TIMEOUT" json:"shutdown_timeout"`
+	ReadHeaderTimeout time.Duration `mapstructure:"READ_HEADER_TIMEOUT" json:"read_header_timeout"`
+	ReadTimeout       time.Duration `mapstructure:"READ_TIMEOUT" json:"read_timeout"`
+	WriteTimeout      time.Duration `mapstructure:"WRITE_TIMEOUT" json:"write_timeout"`
+	IdleTimeout       time.Duration `mapstructure:"IDLE_TIMEOUT" json:"idle_timeout"`
 }
 
 func (c *Config) GetJWTSecret() string {
