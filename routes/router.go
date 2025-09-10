@@ -1,23 +1,22 @@
 package routes
 
 import (
+	"platform-go-challenge/docs"
 	"platform-go-challenge/internal/handlers"
 	"platform-go-challenge/internal/middleware"
 	"platform-go-challenge/internal/service"
-
-	"platform-go-challenge/docs"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func NewRouter(s *service.FavouriteService) *gin.Engine {
+func NewRouter(s *service.FavouriteService, secretValue string) *gin.Engine {
 	router := gin.Default()
 
 	favouritesHandler := handlers.NewFavouriteHandler(s)
 	healthHandler := handlers.NewHealthHandler()
-	jwtHandler := handlers.NewJWT("fanis") //TODO replace with actual key from config
+	jwtHandler := handlers.NewJWT(secretValue)
 
 	router.Use(middleware.ErrorHandler())
 	router.GET("/health", healthHandler)

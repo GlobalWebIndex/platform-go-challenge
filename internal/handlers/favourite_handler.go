@@ -12,7 +12,7 @@ import (
 
 // FavouriteHandler provides methods for handling favourite-related requests.
 type FavouriteHandler struct {
-	FavouriteService *service.FavouriteService
+	FavouriteService service.FavouriteServiceIntf
 }
 
 // NewFavouriteHandler creates and returns a new FavouriteHandler.
@@ -141,6 +141,11 @@ func (h *FavouriteHandler) UpdateFavouriteDescription(c *gin.Context) {
 func (h *FavouriteHandler) DeleteFavourite(c *gin.Context) {
 	userID := c.Param("userID")
 	assetID := c.Param("assetID")
+
+	if userID == "" {
+		c.Error(middleware.NewAPIError(http.StatusBadRequest, "userID is required", "userID"))
+		return
+	}
 
 	ctx := c.Request.Context()
 	err := h.FavouriteService.RemoveFavourite(ctx, userID, assetID)

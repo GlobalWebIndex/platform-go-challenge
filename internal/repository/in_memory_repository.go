@@ -19,7 +19,8 @@ type InMemoryRepository struct {
 	assets         map[string]entities.Asset
 	users          map[string]*entities.User
 	userFavourites map[string]map[string]entities.Asset
-	mu             sync.RWMutex
+	globalLock     sync.RWMutex
+	perUserLock    map[string]*sync.RWMutex
 }
 
 // NewInMemoryRepository creates a new instance of InMemoryRepository.
@@ -37,8 +38,8 @@ func (r *InMemoryRepository) SaveAsset(asset entities.Asset) error {
 }
 
 func (r *InMemoryRepository) GetAsset(assetID string) *entities.Asset {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
+	r.globalLock.RLock()
+	defer r.globalLock.RUnlock()
 	asset, ok := r.assets[assetID]
 	if !ok {
 		return nil
@@ -48,8 +49,9 @@ func (r *InMemoryRepository) GetAsset(assetID string) *entities.Asset {
 
 // GetFavourites retrieves all favourite assets for a given user.
 func (r *InMemoryRepository) GetFavourites(userID string, page, size int) ([]entities.Asset, error) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
+	userLock := r.getUserLock(userID)
+	userLock.RLock()
+	defer userLock.RUnlock()
 
 	favourites, ok := r.userFavourites[userID]
 	if !ok {
@@ -68,8 +70,9 @@ func (r *InMemoryRepository) GetFavourites(userID string, page, size int) ([]ent
 
 // AddFavourite adds an asset to a user's favourites.
 func (r *InMemoryRepository) AddFavourite(userID string, assetID string) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	userLock := r.getUserLock(userID)
+	userLock.Lock()
+	defer userLock.Unlock()
 
 	if _, ok := r.users[userID]; !ok {
 		return UserNotFoundError
@@ -97,8 +100,8 @@ func (r *InMemoryRepository) AddFavourite(userID string, assetID string) error {
 
 // UpdateFavouriteDescription updates the description of a specific favourite asset for a user.
 func (r *InMemoryRepository) UpdateFavouriteDescription(userID string, assetID string, newDescription string) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	r.globalLock.Lock()
+	defer r.globalLock.Unlock()
 
 	if _, ok := r.users[userID]; !ok {
 		return UserNotFoundError
@@ -122,8 +125,8 @@ func (r *InMemoryRepository) UpdateFavouriteDescription(userID string, assetID s
 
 // RemoveFavourite removes a specific favourite asset for a user.
 func (r *InMemoryRepository) RemoveFavourite(userID string, assetID string) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	r.globalLock.Lock()
+	defer r.globalLock.Unlock()
 
 	userFavourites, ok := r.userFavourites[userID]
 	if !ok {
@@ -139,8 +142,8 @@ func (r *InMemoryRepository) RemoveFavourite(userID string, assetID string) erro
 }
 
 func (r *InMemoryRepository) GetUser(userID string) *entities.User {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
+	r.globalLock.RLock()
+	defer r.globalLock.RUnlock()
 
 	user, ok := r.users[userID]
 	if !ok {
@@ -152,4 +155,14 @@ func (r *InMemoryRepository) GetUser(userID string) *entities.User {
 
 func (r *InMemoryRepository) SaveUser(user *entities.User) {
 	r.users[user.ID] = user
+}
+
+func (r *InMemoryRepository) getUserLock(userID string) *sync.RWMutex {
+	r.globalLock.Lock()
+	defer r.globalLock.Unlock()
+
+	if _, ok := r.perUserLock[userID]; !ok {
+		r.perUserLock[userID] = &sync.RWMutex{}
+	}
+	return r.perUserLock[userID]
 }

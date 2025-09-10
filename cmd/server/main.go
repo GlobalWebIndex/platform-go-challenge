@@ -17,28 +17,18 @@ import (
 	"platform-go-challenge/internal/repository"
 	"platform-go-challenge/internal/seed"
 	"platform-go-challenge/internal/service"
+	"platform-go-challenge/pkg/config"
 	"platform-go-challenge/routes"
 	"syscall"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-)
-
-const (
-	defaultServerAddr = "0.0.0.0:8080"
-	shutdownTimeout   = 30 * time.Second
 )
 
 func main() {
 	// Set Gin to release mode for production
 	// This disables debug output.
 	gin.SetMode(gin.ReleaseMode)
-
-	serverAddr := os.Getenv("SERVER_ADDR")
-	if serverAddr == "" {
-		serverAddr = defaultServerAddr
-	}
 
 	logger := InitLogger()
 	defer func() {
@@ -47,26 +37,31 @@ func main() {
 		}
 	}()
 
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		logger.Fatal("failed to load config", zap.Error(err))
+		return
+	}
+
 	// Initialize the repository implementation.
 	favouriteRepo := repository.NewInMemoryRepository()
 	favouriteService := service.NewFavouriteService(favouriteRepo, logger)
 
 	seed.Seed(context.Background(), favouriteRepo, logger)
 
-	r := routes.NewRouter(favouriteService)
+	r := routes.NewRouter(favouriteService, cfg.GetJWTSecret())
 
 	srv := &http.Server{
-		Addr:    serverAddr,
-		Handler: r, // Use the Gin router as the handler
-		// Best practice timeouts
-		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		IdleTimeout:       60 * time.Second,
+		Addr:              cfg.ServerAddr,
+		Handler:           r,
+		ReadHeaderTimeout: cfg.ReadHeaderTimeout,
+		ReadTimeout:       cfg.ReadTimeout,
+		WriteTimeout:      cfg.WriteTimeout,
+		IdleTimeout:       cfg.IdleTimeout,
 	}
 	// Graceful shutdown logic remains the same.
 	go func() {
-		logger.Info("server starting", zap.String("addr", serverAddr))
+		logger.Info("server starting", zap.String("addr", srv.Addr))
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.Fatal("could not start server", zap.Error(err))
 		}
@@ -78,7 +73,7 @@ func main() {
 	<-quit
 	logger.Info("shutting down server")
 
-	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.ShutdownTimeout)
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {

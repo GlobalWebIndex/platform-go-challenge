@@ -19,6 +19,18 @@ func (e *APIError) Error() string {
 	return e.Message
 }
 
+func (e *APIError) GetMessage() string {
+	return e.Message
+}
+
+func (e *APIError) GetField() string {
+	return e.Field
+}
+
+func (e *APIError) GetCode() int {
+	return e.Code
+}
+
 // NewAPIError creates a new structured error.
 func NewAPIError(code int, message string, field string) *APIError {
 	return &APIError{
@@ -41,7 +53,6 @@ func ErrorHandler() gin.HandlerFunc {
 			} else {
 				// Default to a 500 Internal Server Error for unhandled errors
 				c.JSON(http.StatusInternalServerError, gin.H{
-					"code":    http.StatusInternalServerError,
 					"message": "An unexpected error occurred",
 				})
 			}

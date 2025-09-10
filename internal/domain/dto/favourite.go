@@ -7,7 +7,7 @@ type AddFavouriteRequest struct {
 
 // UpdateFavouriteDescriptionRequest represents the request body for updating a favourite description.
 type UpdateFavouriteDescriptionRequest struct {
-	Description string `json:"description" binding:"required"`
+	Description string `json:"description" binding:"required" `
 }
 
 func (req *AddFavouriteRequest) GetAssetID() string {

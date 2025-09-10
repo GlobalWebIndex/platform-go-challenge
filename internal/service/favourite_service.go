@@ -8,6 +8,14 @@ import (
 	"go.uber.org/zap"
 )
 
+// FavouriteServiceIntf defines the interface for our FavouriteService.
+type FavouriteServiceIntf interface {
+	GetFavourites(ctx context.Context, userID string, page, size int) []entities.Asset
+	AddFavourite(ctx context.Context, userID string, assetID string) error
+	UpdateFavouriteDescription(ctx context.Context, userID string, assetID string, description string) error
+	RemoveFavourite(ctx context.Context, userID string, assetID string) error
+}
+
 type FavouriteService struct {
 	repo   repository.Repository
 	logger *zap.Logger
@@ -26,7 +34,6 @@ func (s *FavouriteService) GetFavourites(ctx context.Context, userID string, pag
 	// A real implementation would call the repository here.
 	s.logger.Info("retrieving favourites", zap.String("userID", userID))
 
-	// For now, it returns a dummy value.
 	result, _ := s.repo.GetFavourites(userID, page, size)
 	return result
 }
