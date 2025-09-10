@@ -1,0 +1,54 @@
+name: favourites-api
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: favourites-postgres
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h 127.0.0.1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [appnet]
+
+  api:
+    build:
+      context: .
+    container_name: favourites-api
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      HTTP_ADDR: ${HTTP_ADDR:-:8080}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-favs}
+      DB_USER: ${DB_USER:-app}
+      DB_PASS: ${DB_PASS:-app}
+      DB_SSLMODE: ${DB_SSLMODE:-disable}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOG_PATH: ${LOG_PATH:-/app/logs}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${HOST_PORT:-8080}:8080"
+    volumes:
+      - ./logs:/app/logs
+    networks: [appnet]
+
+networks:
+  appnet: {}
+
+volumes:
+  pgdata: {}

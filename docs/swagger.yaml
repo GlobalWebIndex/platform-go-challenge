@@ -1,0 +1,298 @@
+basePath: /api
+consumes:
+- application/json
+definitions:
+  domain.AssetType:
+    enum:
+    - chart
+    - insight
+    - audience
+    type: string
+    x-enum-varnames:
+    - AssetTypeChart
+    - AssetTypeInsight
+    - AssetTypeAudience
+  handlers.AssetEditRequest:
+    properties:
+      description:
+        example: New description from Swagger
+        type: string
+    type: object
+  handlers.AssetResponse:
+    properties:
+      description:
+        example: Daily active users - last 7 days
+        type: string
+      id:
+        example: aaaaaaa1-0000-0000-0000-000000000001
+        type: string
+      payload:
+        type: object
+      type:
+        allOf:
+        - $ref: '#/definitions/domain.AssetType'
+        example: chart
+    type: object
+  handlers.AssetsListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handlers.AssetResponse'
+        type: array
+      next_after:
+        type: string
+    type: object
+  handlers.ErrorResponse:
+    properties:
+      error:
+        example: error description
+        type: string
+    type: object
+  handlers.FavouriteAddRequest:
+    properties:
+      asset_id:
+        example: aaaaaaa1-0000-0000-0000-000000000001
+        type: string
+    type: object
+  handlers.FavouriteResponse:
+    properties:
+      asset_id:
+        example: aaaaaaa1-0000-0000-0000-000000000001
+        type: string
+      created_at:
+        example: "2025-09-08T12:34:56Z"
+        type: string
+      user_id:
+        example: 11111111-1111-1111-1111-111111111111
+        type: string
+    type: object
+  handlers.HealthResponse:
+    properties:
+      ok:
+        example: true
+        type: boolean
+    type: object
+  handlers.UserResponse:
+    properties:
+      created_at:
+        example: "2025-09-08T12:34:56Z"
+        type: string
+      id:
+        example: 11111111-1111-1111-1111-111111111111
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Simple API to manage user favourites over assets.
+  title: GWI Favourites API
+  version: "1.0"
+paths:
+  /assets/{asset_id}/description:
+    patch:
+      consumes:
+      - application/json
+      description: Updates the description of an asset.
+      parameters:
+      - description: Asset ID (UUID)
+        in: path
+        name: asset_id
+        required: true
+        type: string
+      - description: New description payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.AssetEditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.AssetResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Edit asset description
+      tags:
+      - assets
+  /healthz:
+    get:
+      description: Simple readiness probe.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.HealthResponse'
+      summary: Health check
+      tags:
+      - health
+  /users/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Returns a user by ID.
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get user
+      tags:
+      - users
+  /users/{user_id}/favourites:
+    get:
+      consumes:
+      - application/json
+      description: Returns assets the user has favourited using keyset pagination.
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Max items to return (default 20, max 50)
+        in: query
+        name: limit
+        type: integer
+      - description: Opaque cursor from next_after
+        in: query
+        name: after
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.AssetsListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: List favourites for a user
+      tags:
+      - favourites
+    post:
+      consumes:
+      - application/json
+      description: Adds an asset to the user's favourites.
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Favourite payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.FavouriteAddRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.FavouriteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Add favourite
+      tags:
+      - favourites
+  /users/{user_id}/favourites/{asset_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Removes an asset from the user's favourites.
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Asset ID (UUID)
+        in: path
+        name: asset_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Remove favourite
+      tags:
+      - favourites
+produces:
+- application/json
+schemes:
+- http
+swagger: "2.0"

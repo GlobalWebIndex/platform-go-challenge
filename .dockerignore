@@ -1,0 +1,13 @@
+# VCS & tooling
+.git
+.gitignore
+.vscode
+.idea
+
+# Local noise
+logs
+*.log
+*.tmp
+
+# OS junk
+**/.DS_Store
