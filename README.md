@@ -6,7 +6,7 @@ This document provides a comprehensive overview of the GWI Favourites API, cover
 
 ### 🚀 Getting Started
 
-The project uses a **multi-stage Docker build** to create a secure and highly efficient production image. The first stage builds the Go binary, and the second copies only the executable into a minimal base image.
+The project uses a multi-stage Docker build to create a secure and highly efficient production image. The first stage builds the Go binary, and the second copies only the executable into a minimal base image.
 
 1.  **Build the Docker Image**: From the project's root directory, run the following command. The `-t` flag tags the image with a name for easy identification.
 
@@ -17,18 +17,18 @@ The project uses a **multi-stage Docker build** to create a secure and highly ef
 2.  **Run the Container**: This command starts a new container from your image. The `-p` flag maps the container's internal port `8080` to your host machine, and the `-e` flag injects the required JWT secret as an environment variable.
 
     ```sh
-    docker run -p 8080:8080 -e APP_JWT_SECRET="your_secret_key" gwi-favourites
+    docker run -p 8080:8080 -e JWT_SECRET="your_secret_key" gwi-favourites
     ```
 
-3.  **Access the API**: Once the container is running, you can access the API endpoints and the **Swagger UI** for documentation on `http://localhost:8080/swagger/index.html`.
+3.  **Access the API**: Once the container is running, you can access the API endpoints and the Swagger UI for documentation on `http://localhost:8080/swagger/index.html`.
 
 ---
 
-### 🔐 Authentication
+### 🔐 Authentication and Authorization
 
-This API uses **JSON Web Tokens (JWTs)** for authentication. All endpoints related to managing favourites are protected and require a valid JWT to be sent with each request.
+This API uses **JSON Web Tokens (JWTs)** for authentication. All endpoints for managing favourites are protected and require a valid JWT.
 
-* **JWT Endpoint**: You can obtain a JWT by making a `POST` request to the `/jwt` endpoint with a `userID` in the request body.
+* **JWT Endpoint**: You can obtain a JWT by making a `POST` request to the `/jwt` endpoint with a `userID` in the request body. This endpoint is responsible for issuing tokens with different roles based on the provided user ID.
 
     ```sh
     curl -X POST http://localhost:8080/jwt \
@@ -36,11 +36,12 @@ This API uses **JSON Web Tokens (JWTs)** for authentication. All endpoints relat
     -d '{"userID": "user_id_here"}'
     ```
 
-* **Bearer Token**: Once you have a token, you must include it in the `Authorization` header of all subsequent requests to the protected endpoints.
+* **Role-Based Access**: The API currently implements a simple role-based access control based on the `userID` provided during token creation at the `/jwt` endpoint.
 
-    ```
-    Authorization: Bearer <your_jwt_token_here>
-    ```
+    * **Admin User**: A `userID` of `"admin_user_id"` grants **administrative access**, allowing the token holder to access and manage resources for **all users** on the API.
+    * **Casual User**: Any other `userID` (e.g., `"user_id_here"`) is treated as a **casual user**. Their tokens are restricted to managing only **their own resources** and cannot access or modify data belonging to other users.
+
+* **`JWT_SECRET` Environment Variable**: The application requires a `JWT_SECRET` to sign and verify tokens. This **must be provided** as an environment variable when running the Docker container or configured via `config.json`. The application will **fail to start** if this secret is missing, as it is crucial for cryptographic security.
 
 ---
 
@@ -48,8 +49,8 @@ This API uses **JSON Web Tokens (JWTs)** for authentication. All endpoints relat
 
 The application is built with a clean, layered architecture to promote testability and maintainability.
 
-* **Handlers**: Located in the `handlers` package, these components use the **Gin framework** to manage HTTP requests and responses. They are responsible for parsing request data and delegating business logic to the service layer.
-* **Service Layer**: The `favourite_service` package contains the core business logic. It's designed to be independent of the handlers and relies on an **interface** (`FavouriteServiceIntf`) for dependency injection.
+* **Handlers**: Located in the `handlers` package, these components use the **Gin framework** to manage HTTP requests and responses. They parse request data and delegate business logic to the service layer.
+* **Service Layer**: The `favourite_service` package contains the core business logic. It's designed to be independent of the handlers and relies on an interface (`FavouriteServiceIntf`) for dependency injection.
 * **Repository**: The `repository` package defines the `Repository` interface, which abstracts the data storage layer. The `InMemoryRepository` is a concrete, concurrency-safe implementation that uses mutexes to prevent race conditions during concurrent access.
 * **Middleware**: The application uses a custom `ErrorHandler` middleware to catch and handle API errors uniformly, ensuring a consistent JSON response format across all endpoints. Authentication is handled by **JWT middleware**, which protects all favourite-related endpoints.
 * **Configuration**: The project uses the **Viper library** for structured configuration. It loads settings from a `config.json` file, environment variables (`JWT_SECRET`), or a set of default values.
