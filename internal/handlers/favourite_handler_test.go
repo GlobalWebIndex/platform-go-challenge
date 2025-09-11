@@ -40,15 +40,6 @@ func (m *MockFavouriteService) RemoveFavourite(userID string, assetID string) er
 	return args.Error(0)
 }
 
-// getTestContext creates a new Gin context for testing with a given user ID and role.
-func getTestContext(userID, role string) *gin.Context {
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	c.Set(middleware.JWT_USER_ID_KEY, userID)
-	c.Set(middleware.JWT_ROLE_KEY, role)
-	return c
-}
-
 // TestGetFavourites_Success tests the happy path of GetFavourites.
 func TestGetFavourites_Success(t *testing.T) {
 	// Arrange
