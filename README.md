@@ -1,31 +1,86 @@
-# GlobalWebIndex Engineering Challenge
+# GWI Favourites API (Go Challenge)
 
-## Introduction
+This project is a Go web server for managing user favourites (assets: Chart, Insight, Audience) with full CRUD endpoints, JWT authentication, pagination, Docker support, and automated testing.
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+## Features
+- RESTful API for user favourites
+- Asset types: Chart, Insight, Audience
+- JWT-based authentication for all endpoints
+- Pagination support for listing favourites
+- In-memory storage with concurrency safety
+- Dockerfile for containerization
+- Makefile for build, run, lint, and test automation
+- Postman collection for API testing
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+## Getting Started
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+### Prerequisites
+- Go 1.20+
+- Docker (optional)
 
-## Challenge
+### Build & Run (Locally)
+```bash
+make build      # Build the Go binary
+make run        # Run the server locally (default: :8080)
+```
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+### Build & Run (Docker)
+```bash
+docker build -t gwi-favourites .
+docker run -p 8080:8080 gwi-favourites
+```
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+### Test
+```bash
+make test           # Run all unit tests
+```
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+## API Endpoints
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+All endpoints (except `/token`) require JWT authentication via the `Authorization: Bearer <TOKEN>` header.
 
-It is appreciated, though not required, if a Dockerfile is included.
+### Authentication
+- **POST /token**
+  - Request: `{ "user_id": "<USER_UUID>" }`
+  - Response: `{ "token": "<JWT_TOKEN>" }`
+  - Use this endpoint to obtain a JWT for a user.
 
-## Submission
+### Favourites
+- **GET /favourites?limit=10&offset=0**
+  - List all favourite assets for the authenticated user (supports pagination).
+- **POST /favourites/add**
+  - Add a new asset (Chart, Insight, Audience) to favourites.
+  - Request body: `{ "type": "chart|insight|audience", "favorite": true|false, "asset": { ... } }`
+- **PUT /favourites/remove?asset_id=<ASSET_UUID>**
+  - Update the `favorite` status of an asset.
+  - Request body: `{ "favorite": true|false }`
+- **PUT /favourites/edit?asset_id=<ASSET_UUID>**
+  - Edit the description of an asset.
+  - Request body: `{ "description": "..." }`
+- **DELETE /favourites/delete?asset_id=<ASSET_UUID>**
+  - Delete an asset from favourites.
 
-Just create a fork from the current repo and send it to us!
+## Asset Types
+- **Chart**: `{ "Title", "XAxisTitle", "YAxisTitle", "Data", "Description" }`
+- **Insight**: `{ "Text", "Description" }`
+- **Audience**: `{ "Gender", "BirthCountry", "AgeGroup", "SocialHours", "Purchases", "Description" }`
 
-Good luck, potential colleague!
+## Authentication Flow
+- Obtain a JWT via `/token` by providing a valid user UUID.
+- Include the JWT in the `Authorization` header for all other requests.
+- The server extracts the user ID from the token and uses it to scope all data access.
+
+## Running Tests
+```bash
+make test
+```
+All tests use JWT authentication and validate the full API contract.
+
+## Postman Collection
+A ready-to-use Postman collection (`collection.json`) is included for testing all endpoints, including authentication.
+
+## Notes
+- The server uses in-memory storage; data resets on restart.
+- For production, use a secure JWT secret and persistent storage.
+
+---
