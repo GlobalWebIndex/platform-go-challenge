@@ -20,14 +20,14 @@ func JWT(secretKey string) gin.HandlerFunc {
 		// Get the token from the Authorization header.
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, NewAPIError("Authorization header is required", "Authorization"))
+			c.AbortWithStatusJSON(http.StatusUnauthorized, NewAPIError(http.StatusUnauthorized, "Authorization header is required", "Authorization"))
 			return
 		}
 
 		// Check if the token is in the correct format (Bearer <token>).
 		tokenParts := strings.SplitN(authHeader, " ", 2)
 		if len(tokenParts) != 2 || strings.ToLower(tokenParts[0]) != "bearer" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, NewAPIError("Authorization header must be in the format 'Bearer <token>'", "Authorization"))
+			c.AbortWithStatusJSON(http.StatusUnauthorized, NewAPIError(http.StatusUnauthorized, "Authorization header must be in the format 'Bearer <token>'", "Authorization"))
 			return
 		}
 
@@ -43,23 +43,21 @@ func JWT(secretKey string) gin.HandlerFunc {
 
 		// Handle validation errors.
 		if err != nil || !token.Valid {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, NewAPIError("Invalid or expired token", "Authorization"))
+			c.AbortWithStatusJSON(http.StatusUnauthorized, NewAPIError(http.StatusUnauthorized, "Invalid or expired token", "Authorization"))
 			return
 		}
 
 		// Extract claims and set user ID in the context.
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, NewAPIError("Failed to parse token claims", "token"))
-			c.Abort()
+			c.AbortWithStatusJSON(http.StatusInternalServerError, NewAPIError(http.StatusInternalServerError, "Failed to parse token claims", "token"))
 			return
 		}
 
 		// Assuming the user ID is stored in a claim named "sub".
 		userID, ok := claims["sub"].(string)
 		if !ok || userID == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, NewAPIError("User ID not found in token claims", "sub"))
-			c.Abort()
+			c.AbortWithStatusJSON(http.StatusUnauthorized, NewAPIError(http.StatusUnauthorized, "User ID not found in token claims", "sub"))
 			return
 		}
 

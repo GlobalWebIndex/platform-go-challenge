@@ -21,7 +21,6 @@ import (
 // @Failure 500 {object} map[string]string "Failed to create token"
 // @Router /jwt [post]
 func NewJWT(secretKey string) gin.HandlerFunc {
-	//TODO consider adding context in jwt handling e.g. claims, roles
 	return func(c *gin.Context) {
 
 		// Define a struct to bind the request body to.
@@ -29,7 +28,7 @@ func NewJWT(secretKey string) gin.HandlerFunc {
 
 		// Bind the JSON payload to the struct.
 		if err := c.ShouldBindJSON(&reqBody); err != nil {
-			c.Error(middleware.NewAPIError(http.StatusBadRequest, "invalid json body", "User Id missing"))
+			c.AbortWithStatusJSON(http.StatusBadRequest, middleware.NewAPIError(http.StatusBadRequest, "invalid json body", "User Id missing"))
 			return
 		}
 
@@ -54,7 +53,7 @@ func NewJWT(secretKey string) gin.HandlerFunc {
 		// Sign the token with the secret key.
 		signedToken, err := token.SignedString([]byte(secretKey))
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create token"})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, middleware.NewAPIError(http.StatusInternalServerError, "failed to create token", "User Id missing"))
 			return
 		}
 
