@@ -1,31 +1,187 @@
 # GlobalWebIndex Engineering Challenge
 
-## Introduction
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+## Quick Start
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+1. Run tests
+```
+docker build --target run-test-stage --progress plain --no-cache -t yours-tests-image-name .
+```
+2. Build Release image
+```
+docker build --target build-release-stage --no-cache -t yours-image-name .
+```
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+3. Run Image
 
-## Challenge
+```
+docker run -p 3333:3333 yours-image-name
+```
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+## Overview
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+This Go web server allows users to manage a personal list of favorite assets. Assets can be of three types: Chart, Insight, or Audience. Users can add, remove their favorites and edit assets.
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+- **Web server**: Go’s http package
+- **Routing**: Handled in `main.go` with `http.ServeMux`
+- **Endpoints**:
+    1. `/favAssets`: Fetch the user's favorite endpoints.
+    2. `/editAssets`: Edit the description of any asset that exists.
+    3. `/deleteAssets`: Remove asset from favorite users list.
+    4. `/addAssets`: Add a new asset in user's favorites.
+- **Storage**: For simplicity in memory structs (`data/dbData.go`) are used.
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+Diagram of the structs:
 
-It is appreciated, though not required, if a Dockerfile is included.
++-------------+         +--------------+            +---------------------------------+
+|   Users     |         |  Assets      |            |    Favorites                    |      
++-------------+         +--------------+            +---------------------------------+
+| UserId (PK) |         | ID (PK)      |            |   ID (PK)                       |
+| Name        |         | Type         |            |   UserId (FK -> Users.UserId)   |
++-------------+         | Description  |            |   AssetId (FK -> Assets.ID)     |
+                        +---------------+           +---------------------------------+
 
-## Submission
+                             ^
+         -----------------------------------------------------------------------------
+         |                                      |                                    |
+     +--------------------------+          +--------------------------+          +---------------------------+
+     | Chart                    |          | Insight                  |          |Audience                   |
+     +--------------------------+          +--------------------------+          +---------------------------+
+     | ChartId (PK)             |          | InsightId (PK)           |          | AudienceId (PK)           |
+     | AssetID (FK -> Assets.ID)|          | AssetID (FK -> Assets.ID)|          | AssetID (FK -> Assets.ID) |
+     | XAxis                    |          +--------------------------+          | Gender                    |
+     | YAxis                    |                                                | AgeGroup                  |
+     | Data                     |                                                | BirthCountry              |
+     +--------------------------+                                                | HoursOnSocial             |
+                                                                                 | PurchasesLastM            |
+                                                                                 +---------------------------+
 
-Just create a fork from the current repo and send it to us!
+## Example Requests
 
-Good luck, potential colleague!
+1. Fetch users favorites assets
+
+### Request
+
+```
+curl --location 'http://localhost:3333/favAssets' \
+--header 'Content-Type: application/json' \
+--data '{
+  "user_id": 1
+}'
+```
+
+### Response
+```
+{
+    "user_id": 1,
+    "assetData": [
+        {
+            "fav_id": 1,
+            "description": "Annual inflation rate",
+            "characteristics": {
+                "chartId": 1,
+                "assetId": 2,
+                "title": "Monthly Sales",
+                "x_axis": "Month",
+                "y_axis": "Revenue",
+                "values": [
+                    100,
+                    200,
+                    400
+                ]
+            }
+        },
+        {
+            "fav_id": 2,
+            "description": "Insights for youngs",
+            "characteristics": {
+                "insightId": 1,
+                "asset_id": 1,
+                "title": "Insights for youngs"
+            }
+        }
+    ],
+    "msg": "Success",
+    "code": 200
+}
+
+```
+
+2. Add asset into favorites
+
+### Request
+
+```
+curl --location 'http://localhost:3333/addAssets' \
+--header 'Content-Type: application/json' \
+--data '{
+    "user_id": 1,
+    "asset_id": 5
+}'
+```
+
+### Response
+
+```
+{
+    "success": true,
+    "msg": "New asset added succesfully",
+    "code": 200
+}
+```
+
+3. Delete asset from favorite
+
+### Request
+
+```
+curl --location 'http://localhost:3333/deleteAssets' \
+--header 'Content-Type: application/json' \
+--data '{
+    "user_id": 1,
+    "asset_id": 2
+}'
+
+```
+
+### Response
+
+```
+{
+    "success": true,
+    "msg": "Success deletion",
+    "code": 200
+}
+```
+
+4. Change the description of an asset
+
+### Request
+
+```
+curl --location 'http://localhost:3333/editAssets' \
+--header 'Content-Type: application/json' \
+--data '{
+    "asset_id": 1,
+    "new_description": "Insights for youngs here"
+}'
+
+```
+### Response
+
+```
+{
+    "success": true,
+    "msg": "Success edit of an asset",
+    "code": 200
+}
+
+```
+
+## Future Improvements
+
+1. Add a real database for persistence
+
+2. Add authentication mechanism
+
+3. Optimize large asset lists (pagination, caching)
