@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"platform-go-challenge/internal/domain/dto"
 	"platform-go-challenge/internal/middleware"
+	"platform-go-challenge/internal/repository"
 	"platform-go-challenge/internal/service"
 	"strconv"
 
@@ -20,26 +22,6 @@ func NewFavouriteHandler(s *service.FavouriteService) *FavouriteHandler {
 	return &FavouriteHandler{
 		FavouriteService: s,
 	}
-}
-
-// isAuthorized checks if the user from the JWT has permission to access the resource.
-// A user is authorized if their ID matches the resource's user ID or if they are an admin.
-func isAuthorized(c *gin.Context, userIDInPath string) bool {
-	// Get the user ID and role from the context.
-	userIDFromToken, _ := c.Get(middleware.JWT_USER_ID_KEY)
-	userRole, _ := c.Get(middleware.JWT_ROLE_KEY)
-
-	// Check if the user is an admin.
-	if userRole == "admin" {
-		return true
-	}
-
-	// Check if the user ID from the token matches the user ID in the path.
-	if userIDFromToken == userIDInPath {
-		return true
-	}
-
-	return false
 }
 
 // @Summary Get a user's favourites
@@ -61,23 +43,26 @@ func (h *FavouriteHandler) GetFavourites(c *gin.Context) {
 
 	// Authorization check.
 	if !isAuthorized(c, userID) {
-		c.AbortWithError(http.StatusForbidden, middleware.NewAPIError("access denied", ""))
+		c.AbortWithStatusJSON(http.StatusForbidden, middleware.NewAPIError(http.StatusForbidden, "access denied", ""))
 		return
 	}
 
 	page, size, err := ExtractPageAndSize(c)
 	if err != nil {
+		c.AbortWithStatusJSON(http.StatusForbidden, middleware.NewAPIError(http.StatusForbidden, "invalid paging parameters", ""))
 		return
 	}
 
 	if userID == "" {
-		c.AbortWithError(http.StatusBadRequest, middleware.NewAPIError("userID is required", "userID"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, middleware.NewAPIError(http.StatusBadRequest, "userID is required", "userID"))
 		return
 	}
 
-	ctx := c.Request.Context()
-	// Call the service layer to get the data.
-	favourites := h.FavouriteService.GetFavourites(ctx, userID, page, size)
+	favourites, err := h.FavouriteService.GetFavourites(userID, page, size)
+	if err != nil {
+		HandleServiceErrors(c, err)
+		return
+	}
 
 	c.JSON(http.StatusOK, favourites)
 }
@@ -98,28 +83,27 @@ func (h *FavouriteHandler) GetFavourites(c *gin.Context) {
 func (h *FavouriteHandler) AddFavourite(c *gin.Context) {
 	userID := c.Param("userID")
 	if userID == "" {
-		c.AbortWithError(http.StatusBadRequest, middleware.NewAPIError("userID is required", "userID"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, middleware.NewAPIError(http.StatusBadRequest, "userID is required", "userID"))
 		return
 	}
 
 	// Authorization check.
 	if !isAuthorized(c, userID) {
-		c.AbortWithError(http.StatusForbidden, middleware.NewAPIError("access denied", ""))
+		c.AbortWithStatusJSON(http.StatusForbidden, middleware.NewAPIError(http.StatusForbidden, "access denied", ""))
 		return
 	}
 
 	var reqBody dto.AddFavouriteRequest
 
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.AbortWithError(http.StatusBadRequest, middleware.NewAPIError("invalid json body", ""))
+		c.AbortWithStatusJSON(http.StatusBadRequest, middleware.NewAPIError(http.StatusBadRequest, "invalid json body", ""))
 		return
 	}
 
-	ctx := c.Request.Context()
 	// Call the service layer to perform the business logic.
-	err := h.FavouriteService.AddFavourite(ctx, userID, reqBody.AssetID)
+	err := h.FavouriteService.AddFavourite(userID, reqBody.AssetID)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, middleware.NewAPIError(err.Error(), ""))
+		HandleServiceErrors(c, err)
 		return
 	}
 
@@ -146,21 +130,20 @@ func (h *FavouriteHandler) UpdateFavouriteDescription(c *gin.Context) {
 
 	// Authorization check.
 	if !isAuthorized(c, userID) {
-		c.AbortWithError(http.StatusForbidden, middleware.NewAPIError("access denied", ""))
+		c.AbortWithStatusJSON(http.StatusForbidden, middleware.NewAPIError(http.StatusForbidden, "access denied", ""))
 		return
 	}
 
 	var reqBody dto.UpdateFavouriteDescriptionRequest
 
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.AbortWithError(http.StatusBadRequest, middleware.NewAPIError("invalid json body", ""))
+		c.AbortWithStatusJSON(http.StatusBadRequest, middleware.NewAPIError(http.StatusBadRequest, "invalid json body", ""))
 		return
 	}
 
-	ctx := c.Request.Context()
-	err := h.FavouriteService.UpdateFavouriteDescription(ctx, userID, assetID, reqBody.GetDescription())
+	err := h.FavouriteService.UpdateFavouriteDescription(userID, assetID, reqBody.GetDescription())
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, middleware.NewAPIError(err.Error(), ""))
+		HandleServiceErrors(c, err)
 		return
 	}
 
@@ -186,19 +169,18 @@ func (h *FavouriteHandler) DeleteFavourite(c *gin.Context) {
 
 	// Authorization check.
 	if !isAuthorized(c, userID) {
-		c.AbortWithError(http.StatusForbidden, middleware.NewAPIError("access denied", ""))
+		c.AbortWithStatusJSON(http.StatusForbidden, middleware.NewAPIError(http.StatusForbidden, "access denied", ""))
 		return
 	}
 
 	if userID == "" {
-		c.AbortWithError(http.StatusBadRequest, middleware.NewAPIError("userID is required", "userID"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, middleware.NewAPIError(http.StatusBadRequest, "userID is required", "userID"))
 		return
 	}
 
-	ctx := c.Request.Context()
-	err := h.FavouriteService.RemoveFavourite(ctx, userID, assetID)
+	err := h.FavouriteService.RemoveFavourite(userID, assetID)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, middleware.NewAPIError(err.Error(), ""))
+		HandleServiceErrors(c, err)
 		return
 	}
 
@@ -220,4 +202,36 @@ func ExtractPageAndSize(c *gin.Context) (page, size int, err error) {
 	}
 
 	return page, size, nil
+}
+
+func HandleServiceErrors(c *gin.Context, err error) {
+	switch {
+	case errors.Is(err, repository.UserNotFoundError):
+		c.AbortWithStatusJSON(http.StatusNotFound, middleware.NewAPIError(http.StatusNotFound, err.Error(), "userID"))
+	case errors.Is(err, repository.AssetNotFoundError):
+		c.AbortWithStatusJSON(http.StatusNotFound, middleware.NewAPIError(http.StatusNotFound, err.Error(), "assetID"))
+	default:
+		c.AbortWithStatusJSON(http.StatusInternalServerError, middleware.NewAPIError(http.StatusInternalServerError, err.Error(), ""))
+	}
+	c.Abort()
+}
+
+// isAuthorized checks if the user from the JWT has permission to access the resource.
+// A user is authorized if their ID matches the resource's user ID or if they are an admin.
+func isAuthorized(c *gin.Context, userIDInPath string) bool {
+	// Get the user ID and role from the context.
+	userIDFromToken, _ := c.Get(middleware.JWT_USER_ID_KEY)
+	userRole, _ := c.Get(middleware.JWT_ROLE_KEY)
+
+	// Check if the user is an admin.
+	if userRole == "admin" {
+		return true
+	}
+
+	// Check if the user ID from the token matches the user ID in the path.
+	if userIDFromToken == userIDInPath {
+		return true
+	}
+
+	return false
 }

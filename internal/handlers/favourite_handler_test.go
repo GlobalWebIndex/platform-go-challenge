@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"bytes"
-	"context"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -21,23 +20,23 @@ type MockFavouriteService struct {
 	mock.Mock
 }
 
-func (m *MockFavouriteService) GetFavourites(ctx context.Context, userID string, page, size int) []entities.Asset {
-	args := m.Called(ctx, userID, page, size)
-	return args.Get(0).([]entities.Asset)
+func (m *MockFavouriteService) GetFavourites(userID string, page, size int) ([]entities.Asset, error) {
+	args := m.Called(userID, page, size)
+	return args.Get(0).([]entities.Asset), nil
 }
 
-func (m *MockFavouriteService) AddFavourite(ctx context.Context, userID string, assetID string) error {
-	args := m.Called(ctx, userID, assetID)
+func (m *MockFavouriteService) AddFavourite(userID string, assetID string) error {
+	args := m.Called(userID, assetID)
 	return args.Error(0)
 }
 
-func (m *MockFavouriteService) UpdateFavouriteDescription(ctx context.Context, userID string, assetID string, description string) error {
-	args := m.Called(ctx, userID, assetID, description)
+func (m *MockFavouriteService) UpdateFavouriteDescription(userID string, assetID string, description string) error {
+	args := m.Called(userID, assetID, description)
 	return args.Error(0)
 }
 
-func (m *MockFavouriteService) RemoveFavourite(ctx context.Context, userID string, assetID string) error {
-	args := m.Called(ctx, userID, assetID)
+func (m *MockFavouriteService) RemoveFavourite(userID string, assetID string) error {
+	args := m.Called(userID, assetID)
 	return args.Error(0)
 }
 
@@ -60,7 +59,7 @@ func TestGetFavourites_Success(t *testing.T) {
 		&entities.Audience{},
 		&entities.Audience{},
 	}
-	mockService.On("GetFavourites", mock.Anything, "user1", 1, 10).Return(expectedAssets)
+	mockService.On("GetFavourites", "user1", 1, 10).Return(expectedAssets)
 
 	// Set up a Gin context with a user and make the request.
 	w := httptest.NewRecorder()
@@ -109,7 +108,7 @@ func TestGetFavourites_AsAdmin(t *testing.T) {
 	expectedAssets := []entities.Asset{
 		&entities.Audience{},
 	}
-	mockService.On("GetFavourites", mock.Anything, "user2", 1, 10).Return(expectedAssets)
+	mockService.On("GetFavourites", "user2", 1, 10).Return(expectedAssets)
 
 	// Set up a Gin context for an admin user.
 	w := httptest.NewRecorder()
@@ -124,7 +123,7 @@ func TestGetFavourites_AsAdmin(t *testing.T) {
 
 	// Assert
 	assert.Equal(t, http.StatusOK, w.Code)
-	mockService.AssertCalled(t, "GetFavourites", mock.Anything, "user2", 1, 10)
+	mockService.AssertCalled(t, "GetFavourites", "user2", 1, 10)
 }
 
 // TestAddFavourite_Success tests the happy path of AddFavourite.
@@ -132,7 +131,7 @@ func TestAddFavourite_Success(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-	mockService.On("AddFavourite", mock.Anything, "user1", "asset1").Return(nil)
+	mockService.On("AddFavourite", "user1", "asset1").Return(nil)
 
 	w := httptest.NewRecorder()
 	jsonBody := strings.NewReader(`{"assetID": "asset1"}`)
@@ -178,7 +177,7 @@ func TestAddFavourite_AsAdmin(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-	mockService.On("AddFavourite", mock.Anything, "user2", "asset1").Return(nil)
+	mockService.On("AddFavourite", "user2", "asset1").Return(nil)
 
 	w := httptest.NewRecorder()
 	jsonBody := strings.NewReader(`{"assetID": "asset1"}`)
@@ -194,7 +193,7 @@ func TestAddFavourite_AsAdmin(t *testing.T) {
 
 	// Assert
 	assert.Equal(t, http.StatusCreated, w.Code)
-	mockService.AssertCalled(t, "AddFavourite", mock.Anything, "user2", "asset1")
+	mockService.AssertCalled(t, "AddFavourite", "user2", "asset1")
 }
 
 // TestAddFavourite_ServiceError tests the error path of AddFavourite.
@@ -202,7 +201,7 @@ func TestAddFavourite_ServiceError(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-	mockService.On("AddFavourite", mock.Anything, "user1", "asset1").Return(errors.New("service error"))
+	mockService.On("AddFavourite", "user1", "asset1").Return(errors.New("service error"))
 
 	w := httptest.NewRecorder()
 	jsonBody := strings.NewReader(`{"assetID": "asset1"}`)
@@ -269,7 +268,7 @@ func TestUpdateFavouriteDescription_Success(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-	mockService.On("UpdateFavouriteDescription", mock.Anything, "user1", "asset1", "new description").Return(nil)
+	mockService.On("UpdateFavouriteDescription", "user1", "asset1", "new description").Return(nil)
 
 	w := httptest.NewRecorder()
 	requestBody := []byte(`{"description": "new description"}`)
@@ -321,7 +320,7 @@ func TestUpdateFavouriteDescription_AsAdmin(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-	mockService.On("UpdateFavouriteDescription", mock.Anything, "user2", "asset1", "new description").Return(nil)
+	mockService.On("UpdateFavouriteDescription", "user2", "asset1", "new description").Return(nil)
 
 	w := httptest.NewRecorder()
 	requestBody := []byte(`{"description": "new description"}`)
@@ -340,7 +339,7 @@ func TestUpdateFavouriteDescription_AsAdmin(t *testing.T) {
 
 	// Assert
 	assert.Equal(t, http.StatusOK, w.Code)
-	mockService.AssertCalled(t, "UpdateFavouriteDescription", mock.Anything, "user2", "asset1", "new description")
+	mockService.AssertCalled(t, "UpdateFavouriteDescription", "user2", "asset1", "new description")
 }
 
 // TestUpdateFavouriteDescription_InvalidJSON tests the handler's response to an invalid JSON payload.
@@ -374,7 +373,7 @@ func TestUpdateFavouriteDescription_ServiceError(t *testing.T) {
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
 	serviceError := errors.New("database connection failed")
-	mockService.On("UpdateFavouriteDescription", mock.Anything, "user1", "asset1", "new description").Return(serviceError)
+	mockService.On("UpdateFavouriteDescription", "user1", "asset1", "new description").Return(serviceError)
 
 	w := httptest.NewRecorder()
 	requestBody := []byte(`{"description": "new description"}`)
@@ -400,7 +399,7 @@ func TestDeleteFavourite_Success(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-	mockService.On("RemoveFavourite", mock.Anything, "user1", "asset1").Return(nil)
+	mockService.On("RemoveFavourite", "user1", "asset1").Return(nil)
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
@@ -448,7 +447,7 @@ func TestDeleteFavourite_AsAdmin(t *testing.T) {
 	// Arrange
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
-	mockService.On("RemoveFavourite", mock.Anything, "user2", "asset1").Return(nil)
+	mockService.On("RemoveFavourite", "user2", "asset1").Return(nil)
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
@@ -465,7 +464,7 @@ func TestDeleteFavourite_AsAdmin(t *testing.T) {
 
 	// Assert
 	assert.Equal(t, http.StatusOK, w.Code)
-	mockService.AssertCalled(t, "RemoveFavourite", mock.Anything, "user2", "asset1")
+	mockService.AssertCalled(t, "RemoveFavourite", "user2", "asset1")
 }
 
 // TestDeleteFavourite_ServiceError tests the handler's response when the service layer returns an error.
@@ -474,7 +473,7 @@ func TestDeleteFavourite_ServiceError(t *testing.T) {
 	mockService := new(MockFavouriteService)
 	handler := &FavouriteHandler{FavouriteService: mockService}
 	serviceError := errors.New("database error")
-	mockService.On("RemoveFavourite", mock.Anything, "user1", "asset1").Return(serviceError)
+	mockService.On("RemoveFavourite", "user1", "asset1").Return(serviceError)
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)

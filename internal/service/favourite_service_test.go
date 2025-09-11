@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"errors"
 	"platform-go-challenge/internal/domain/entities"
 	"platform-go-challenge/internal/repository"
@@ -78,7 +77,7 @@ func TestGetFavourites(t *testing.T) {
 	service := NewFavouriteService(mockRepo, logger)
 
 	// Test case
-	assets := service.GetFavourites(context.Background(), "user1", 1, 10)
+	assets, _ := service.GetFavourites("user1", 1, 10)
 	assert.Equal(t, mockAssets, assets)
 }
 
@@ -94,7 +93,7 @@ func TestGetFavouritesError(t *testing.T) {
 	service := NewFavouriteService(mockRepo, logger)
 
 	// Test case
-	assets := service.GetFavourites(context.Background(), "user1", 0, 10)
+	assets, _ := service.GetFavourites("user1", 0, 10)
 	assert.Nil(t, assets)
 }
 
@@ -110,7 +109,7 @@ func TestAddFavourite_Success(t *testing.T) {
 	service := NewFavouriteService(mockRepo, zap.NewNop())
 
 	// Act
-	err := service.AddFavourite(context.Background(), "user1", "asset1")
+	err := service.AddFavourite("user1", "asset1")
 
 	// Assert
 	assert.NoError(t, err)
@@ -130,7 +129,7 @@ func TestAddFavourite_Error(t *testing.T) {
 	service := NewFavouriteService(mockRepo, zap.NewNop())
 
 	// Act
-	err := service.AddFavourite(context.Background(), "user1", "asset1")
+	err := service.AddFavourite("user1", "asset1")
 
 	// Assert
 	assert.EqualError(t, err, expectedErr.Error())
@@ -148,7 +147,7 @@ func TestRemoveFavourite_Success(t *testing.T) {
 	service := NewFavouriteService(mockRepo, zap.NewNop())
 
 	// Act
-	err := service.RemoveFavourite(context.Background(), "user1", "asset1")
+	err := service.RemoveFavourite("user1", "asset1")
 
 	// Assert
 	assert.NoError(t, err)
@@ -167,7 +166,7 @@ func TestRemoveFavourite_Error(t *testing.T) {
 	service := NewFavouriteService(mockRepo, zap.NewNop())
 
 	// Act
-	err := service.RemoveFavourite(context.Background(), "user1", "asset1")
+	err := service.RemoveFavourite("user1", "asset1")
 
 	// Assert
 	assert.EqualError(t, err, expectedErr.Error())
@@ -185,7 +184,7 @@ func TestUpdateFavouriteDescription_Success(t *testing.T) {
 	service := NewFavouriteService(mockRepo, zap.NewNop())
 
 	// Act
-	err := service.UpdateFavouriteDescription(context.Background(), "user1", "asset1", "new desc")
+	err := service.UpdateFavouriteDescription("user1", "asset1", "new desc")
 
 	// Assert.
 	assert.NoError(t, err)
@@ -204,7 +203,7 @@ func TestUpdateFavouriteDescription_Error(t *testing.T) {
 	service := NewFavouriteService(mockRepo, zap.NewNop())
 
 	// Act
-	err := service.UpdateFavouriteDescription(context.Background(), "user1", "asset1", "new desc")
+	err := service.UpdateFavouriteDescription("user1", "asset1", "new desc")
 
 	// Assert
 	assert.EqualError(t, err, expectedErr.Error())

@@ -53,6 +53,12 @@ func (r *InMemoryRepository) GetAsset(assetID string) *entities.Asset {
 
 // GetFavourites retrieves all favourite assets for a given user.
 func (r *InMemoryRepository) GetFavourites(userID string, page, size int) ([]entities.Asset, error) {
+
+	_, ok := r.users[userID]
+	if !ok {
+		return nil, UserNotFoundError
+	}
+
 	userLock := r.getUserLock(userID)
 	userLock.RLock()
 	defer userLock.RUnlock()
@@ -74,25 +80,24 @@ func (r *InMemoryRepository) GetFavourites(userID string, page, size int) ([]ent
 
 // AddFavourite adds an asset to a user's favourites.
 func (r *InMemoryRepository) AddFavourite(userID string, assetID string) error {
-	userLock := r.getUserLock(userID)
-	userLock.Lock()
-	defer userLock.Unlock()
-
 	r.globalLock.RLock()
 	if _, ok := r.users[userID]; !ok {
 		return UserNotFoundError
 	}
+	defer r.globalLock.RUnlock()
 
 	asset, ok := r.assets[assetID]
 	if !ok {
 		return AssetNotFoundError
 	}
 
+	userLock := r.getUserLock(userID)
+	userLock.Lock()
+	defer userLock.Unlock()
 	// Ensure the user's favourites map exists
 	if _, ok := r.userFavourites[userID]; !ok {
 		r.userFavourites[userID] = make(map[string]entities.Asset)
 	}
-	defer r.globalLock.RUnlock()
 
 	// Check if the asset is already a favourite
 	if _, ok := r.userFavourites[userID][assetID]; ok {
@@ -124,7 +129,7 @@ func (r *InMemoryRepository) UpdateFavouriteDescription(userID string, assetID s
 	}
 
 	asset.SetDescription(newDescription)
-	userFavs[assetID] = asset
+	r.assets[assetID] = asset
 
 	return nil
 }
