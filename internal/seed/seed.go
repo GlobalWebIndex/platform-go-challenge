@@ -1,7 +1,6 @@
 package seed
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"time"
@@ -15,7 +14,7 @@ import (
 
 // Seed populates the repository with dummy data for testing.
 // In a real application, this would be guarded by a flag or only run in a test environment.
-func Seed(ctx context.Context, repo repository.Repository, logger *zap.Logger) {
+func Seed(repo repository.Repository, logger *zap.Logger) {
 	logger.Info("seeding repository with data")
 
 	user1, err := entities.NewUser()

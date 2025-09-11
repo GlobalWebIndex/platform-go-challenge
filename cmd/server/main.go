@@ -47,7 +47,7 @@ func main() {
 	favouriteRepo := repository.NewInMemoryRepository()
 	favouriteService := service.NewFavouriteService(favouriteRepo, logger)
 
-	seed.Seed(context.Background(), favouriteRepo, logger)
+	seed.Seed(favouriteRepo, logger)
 
 	r := routes.NewRouter(favouriteService, cfg.GetJWTSecret())
 
