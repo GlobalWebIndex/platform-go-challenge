@@ -1,13 +1,12 @@
-package tests
+package db
 
 import (
-	"platform-go-challenge/db"
 	"platform-go-challenge/models"
 	"testing"
 )
 
 func TestAddAndGetFavorites(test *testing.T) {
-	database := db.NewDB()
+	database := NewDB()
 	asset := models.Asset{ID: "12", Description: "Testing an asset"}
 
 	//Add the asset
@@ -30,7 +29,7 @@ func TestAddAndGetFavorites(test *testing.T) {
 }
 
 func TestRemoveFavorite(test *testing.T) {
-	database := db.NewDB()
+	database := NewDB()
 	asset := models.Asset{ID: "12", Description: "Testing an asset to be removed"}
 	_ = database.AddFavorite("user123", asset)
 
@@ -46,7 +45,7 @@ func TestRemoveFavorite(test *testing.T) {
 }
 
 func TestUpdateFavorite(test *testing.T) {
-	database := db.NewDB()
+	database := NewDB()
 	asset := models.Asset{ID: "12", Description: "Old description"}
 	_ = database.AddFavorite("user123", asset)
 
@@ -63,7 +62,7 @@ func TestUpdateFavorite(test *testing.T) {
 }
 
 func TestInvalidUserID(test *testing.T) {
-	database := db.NewDB()
+	database := NewDB()
 	asset := models.Asset{ID: "12", Description: "Just an asset"}
 
 	err := database.AddFavorite("", asset)
