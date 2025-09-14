@@ -2,6 +2,7 @@ package db
 
 import (
 	"errors"
+	"fmt"
 	"sync"
 
 	"platform-go-challenge/models"
@@ -46,6 +47,11 @@ func (db *DB) AddFavorite(userId string, asset models.Asset) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
+	for _, existingAsset := range db.favorites[userId] {
+		if existingAsset.ID == asset.ID {
+			return fmt.Errorf("asset with ID %s already exists for user %s", asset.ID, userId)
+		}
+	}
 	db.favorites[userId] = append(db.favorites[userId], asset)
 	return nil
 }

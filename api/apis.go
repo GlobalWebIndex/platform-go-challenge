@@ -31,36 +31,10 @@ func FavoritesAPIs(writer http.ResponseWriter, request *http.Request) {
 	switch request.Method {
 	case "GET":
 		if assetId == "" {
-			// If no asset ID ten return all user favorites
-			assets, err := database.GetFavorites(userId)
-			if err != nil {
-				http.Error(writer, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			writer.Header().Set("Content-Type", "application/json")
-			err = json.NewEncoder(writer).Encode(assets)
-			if err != nil {
-				return
-			}
+			handleGetFavorites(writer, request, userId)
 		} else {
-			// return a single favorite
-			assets, err := database.GetFavorites(userId)
-			if err != nil {
-				http.Error(writer, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			for _, asset := range assets {
-				if asset.ID == assetId {
-					writer.Header().Set("Content-Type", "application/json")
-					err := json.NewEncoder(writer).Encode(asset)
-					if err != nil {
-						return
-					}
-					return
-				}
-			}
+			handleGetSingleFavorite(writer, request, userId, assetId)
 		}
-		handleGetFavorites(writer, request, userId)
 	case "POST":
 		handlePostFavorite(writer, request, userId)
 	case "PUT":
@@ -94,6 +68,26 @@ func handleGetFavorites(writer http.ResponseWriter, request *http.Request, userI
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func handleGetSingleFavorite(writer http.ResponseWriter, request *http.Request, userId string, assetId string) {
+	assets, err := database.GetFavorites(userId)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, asset := range assets {
+		if asset.ID == assetId {
+			writer.Header().Set("Content-Type", "application/json")
+			err = json.NewEncoder(writer).Encode(asset)
+			if err != nil {
+				http.Error(writer, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+	}
+	http.Error(writer, fmt.Sprintf("Asset %s not found", assetId), http.StatusNotFound)
 }
 
 func handlePostFavorite(writer http.ResponseWriter, request *http.Request, userId string) {
