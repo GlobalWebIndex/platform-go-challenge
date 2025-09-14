@@ -15,35 +15,65 @@ import (
 var database = db.NewDB()
 
 func FavoritesAPIs(writer http.ResponseWriter, request *http.Request) {
-	path := request.URL.Path
-	pathWithoutPrefix := strings.TrimPrefix(path, "/users/")
-	parts := strings.Split(pathWithoutPrefix, "/")
+	urlParts := strings.Split(strings.Trim(request.URL.Path, "/"), "/")
 
-	if len(parts) != 2 {
+	if len(urlParts) < 2 || urlParts[0] != "users" {
 		http.Error(writer, "invalid path", http.StatusBadRequest)
 		return
 	}
 
-	userId := parts[0]
+	userId := urlParts[1]
+	var assetId string
+	if len(urlParts) > 2 {
+		assetId = urlParts[2]
+	}
 
 	switch request.Method {
 	case "GET":
+		if assetId == "" {
+			// If no asset ID ten return all user favorites
+			assets, err := database.GetFavorites(userId)
+			if err != nil {
+				http.Error(writer, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			writer.Header().Set("Content-Type", "application/json")
+			err = json.NewEncoder(writer).Encode(assets)
+			if err != nil {
+				return
+			}
+		} else {
+			// return a single favorite
+			assets, err := database.GetFavorites(userId)
+			if err != nil {
+				http.Error(writer, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			for _, asset := range assets {
+				if asset.ID == assetId {
+					writer.Header().Set("Content-Type", "application/json")
+					err := json.NewEncoder(writer).Encode(asset)
+					if err != nil {
+						return
+					}
+					return
+				}
+			}
+		}
 		handleGetFavorites(writer, request, userId)
 	case "POST":
 		handlePostFavorite(writer, request, userId)
 	case "PUT":
-		if len(parts) < 2 {
-			http.Error(writer, "missing asset ID for PUT", http.StatusBadRequest)
+		if assetId == "" {
+			http.Error(writer, "missing assetId for PUT", http.StatusBadRequest)
 			return
 		}
-		assetId := parts[1]
 		handleUpdateFavorite(writer, request, userId, assetId)
 	case "DELETE":
-		if len(parts) < 2 {
-			http.Error(writer, "missing asset ID for DELETE", http.StatusBadRequest)
+		if assetId == "" {
+			http.Error(writer, "missing assetId for DELETE", http.StatusBadRequest)
 			return
 		}
-		assetId := parts[1]
 		handleRemoveFavorite(writer, request, userId, assetId)
 	default:
 		http.Error(writer, fmt.Sprintf("Method %s not allowed", request.Method), http.StatusMethodNotAllowed)

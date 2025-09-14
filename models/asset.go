@@ -6,7 +6,7 @@ import (
 
 type Asset struct {
 	ID          string    `json:"id"`
-	TYpeID      string    `json:"type"`
+	TypeID      string    `json:"type"`
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`
 }

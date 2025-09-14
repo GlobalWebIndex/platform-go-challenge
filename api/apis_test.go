@@ -15,9 +15,10 @@ func resetData() {
 	database = db.NewDB()
 }
 
-func createTestAsset(userId string, assetId string, description string) models.Asset {
+func createTestAsset(userId string, assetId string, typeId string, description string) models.Asset {
 	asset := models.Asset{
 		ID:          assetId,
+		TypeID:      typeId,
 		Description: description,
 	}
 
@@ -28,11 +29,12 @@ func createTestAsset(userId string, assetId string, description string) models.A
 	return asset
 }
 
-func TestPostandGetFavorites(test *testing.T) {
+func TestPostAndGetFavorites(test *testing.T) {
 
 	resetData()
 
-	asset := models.Asset{ID: "12", Description: "Just an asset"}
+	//POST an asset
+	asset := models.Asset{ID: "12", TypeID: "Chart", Description: "Just an asset chart"}
 	body, _ := json.Marshal(asset)
 
 	request, _ := http.NewRequest("POST", "/users/user123/12", bytes.NewBuffer(body))
@@ -43,7 +45,8 @@ func TestPostandGetFavorites(test *testing.T) {
 		test.Errorf("Expected status code 201, got %d", response.Result().StatusCode)
 	}
 
-	request, _ = http.NewRequest("GET", "/users/user123/12", nil)
+	// Call GET on all favorites
+	request, _ = http.NewRequest("GET", "/users/user123", nil)
 	response = httptest.NewRecorder()
 	FavoritesAPIs(response, request)
 
@@ -62,9 +65,33 @@ func TestPostandGetFavorites(test *testing.T) {
 	}
 }
 
+func TestGetSingleAsset(test *testing.T) {
+	resetData()
+	createTestAsset("user123", "12", "Chart", "Chart")
+	createTestAsset("user123", "13", "Insight", "Insight")
+
+	request, _ := http.NewRequest("GET", "/users/user123/13", nil)
+	response := httptest.NewRecorder()
+	FavoritesAPIs(response, request)
+
+	if response.Result().StatusCode != http.StatusOK {
+		test.Errorf("Expected status code 200, got %d", response.Result().StatusCode)
+	}
+
+	var filteredAsset models.Asset
+	err := json.NewDecoder(response.Result().Body).Decode(&filteredAsset)
+	if err != nil {
+		test.Errorf("failed to decode favorites %v", err)
+	}
+	if filteredAsset.ID != "13" || filteredAsset.Description != "Insight" {
+		test.Errorf("Expected 1 Insight, got %s", filteredAsset.Description)
+	}
+
+}
+
 func TestUpdateFavorite(test *testing.T) {
 	resetData()
-	asset := createTestAsset("user123", "12", "Existing old asset")
+	asset := createTestAsset("user123", "12", "Plain asset", "Existing old asset")
 
 	body, _ := json.Marshal(asset)
 	request := httptest.NewRequest("PUT", "/users/user123/12", bytes.NewBuffer(body))
