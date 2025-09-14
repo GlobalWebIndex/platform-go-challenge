@@ -107,23 +107,17 @@ func (fh FavouriteHandler) DeleteFavourite(writer http.ResponseWriter, request *
 
 	assetID, ok := vars["asset_id"]
 	if !ok {
-		writer.WriteHeader(http.StatusBadRequest)
-		result, _ := json.Marshal("Asset ID is missing")
-		writer.Write(result)
+		http.Error(writer, "Asset ID is missing", http.StatusBadRequest)
 		return
 	}
 
 	userID := request.Header.Get("user_id")
 
-	favourite, err := fh.fs.DeleteFavourite(userID, assetID)
+	_, err := fh.fs.DeleteFavourite(userID, assetID)
 	if err != nil {
-		writer.WriteHeader(http.StatusBadRequest)
-		result, _ := json.Marshal(err)
-		writer.Write(result)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	writer.WriteHeader(http.StatusOK)
-	result, _ := json.Marshal(favourite)
-	writer.Write(result)
 }
