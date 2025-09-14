@@ -5,9 +5,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"platform-go-challenge/app/services"
 	"platform-go-challenge/persistence"
 	"platform-go-challenge/presentation"
+	"syscall"
 	"time"
 
 	"github.com/arangodb/go-driver"
@@ -91,5 +93,35 @@ func main() {
 	}
 
 	http.Handle("/", r)
-	log.Fatal(http.ListenAndServe(":"+serverOnPort, r))
+
+	// Run our server in a goroutine so that it doesn't block.
+	server := http.Server{
+		Addr:    ":" + serverOnPort,
+		Handler: r,
+	}
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil && err != http.ErrServerClosed {
+			log.Fatalf("ListenAndServe error: %v\n", err)
+		}
+	}()
+
+	stop := make(chan os.Signal, 1)
+	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C)
+	signal.Notify(stop, os.Interrupt, syscall.SIGINT)
+
+	// Block until we receive our signal.
+	<-stop
+	log.Println("Shutting down server...")
+
+	// Create a deadline to wait for.
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = server.Shutdown(ctx)
+	if err != nil {
+		log.Fatalf("Server forced to shutdown: %v\n", err)
+	}
+
+	log.Println("Server gracefully stopped.")
 }
