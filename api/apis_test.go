@@ -117,3 +117,38 @@ func TestUpdateFavorite(test *testing.T) {
 		test.Errorf("Expected 'Now asset is updated', got %s", returnedAsset.Description)
 	}
 }
+
+func TestDeleteAsset(test *testing.T) {
+	resetData()
+	createTestAsset("user123", "12", "Chart", "Users favorite chart")
+	createTestAsset("user123", "13", "Insight", "Users favorite insight")
+	createTestAsset("user123", "14", "Chart", "Users favorite chart 2")
+
+	request, _ := http.NewRequest("DELETE", "/users/user123/12", nil)
+	response := httptest.NewRecorder()
+	FavoritesAPIs(response, request)
+
+	if response.Result().StatusCode != http.StatusNoContent {
+		test.Errorf("Expected status code 204, got %d", response.Result().StatusCode)
+	}
+
+	// check that only 2 assets should exist
+	request, _ = http.NewRequest("GET", "/users/user123", nil)
+	response = httptest.NewRecorder()
+	FavoritesAPIs(response, request)
+
+	if response.Result().StatusCode != http.StatusOK {
+		test.Errorf("Expected status code 200, got %d", response.Result().StatusCode)
+	}
+
+	var favorites []models.Asset
+	err := json.NewDecoder(response.Result().Body).Decode(&favorites)
+	if err != nil {
+		test.Errorf("failed to decode favorites %v", err)
+	}
+
+	if len(favorites) != 2 {
+		test.Errorf("Expected 2 favorite, got %d", len(favorites))
+	}
+
+}

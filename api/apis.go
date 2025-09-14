@@ -74,7 +74,7 @@ func FavoritesAPIs(writer http.ResponseWriter, request *http.Request) {
 			http.Error(writer, "missing assetId for DELETE", http.StatusBadRequest)
 			return
 		}
-		handleRemoveFavorite(writer, request, userId, assetId)
+		handleRemoveFavorite(writer, userId, assetId)
 	default:
 		http.Error(writer, fmt.Sprintf("Method %s not allowed", request.Method), http.StatusMethodNotAllowed)
 
@@ -147,7 +147,7 @@ func handleUpdateFavorite(writer http.ResponseWriter, request *http.Request, use
 	}
 }
 
-func handleRemoveFavorite(writer http.ResponseWriter, request *http.Request, userId string, assetId string) {
+func handleRemoveFavorite(writer http.ResponseWriter, userId string, assetId string) {
 	err := database.RemoveFavorite(userId, assetId)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
