@@ -37,11 +37,7 @@ func (fr FavouriteRepository) GetFavourites(userID string) ([]domain.Asset, erro
 		"userID": userID,
 	}
 
-	query := `FOR f IN favourite
-	          FILTER f._from == @userID
-			  FOR a IN asset
-			  FILTER f._to == a._id
-			  RETURN a`
+	query := `FOR v, e IN 1..1 OUTBOUND @userID favourite RETURN v`
 	cursor, err := fr.db.Query(context.Background(), query, bindVars)
 	if err != nil {
 		log.Printf("Failed to execute query")
@@ -86,6 +82,7 @@ func (fr FavouriteRepository) EditFavourites(userID, assetID, description string
 		log.Printf("Failed to execute query")
 		return domain.Asset{}, err
 	}
+	defer cursor.Close()
 
 	var asset domain.Asset
 	meta, err := cursor.ReadDocument(context.Background(), &asset)
@@ -117,6 +114,7 @@ func (fr FavouriteRepository) DeleteFavourite(userID, assetID string) (domain.Fa
 		log.Printf("Failed to execute query")
 		return domain.Favourite{}, err
 	}
+	defer cursor.Close()
 
 	var favourite domain.Favourite
 	meta, err := cursor.ReadDocument(context.Background(), &favourite)
