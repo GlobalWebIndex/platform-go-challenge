@@ -28,14 +28,52 @@ docker run -p 8080:8080 platform-go-challenge
 
 ## Initial curl commands to test GET, POST, PUT and DELETE apis
 
+### Create a Chart asset
+```bash
+curl -X POST http://localhost:8080/users/user123 \
+-H "Content-Type: application/json" \
+-d '{
+  "id": "12",
+  "type": "Chart",
+  "description": "Monthly sales chart",
+  "data": {
+    "title": "Sales",
+    "x_axis": "Month",
+    "y_axis": "Revenue",
+    "data": [100, 200, 300]
+  }
+}'
+```
+
 ### Create an Insight asset
 ```bash
 curl -X POST http://localhost:8080/users/user123 \
 -H "Content-Type: application/json" \
 -d '{
-"id": "12",
-"type": "Insight",
-"description": "New insight asset"
+  "id": "13",
+  "type": "Insight",
+  "description": "Social media insight",
+  "data": {
+    "text": "How many hours people spend on their phones"
+  }
+}'
+```
+
+### Create an Audience asset
+```bash
+curl -X POST http://localhost:8080/users/user123 \
+-H "Content-Type: application/json" \
+-d '{
+  "id": "14",
+  "type": "Audience",
+  "description": "Male audience",
+  "data": {
+    "gender": "Male",
+    "birth_country": "Greece",
+    "age_group": "24-35",
+    "social_hours": "3",
+    "purchases_last": "5"
+  }
 }'
 ```
 ### Retrieve all assets of a user

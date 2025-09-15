@@ -5,10 +5,11 @@ import (
 )
 
 type Asset struct {
-	ID          string    `json:"id"`
-	TypeID      string    `json:"type"`
-	Description string    `json:"description"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID          string                 `json:"id"`
+	TypeID      string                 `json:"type"`
+	Description string                 `json:"description"`
+	CreatedAt   time.Time              `json:"created_at"`
+	Data        map[string]interface{} `json:"data"`
 }
 
 type Chart struct {

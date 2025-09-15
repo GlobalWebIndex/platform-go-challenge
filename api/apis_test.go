@@ -15,11 +15,12 @@ func resetData() {
 	database = db.NewDB()
 }
 
-func createTestAsset(userId string, assetId string, typeId string, description string) models.Asset {
+func createTestAsset(userId string, assetId string, typeId string, description string, data map[string]interface{}) models.Asset {
 	asset := models.Asset{
 		ID:          assetId,
 		TypeID:      typeId,
 		Description: description,
+		Data:        data,
 	}
 
 	err := database.AddFavorite(userId, asset)
@@ -67,8 +68,12 @@ func TestPostAndGetFavorites(test *testing.T) {
 
 func TestGetSingleAsset(test *testing.T) {
 	resetData()
-	createTestAsset("user123", "12", "Chart", "Chart")
-	createTestAsset("user123", "13", "Insight", "Insight")
+
+	chartData := map[string]interface{}{"title": "Sales", "x_axis": "Month", "y_axis": "Revenue", "data": []int{100, 200, 300}}
+	createTestAsset("user123", "12", "Chart", "Chart", chartData)
+
+	insightData := map[string]interface{}{"text": "40% of millennials spend more than 3 hours on social media daily"}
+	createTestAsset("user123", "13", "Insight", "Insight", insightData)
 
 	request, _ := http.NewRequest("GET", "/users/user123/13", nil)
 	response := httptest.NewRecorder()
@@ -91,7 +96,8 @@ func TestGetSingleAsset(test *testing.T) {
 
 func TestUpdateFavorite(test *testing.T) {
 	resetData()
-	asset := createTestAsset("user123", "12", "Plain asset", "Existing old asset")
+	chartData := map[string]interface{}{"title": "Sales", "x_axis": "Month", "y_axis": "Revenue", "data": []int{100, 200, 300}}
+	asset := createTestAsset("user123", "12", "Chart", "Existing old chart", chartData)
 
 	body, _ := json.Marshal(asset)
 	request := httptest.NewRequest("PUT", "/users/user123/12", bytes.NewBuffer(body))
@@ -120,9 +126,14 @@ func TestUpdateFavorite(test *testing.T) {
 
 func TestDeleteAsset(test *testing.T) {
 	resetData()
-	createTestAsset("user123", "12", "Chart", "Users favorite chart")
-	createTestAsset("user123", "13", "Insight", "Users favorite insight")
-	createTestAsset("user123", "14", "Chart", "Users favorite chart 2")
+	chartData := map[string]interface{}{"title": "Sales", "x_axis": "Month", "y_axis": "Revenue", "data": []int{100, 200, 300}}
+	createTestAsset("user123", "12", "Chart", "Users favorite chart", chartData)
+
+	insightData := map[string]interface{}{"text": "40% of millennials spend more than 3 hours on social media daily"}
+	createTestAsset("user123", "13", "Insight", "Users favorite insight", insightData)
+
+	audienceData := map[string]interface{}{"gender": "Male", "birth_country": "USA", "age_group": "24-35", "social_hours": "3+", "purchases_last": "5"}
+	createTestAsset("user123", "14", "Audience", "Users favorite audience data", audienceData)
 
 	request, _ := http.NewRequest("DELETE", "/users/user123/12", nil)
 	response := httptest.NewRecorder()
