@@ -1,31 +1,97 @@
-# GlobalWebIndex Engineering Challenge
+# Favorites Service
 
-## Introduction
+A small Go web service that lets users manage their favorite assets (Charts, Insights, Audiences).
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+## Features
+- Add, remove, update, and list favorites
+- In-memory store (thread-safe)
+- Basic tests included
+- Dockerized
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+## Running locally
+```bash
+go run main.go
+```
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+## API Endpoints
+- `GET /users/{id}` → list favorites
+- `GET /users/{id}/{assetId}` → get a single favorite asset by id
+- `POST /users/{id}` → add favorite
+- `PUT /users/{id}/{assetId}` → edit favorite
+- `DELETE /users/{id}/{assetId}` → remove favorite
 
-## Challenge
+## Run with Docker
+```bash
+docker build -t platform-go-challenge .
+docker run -p 8080:8080 platform-go-challenge
+```
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+## Initial curl commands to test GET, POST, PUT and DELETE apis
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+### Create a Chart asset
+```bash
+curl -X POST http://localhost:8080/users/user123 \
+-H "Content-Type: application/json" \
+-d '{
+  "id": "12",
+  "type": "Chart",
+  "description": "Monthly sales chart",
+  "data": {
+    "title": "Sales",
+    "x_axis": "Month",
+    "y_axis": "Revenue",
+    "data": [100, 200, 300]
+  }
+}'
+```
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+### Create an Insight asset
+```bash
+curl -X POST http://localhost:8080/users/user123 \
+-H "Content-Type: application/json" \
+-d '{
+  "id": "13",
+  "type": "Insight",
+  "description": "Social media insight",
+  "data": {
+    "text": "How many hours people spend on their phones"
+  }
+}'
+```
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+### Create an Audience asset
+```bash
+curl -X POST http://localhost:8080/users/user123 \
+-H "Content-Type: application/json" \
+-d '{
+  "id": "14",
+  "type": "Audience",
+  "description": "Male audience",
+  "data": {
+    "gender": "Male",
+    "birth_country": "Greece",
+    "age_group": "24-35",
+    "social_hours": "3",
+    "purchases_last": "5"
+  }
+}'
+```
+### Retrieve all assets of a user
+```bash
+curl -X GET http://localhost:8080/users/user123
+```
 
-It is appreciated, though not required, if a Dockerfile is included.
+### Update an existing asset
+```bash
+curl -X PUT http://localhost:8080/users/user123/12 \
+  -H "Content-Type: application/json" \
+  -d '{
+        "description": "Updated insight description"
+      }'
+```
 
-## Submission
 
-Just create a fork from the current repo and send it to us!
-
-Good luck, potential colleague!
+### Delete an existing asset
+```bash
+curl -X DELETE http://localhost:8080/users/user123/12
+```
