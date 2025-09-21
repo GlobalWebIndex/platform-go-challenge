@@ -1,0 +1,25 @@
+# Version control
+.git
+.gitignore
+
+# IDE/editor
+.idea/
+.vscode/
+*.swp
+
+# Build outputs
+bin/
+/build/
+/dist/
+*.out
+
+# Go stuff
+**/*.test
+**/*_test.go
+**/vendor/
+**/.cache/
+**/coverage*
+
+# OS junk
+.DS_Store
+Thumbs.db

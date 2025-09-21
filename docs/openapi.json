@@ -1,0 +1,294 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Favourites API",
+    "version": "1.0.0",
+    "description": "API for managing user favourites (assets). Supports chart, insight, and audience assets."
+  },
+  "servers": [
+    { "url": "http://localhost:8080" }
+  ],
+  "paths": {
+    "/users/{userID}/favourites": {
+      "get": {
+        "summary": "List user's favourite assets",
+        "parameters": [
+          { "$ref": "#/components/parameters/UserID" },
+          { "$ref": "#/components/parameters/Limit" },
+          { "$ref": "#/components/parameters/Offset" },
+          { "$ref": "#/components/parameters/Sort" },
+          { "$ref": "#/components/parameters/Order" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of assets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Asset" }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      },
+      "post": {
+        "summary": "Add a single asset to user's favourites",
+        "parameters": [
+          { "$ref": "#/components/parameters/UserID" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AddAssetRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created asset",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Asset" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/users/{userID}/favourites/bulk": {
+      "post": {
+        "summary": "Add multiple assets to user's favourites",
+        "parameters": [
+          { "$ref": "#/components/parameters/UserID" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/AddAssetRequest" }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created assets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Asset" }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/users/{userID}/favourites/{assetID}": {
+      "patch": {
+        "summary": "Update an asset's description",
+        "parameters": [
+          { "$ref": "#/components/parameters/UserID" },
+          { "$ref": "#/components/parameters/AssetID" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateDescriptionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated asset",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Asset" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "summary": "Remove an asset from user's favourites",
+        "parameters": [
+          { "$ref": "#/components/parameters/UserID" },
+          { "$ref": "#/components/parameters/AssetID" }
+        ],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "UserID": {
+        "name": "userID",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      },
+      "AssetID": {
+        "name": "assetID",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "schema": { "type": "integer", "default": 100, "minimum": 0, "maximum": 1000 }
+      },
+      "Offset": {
+        "name": "offset",
+        "in": "query",
+        "schema": { "type": "integer", "default": 0, "minimum": 0 }
+      },
+      "Sort": {
+        "name": "sort",
+        "in": "query",
+        "schema": { "type": "string", "enum": ["created_at", "type"], "default": "created_at" }
+      },
+      "Order": {
+        "name": "order",
+        "in": "query",
+        "schema": { "type": "string", "enum": ["asc", "desc"], "default": "asc" }
+      }
+    },
+    "schemas": {
+      "AssetType": { "type": "string", "enum": ["chart", "insight", "audience"] },
+      "BaseAsset": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/AssetType" },
+          "description": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "type", "description", "createdAt"]
+      },
+      "ChartAsset": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseAsset" },
+          {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "xAxisTitle": { "type": "string" },
+              "yAxisTitle": { "type": "string" },
+              "data": { "type": "array", "items": { "type": "number" } }
+            },
+            "required": ["title"]
+          }
+        ]
+      },
+      "InsightAsset": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseAsset" },
+          { "type": "object", "properties": { "text": { "type": "string" } }, "required": ["text"] }
+        ]
+      },
+      "AudienceAsset": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseAsset" },
+          {
+            "type": "object",
+            "properties": {
+              "gender": { "type": "string" },
+              "birthCountry": { "type": "string" },
+              "ageGroup": { "type": "string" },
+              "socialHoursPerDay": { "type": "string" },
+              "purchasesLastMonth": { "type": "integer" }
+            }
+          }
+        ]
+      },
+      "Asset": {
+        "oneOf": [
+          { "$ref": "#/components/schemas/ChartAsset" },
+          { "$ref": "#/components/schemas/InsightAsset" },
+          { "$ref": "#/components/schemas/AudienceAsset" }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "chart": "#/components/schemas/ChartAsset",
+            "insight": "#/components/schemas/InsightAsset",
+            "audience": "#/components/schemas/AudienceAsset"
+          }
+        }
+      },
+      "ChartPayload": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "xAxisTitle": { "type": "string" },
+          "yAxisTitle": { "type": "string" },
+          "data": { "type": "array", "items": { "type": "number" } }
+        },
+        "required": ["title"]
+      },
+      "InsightPayload": { "type": "object", "properties": { "text": { "type": "string" } }, "required": ["text"] },
+      "AudiencePayload": {
+        "type": "object",
+        "properties": {
+          "gender": { "type": "string" },
+          "birthCountry": { "type": "string" },
+          "ageGroup": { "type": "string" },
+          "socialHoursPerDay": { "type": "string" },
+          "purchasesLastMonth": { "type": "integer" }
+        }
+      },
+      "AddAssetRequest": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/AssetType" },
+          "description": { "type": "string" },
+          "payload": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/ChartPayload" },
+              { "$ref": "#/components/schemas/InsightPayload" },
+              { "$ref": "#/components/schemas/AudiencePayload" }
+            ]
+          }
+        },
+        "required": ["type", "description", "payload"]
+      },
+      "UpdateDescriptionRequest": {
+        "type": "object",
+        "properties": { "description": { "type": "string" } },
+        "required": ["description"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": { "error": { "type": "string" } },
+        "required": ["error"]
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "NotFound": {
+        "description": "Not found",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

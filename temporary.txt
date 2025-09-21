@@ -1,0 +1,68 @@
+Explanation of the snippet from server.go (handleUserFavouritesBulk)
+
+Snippet:
+
+if err := s.preflightBatch(userID, assets); err != nil {
+	// preflight returns 409-level conflicts with proper messages
+	status := http.StatusConflict
+	if strings.HasPrefix(err.Error(), "invalid json array:") || strings.HasPrefix(err.Error(), "item ") && strings.Contains(err.Error(), ": invalid") {
+		status = http.StatusBadRequest
+	}
+	writeError(w, status, err.Error())
+	return
+}
+
+What it does, step by step:
+- It runs a preflight check for the incoming bulk assets (preflightBatch). That helper validates batch-level conflicts (e.g., duplicate IDs within the batch or clashes with existing user assets) and also assigns IDs to items that don’t have one yet.
+- If preflightBatch returns an error, the handler needs to decide the correct HTTP status code to send back.
+  - By default, it considers such failures as conflicts and uses HTTP 409 (Conflict).
+  - However, it remaps certain error messages to HTTP 400 (Bad Request), namely:
+    1) Errors starting with "invalid json array:" — indicating the request body wasn’t a valid JSON array for bulk input.
+    2) Errors that look like per-item validation failures, which preflight/decoding formats as: "item N: ... invalid ...". These are treated as input validation problems, not conflicts, so they become 400.
+- After deciding the status, it writes a JSON error response like {"error":"<message>"} and returns immediately, aborting the bulk operation.
+
+Note about the conditional:
+- The condition uses Go’s operator precedence: A || (B && C).
+  So this expression:
+  strings.HasPrefix(err.Error(), "invalid json array:") || strings.HasPrefix(err.Error(), "item ") && strings.Contains(err.Error(), ": invalid")
+  is equivalent to:
+  (strings.HasPrefix(errMsg, "invalid json array:")) ||
+  (strings.HasPrefix(errMsg, "item ") && strings.Contains(errMsg, ": invalid"))
+  where errMsg = err.Error().
+
+Potential improvements for handleUserFavouritesBulk
+1) Strongly typed errors and central mapping
+   - Define sentinel/typed errors (e.g., ErrBadRequest, ErrConflict, or a ValidationError type with fields like Index, Field, Code).
+   - Have helpers return those types and centralize status selection in a small function (e.g., mapErrorToHTTPStatus(err)). This removes fragile string-prefix matching and makes tests simpler and safer.
+
+2) Clearer responsibility boundaries
+   - Keep decode/validation functions responsible only for syntactic/semantic validation -> always 400 level.
+   - Limit preflightBatch to conflict detection and ID assignment -> always 409 level.
+   - With this separation, the status mapping is trivial and the current special-casing becomes unnecessary.
+
+3) Structured error body for bulk failures
+   - Instead of a single "error" string, return structured details for bulk (e.g., {"error":"validation failed","details":[{"index":N,"message":"...","code":"invalid_field"}]}).
+   - This helps clients pinpoint which item failed and why.
+
+4) Transaction-like semantics (all-or-nothing) and idempotency
+   - The preflight step already tries to avoid partial commits; ensure addAssetsBatch is protected against races (store side) or implement a batch Add in the store that validates and commits atomically where possible (e.g., via a single lock section in memory store or a transaction in a persistent store).
+   - Consider an idempotency key header for bulk requests to safely retry on network errors.
+
+5) Batch size limits and resource safeguards
+   - Enforce a maximum number of items per bulk call (e.g., 100–1000) and a maximum body size to protect the server.
+   - Fail fast with 413 (Payload Too Large) or 400 with a clear message.
+
+6) Streaming/iterative decoding for very large batches
+   - If large payloads are expected, use a json.Decoder to stream through the array to reduce peak memory usage. For the current scope, the simple approach is fine.
+
+7) Consistent headers and method handling
+   - Ensure Content-Type is application/json on POST; return 415 if not.
+   - The handler already sets Allow for non-POST; keep tests verifying 405 and Allow header.
+
+8) Logging and observability
+   - Log batch size, user ID (redacted as necessary), and error categories to aid debugging and monitoring.
+
+9) Test coverage
+   - Add unit tests that assert: (a) status mapping without relying on string matching (once typed errors exist), (b) duplicate IDs within a batch, (c) duplicate against existing store, (d) large offset/limit interaction after bulk insert, (e) body Content-Type handling, (f) maximum batch size enforcement.
+
+These improvements would make the bulk endpoint more robust, maintainable, and user-friendly without changing the core behavior clients rely on today.
