@@ -1,0 +1,41 @@
+version: '3.7'
+
+networks:
+  platform-network:
+    external: true
+
+services:
+  arangodb:
+    image: arangodb:latest
+    container_name: arangodb
+    environment:
+      ARANGO_ROOT_USERNAME: root    
+      ARANGO_ROOT_PASSWORD: rootpassword
+    ports:
+      - 8529:8529
+    volumes:
+      - arangodb_data_container:/var/lib/arangodb3
+      - arangodb_apps_data_container:/var/lib/arangodb3-apps
+    networks:
+      - platform-network
+
+  platform_service:
+    build: .
+    image: platform_image
+    container_name: platform_container
+    ports: 
+      - 8000:8000
+    depends_on:
+      - arangodb
+    networks:
+      - platform-network
+    environment:
+      - ARANGO_URL=http://arangodb:8529
+      - ARANGO_USERNAME=root
+      - ARANGO_PASSWORD=rootpassword
+      - ARANGO_DB=platform-db
+      - SERVE_ON_PORT=8000
+
+volumes:
+  arangodb_data_container:
+  arangodb_apps_data_container:
