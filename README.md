@@ -5,6 +5,8 @@
 - [Getting Started](#getting-started)  
   - [Prerequisites](#prerequisites)  
 - [Quick Start](#quick-start)
+- [Testing](#testing)
+
 
 
 ## Introduction
@@ -75,16 +77,43 @@ go run ./src/scripts/seed
 ```
 
 ## Testing
+For the purpose of testing execute the following before initiating the testing:
+- `docker compose up`,
+-  source the environmental variables containing the BASE_URL and
+- `DATABASE_URL='postgres://platform-go-challenge:pass@localhost:5432/platform-go-challenge' \ go run ./src/scripts/seed`
 
-You may test the endpoints using curl:
+Finally after those, test the endpoints using curl:
 
 1) GET user favorites:
+- GET user favorites first element to simulate that you get the first page and get *NEXT_T* and *NEXT_ID*:
 ```
 curl -s "$BASE_URL/v1/users/u1/favorites?limit=1" | jq
+```
+- GET user favorites next page:
+```
+curl -s "$BASE_URL/v1/users/u1/favorites?limit=2&after_t=NEXT_T&after_id=NEXT_ID" | jq
 ```
 
 2) GET user favorites by type:
 ```
 curl -s "$BASE_URL/v1/users/u1/favorites?limit=20&type=chart" | jq
 ```
-3) 
+
+3) POST user favorite from assets:
+```
+curl -i -X POST "$BASE_URL/v1/users/u1/favorites" \
+  -H "Content-Type: application/json" \
+  -d "{\"assetId\":\"$ASSET_ID\"}"
+```
+
+4) DELETE user favorite:
+```
+curl -i -X DELETE "$BASE_URL/v1/users/u1/favorites/$ASSET_ID"
+```
+
+5) PATCH user favorite description:
+```
+curl -i -X PATCH "$BASE_URL/v1/assets/$ASSET_ID" \
+  -H 'Content-Type: application/json' \
+  --data '{"description":"Updated via curl"}'
+```
