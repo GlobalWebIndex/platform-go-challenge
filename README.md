@@ -12,10 +12,8 @@
 ## Introduction
 A tiny, clean HTTP API in Go that lets users “star” assets (charts, insights, audiences) and fetch their favourites for quick access when enter in thee platform's dashboard. This server has two endpoints implementing the following:
 
-- 
-- POST /v1/users/:user_id/favorites body: {"assetId":"..."}
-- DELETE /v1/users/:user_id/favorites/:asset_id
-- PATCH /v1/assets/:asset_id body: {"description":"..."}
+- an endpoint that enables a user to ADD/EDIT(shared attributes)/DELETE favorites
+- an endpoint that gets the user id and returns back a list of favorites
 
 ## Getting Started
 
