@@ -1,6 +1,6 @@
 BEGIN;
 
--- ===== users (new) =====
+-- ===== users =====
 CREATE TABLE IF NOT EXISTS users (
   id          text PRIMARY KEY,
   email       text NOT NULL UNIQUE,
@@ -10,10 +10,9 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at  timestamptz NOT NULL
 );
 
--- helpful index if you later search by email prefix
 CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
 
--- ===== assets (unchanged structure; snake_case columns already) =====
+-- ===== assets =====
 CREATE TABLE IF NOT EXISTS assets (
   id          text PRIMARY KEY,
   type        text NOT NULL CHECK (type IN ('chart','insight','audience')),
@@ -23,43 +22,21 @@ CREATE TABLE IF NOT EXISTS assets (
   created_at  timestamptz NOT NULL,
   updated_at  timestamptz NOT NULL
 );
+
 CREATE INDEX IF NOT EXISTS idx_assets_type ON assets(type);
 
--- ===== favorites (now references users + assets) =====
+-- ===== favorites (user-specific relation with overrides) =====
 CREATE TABLE IF NOT EXISTS favorites (
-  user_id    text NOT NULL REFERENCES users(id)   ON DELETE CASCADE,
-  asset_id   text NOT NULL REFERENCES assets(id)  ON DELETE CASCADE,
-  created_at timestamptz NOT NULL,
+  user_id              text NOT NULL REFERENCES users(id)  ON DELETE CASCADE,
+  asset_id             text NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
+  created_at           timestamptz NOT NULL,
+  override             jsonb NOT NULL DEFAULT '{}'::jsonb,   -- per-user fields (e.g., title/description)
+  override_updated_at  timestamptz,
   PRIMARY KEY (user_id, asset_id)
 );
 
--- keyset pagination support
+-- keyset pagination support: (created_at DESC, asset_id ASC) per user
 CREATE INDEX IF NOT EXISTS idx_fav_user_created
   ON favorites (user_id, created_at DESC, asset_id);
-
--- --- Safety nets if favorites existed before without FKs ---
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint
-    WHERE conname = 'fk_favorites_user_id'
-  ) THEN
-    ALTER TABLE favorites
-      ADD CONSTRAINT fk_favorites_user_id
-      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint
-    WHERE conname = 'fk_favorites_asset_id'
-  ) THEN
-    ALTER TABLE favorites
-      ADD CONSTRAINT fk_favorites_asset_id
-      FOREIGN KEY (asset_id) REFERENCES assets(id) ON DELETE CASCADE;
-  END IF;
-END $$;
 
 COMMIT;

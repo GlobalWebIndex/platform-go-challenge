@@ -98,20 +98,32 @@ func (h *Handlers) removeFavorite(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// PATCH /v1/assets/:asset_id   body: { "description": "..." }
-func (h *Handlers) editAssetDescription(c *gin.Context) {
+// PATCH /v1/users/:user_id/favorites/:asset_id   body: { "description": "...", "title": "..." }
+func (h *Handlers) patchFavoriteOverride(c *gin.Context) {
+	userID := core.UserID(c.Param("user_id"))
 	assetID := core.AssetID(c.Param("asset_id"))
+
 	var body map[string]any
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid JSON"})
 		return
 	}
-	desc, _ := body["description"].(string)
-	if strings.TrimSpace(desc) == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "description is required"})
+
+	// whitelist allowed shared fields
+	override := map[string]any{}
+	if v, ok := body["description"].(string); ok && strings.TrimSpace(v) != "" {
+		override["description"] = v
+	}
+	if v, ok := body["title"].(string); ok && strings.TrimSpace(v) != "" {
+		override["title"] = v
+	}
+
+	if len(override) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "no supported fields to update"})
 		return
 	}
-	if err := h.assetSvc.EditDescription(assetID, desc, h.now()); err != nil {
+
+	if err := h.favoriteSvc.SetFavoriteOverride(userID, assetID, override, h.now()); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -126,7 +138,7 @@ func SetupRouter(h *Handlers) *gin.Engine {
 		v1.GET("/users/:user_id/favorites", h.getFavorites)
 		v1.POST("/users/:user_id/favorites", h.addFavorite)
 		v1.DELETE("/users/:user_id/favorites/:asset_id", h.removeFavorite)
-		v1.PATCH("/assets/:asset_id", h.editAssetDescription)
+		v1.PATCH("/users/:user_id/favorites/:asset_id", h.patchFavoriteOverride)
 	}
 
 	return r

@@ -12,7 +12,7 @@
 ## Introduction
 A tiny, clean HTTP API in Go that lets users “star” assets (charts, insights, audiences) and fetch their favourites for quick access when enter in thee platform's dashboard. This server has two endpoints implementing the following:
 
-- GET /v1/users/:user_id/favorites?limit=&after_t=&after_id=&type=
+- 
 - POST /v1/users/:user_id/favorites body: {"assetId":"..."}
 - DELETE /v1/users/:user_id/favorites/:asset_id
 - PATCH /v1/assets/:asset_id body: {"description":"..."}
@@ -113,7 +113,7 @@ curl -i -X DELETE "$BASE_URL/v1/users/u1/favorites/$ASSET_ID"
 
 5) PATCH user favorite description:
 ```
-curl -i -X PATCH "$BASE_URL/v1/assets/$ASSET_ID" \
+curl -i -X PATCH "$BASE_URL/v1/users/u1/favorites/$ASSET_ID" \
   -H 'Content-Type: application/json' \
-  --data '{"description":"Updated via curl"}'
+  --data '{"description":"My private description"}'
 ```
