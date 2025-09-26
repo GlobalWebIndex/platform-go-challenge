@@ -1,31 +1,117 @@
-# GlobalWebIndex Engineering Challenge
+# GlobalWebIndex Engineering Challenge                                        
+
+##### Table of Contents  
+- [Introduction](#introduction)
+- [Getting Started](#getting-started)  
+  - [Prerequisites](#prerequisites)  
+- [Quick Start](#quick-start)
+- [Testing](#testing)
+
+
 
 ## Introduction
+A tiny, clean HTTP API in Go that lets users “star” assets (charts, insights, audiences) and fetch their favourites for quick access when enter in thee platform's dashboard. This server has two endpoints implementing the following:
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+- an endpoint that enables a user to ADD/EDIT(shared attributes)/DELETE favorites
+- an endpoint that gets the user id and returns back a list of favorites
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+## Getting Started
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+### Prerequisites
+You’ll need the following to develop and run the API locally:
 
-## Challenge
+- Go: **1.23+**
+- Docker Engine and Docker Compose v2 
+- Postgres 16
+- Gin HTTP router
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+## Quick start (local dev)
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+You’ll need Docker (for Postgres) and Go 1.22+ (to run the server):
+#### Without docker-compose
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+1) Create your env file
+```
+cp .env.template .env
+# uncomment DATABASE_URL run the server locally (outside docker-compose), be sure .env has:
+# DATABASE_URL=postgres://platform-go-challenge:pass@localhost:5432/platform-go-challenge?sslmode=disable
+```
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+2) Start Postgres
+```
+docker run --name platform-go-challenge-db -p 5432:5432 \
+  -e POSTGRES_USER=platform-go-challenge -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=platform-go-challenge \
+  -d postgres:16
+```
 
-It is appreciated, though not required, if a Dockerfile is included.
+3) Export envs for the Go process
+```
+# (uncomment DATABASE_URL in .env first if running server locally (outside docker-compose))
+source .env
+```
 
-## Submission
+4) Seed (required when dev locally only) and run the server
+```
+go run ./src/scripts/seed
+go run ./src/scripts/server
+```
 
-Just create a fork from the current repo and send it to us!
+#### With docker-compose
 
-Good luck, potential colleague!
+0) From the repo root
+```
+cp .env.template .env   
+```
+
+1) Spin-up docker-compose
+```
+docker compose up --build
+```
+
+2) (Optional) Seed sample assets into the compose Postgres
+```
+DATABASE_URL="postgres://platform-go-challenge:pass@localhost:5432/platform-go-challenge" \
+go run ./src/scripts/seed
+```
+
+## Testing
+For the purpose of testing execute the following before initiating the testing:
+- `docker compose up`,
+-  source the environmental variables containing the BASE_URL and
+- `DATABASE_URL='postgres://platform-go-challenge:pass@localhost:5432/platform-go-challenge' \ go run ./src/scripts/seed`
+
+Finally after those, test the endpoints using curl:
+
+1) GET user favorites:
+- GET user favorites first element to simulate that you get the first page and get *NEXT_T* and *NEXT_ID*:
+```
+curl -s "$BASE_URL/v1/users/u1/favorites?limit=1" | jq
+```
+- GET user favorites next page:
+```
+curl -s "$BASE_URL/v1/users/u1/favorites?limit=2&after_t=NEXT_T&after_id=NEXT_ID" | jq
+```
+
+2) GET user favorites by type:
+```
+curl -s "$BASE_URL/v1/users/u1/favorites?limit=20&type=chart" | jq
+```
+
+3) POST user favorite from assets:
+```
+curl -i -X POST "$BASE_URL/v1/users/u1/favorites" \
+  -H "Content-Type: application/json" \
+  -d "{\"assetId\":\"$ASSET_ID\"}"
+```
+
+4) DELETE user favorite:
+```
+curl -i -X DELETE "$BASE_URL/v1/users/u1/favorites/$ASSET_ID"
+```
+
+5) PATCH user favorite description:
+```
+curl -i -X PATCH "$BASE_URL/v1/users/u1/favorites/$ASSET_ID" \
+  -H 'Content-Type: application/json' \
+  --data '{"description":"My private description"}'
+```
