@@ -1,31 +1,194 @@
-# GlobalWebIndex Engineering Challenge
+# **Favourite Assets** 
 
-## Introduction
+## **Overview**
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+**This project is a Go-based server that manages Users, Assets, and Favourites, with role-based access control handled via Keycloak.**
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+   ⦁	Users: Can be created, updated, listed, and deleted (admin-only for some operations).
+   
+   ⦁	Assets: Supports different types like Charts, Insights, and Audience data. Admins can manage all assets.
+   
+   ⦁	Favourites: Users can mark assets as favourites. 
+   
+   ⦁   The server stores all of them in a local in-memory database with sharded storage for efficiency.
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+**Keycloak Integration**
 
-## Challenge
+   ⦁	Keycloak is used for authentication and authorization.*
+   
+   ⦁	The server reads the JWT token, checks the user role, and determines access.
+   
+   ⦁	In an actual project, you could connect your DB to Keycloak to validate the user ID and fetch user data directly.
+   
+   ⦁	For this demo, Keycloak runs in Docker, and the server verifies tokens locally.
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+  *In this demo, the server parses JWT tokens from Keycloak to read roles and user info. In a production environment, the server should validate the token signature and issuer before trusting the   claims.
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+## **How to run**
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+⦁	**Use Docker Compose to start both the Go server and Keycloak: docker-compose up --build**
 
-It is appreciated, though not required, if a Dockerfile is included.
+   This command will:
 
-## Submission
+   Build your Go server image
 
-Just create a fork from the current repo and send it to us!
+   Start your server on http://localhost:8080
 
-Good luck, potential colleague!
+   Start Keycloak on http://localhost:8081
+
+   The Keycloak realm favourite-assets is automatically imported from keycloak-realm/realm-export.json.
+
+
+⦁	**Get a JWT Token from Keycloak**
+
+  Make a call to retrieve a token 
+   
+  **Admin User** 
+
+     curl -X POST "http://localhost:8081/realms/favourite-assets/protocol/openid-connect/token" \
+     -d "grant_type=password&client_id=favourite-assets&username=admin&password=admin&client_secret=secret"
+    
+  **Plain user**
+       
+       curl -X POST "http://localhost:8081/realms/favourite-assets/protocol/openid-connect/token" \
+        -d "grant_type=password&client_id=favourite-assets&username=user&password=user&client_secret=secret"
+
+  Include the token in your requests as a Bearer Token
+
+⦁ **Call endpoints**
+
+ **Users** 
+      
+       Create User (Admin only)
+       POST http://localhost:8080/users/
+         {
+          "name": "John Doe",
+          "email": "john@example.com"
+         }
+
+        List Users (Admin only)
+        GET http://localhost:8080/users/
+        
+        Get User by ID (All roles)
+        GET http://localhost:8080/users/by-id?userId=<uuid>
+          
+        Update User (All roles)
+        PUT http://localhost:8080/users/?userId=<uuid>
+            {
+             "name": "John Smith",
+             "email": "johnsmith@example.com"
+            }
+        
+        Delete User (Admin only)
+        DELETE http://localhost:8080/users/?userId=<uuid>
+        
+  **Assets**
+  
+        Create Asset (Admin only)
+        POST http://localhost:8080/assets/
+        Example for Chart asset:
+        
+        {
+          "type": "chart",
+          "title": "Sales Chart",
+          "description": "Monthly sales data",
+          "xAxis": "Month",
+          "yAxis": "Revenue"
+        }
+        Example for Insight asset
+        {
+          "type": "insight",
+          "description": "Customer behavior",
+          "text": "Most customers buy on weekends."
+        }
+        
+        Example for Audience asset:
+        
+        {
+          "type": "audience",
+          "description": "Target demographic",
+          "gender": "male",
+          "birthCountry": "USA",
+          "ageGroup": "25-34",
+          "hoursSocialDaily": 3,
+          "purchasesLastMonth": 5
+        }
+        
+        List Assets (All roles)
+        GET http://localhost:8080/assets/
+        Optional filter: GET http://localhost:8080/assets/?type=chart
+        
+        Get Asset by ID (All roles)
+        GET http://localhost:8080/assets/by-id?assetId=<uuid>
+        
+        Update Asset (Admin only)
+        PUT http://localhost:8080/assets/?assetId=<uuid>
+        Body is similar to create request, with updated values.
+        
+        Delete Asset (Admin only)
+        DELETE http://localhost:8080/assets/?assetId=<uuid>
+        
+  **Favourites**
+        
+        Add Favourite (All roles)
+        POST http://localhost:8080/favorites/?userId=<uuid>&assetId=<uuid>
+        
+        Remove Favourite (All roles)
+        DELETE http://localhost:8080/favorites/?favouriteId=<uuid>
+        
+        List Favourites by User (All roles)
+        GET http://localhost:8080/favorites/?userId=<uuid>
+        
+        Get Favourite by ID (All roles)
+        GET http://localhost:8080/favorites/by-id?favouriteId=<uuid>
+
+## **DB Schema**
+    
+    +----------------+
+    |     users      |
+    +----------------+
+    | id (PK)        |
+    | name           |
+    | email          |
+    | created_at     |
+    | updated_at     |
+    +----------------+
+             |
+             | 1 : M   (one user can have many favourites)
+             v
+    +----------------+
+    |   favourites   |
+    +----------------+
+    | id (PK)        |
+    | user_id (FK)   | ---> users.id
+    | asset_id (FK)  | ---> assets.id
+    | asset_type     |
+    | created_at     |
+    +----------------+
+             |
+             | M : 1   (many favourites can point to one asset)
+             v
+    +----------------+
+    |     assets     |
+    +----------------+
+    | id (PK)        |
+    | type           | <-- chart / insight / audience
+    | description    |
+    | created_at     |
+    | updated_at     |
+    +----------------+
+            / | \
+           /  |  \
+          v   v   v
+    +---------+ +---------+ +----------------+
+    |  chart  | | insight | | audience       |
+    +---------+ +---------+ +----------------+
+    | title   | | text    | | gender         |
+    | x_axis  | |         | | birth_country  |
+    | y_axis  | |         | | age_group      |
+    |         | |         | | hours_social   |
+    |         | |         | | purchases_last |
+    +---------+ +---------+ +----------------+
+    
+
