@@ -1,0 +1,587 @@
+{
+	"info": {
+		"_postman_id": "c5adbd2d-f82e-4c1c-b8d6-913b32c49e3e",
+		"name": "GWI platform-go-challenge",
+		"description": "Postman collection for GWI Challenge (Go Favourites API).\nBase URL is stored in variable {{base_url}}.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13198734",
+		"_collection_link": "https://orange-firefly-379550.postman.co/workspace/My-Workspace~fc1ad073-08e0-4ed0-8553-af7b9f0f4a45/collection/13198734-c5adbd2d-f82e-4c1c-b8d6-913b32c49e3e?action=share&source=collection_link&creator=13198734"
+	},
+	"item": [
+		{
+			"name": "User Creation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"test@gwi.local\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "User Creation Test",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"test@gwi.local\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 14 Sep 2025 13:41:48 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "34"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"email\": \"test@gwi.local\",\n    \"id\": 2\n}"
+				}
+			]
+		},
+		{
+			"name": "Get User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get User Test",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 14 Sep 2025 14:04:55 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "34"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"email\": \"gwi@demo.local\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Get All Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users?limit=50&offset=0",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "50"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Favourite - Insight",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"type\": \"insight\",\n  \"description\": \"Matchbox\",\n  \"data\": { \"text\": \"George Oikonomidis\" },\n  \"custom_description\": \"pin it\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/users/1/favourites",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"1",
+						"favourites"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Add Favourite - Insight Test",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"insight\",\n  \"description\": \"Matchbox\",\n  \"data\": { \"text\": \"George Oikonomidis\" },\n  \"custom_description\": \"pin it\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/1/favourite",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"favourite"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 14 Sep 2025 13:43:35 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "140"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"user_id\": 1,\n    \"asset\": {\n        \"id\": 4,\n        \"type\": \"insight\",\n        \"description\": \"Matchbox\",\n        \"data\": {\n            \"text\": \"George Oikonomidis\"\n        }\n    },\n    \"custom_description\": \"pin it\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Add Favourite - Chart",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"type\": \"chart\",\n  \"description\": \"chart user description\",\n\"data\": {\n    \"gender\": \"Male\",\n    \"age_group\": \"24-35\",\n    \"education\": \"University\",\n    \"profession\": \"Hercules\",\n    \"country\": \"Greece\",\n    \"hours_social\": \">3\",\n    \"purchases_last_month\": 5\n  },\n    \"custom_description\": \"growth chart\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/users/1/favourites",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"1",
+						"favourites"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Add Favourite - Chart Test",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"chart\",\n  \"description\": \"chart user description\",\n\"data\": {\n    \"gender\": \"Male\",\n    \"age_group\": \"24-35\",\n    \"education\": \"University\",\n    \"profession\": \"Hercules\",\n    \"country\": \"Greece\",\n    \"hours_social\": \">3\",\n    \"purchases_last_month\": 5\n  },\n    \"custom_description\": \"growth chart\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/1/favourite",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"favourite"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 14 Sep 2025 13:17:46 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "284"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"user_id\": 1,\n    \"asset\": {\n        \"id\": 2,\n        \"type\": \"chart\",\n        \"description\": \"chart user description\",\n        \"data\": {\n            \"age_group\": \"24-35\",\n            \"country\": \"Greece\",\n            \"education\": \"University\",\n            \"gender\": \"Male\",\n            \"hours_social\": \">3\",\n            \"profession\": \"Hercules\",\n            \"purchases_last_month\": 5\n        }\n    },\n    \"custom_description\": \"growth chart\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Add Favourite - Audience",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"type\": \"audience\",\n  \"description\": \"Female social users\",\n  \"data\": { \"gender\": \"Female\", \"age_group\": \"24-35\", \"hours_social\": \"<3\", \"country\": \"Greece\" },\n  \"custom_description\": \"target segment\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/users/1/favourites",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"1",
+						"favourites"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Add Favourite - Audience Test",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"audience\",\n  \"description\": \"Female social users\",\n  \"data\": { \"gender\": \"Female\", \"age_group\": \"24-35\", \"hours_social\": \"<3\", \"country\": \"Greece\" },\n  \"custom_description\": \"target segment\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/1/favourite",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"favourite"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 14 Sep 2025 13:44:55 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "214"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"user_id\": 1,\n    \"asset\": {\n        \"id\": 5,\n        \"type\": \"audience\",\n        \"description\": \"Female social users\",\n        \"data\": {\n            \"age_group\": \"24-35\",\n            \"country\": \"Greece\",\n            \"gender\": \"Female\",\n            \"hours_social\": \"<3\"\n        }\n    },\n    \"custom_description\": \"target segment\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Get Favorites",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users/1/favourites",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"1",
+						"favourites"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get All Favorites Pagination Test",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/1/favourites?limit=50&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"favourites"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "50"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Link",
+							"value": "</v1/users/1/favourites?limit=50&offset=0>; rel=\"self\""
+						},
+						{
+							"key": "X-Total-Count",
+							"value": "3"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 14 Sep 2025 14:21:53 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "640"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"user_id\": 1,\n        \"asset\": {\n            \"id\": 6,\n            \"type\": \"chart\",\n            \"description\": \"chart user description\",\n            \"data\": {\n                \"age_group\": \"24-35\",\n                \"country\": \"Greece\",\n                \"education\": \"University\",\n                \"gender\": \"Male\",\n                \"hours_social\": \">3\",\n                \"profession\": \"Hercules\",\n                \"purchases_last_month\": 5\n            }\n        },\n        \"custom_description\": \"growth chart\"\n    },\n    {\n        \"user_id\": 1,\n        \"asset\": {\n            \"id\": 5,\n            \"type\": \"audience\",\n            \"description\": \"Female social users\",\n            \"data\": {\n                \"age_group\": \"24-35\",\n                \"country\": \"Greece\",\n                \"gender\": \"Female\",\n                \"hours_social\": \"<3\"\n            }\n        },\n        \"custom_description\": \"target segment\"\n    },\n    {\n        \"user_id\": 1,\n        \"asset\": {\n            \"id\": 4,\n            \"type\": \"insight\",\n            \"description\": \"Matchbox\",\n            \"data\": {\n                \"text\": \"George Oikonomidis\"\n            }\n        },\n        \"custom_description\": \"pin it\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Update Favourite Description",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"front page quick access\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/users/1/favourites/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"1",
+						"favourites",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Update Favourite Description Test",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"front page quick access\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/1/favourite/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"favourite",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 14 Sep 2025 13:45:23 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "16"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": \"ok\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Delete Favourites",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users/1/favourites/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"1",
+						"favourites",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete All User's Favourites",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users/1/favourites",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"1",
+						"favourites"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/v1"
+		}
+	]
+}
