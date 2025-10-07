@@ -1,31 +1,154 @@
-# GlobalWebIndex Engineering Challenge
+# GWI challenge
 
-## Introduction
+A dashboard for assets. 
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+<i>This project is the [technical assignment for GWI](https://github.com/GlobalWebIndex/platform-go-challenge).</i>
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
 
-## Challenge
+## Table of Contents
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+- Technical Implementation
+- Software versions
+- Installation & Deployment
+- Features
+- Data population
+- Authentication
+- Potential enhancements
+- Bugs
+- License
+- Contact
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+## Technical Implementation
+- The backend has been implemented by using Go.
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+The main goals during development were:
+- Separation of concerns: each entity has a route, a service and a model.
+- Security:
+    - JWT
+    - Unified response
+- Error handling
+- Testing
+- Clear naming and documentation
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+## Software versions
+- Python: 1.25.1
+- Docker: 28.4.0
 
-It is appreciated, though not required, if a Dockerfile is included.
+## Installation & Deployment
 
-## Submission
+```bash
+# Clone the repository
+git clone git@github.com:stevenoddity/platform-go-challenge.git
 
-Just create a fork from the current repo and send it to us!
+# Navigate to the project directory
+cd platform-go-challenge
 
-Good luck, potential colleague!
+# Build docker image
+docker build -t gwi-challenge .
+
+# Run docker image 
+docker run -p 8080:8080 gwi-challenge
+
+```
+
+```bash
+Application can be accessed at http://127.0.0.1:8080/
+```
+Command for running tests:
+```bash
+go test -v ./...
+```
+
+# Features
+- ## List Favorites
+```bash
+curl -i -X GET -H "Authorization: Bearer $JWT" "http://127.0.0.1:8080/favorites
+```
+Example:
+```bash
+curl -i -X GET -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.fKCJWNXwhs7ukzI7vpAN2v1z5PBFmiqLlAEhoxbuDB4" "http://127.0.0.1:8080/favorites"
+```
+- ## Add a new Favorite
+```bash
+curl -i -X POST -H "Authorization: Bearer $JWT" "http://127.0.0.1:8080/favorites" -d '{
+    "asset_id": {asset_id}
+  }'
+```
+Example:
+```bash
+curl -i -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.fKCJWNXwhs7ukzI7vpAN2v1z5PBFmiqLlAEhoxbuDB4" "http://127.0.0.1:8080/favorites" -d '{
+    "asset_id": 3
+  }'
+```
+- ## Delete a Favorite
+```bash
+curl -i -X DELETE -H "Authorization: Bearer $JWT" "http://127.0.0.1:8080/favorites/{favorite_id}"
+```
+Example:
+```bash
+curl -i -X DELETE -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.fKCJWNXwhs7ukzI7vpAN2v1z5PBFmiqLlAEhoxbuDB4" "http://127.0.0.1:8080/favorites/1"
+```
+- ## Edit Asset's description
+```bash
+curl -i -X PUT -H "Authorization: Bearer $JWT" "http://127.0.0.1:8080/assets/{asset_id}" -d '{
+    "data": {
+      "new_data_field": "new_value",
+      "new_data_field_2": 64000
+    },
+    "new_field": "example"
+  }'
+```
+Example:
+```bash
+curl -i -X PUT -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.fKCJWNXwhs7ukzI7vpAN2v1z5PBFmiqLlAEhoxbuDB4" "http://127.0.0.1:8080/assets/1" -d '{
+    "data": {
+      "category": "crypto",
+      "price": 64000
+    },
+    "new_field": "example"
+  }'
+```
+
+# Data population
+
+Initial dataset can be located at:
+```bash
+database/database.go
+```
+
+# Authentication
+## JWT token for user_id = 1:
+```bash
+ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.fKCJWNXwhs7ukzI7vpAN2v1z5PBFmiqLlAEhoxbuDB4
+```
+## Generate JWT token ad hoc:
+Use secret-key at https://www.jwt.io/
+```bash
+secret_key="gwi-jwt-secret"
+```
+
+# Potential Enhancements
+- Enhance testing
+- Use database: NoSQL (document-based) would be my suggestion due to the unstructured format of data (i.e. mongoDB or ElasticSearch)
+- Logging 
+- Pagination
+- Lazy loading (minimize json loadind)
+- Concurrency (use locks)
+- Authorization on authenticated users
+- Expiration in JWT
+- Blacklist old JWT tokens
+- Rate limiter on endpoints
+- Enhance input validators
+- Use Maps instead of loops
+
+# Bugs
+
+- Concurency issues 
+- HTTP Response Status of creation should be 201
+
+# Licences
+
+# Contact
+
+Don't hesitate to ask me for clarifications at steveofsam@gmail.com
