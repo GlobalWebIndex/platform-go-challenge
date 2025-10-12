@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"platform-go-challenge/internal/handler"
+	"platform-go-challenge/internal/middleware"
 	"platform-go-challenge/internal/storage"
 )
 
@@ -32,7 +33,7 @@ func main() {
 	port := ":8080"
 	server := &http.Server{
 		Addr:    port,
-		Handler: router,
+		Handler: middleware.LoggingMiddleware(router),
 	}
 
 	// Graceful shutdown
