@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "444d003c-e049-4bf3-a6a2-515d6dde5264",
+		"name": "GWI API",
+		"description": "Collection for testing the Favorites Web Server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6800913"
+	},
+	"item": [
+		{
+			"name": "Get User Favorites",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/users/user123/favorites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"user123",
+						"favorites"
+					]
+				},
+				"description": "Get all favorites for a user"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Chart Favorite",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"asset\": {\n    \"chart\": {\n      \"id\": \"chart-001\",\n      \"type\": \"chart\",\n      \"description\": \"Monthly sales performance\",\n      \"title\": \"Sales by Region\",\n      \"x_axis_key\": \"month\",\n      \"y_axis_key\": \"sales\",\n      \"data\": [\n        {\"month\": \"Jan\", \"sales\": 1200},\n        {\"month\": \"Feb\", \"sales\": 1900},\n        {\"month\": \"Mar\", \"sales\": 1500}\n      ]\n    }\n  }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/users/user123/favorites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"user123",
+						"favorites"
+					]
+				},
+				"description": "Add a chart asset to favorites"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Insight Favorite",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"asset\": {\n    \"insight\": {\n      \"id\": \"insight-001\",\n      \"type\": \"insight\",\n      \"description\": \"Social media engagement trend\",\n      \"title\": \"Millennial Social Media Usage\",\n      \"content\": \"40% of millennials spend more than 3 hours on social media daily\"\n    }\n  }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/users/user123/favorites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"user123",
+						"favorites"
+					]
+				},
+				"description": "Add an insight asset to favorites"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Audience Favorite",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"asset\": {\n    \"audience\": {\n      \"id\": \"audience-001\",\n      \"type\": \"audience\",\n      \"description\": \"High-value male customers\",\n      \"gender\": \"Male\",\n      \"countries\": [\"US\", \"UK\", \"Canada\"],\n      \"age_min\": 24,\n      \"age_max\": 35,\n      \"min_hours_daily_social_media\": 3,\n      \"min_purchases_last_month\": 5\n    }\n  }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/users/user123/favorites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"user123",
+						"favorites"
+					]
+				},
+				"description": "Add an audience segment to favorites"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Another Audience Favorite",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"asset\": {\n    \"audience\": {\n      \"id\": \"audience-002\",\n      \"type\": \"audience\",\n      \"description\": \"Female tech enthusiasts\",\n      \"gender\": \"Female\",\n      \"countries\": [\"US\", \"Germany\"],\n      \"age_min\": 18,\n      \"age_max\": 40,\n      \"min_hours_daily_social_media\": 2,\n      \"min_purchases_last_month\": 3\n    }\n  }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/users/user123/favorites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"user123",
+						"favorites"
+					]
+				},
+				"description": "Add another audience segment to favorites"
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Favorite Description",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"Updated: Q3 sales by region with trend analysis\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/users/user123/favorites/chart-001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"user123",
+						"favorites",
+						"chart-001"
+					]
+				},
+				"description": "Update the description of a favorited asset"
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Favorite",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/users/user123/favorites/insight-001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"user123",
+						"favorites",
+						"insight-001"
+					]
+				},
+				"description": "Remove an asset from user's favorites"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Favorites (After Changes)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/users/user123/favorites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"user123",
+						"favorites"
+					]
+				},
+				"description": "Get all favorites for a user after modifications"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Non-Existent User Favorites",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/users/user999/favorites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"user999",
+						"favorites"
+					]
+				},
+				"description": "Get favorites for a user that doesn't have any"
+			},
+			"response": []
+		}
+	]
+}
