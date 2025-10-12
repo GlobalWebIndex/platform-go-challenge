@@ -10,6 +10,16 @@ import (
 	"platform-go-challenge/internal/util"
 )
 
+// HealthCheck returns the server health status
+func HealthCheck() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		util.RespondJSON(w, http.StatusOK, map[string]interface{}{
+			"status": "healthy",
+			"message": "Favorites API is running",
+		})
+	}
+}
+
 // GetFavorites returns all favorites for a user
 func GetFavorites(store storage.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

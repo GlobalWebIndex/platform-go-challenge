@@ -24,11 +24,12 @@ func main() {
 	router := http.NewServeMux()
 
 	// Register handlers
+	router.HandleFunc("GET /api/health", handler.HealthCheck())
 	router.HandleFunc("GET /api/users/{id}/favorites", handler.GetFavorites(store))
 	router.HandleFunc("POST /api/users/{id}/favorites", handler.AddFavorite(store))
 	router.HandleFunc("DELETE /api/users/{id}/favorites/{assetId}", handler.RemoveFavorite(store))
 	router.HandleFunc("PUT /api/users/{id}/favorites/{assetId}", handler.EditFavorite(store))
-
+	
 	// Start server
 	port := ":8080"
 	server := &http.Server{
