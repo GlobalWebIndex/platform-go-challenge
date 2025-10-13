@@ -53,11 +53,18 @@ func main() {
 
 	router.Handle("/api/users/", authMiddleware(protectedMux))
 
+	// --- Rate limiting setup ---
+	loginLimiter := middleware.NewRateLimiter(5, time.Minute)     // 5 req/min per IP
+	defaultLimiter := middleware.NewRateLimiter(50, time.Minute) // 10 req/min per IP
+	rateLimitMiddleware := middleware.RateLimitMiddleware(loginLimiter, defaultLimiter)
+	// ----------------------------
+
+	// Combine middlewares
+	handlerWithRateLimit := rateLimitMiddleware(router)
+	loggingHandler := middleware.RequestLogger(metricsCollector)(handlerWithRateLimit)
+
 	// Start server
 	port := ":8080"
-	
-	loggingHandler := middleware.RequestLogger(metricsCollector)(router)
-	
 	server := &http.Server{
 		Addr:    port,
 		Handler: loggingHandler,
