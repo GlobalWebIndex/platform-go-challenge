@@ -37,8 +37,16 @@ func (m *Metrics) RecordStatusCode(statusCode int) {
 	m.requestsByStatus[statusCode]++
 }
 
+// HealthStatus contains application health metrics
+type HealthStatus struct {
+	Status           string `json:"status"`
+	TotalRequests   int64  `json:"total_requests"`
+	UptimeSeconds   int64  `json:"uptime_seconds"`
+	StatusCodeCounts map[int]int64 `json:"status_codes"`
+}
+
 // GetHealthStatus returns a health status object
-func (m *Metrics) GetHealthStatus() map[string]interface{} {
+func (m *Metrics) GetHealthStatus() HealthStatus {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 
@@ -47,11 +55,11 @@ func (m *Metrics) GetHealthStatus() map[string]interface{} {
 		statusCodes[k] = v
 	}
 
-	return map[string]interface{}{
-		"status":           "healthy",
-		"total_requests":   atomic.LoadInt64(&m.totalRequests),
-		"uptime_seconds":   int64(time.Since(m.startTime).Seconds()),
-		"status_codes":     statusCodes,
+	return HealthStatus{
+		Status:           "healthy",
+		TotalRequests:   atomic.LoadInt64(&m.totalRequests),
+		UptimeSeconds:   int64(time.Since(m.startTime).Seconds()),
+		StatusCodeCounts: statusCodes,
 	}
 }
 
@@ -67,7 +75,7 @@ func (rw *responseWriter) WriteHeader(code int) {
 	rw.ResponseWriter.WriteHeader(code)
 }
 
-// RequestLogger is middleware that logs HTTP requests
+// RequestLogger logs HTTP requests
 func RequestLogger(metricsCollector *Metrics) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -4,7 +4,6 @@ package model
 type AssetType string
 
 // Supported asset types
-// Use them in the request body
 const (
 	AssetTypeChart    AssetType = "chart"
 	AssetTypeInsight  AssetType = "insight"

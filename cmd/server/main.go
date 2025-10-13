@@ -24,12 +24,6 @@ func main() {
 		SecretKey:  os.Getenv("JWT_SECRET"),
 		ExpiryTime: 24 * time.Hour,
 	}
-
-	if jwtConfig.SecretKey == "" {
-		jwtConfig.SecretKey = "your-secret-key-change-this-in-production"
-		fmt.Println("WARNING: Using default JWT secret. Set JWT_SECRET environment variable in production")
-	}
-
 	jwtManager := auth.NewJWTManager(jwtConfig)
 
 	// Create metrics collector
