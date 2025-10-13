@@ -1,17 +1,74 @@
 {
 	"info": {
-		"_postman_id": "444d003c-e049-4bf3-a6a2-515d6dde5264",
+		"_postman_id": "652172d7-96c5-413a-a79e-59938718be66",
 		"name": "GWI API",
-		"description": "Collection for testing the Favorites Web Server",
+		"description": "Collection for testing the Favorites Web Server with JWT authentication",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "6800913"
 	},
 	"item": [
 		{
-			"name": "Get User Favorites",
+			"name": "Login (Get Token)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"user_id\": \"user123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"login"
+					]
+				},
+				"description": "Get JWT token. Copy the token and paste it in the {{token}} variable below or use in Authorization headers."
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check (No Auth Required)",
 			"request": {
 				"method": "GET",
 				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"health"
+					]
+				},
+				"description": "Health check endpoint - no authentication required"
+			},
+			"response": []
+		},
+		{
+			"name": "Get User Favorites",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "http://localhost:8080/api/users/user123/favorites",
 					"protocol": "http",
@@ -26,7 +83,7 @@
 						"favorites"
 					]
 				},
-				"description": "Get all favorites for a user"
+				"description": "Get all favorites for a user. Requires JWT token in Authorization header."
 			},
 			"response": []
 		},
@@ -38,6 +95,11 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -58,7 +120,7 @@
 						"favorites"
 					]
 				},
-				"description": "Add a chart asset to favorites"
+				"description": "Add a chart asset to favorites. Requires JWT token."
 			},
 			"response": []
 		},
@@ -70,6 +132,11 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -90,7 +157,7 @@
 						"favorites"
 					]
 				},
-				"description": "Add an insight asset to favorites"
+				"description": "Add an insight asset to favorites. Requires JWT token."
 			},
 			"response": []
 		},
@@ -102,6 +169,11 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -122,7 +194,7 @@
 						"favorites"
 					]
 				},
-				"description": "Add an audience segment to favorites"
+				"description": "Add an audience segment to favorites. Requires JWT token."
 			},
 			"response": []
 		},
@@ -134,6 +206,11 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -154,7 +231,7 @@
 						"favorites"
 					]
 				},
-				"description": "Add another audience segment to favorites"
+				"description": "Add another audience segment to favorites. Requires JWT token."
 			},
 			"response": []
 		},
@@ -166,6 +243,11 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -187,7 +269,7 @@
 						"chart-001"
 					]
 				},
-				"description": "Update the description of a favorited asset"
+				"description": "Update the description of a favorited asset. Requires JWT token."
 			},
 			"response": []
 		},
@@ -195,7 +277,13 @@
 			"name": "Remove Favorite",
 			"request": {
 				"method": "DELETE",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "http://localhost:8080/api/users/user123/favorites/insight-001",
 					"protocol": "http",
@@ -211,12 +299,70 @@
 						"insight-001"
 					]
 				},
-				"description": "Remove an asset from user's favorites"
+				"description": "Remove an asset from user's favorites. Requires JWT token."
 			},
 			"response": []
 		},
 		{
 			"name": "Get Favorites (After Changes)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/users/user123/favorites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"user123",
+						"favorites"
+					]
+				},
+				"description": "Get all favorites for a user after modifications. Requires JWT token."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Non-Existent User Favorites",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/users/user999/favorites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"user999",
+						"favorites"
+					]
+				},
+				"description": "Get favorites for a user that doesn't have any. Requires JWT token."
+			},
+			"response": []
+		},
+		{
+			"name": "Test Missing Token",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -234,17 +380,23 @@
 						"favorites"
 					]
 				},
-				"description": "Get all favorites for a user after modifications"
+				"description": "Test without token - should return 401 Unauthorized"
 			},
 			"response": []
 		},
 		{
-			"name": "Get Non-Existent User Favorites",
+			"name": "Test Invalid Token",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer invalid-token-here",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "http://localhost:8080/api/users/user999/favorites",
+					"raw": "http://localhost:8080/api/users/user123/favorites",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -253,13 +405,44 @@
 					"path": [
 						"api",
 						"users",
-						"user999",
+						"user123",
 						"favorites"
 					]
 				},
-				"description": "Get favorites for a user that doesn't have any"
+				"description": "Test with invalid token - should return 401 Unauthorized"
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "",
+			"type": "default"
 		}
 	]
 }
