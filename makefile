@@ -17,7 +17,7 @@ run:
 	go run ./cmd/server
 
 test:
-	go test ./...
+	go test -cover ./...
 
 docker-build:
 	docker compose build
