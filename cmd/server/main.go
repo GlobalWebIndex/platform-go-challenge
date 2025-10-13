@@ -32,11 +32,14 @@ func main() {
 
 	jwtManager := auth.NewJWTManager(jwtConfig)
 
+	// Create metrics collector
+	metricsCollector := middleware.NewMetrics()
+
 	// Create router
 	router := http.NewServeMux()
 
 	// Public endpoints (no auth required)
-	router.HandleFunc("GET /api/health", handler.HealthCheck())
+	router.HandleFunc("GET /api/health", handler.HealthCheck(metricsCollector))
 	router.HandleFunc("POST /api/login", handler.Login(jwtManager))
 
 	// Protected endpoints (auth required)
@@ -52,9 +55,12 @@ func main() {
 
 	// Start server
 	port := ":8080"
+	
+	loggingHandler := middleware.RequestLogger(metricsCollector)(router)
+	
 	server := &http.Server{
 		Addr:    port,
-		Handler: middleware.LoggingMiddleware(router),
+		Handler: loggingHandler,
 	}
 
 	// Graceful shutdown

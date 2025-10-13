@@ -5,18 +5,16 @@ import (
 	"net/http"
 
 	"platform-go-challenge/internal/api_errors"
+	"platform-go-challenge/internal/middleware"
 	"platform-go-challenge/internal/model"
 	"platform-go-challenge/internal/storage"
 	"platform-go-challenge/internal/util"
 )
 
 // HealthCheck returns the server health status
-func HealthCheck() http.HandlerFunc {
+func HealthCheck(metricsCollector *middleware.Metrics) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		util.RespondJSON(w, http.StatusOK, map[string]interface{}{
-			"status": "healthy",
-			"message": "Favorites API is running",
-		})
+		util.RespondJSON(w, http.StatusOK, metricsCollector.GetHealthStatus())
 	}
 }
 
