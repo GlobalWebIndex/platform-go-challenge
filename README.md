@@ -69,15 +69,15 @@ A RESTful API service for managing user favorites (charts, insights, and audienc
 ## Features
 
 - JWT-based authentication
-- Rate limiting (5 req/min for login, 50 req/min for other endpoints)
+- Rate limiting
 - Support for multiple asset types (Chart, Insight, Audience)
 - Thread-safe in-memory storage
-- 100% test coverage on core business logic
+- Tests on core business logic
 - Docker support with Docker Compose
 - Request metrics and health monitoring
+- Graceful shutdown
 - Clean architecture with separation of concerns
 - Comprehensive error handling
-- Graceful shutdown
 
 ## Architecture
 
