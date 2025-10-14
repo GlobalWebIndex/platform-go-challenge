@@ -647,7 +647,6 @@ Pros:
 - [ ] Filtering and sorting favorites
 - [ ] User registration and management
 - [ ] Refresh token mechanism
-- [ ] CI/CD pipeline
 - [ ] Redis for distributed rate limiting
 - [ ] API documentation (Swagger/OpenAPI) & docs endpoint
 - [ ] Prometheus metrics export
