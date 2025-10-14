@@ -73,11 +73,12 @@ A RESTful API service for managing user favorites (charts, insights, and audienc
 - Support for multiple asset types (Chart, Insight, Audience)
 - Thread-safe in-memory storage
 - Tests on core business logic
-- Docker support with Docker Compose
+- Docker support with Docker Compose & Makefile for convenient local builds
 - Request metrics and health monitoring
 - Graceful shutdown
 - Clean architecture with separation of concerns
 - Comprehensive error handling
+- CI/CD pipeline for testing
 
 ## Architecture
 
