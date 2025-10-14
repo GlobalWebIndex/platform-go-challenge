@@ -35,6 +35,9 @@ A RESTful API service for managing user favorites (charts, insights, and audienc
     - [Run Tests with Race Detector](#run-tests-with-race-detector)
     - [Test Structure](#test-structure)
     - [What's Tested](#whats-tested)
+  - [CI/CD Pipeline](#cicd-pipeline)
+    - [Workflow Configuration](#workflow-configuration)
+    - [What It Does](#what-it-does)
   - [Docker Support](#docker-support)
     - [Build Image](#build-image)
     - [Run with Docker Compose](#run-with-docker-compose)
@@ -80,6 +83,9 @@ A RESTful API service for managing user favorites (charts, insights, and audienc
 
 ```
 platform-go-challenge/
+├── .github/
+│   └── workflows/
+│       └── test.yml         # CI/CD pipeline configuration
 ├── cmd/
 │   └── server/
 │       └── main.go          # Application entry point
@@ -457,6 +463,36 @@ internal/
 **Model Tests:**
 - GetBaseAsset() for all asset types
 - Edge cases (nil assets)
+
+## CI/CD Pipeline
+
+The project includes automated testing via GitHub Actions that runs on every push and pull request.
+
+### Workflow Configuration
+
+Located at `.github/workflows/test.yml`:
+
+```yaml
+name: Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.25'
+      - run: go test -race -coverprofile=coverage.out ./...
+      - run: go test -cover ./...
+```
+
+### What It Does
+
+- Runs on every push to any branch & on every pull request
+- Executes all tests with race detector
+- Generates coverage report & displays coverage percentage
+
 
 ## Docker Support
 
