@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMemoryStore_BasicCRUD(t *testing.T) {
+func TestMemoryStore(t *testing.T) {
 	s := db.NewMemoryStore()
 
 	userID := uuid.New()
@@ -26,14 +26,14 @@ func TestMemoryStore_BasicCRUD(t *testing.T) {
 	assert.Equal(t, asset.Description, items[0].Description)
 
 	// Update
-	err = s.PatchFavourite(userID, items[0].ID, "Updated")
+	err = s.PatchFavourite(userID, asset.ID, "Updated")
 	assert.NoError(t, err)
 
 	updated, _ := s.GetAllFavourites(userID, db.PagedQuery{})
 	assert.Equal(t, "Updated", updated[0].Description)
 
 	// Remove
-	err = s.RemoveFavourite(userID, items[0].ID)
+	err = s.RemoveFavourite(userID, asset.ID)
 	assert.NoError(t, err)
 
 	items, _ = s.GetAllFavourites(userID, db.PagedQuery{})
