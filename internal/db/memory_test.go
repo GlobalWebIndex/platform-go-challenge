@@ -16,7 +16,7 @@ func TestMemoryStore_BasicCRUD(t *testing.T) {
 	asset := model.NewAsset(model.InsightType, "Insight 1", "Test insight")
 
 	// Add
-	err := s.AddFavourite(userID, asset)
+	err := s.AddFavourite(userID, &asset)
 	assert.NoError(t, err)
 
 	// Get

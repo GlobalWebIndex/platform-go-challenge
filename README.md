@@ -158,3 +158,16 @@ Key methods to implement:
 - The store is in-memory and ephemeral. Restarting the server clears all runtime state.
 - The JWT secret is hard-coded for the challenge and should be replaced by a secure secret management strategy for any real deployment.
 - The `model.Asset.Data` field uses `any` to keep the example compact. For a production service a well-defined schema per asset type with validation is recommended.
+
+## Generating Swagger docs
+
+The project uses swaggo/swag to generate Swagger documentation. To regenerate the docs run the following command from the repository root:
+
+```bash
+$(go env GOPATH)/bin/swag init -g main.go -d cmd/app,internal/api,internal/model --parseInternal -o internal/swagger
+```
+
+Notes:
+
+- The command writes generated files into the `internal/swagger` directory (adjust `-o` if you prefer a different output location).
+- Running `swag init` will overwrite the generated files; if you manually customize `internal/swagger` you may want to keep a backup or script changes post-generation.

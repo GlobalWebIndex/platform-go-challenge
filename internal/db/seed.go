@@ -37,9 +37,9 @@ func SeedMemoryStore(store *MemoryStore) {
 		PurchasesLastMonth: 8,
 	})
 
-	store.AddFavourite(user1, chart1)
-	store.AddFavourite(user1, insight1)
-	store.AddFavourite(user1, audience1)
+	store.AddFavourite(user1, &chart1)
+	store.AddFavourite(user1, &insight1)
+	store.AddFavourite(user1, &audience1)
 
 	// User 2 Assets
 	chart2 := model.NewAsset(model.ChartType, "Quarterly Expenses", model.ChartData{
@@ -58,8 +58,8 @@ func SeedMemoryStore(store *MemoryStore) {
 		Text: "Online purchases increased by 25% last quarter.",
 	})
 
-	store.AddFavourite(user2, chart2)
-	store.AddFavourite(user2, insight2)
+	store.AddFavourite(user2, &chart2)
+	store.AddFavourite(user2, &insight2)
 
 	// Log users so you can test easily
 	println("Seeded users:")

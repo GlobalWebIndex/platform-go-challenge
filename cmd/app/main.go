@@ -9,10 +9,27 @@ import (
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 
+	// swagger
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	"github.com/mr-polymath/platform-go-challenge/internal/api"
 	"github.com/mr-polymath/platform-go-challenge/internal/db"
+	_ "github.com/mr-polymath/platform-go-challenge/internal/swagger"
 )
 
+// @title Favourites API
+// @version 1.0
+// @description A small API for managing user favourites.
+// @contact.name API Support
+// @contact.email support@example.com
+// @host localhost:3002
+// @BasePath /
+// @schemes http
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Enter 'Bearer token'
 func main() {
 	mStore := db.NewMemoryStore()
 	db.SeedMemoryStore(mStore)
@@ -20,6 +37,9 @@ func main() {
 
 	r := gin.Default()                     // includes Logger and Recovery by default
 	r.Use(gzip.Gzip(gzip.BestCompression)) // Enable gzip compression
+
+	// Swagger UI route
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	handler.RegisterRoutes(r)
 

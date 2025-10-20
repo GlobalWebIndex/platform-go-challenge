@@ -20,7 +20,7 @@ type FavouriteRepository interface {
 	// GetAllFavourites returns all assets favourited by a user.
 	GetAllFavourites(userID uuid.UUID, q PagedQuery) ([]model.Asset, error)
 	// Add inserts an asset into the user's favourites.
-	AddFavourite(userID uuid.UUID, a model.Asset) error
+	AddFavourite(userID uuid.UUID, a *model.Asset) error
 	// Remove deletes a specific asset from a user's favourites.
 	RemoveFavourite(userID uuid.UUID, assetID uuid.UUID) error
 	// UpdateDescription updates only the description field of an asset.

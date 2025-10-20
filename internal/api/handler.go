@@ -49,6 +49,17 @@ type TokenResponse struct {
 	Token string `json:"token"`
 }
 
+// GenerateTokenHandler godoc
+// @Summary Generate JWT token
+// @Description Creates a JWT token for the provided user id
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body TokenRequest true "user id"
+// @Success 200 {object} TokenResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /token [post]
 // GenerateTokenHandler creates a JWT token for the provided user ID
 func GenerateTokenHandler(secret []byte) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -68,6 +79,22 @@ func GenerateTokenHandler(secret []byte) gin.HandlerFunc {
 	}
 }
 
+// GetAllFavourites godoc
+// @Summary List favourites
+// @Description Get all favourites for a user
+// @Tags favourites
+// @Accept json
+// @Produce json
+// @Param userId path string true "user id"
+// @Param offset query int false "offset"
+// @Param limit query int false "limit"
+// @Param sortBy query string false "sortBy"
+// @Param order query string false "order"
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]string
+// @Failure 403 {object} map[string]string
+// @Router /users/{userId}/favourites [get]
 // ListFavourites returns all favourites for a given user id.
 func (h *Handler) GetAllFavourites(c *gin.Context) {
 	userIdFromToken := c.GetString("userId")
@@ -98,6 +125,20 @@ func (h *Handler) GetAllFavourites(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"favourites": assets})
 }
 
+// AddFavourite godoc
+// @Summary Add favourite
+// @Description Add an asset to user's favourites
+// @Tags favourites
+// @Accept json
+// @Produce json
+// @Param userId path string true "user id"
+// @Param asset body model.AssetPost true "asset"
+// @Security BearerAuth
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 403 {object} map[string]string
+// @Router /users/{userId}/favourites [post]
 // AddFavourite decodes the request and adds an asset to the user's
 // favourites. It returns the created asset with 201 status.
 func (h *Handler) AddFavourite(c *gin.Context) {
@@ -119,7 +160,7 @@ func (h *Handler) AddFavourite(c *gin.Context) {
 		return
 	}
 
-	if err := h.FavouriteRepository.AddFavourite(userId, asset); err != nil {
+	if err := h.FavouriteRepository.AddFavourite(userId, &asset); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -129,6 +170,20 @@ func (h *Handler) AddFavourite(c *gin.Context) {
 		"favourite": asset})
 }
 
+// DeleteFavourite godoc
+// @Summary Delete favourite
+// @Description Remove an asset from user's favourites
+// @Tags favourites
+// @Accept json
+// @Produce json
+// @Param userId path string true "user id"
+// @Param assetId path string true "asset id"
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]string
+// @Failure 403 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /users/{userId}/favourites/{assetId} [delete]
 // DeleteFavourite removes an asset from a user's favourites.
 func (h *Handler) DeleteFavourite(c *gin.Context) {
 	userIdFromToken := c.GetString("userId")
@@ -163,6 +218,22 @@ type patchReq struct {
 	Description string `json:"description"`
 }
 
+// PatchFavourite godoc
+// @Summary Update favourite description
+// @Description Update the description of a favourited asset
+// @Tags favourites
+// @Accept json
+// @Produce json
+// @Param userId path string true "user id"
+// @Param assetId path string true "asset id"
+// @Param request body patchReq true "description"
+// @Security BearerAuth
+// @Success 204 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 403 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /users/{userId}/favourites/{assetId} [patch]
 // PatchFavourite updates the description of a favourited asset.
 func (h *Handler) PatchFavourite(c *gin.Context) {
 	userIdFromToken := c.GetString("userId")

@@ -34,10 +34,6 @@ func NewMemoryStore() *MemoryStore {
 func (m *MemoryStore) GetAllFavourites(userID uuid.UUID, q PagedQuery) ([]model.Asset, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	println("offset: ", q.Offset)
-	println("limit: ", q.Limit)
-	println("sortby: ", q.SortBy)
-	println("order: ", q.Order)
 	assets := []model.Asset{}
 	if userFavourites, ok := m.favourites[userID]; ok {
 		for _, asset := range userFavourites {
@@ -83,7 +79,7 @@ func (m *MemoryStore) GetAllFavourites(userID uuid.UUID, q PagedQuery) ([]model.
 
 // Add inserts an asset into a user's favourites. If the asset has no ID it
 // will be assigned a timestamp-based ID and CreatedAt will be set.
-func (m *MemoryStore) AddFavourite(userID uuid.UUID, a model.Asset) error {
+func (m *MemoryStore) AddFavourite(userID uuid.UUID, a *model.Asset) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if _, ok := m.favourites[userID]; !ok {
@@ -92,7 +88,7 @@ func (m *MemoryStore) AddFavourite(userID uuid.UUID, a model.Asset) error {
 	a.ID = uuid.New()
 	a.CreatedAt = time.Now().UTC()
 	a.UpdatedAt = a.CreatedAt
-	m.favourites[userID][a.ID] = a
+	m.favourites[userID][a.ID] = *a
 	return nil
 }
 

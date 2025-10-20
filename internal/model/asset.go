@@ -60,6 +60,13 @@ type Asset struct {
 	Data        any       `json:"data,omitempty"` // ChartData, InsightData, or AudienceData
 }
 
+// AssetPost is a minimal representation of an asset for creation purposes.
+type AssetPost struct {
+	Type        AssetType `json:"type"`
+	Description string    `json:"description"`
+	Data        any       `json:"data,omitempty"` // ChartData, InsightData, or AudienceData
+}
+
 // NewAsset creates a new Asset with a generated UUID.
 func NewAsset(assetType AssetType, description string, data any) Asset {
 	timeNow := time.Now().UTC()

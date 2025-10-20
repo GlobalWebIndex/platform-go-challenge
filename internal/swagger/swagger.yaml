@@ -1,0 +1,295 @@
+basePath: /
+definitions:
+  api.TokenRequest:
+    properties:
+      user_id:
+        type: string
+    required:
+    - user_id
+    type: object
+  api.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  api.patchReq:
+    properties:
+      description:
+        type: string
+    type: object
+  model.AssetPost:
+    properties:
+      data:
+        description: ChartData, InsightData, or AudienceData
+      description:
+        type: string
+      type:
+        $ref: '#/definitions/model.AssetType'
+    type: object
+  model.AssetType:
+    enum:
+    - chart
+    - insight
+    - audience
+    type: string
+    x-enum-varnames:
+    - ChartType
+    - InsightType
+    - AudienceType
+host: localhost:3002
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+  description: A small API for managing user favourites.
+  title: Favourites API
+  version: "1.0"
+paths:
+  /token:
+    post:
+      consumes:
+      - application/json
+      description: Creates a JWT token for the provided user id
+      parameters:
+      - description: user id
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.TokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Generate JWT token
+      tags:
+      - auth
+  /users/{userId}/favourites:
+    get:
+      consumes:
+      - application/json
+      description: Get all favourites for a user
+      parameters:
+      - description: user id
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: sortBy
+        in: query
+        name: sortBy
+        type: string
+      - description: order
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List favourites
+      tags:
+      - favourites
+    post:
+      consumes:
+      - application/json
+      description: Add an asset to user's favourites
+      parameters:
+      - description: user id
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: asset
+        in: body
+        name: asset
+        required: true
+        schema:
+          $ref: '#/definitions/model.AssetPost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Add favourite
+      tags:
+      - favourites
+  /users/{userId}/favourites/{assetId}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove an asset from user's favourites
+      parameters:
+      - description: user id
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: asset id
+        in: path
+        name: assetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete favourite
+      tags:
+      - favourites
+    patch:
+      consumes:
+      - application/json
+      description: Update the description of a favourited asset
+      parameters:
+      - description: user id
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: asset id
+        in: path
+        name: assetId
+        required: true
+        type: string
+      - description: description
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.patchReq'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update favourite description
+      tags:
+      - favourites
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    description: Enter 'Bearer token'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
