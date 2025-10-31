@@ -1,0 +1,649 @@
+basePath: /api/v1
+definitions:
+  dto.AssetCreationResponse:
+    properties:
+      age_group:
+        description: |-
+          AgeGroup of the audience segment (only for audience assets)
+          example: 18-24
+        type: string
+      axes_titles:
+        description: |-
+          AxesTitles contains the titles for chart axes (only for chart assets)
+          example: {"x": "Time", "y": "Revenue"}
+        items:
+          type: string
+        type: array
+      birth_country:
+        description: |-
+          BirthCountry of the audience segment (only for audience assets)
+          example: US
+        type: string
+      created_at:
+        description: |-
+          CreatedAt timestamp when the asset was created
+          example: 2023-10-05T14:30:00Z
+        type: string
+      data:
+        description: |-
+          Data contains the chart or insight data (only for chart and insight assets)
+          example: [{"x": "2023-01", "y": 1000}, {"x": "2023-02", "y": 1500}]
+      description:
+        description: |-
+          Description provides more details about the asset
+          example: "Audience segment of young adults active on social media"
+        type: string
+      gender:
+        description: |-
+          Gender of the audience segment (only for audience assets)
+          example: female
+        type: string
+      hours_social:
+        description: |-
+          HoursSocial represents hours spent on social media per week (only for audience assets)
+          example: 15
+        type: integer
+      id:
+        description: |-
+          ID is the unique identifier for the asset
+          example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      purchases_last_month:
+        description: |-
+          PurchasesLastMo represents number of purchases in the last month (only for audience assets)
+          example: 3
+        type: integer
+      title:
+        description: |-
+          Title of the asset
+          example: "Young Social Media Users"
+        type: string
+      type:
+        description: |-
+          Type of the asset (audience, chart, insight)
+          example: audience
+        type: string
+      updated_at:
+        description: |-
+          UpdatedAt timestamp when the asset was last updated
+          example: 2023-10-05T14:30:00Z
+        type: string
+    type: object
+  dto.AssetRequest:
+    properties:
+      age_group:
+        description: |-
+          Age group of the audience (optional)
+          example: 25-34
+        type: string
+      axes_titles:
+        description: |-
+          Titles for the chart axes (for chart-type assets)
+          example: ["Age Group", "Average Purchases"]
+        items:
+          type: string
+        type: array
+      birth_country:
+        description: |-
+          Birth country of the audience (optional)
+          example: Canada
+        type: string
+      created_at:
+        description: |-
+          Timestamp when the asset was created
+          example: 2025-01-01T12:00:00Z
+        type: string
+      data:
+        description: |-
+          Data points for the chart (for chart-type assets)
+          example: [[18, 2.3], [25, 3.5], [34, 4.1]]
+        items:
+          items:
+            format: float64
+            type: number
+          type: array
+        type: array
+      description:
+        description: |-
+          Description of the asset
+          example: This chart shows demographic breakdown by age and gender.
+        type: string
+      gender:
+        description: |-
+          Gender associated with the audience (optional)
+          example: female
+        type: string
+      hours_social:
+        description: |-
+          Average hours spent on social media per day (optional)
+          example: 4
+        type: integer
+      id:
+        description: |-
+          Unique identifier of the asset
+          example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      purchases_last_month:
+        description: |-
+          Number of purchases made in the last month (optional)
+          example: 12
+        type: integer
+      text:
+        description: |-
+          Text associated with the insight (optional)
+          / example: This insight highlights key trends in customer behavior.
+        type: string
+      title:
+        description: |-
+          Title of the asset
+          required: true
+          example: Customer Demographics Overview
+        type: string
+      type:
+        description: |-
+          Type of the asset (audience, chart, or insight)
+          required: true
+          enum: audience,chart,insight
+          example: chart
+        enum:
+        - audience
+        - chart
+        - insight
+        type: string
+      updated_at:
+        description: |-
+          Timestamp when the asset was last updated
+          example: 2025-01-02T15:30:00Z
+        type: string
+    required:
+    - id
+    - title
+    - type
+    type: object
+  dto.CreateUserRequest:
+    properties:
+      email:
+        description: |-
+          The user's email address
+          required: true
+          example: "alice@example.com"
+        type: string
+      name:
+        description: |-
+          The user's full name
+          required: true
+          example: "Alice Johnson"
+        minLength: 2
+        type: string
+      password:
+        description: |-
+          The user's password
+          required: true
+          example: "P@ssword123"
+        minLength: 8
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  dto.FavouriteRequest:
+    properties:
+      _id:
+        description: |-
+          The ID of the user
+          required: true
+          example: "user_123"
+        type: string
+      asset_id:
+        description: |-
+          The ID of the asset
+          required: true
+          example: "asset_456"
+        type: string
+    required:
+    - _id
+    - asset_id
+    type: object
+  dto.FavouriteResponse:
+    properties:
+      asset:
+        description: |-
+          The full asset object (can be any type)
+          example: {"id":"asset_456","title":"Sales Chart","description":"Monthly sales chart","type":"chart"}
+      asset_id:
+        description: |-
+          The ID of the asset
+          example: "asset_456"
+        type: string
+      asset_type:
+        description: |-
+          The type of the asset (e.g., audience, chart, insight)
+          example: "chart"
+        type: string
+      created_at:
+        description: |-
+          Timestamp when the favourite was created
+          example: "2025-10-30T15:04:05Z"
+        type: string
+      user_id:
+        description: |-
+          The ID of the user
+          example: "user_123"
+        type: string
+    type: object
+  dto.UpdateUserRequest:
+    properties:
+      email:
+        description: |-
+          The user's email address
+          example: "alice@example.com"
+        type: string
+      name:
+        description: |-
+          The user's full name
+          example: "Alice Johnson"
+        type: string
+      password:
+        description: |-
+          The user's password
+          example: "NewP@ssword123"
+        minLength: 8
+        type: string
+    required:
+    - password
+    type: object
+  dto.UserResponse:
+    properties:
+      email:
+        description: |-
+          The user's email
+          example: "alice@example.com"
+        type: string
+      id:
+        description: |-
+          The user's unique ID
+          example: "user_123"
+        type: string
+      name:
+        description: |-
+          The user's full name
+          example: "Alice Johnson"
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact:
+    email: support@yourapp.com
+    name: API Support
+    url: http://localhost:8081
+  description: API for managing assets, users, and favourites
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Preferred Assets API
+  version: "1.0"
+paths:
+  /assets:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new asset of specified type (audience, chart, or insight)
+      parameters:
+      - description: Asset creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AssetRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.AssetCreationResponse'
+        "400":
+          description: Invalid input data
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create a new asset
+      tags:
+      - Assets
+  /assets/{assetId}:
+    delete:
+      consumes:
+      - application/json
+      description: Permanently removes an asset from the system
+      parameters:
+      - description: Asset ID
+        in: path
+        name: assetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Asset deleted successfully
+        "400":
+          description: Invalid asset ID
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete an asset
+      tags:
+      - Assets
+  /favourites:
+    post:
+      consumes:
+      - application/json
+      description: Adds an asset to a user's favourites list
+      parameters:
+      - description: Favourite creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.FavouriteRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Favourite added successfully
+        "400":
+          description: Invalid input data
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Add a favourite
+      tags:
+      - Favourites
+  /favourites/{userId}/{assetId}:
+    delete:
+      consumes:
+      - application/json
+      description: Removes an asset from a user's favourites list
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: Asset ID
+        in: path
+        name: assetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Favourite removed successfully
+        "400":
+          description: Invalid user ID or asset ID
+          schema:
+            type: string
+        "404":
+          description: User or favourite not found
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Remove a favourite
+      tags:
+      - Favourites
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all users in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users retrieved successfully
+          schema:
+            items:
+              $ref: '#/definitions/dto.UserResponse'
+            type: array
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get all users
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account with the provided information
+      parameters:
+      - description: User creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created successfully
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+        "400":
+          description: Invalid input data
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create a new user
+      tags:
+      - Users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Permanently removes a user from the system
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User deleted successfully
+        "400":
+          description: Invalid user ID
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete a user
+      tags:
+      - Users
+    get:
+      consumes:
+      - application/json
+      description: Retrieves user details for the specified user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User found successfully
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+        "400":
+          description: Invalid user ID
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get a user by ID
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Updates user information for the specified user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid input data
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update a user
+      tags:
+      - Users
+  /users/{id}/favourites:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all favourite assets for the specified user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User favourites retrieved successfully
+          schema:
+            items:
+              $ref: '#/definitions/dto.FavouriteResponse'
+            type: array
+        "400":
+          description: Invalid user ID
+          schema:
+            type: string
+        "404":
+          description: Favourites not found
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get user favourites
+      tags:
+      - Users
+securityDefinitions:
+  BearerAuth:
+    description: 'Enter "Bearer" followed by a space and your JWT token. Example:
+      "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiw..."'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

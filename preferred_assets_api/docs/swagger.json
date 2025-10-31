@@ -1,0 +1,831 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API for managing assets, users, and favourites",
+        "title": "Preferred Assets API",
+        "contact": {
+            "name": "API Support",
+            "url": "http://localhost:8081",
+            "email": "support@yourapp.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8081",
+    "basePath": "/api/v1",
+    "paths": {
+        "/assets": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new asset of specified type (audience, chart, or insight)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "Create a new asset",
+                "parameters": [
+                    {
+                        "description": "Asset creation request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AssetRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AssetCreationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Method not allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/{assetId}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Permanently removes an asset from the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "Delete an asset",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Asset ID",
+                        "name": "assetId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Asset deleted successfully"
+                    },
+                    "400": {
+                        "description": "Invalid asset ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Method not allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/favourites": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Adds an asset to a user's favourites list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Favourites"
+                ],
+                "summary": "Add a favourite",
+                "parameters": [
+                    {
+                        "description": "Favourite creation request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.FavouriteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Favourite added successfully"
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Method not allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/favourites/{userId}/{assetId}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Removes an asset from a user's favourites list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Favourites"
+                ],
+                "summary": "Remove a favourite",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Asset ID",
+                        "name": "assetId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Favourite removed successfully"
+                    },
+                    "400": {
+                        "description": "Invalid user ID or asset ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User or favourite not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Method not allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a list of all users in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get all users",
+                "responses": {
+                    "200": {
+                        "description": "List of users retrieved successfully",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.UserResponse"
+                            }
+                        }
+                    },
+                    "405": {
+                        "description": "Method not allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new user account with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create a new user",
+                "parameters": [
+                    {
+                        "description": "User creation request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Method not allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves user details for the specified user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get a user by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User found successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Method not allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates user information for the specified user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User update request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Method not allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Permanently removes a user from the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted successfully"
+                    },
+                    "400": {
+                        "description": "Invalid user ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Method not allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/favourites": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all favourite assets for the specified user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user favourites",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User favourites retrieved successfully",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.FavouriteResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Favourites not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Method not allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.AssetCreationResponse": {
+            "type": "object",
+            "properties": {
+                "age_group": {
+                    "description": "AgeGroup of the audience segment (only for audience assets)\nexample: 18-24",
+                    "type": "string"
+                },
+                "axes_titles": {
+                    "description": "AxesTitles contains the titles for chart axes (only for chart assets)\nexample: {\"x\": \"Time\", \"y\": \"Revenue\"}",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "birth_country": {
+                    "description": "BirthCountry of the audience segment (only for audience assets)\nexample: US",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "CreatedAt timestamp when the asset was created\nexample: 2023-10-05T14:30:00Z",
+                    "type": "string"
+                },
+                "data": {
+                    "description": "Data contains the chart or insight data (only for chart and insight assets)\nexample: [{\"x\": \"2023-01\", \"y\": 1000}, {\"x\": \"2023-02\", \"y\": 1500}]"
+                },
+                "description": {
+                    "description": "Description provides more details about the asset\nexample: \"Audience segment of young adults active on social media\"",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "Gender of the audience segment (only for audience assets)\nexample: female",
+                    "type": "string"
+                },
+                "hours_social": {
+                    "description": "HoursSocial represents hours spent on social media per week (only for audience assets)\nexample: 15",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "ID is the unique identifier for the asset\nexample: 550e8400-e29b-41d4-a716-446655440000",
+                    "type": "string"
+                },
+                "purchases_last_month": {
+                    "description": "PurchasesLastMo represents number of purchases in the last month (only for audience assets)\nexample: 3",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "Title of the asset\nexample: \"Young Social Media Users\"",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Type of the asset (audience, chart, insight)\nexample: audience",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt timestamp when the asset was last updated\nexample: 2023-10-05T14:30:00Z",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.AssetRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "title",
+                "type"
+            ],
+            "properties": {
+                "age_group": {
+                    "description": "Age group of the audience (optional)\nexample: 25-34",
+                    "type": "string"
+                },
+                "axes_titles": {
+                    "description": "Titles for the chart axes (for chart-type assets)\nexample: [\"Age Group\", \"Average Purchases\"]",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "birth_country": {
+                    "description": "Birth country of the audience (optional)\nexample: Canada",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "Timestamp when the asset was created\nexample: 2025-01-01T12:00:00Z",
+                    "type": "string"
+                },
+                "data": {
+                    "description": "Data points for the chart (for chart-type assets)\nexample: [[18, 2.3], [25, 3.5], [34, 4.1]]",
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "number",
+                            "format": "float64"
+                        }
+                    }
+                },
+                "description": {
+                    "description": "Description of the asset\nexample: This chart shows demographic breakdown by age and gender.",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "Gender associated with the audience (optional)\nexample: female",
+                    "type": "string"
+                },
+                "hours_social": {
+                    "description": "Average hours spent on social media per day (optional)\nexample: 4",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "Unique identifier of the asset\nexample: 123e4567-e89b-12d3-a456-426614174000",
+                    "type": "string"
+                },
+                "purchases_last_month": {
+                    "description": "Number of purchases made in the last month (optional)\nexample: 12",
+                    "type": "integer"
+                },
+                "text": {
+                    "description": "Text associated with the insight (optional)\n/ example: This insight highlights key trends in customer behavior.",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "Title of the asset\nrequired: true\nexample: Customer Demographics Overview",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Type of the asset (audience, chart, or insight)\nrequired: true\nenum: audience,chart,insight\nexample: chart",
+                    "type": "string",
+                    "enum": [
+                        "audience",
+                        "chart",
+                        "insight"
+                    ]
+                },
+                "updated_at": {
+                    "description": "Timestamp when the asset was last updated\nexample: 2025-01-02T15:30:00Z",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateUserRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "description": "The user's email address\nrequired: true\nexample: \"alice@example.com\"",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The user's full name\nrequired: true\nexample: \"Alice Johnson\"",
+                    "type": "string",
+                    "minLength": 2
+                },
+                "password": {
+                    "description": "The user's password\nrequired: true\nexample: \"P@ssword123\"",
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
+        "dto.FavouriteRequest": {
+            "type": "object",
+            "required": [
+                "_id",
+                "asset_id"
+            ],
+            "properties": {
+                "_id": {
+                    "description": "The ID of the user\nrequired: true\nexample: \"user_123\"",
+                    "type": "string"
+                },
+                "asset_id": {
+                    "description": "The ID of the asset\nrequired: true\nexample: \"asset_456\"",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.FavouriteResponse": {
+            "type": "object",
+            "properties": {
+                "asset": {
+                    "description": "The full asset object (can be any type)\nexample: {\"id\":\"asset_456\",\"title\":\"Sales Chart\",\"description\":\"Monthly sales chart\",\"type\":\"chart\"}"
+                },
+                "asset_id": {
+                    "description": "The ID of the asset\nexample: \"asset_456\"",
+                    "type": "string"
+                },
+                "asset_type": {
+                    "description": "The type of the asset (e.g., audience, chart, insight)\nexample: \"chart\"",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "Timestamp when the favourite was created\nexample: \"2025-10-30T15:04:05Z\"",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "The ID of the user\nexample: \"user_123\"",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateUserRequest": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "description": "The user's email address\nexample: \"alice@example.com\"",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The user's full name\nexample: \"Alice Johnson\"",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "The user's password\nexample: \"NewP@ssword123\"",
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
+        "dto.UserResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "The user's email\nexample: \"alice@example.com\"",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "The user's unique ID\nexample: \"user_123\"",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The user's full name\nexample: \"Alice Johnson\"",
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Enter \"Bearer\" followed by a space and your JWT token. Example: \"Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiw...\"",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

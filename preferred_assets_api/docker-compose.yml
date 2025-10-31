@@ -1,0 +1,49 @@
+services:
+  # Preferred Assets API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: preferred-assets-api:latest
+    container_name: preferred-assets-api
+    ports:
+      - "127.0.0.1:8081:8081"
+    environment:
+      - ENVIRONMENT=docker
+      - SERVER_PORT=8081
+      - KEYCLOAK_URL=http://preferred_assets_api-keycloak-1:8080  # Docker internal
+      - KEYCLOAK_EXTERNAL_URL=http://localhost:8090  # For external calls
+      - KEYCLOAK_REALM=preferred-assets-realm
+      - KEYCLOAK_CLIENT_ID=preferred-assets-api
+      - KEYCLOAK_CLIENT_SECRET=AIz24JAXB4uQNsQ8uoANOFVobtFVvzlu
+      - LOG_LEVEL=debug
+    depends_on:
+      - keycloak
+    volumes:
+      - ./.env:/app/.env  # For local development
+    restart: unless-stopped
+
+  # Keycloak for authentication
+  keycloak:
+    build:
+      context: .
+      dockerfile: Dockerfile-keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HEALTH_ENABLED=true
+    ports:
+      - "8090:8080"
+    volumes:
+      - ~./untitled folder/GWI-Engineering-Challenge/preferred_assets_api/cmd/api/config/keycloak-realm-import.json:/opt/keycloak/data/import/realm.json
+    tmpfs:
+      - /tmp:size=512M
+    command: start-dev --features=scripts --import-realm --http-enabled=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8443/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  keycloak_dev_data:
