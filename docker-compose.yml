@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    image: gwi-favourites-api
+    container_name: gwi-api
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    command: tail -f /dev/null
+  swagger:
+    image: swaggerapi/swagger-ui
+    container_name: gwi-swagger
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./openapi.yaml:/openapi.yaml:ro
+    environment:
+      SWAGGER_JSON: /openapi.yaml
+    depends_on:
+      - api
+

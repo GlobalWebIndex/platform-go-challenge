@@ -1,0 +1,196 @@
+openapi: 3.1.0
+info:
+  title: GWI Favourites API
+  version: 1.0.0
+  description: REST API for managing user favourites (charts, insights, audiences)
+servers:
+  - url: http://localhost:8080
+paths:
+  /healthz:
+    get:
+      summary: Liveness probe
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: object, properties: { status: { type: string } } }
+  /readyz:
+    get:
+      summary: Readiness probe
+      responses:
+        '200':
+          description: Ready
+          content:
+            application/json:
+              schema: { type: object, properties: { ready: { type: boolean } } }
+  /users/{userID}/favourites:
+    get:
+      summary: List favourites for a user
+      parameters:
+        - in: path
+          name: userID
+          required: true
+          schema: { type: string }
+        - in: query
+          name: limit
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 1000, default: 100 }
+        - in: query
+          name: offset
+          required: false
+          schema: { type: integer, minimum: 0, default: 0 }
+      responses:
+        '200':
+          description: Favourites page
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  favourites:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Favourite'
+                  total: { type: integer }
+                  limit: { type: integer }
+                  offset: { type: integer }
+        '400':
+          description: Bad request
+    post:
+      summary: Create a favourite
+      parameters:
+        - in: path
+          name: userID
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [asset]
+              properties:
+                asset:
+                  $ref: '#/components/schemas/Asset'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favourite'
+        '400':
+          description: Invalid input
+  /users/{userID}/favourites/{favID}:
+    patch:
+      summary: Update favourite description
+      parameters:
+        - in: path
+          name: userID
+          required: true
+          schema: { type: string }
+        - in: path
+          name: favID
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [description]
+              properties:
+                description: { type: string, minLength: 1 }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favourite'
+        '400':
+          description: Invalid input
+        '404':
+          description: Not found
+    delete:
+      summary: Delete a favourite
+      parameters:
+        - in: path
+          name: userID
+          required: true
+          schema: { type: string }
+        - in: path
+          name: favID
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not found
+components:
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    Favourite:
+      type: object
+      properties:
+        id: { type: string }
+        asset:
+          $ref: '#/components/schemas/Asset'
+        description: { type: string }
+        created_at: { type: string, format: date-time }
+      required: [id, asset, created_at]
+    Asset:
+      oneOf:
+        - $ref: '#/components/schemas/Chart'
+        - $ref: '#/components/schemas/Insight'
+        - $ref: '#/components/schemas/Audience'
+      discriminator:
+        propertyName: type
+        mapping:
+          chart: '#/components/schemas/Chart'
+          insight: '#/components/schemas/Insight'
+          audience: '#/components/schemas/Audience'
+    Chart:
+      type: object
+      properties:
+        type: { const: chart }
+        description: { type: string }
+        title: { type: string }
+        axis_x_title: { type: string }
+        axis_y_title: { type: string }
+        data:
+          type: array
+          items: { type: number }
+      required: [type, description, title, data]
+    Insight:
+      type: object
+      properties:
+        type: { const: insight }
+        description: { type: string }
+        text: { type: string }
+      required: [type, description, text]
+    Audience:
+      type: object
+      properties:
+        type: { const: audience }
+        description: { type: string }
+        gender:
+          type: string
+          enum: [male, female]
+        birth_country: { type: string }
+        age_groups:
+          type: array
+          items: { type: string }
+        hours_social_daily: { type: number }
+        purchases_last_month: { type: integer }
+      required: [type, description]
+security:
+  - ApiKeyHeader: []
