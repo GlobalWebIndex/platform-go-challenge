@@ -29,3 +29,150 @@ It is appreciated, though not required, if a Dockerfile is included.
 Just create a fork from the current repo and send it to us!
 
 Good luck, potential colleague!
+
+---
+
+## My project
+
+In this repo, I created (with help of tutorials, golang documentation and Claude Code)
+* a simple rest api that enables the user to create, update, delete and get for each of the 3 asset types, as well as set any assset as his/her favourite/stared
+* a simple graphql api with the same functionality as the rest api (both query and mutation functionality is included) as well as a query to get all assets that a user has put a star on.
+
+I used Go as requested and I have am storing the data in a very simple Postgresql db schema that is created by models in the [models](models/) directory.
+
+I used for the 
+* Rest api https://github.com/gin-gonic/gin
+* Graphql https://github.com/99designs/gqlgen
+* ORM https://github.com/go-gorm/gorm
+
+An overview of the structure of the project can be found at [PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md). All the information on the api and how to use it can be found at See [API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md). Information on the types of tests and how to use them can be found at [TESTING_GUIDE](docs/TESTING_GUIDE.md).
+
+## Running the Application
+
+### Prerequisites 
+1. PostgreSQL database running
+2. `.env` file with database connection strings:
+   ```bash
+   DB_URL=postgres://user:password@localhost:5432/mydb?sslmode=disable
+   TEST_DB_URL=postgres://user:password@localhost:5432/mydb?sslmode=disable
+   ```
+3. Docker with docker-compose 
+
+### Development
+
+```bash
+# Install dependencies
+go mod download
+
+# Generate GraphQL code (after schema changes)
+gqlgen generate
+
+# Build
+go build .
+
+# Run
+go run .
+
+# Server starts on http://localhost:8080
+```
+
+### Testing
+
+```bash
+# Run all tests
+go test ./...
+
+# Run specific test suites
+go test ./tests/unit/...          # Unit tests only
+go test ./tests/e2e/...           # E2E tests only
+go test ./tests/performance/...   # Benchmarks only
+
+# Run benchmarks with custom time
+go test ./tests/performance/... -bench=. -benchtime=1s
+
+# Verbose output
+go test ./tests/e2e/... -v
+```
+
+### Endpoints
+
+- **REST API**: `http://localhost:8080/`
+  - Audience: `/audience`, `/audiences`
+  - Chart: `/chart`, `/charts`
+  - Insight: `/insight`, `/insights`
+  - UserStar: `/userstar`, `/userstars`
+
+- **GraphQL API**: `http://localhost:8080/graphql` (POST)
+- **GraphQL Playground**: `http://localhost:8080/graphql` (GET - Interactive IDE)
+
+## Performance Optimization Ideas 
+
+### 1. Database 
+
+#### [Indexing (AI did this in a different branch)](https://github.com/bsakel/platform-go-challenge/commit/809e44b323f616ffc3b4ec691ecf605aed691714) 
+
+Ensure proper indexes exist:
+
+```sql
+CREATE INDEX idx_user_favourites_user_id ON user_favourites(user_id);
+CREATE INDEX idx_user_favourites_asset_id ON user_favourites(asset_id);
+CREATE INDEX idx_user_favourites_type ON user_favourites(type);
+```
+
+#### Query Optimization
+
+Use `EXPLAIN ANALYZE` to identify slow queries:
+
+```sql
+EXPLAIN ANALYZE
+SELECT * FROM user_favourites WHERE user_id = 1;
+```
+
+#### [Connection Pooling (AI did this in a different branch)](https://github.com/bsakel/platform-go-challenge/commit/89bb1bd103fb024f0a0dddb2172042be9d9aaa6c) 
+
+Configure GORM connection pool in `db/db.go`:
+
+```go
+sqlDB, err := GormDB.DB()
+if err == nil {
+    sqlDB.SetMaxIdleConns(10)
+    sqlDB.SetMaxOpenConns(100)
+    sqlDB.SetConnMaxLifetime(time.Hour)
+}
+```
+
+### 2. Caching 
+
+For frequently accessed data, consider caching:
+
+**Option 1: In-Memory Cache (Simple)**
+```go
+// 5-minute TTL cache
+type CacheEntry struct {
+    Data      *model.UserStared
+    ExpiresAt time.Time
+}
+```
+
+**Option 2: Redis Cache (Production)**
+```go
+// Cache key: "userstared:{userID}"
+// TTL: 5-15 minutes
+// Invalidate on mutations
+```
+
+### 3. [Concurency in the userstars query resolver (AI did this in a different branch)](https://github.com/bsakel/platform-go-challenge/commit/066d2f31ac45e082a457f079c0e88f5dfb5d9a82) 
+
+In [userstared.resolvers.go](graph/resolvers/userstared.resolvers.go) the basic structure of operations is
+	
+  1. Fetch all user stars for this user
+  2. Fetch all audiences 
+  3. Fetch all charts 
+  4. Fetch all insights 
+  5. Build and return the UserStared response
+
+Steps 2,3 and 4 are independent to each other and could be executed as group of goroutines and synced by a waitgroup.
+
+### 4. Adapt web logic and GraphQL queries to allow for pagination
+
+Another way to make the ui perform better is to add add logic to paginate the results instead of quering for all results at once.

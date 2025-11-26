@@ -1,0 +1,10 @@
+type UserStared {
+  userid: Int!
+  audience: [Audience!]!
+  chart: [Chart!]!
+  insight: [Insight!]!
+}
+
+extend type Query {
+  userstared(userID: ID!): UserStared
+}

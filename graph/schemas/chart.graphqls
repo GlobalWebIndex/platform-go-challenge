@@ -1,0 +1,29 @@
+type Chart {
+  id: ID!
+  title: String!
+  xaxistitle: String!
+  yaxistitle: String!
+}
+
+input NewChart {
+  title: String!
+  xaxistitle: String!
+  yaxistitle: String!
+}
+
+input UpdateChart {
+  title: String
+  xaxistitle: String
+  yaxistitle: String
+}
+
+extend type Query {
+  charts: [Chart!]!
+  chart(id: ID!): Chart
+}
+
+extend type Mutation {
+  createChart(input: NewChart!): Chart!
+  updateChart(id: ID!, input: UpdateChart!): Chart!
+  deleteChart(id: ID!): Boolean!
+}

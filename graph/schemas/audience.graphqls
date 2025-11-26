@@ -1,0 +1,35 @@
+type Audience {
+  id: ID!
+  gender: String!
+  birthcountry: String!
+  agegroup: String!
+  dailyhours: Int!
+  noofpurchases: Int!
+}
+
+input NewAudience {
+  gender: String!
+  birthcountry: String!
+  agegroup: String!
+  dailyhours: Int!
+  noofpurchases: Int!
+}
+
+input UpdateAudience {
+  gender: String
+  birthcountry: String
+  agegroup: String
+  dailyhours: Int
+  noofpurchases: Int
+}
+
+type Query {
+  audiences: [Audience!]!
+  audience(id: ID!): Audience
+}
+
+type Mutation {
+  createAudience(input: NewAudience!): Audience!
+  updateAudience(id: ID!, input: UpdateAudience!): Audience!
+  deleteAudience(id: ID!): Boolean!
+}

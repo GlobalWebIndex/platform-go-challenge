@@ -1,0 +1,23 @@
+type Insight {
+  id: ID!
+  text: String!
+}
+
+input NewInsight {
+  text: String!
+}
+
+input UpdateInsight {
+  text: String
+}
+
+extend type Query {
+  insights: [Insight!]!
+  insight(id: ID!): Insight
+}
+
+extend type Mutation {
+  createInsight(input: NewInsight!): Insight!
+  updateInsight(id: ID!, input: UpdateInsight!): Insight!
+  deleteInsight(id: ID!): Boolean!
+}

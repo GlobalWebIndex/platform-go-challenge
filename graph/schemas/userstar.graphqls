@@ -1,0 +1,29 @@
+type UserStar {
+  id: ID!
+  userid: Int!
+  type: String!
+  assetid: Int!
+}
+
+input NewUserStar {
+  userid: Int!
+  type: String!
+  assetid: Int!
+}
+
+input UpdateUserStar {
+  userid: Int
+  type: String
+  assetid: Int
+}
+
+extend type Query {
+  userstars: [UserStar!]!
+  userstar(id: ID!): UserStar
+}
+
+extend type Mutation {
+  createUserStar(input: NewUserStar!): UserStar!
+  updateUserStar(id: ID!, input: UpdateUserStar!): UserStar!
+  deleteUserStar(id: ID!): Boolean!
+}
