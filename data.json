@@ -1,0 +1,130 @@
+{
+  "charts": [
+    {
+      "id": 1,
+      "title": "Chart 1",
+      "x_axis": "Month",
+      "y_axis": "Sales",
+      "data": [
+        {
+          "x": 1,
+          "y": 100
+        },
+        {
+          "x": 2,
+          "y": 150
+        },
+        {
+          "x": 3,
+          "y": 200
+        }
+      ],
+      "description": "This chart shows monthly sales over three months."
+    },
+    {
+      "id": 2,
+      "title": "Chart 2",
+      "x_axis": "Day",
+      "y_axis": "Visitors",
+      "data": [
+        {
+          "x": 1,
+          "y": 300
+        },
+        {
+          "x": 2,
+          "y": 400
+        },
+        {
+          "x": 3,
+          "y": 500
+        }
+      ],
+      "description": "This chart shows daily visitors over three days."
+    },
+    {
+      "id": 3,
+      "title": "Chart 3",
+      "x_axis": "Week",
+      "y_axis": "Revenue",
+      "data": [
+        {
+          "x": 1,
+          "y": 1000
+        },
+        {
+          "x": 2,
+          "y": 1200
+        },
+        {
+          "x": 3,
+          "y": 1400
+        }
+      ],
+      "description": "This chart shows weekly revenue over three weeks."
+    }
+  ],
+  "insights": [
+    {
+      "id": 1,
+      "text": "insight 1",
+      "description": "This insight provides an overview of key metrics for Q1."
+    },
+    {
+      "id": 2,
+      "text": "insight 2",
+      "description": "This insight provides an overview of key metrics for Q2."
+    },
+    {
+      "id": 3,
+      "text": "insight 3",
+      "description": "This insight provides an overview of key metrics for Q3."
+    }
+  ],
+  "audiences": [
+    {
+      "id": 1,
+      "gender": "Female",
+      "birth_country": "USA",
+      "age_group": "25-34",
+      "hours_social_media_daily": 3,
+      "number_of_purchases_last_month": 5,
+      "description": "This audience represents females aged 25-34 from the USA who spend an average of 3 hours on social media daily and made 5 purchases last month."
+    },
+    {
+      "id": 2,
+      "gender": "Male",
+      "birth_country": "Canada",
+      "age_group": "35-44",
+      "hours_social_media_daily": 2,
+      "number_of_purchases_last_month": 8,
+      "description": "This audience represents males aged 35-44 from Canada who spend an average of 2 hours on social media daily and made 8 purchases last month."
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "password": "12345"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "email": "jane@example.com",
+      "password": "password"
+    }
+  ],
+  "favorites": [
+    {
+      "user_id": 1,
+      "asset_id": 3,
+      "asset_type": "insight"
+    },
+    {
+      "user_id": 1,
+      "asset_id": 1,
+      "asset_type": "audience"
+    }
+  ]
+}

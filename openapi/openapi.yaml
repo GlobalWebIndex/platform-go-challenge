@@ -1,0 +1,349 @@
+openapi: 3.0.3
+info:
+  title: Platform Go Challenge API
+  version: 1.0.0
+tags:
+  - name: favorites
+    description: Operations related to favorite assets
+  - name: auth
+    description: Operations related to authentication
+security:
+  - BearerAuth: []
+paths:
+  /favorites:
+    get:
+      tags:
+        - favorites
+      summary: Retrieve a list of favorited assets for a user
+      responses:
+        "200":
+          description: A list of favorited assets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  charts:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Chart"
+                  insights:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Insight"
+                  audiences:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Audience"
+        "400":
+          description: Bad Request - Missing or invalid User-ID header
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Error"
+                  - type: "null"
+    post:
+      tags:
+        - favorites
+      summary: Add a new favorite asset for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                asset_type:
+                  type: string
+                  enum:
+                    - chart
+                    - insight
+                    - audience
+                asset_id:
+                  type: integer
+                description:
+                  type: string
+      responses:
+        "201":
+          description: Favorite asset added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                  asset_id:
+                    type: integer
+                  asset_type:
+                    type: string
+        "200":
+          description: Favorite asset already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                  asset_id:
+                    type: integer
+                  asset_type:
+                    type: string
+        "400":
+          description: Bad Request - Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Asset not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Error"
+                  - type: "null"
+    patch:
+      summary: Update the description of a favorited asset
+      tags:
+        - favorites
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                asset_type:
+                  type: string
+                  enum:
+                    - chart
+                    - insight
+                    - audience
+                asset_id:
+                  type: integer
+                description:
+                  type: string
+      responses:
+        "200":
+          description: Favorite asset updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                  asset_id:
+                    type: integer
+                  asset_type:
+                    type: string
+                  updated_description:
+                    type: string
+        "400":
+          description: Bad Request - Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - User not authorized to update this favorite
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Favorite asset not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Error"
+                  - type: "null"
+    delete:
+      summary: Remove a favorited asset for a user
+      tags:
+        - favorites
+      parameters:
+        - in: query
+          name: asset_id
+          schema:
+            type: integer
+          required: true
+          description: ID of the asset to be removed from favorites
+        - in: query
+          name: asset_type
+          schema:
+            type: string
+            enum:
+              - chart
+              - insight
+              - audience
+          required: true
+          description: Type of the asset to be removed from favorites
+      responses:
+        "200":
+          description: Favorite asset removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: Bad Request - Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Favorite asset not found or does not exist in favorites for the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Error"
+                  - type: "null"
+  /login:
+    post:
+      tags:
+        - auth
+      security: []
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        "401":
+          description: Unauthorized - Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Error"
+                  - type: "null"
+components:
+  schemas:
+    Chart:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        x_axis:
+          type: string
+        y_axis:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/DataPoint"
+        description:
+          type: string
+    DataPoint:
+      type: object
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+    Insight:
+      type: object
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        description:
+          type: string
+    Audience:
+      type: object
+      properties:
+        id:
+          type: integer
+        gender:
+          type: string
+        birth_country:
+          type: string
+        age_group:
+          type: string
+        hours_social_media_daily:
+          type: integer
+        number_of_purchases_last_month:
+          type: integer
+        description:
+          type: string
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        error_code:
+          type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT based authentication using Bearer tokens
