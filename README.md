@@ -29,3 +29,136 @@ It is appreciated, though not required, if a Dockerfile is included.
 Just create a fork from the current repo and send it to us!
 
 Good luck, potential colleague!
+
+# Favourites REST API (Go)
+
+## Introduction
+
+A simple in-memory REST API written in Go (version 1.18.2) that allows users to manage a list of favourite assets.
+Supported asset types include:
+
+- **Chart**
+- **Insight**
+- **Audience**
+
+There is **no database**. All data lives in memory using the following data structure:
+
+map[string]map[string]Asset{}
+
+(This is a map of maps containing the lists of favourites for all users of the system. UserID -> map of (AssetID -> Asset))
+
+
+---
+
+## Features
+
+- Get the list of all favourites for a user (GET)
+- Add a chart, insight, or audience to favourites (POST)  
+- Update (partially) an existing asset (PATCH)  
+- Delete an existing asset (DELETE)  
+- In-memory storage (no database)
+- Table-driven unit tests
+- Minimal Dockerfile included
+
+---
+
+## API Endpoints
+
+### Get all favourites for a user
+
+GET /users/{user_id}/favourites
+
+### Add a favourite (chart, insight or audience)
+
+POST /users/{user_id}/favourites/{asset_type}
+
+Specifically:
+
+POST /users/{user_id}/favourites/chart
+POST /users/{user_id}/favourites/insight
+POST /users/{user_id}/favourites/audience
+
+### Update (partially) an existing asset
+
+PATCH /users/{user_id}/favourites/{asset_id}
+
+### Delete an asset
+
+DELETE /users/{user_id}/favourites/{asset_id}
+
+### Auxiliary endpoint. Create a new user (just for the sake of this user having a list of favourites)
+
+---
+
+## Data Model
+
+### Chart
+
+```json
+{
+  "description": "Example chart",
+  "data": {
+    "title": "Chart Title",
+    "x_axis": "X Label",
+    "y_axis": "Y Label",
+    "data": [1, 2, 3]
+  }
+}
+```
+
+### Insight
+
+```json
+{
+  "description": "Example insight",
+  "data": {
+    "text": "Insightful text"
+  }
+}
+```
+
+### Audience
+```json
+{
+  "description": "Example audience",
+  "data": {
+    "gender": "Male",
+    "birth_country": "GR",
+    "age_groups": ["18-24"],
+    "daily_hours_on_social_media": 3,
+    "purchases_last_month": 2
+  }
+}
+```
+
+---
+
+## Build
+
+go build -o api .
+
+## Run locally (listens on localhost:8080)
+
+./api
+
+## Run tests (verbose)
+
+go test
+
+---
+
+## User missing behaviour
+1. GET: If a user does not exist, return 404.
+2. POST: If a user does not exist, return 404. If a user does not exist, the list of favourites we are trying to add an asset in does not exist as well.
+3. PATCH: If a user does not exist, return 404. It does not make sense to try to partially update an asset from the favourites list of a non-existing user.
+4. DELETE: If a user does not exist, return 404. If a user does not exist, it does not make sense to try to delete an asset from the favourites list of a non-existing user.
+
+---
+
+## Build Docker image
+
+docker build -t favourites-api .
+
+## Run container
+
+docker run -p 8080:8080 favourites-api
