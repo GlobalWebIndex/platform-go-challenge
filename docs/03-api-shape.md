@@ -82,6 +82,7 @@ Industry standards are followed to keep things consistent and maintainable:
 **Error Responses**
 
 - `400 Bad Request` – Invalid query parameters
+- `401 Unauthorized` – Authentication required or invalid
 - `404 Not Found` – User not found
 - `422 Unprocessable Entity` – Validation error
 - `500 Internal Server Error` – Server error
@@ -125,6 +126,7 @@ The asset is stored in the asset store and an `id` is assigned (auto-generated U
 **Error Responses**
 
 - `400 Bad Request` – Invalid request body or missing required fields
+- `401 Unauthorized` – Authentication required or invalid
 - `404 Not Found` – User not found
 - `409 Conflict` – Favourite already exists for this user-asset pair
 - `422 Unprocessable Entity` – Validation error (invalid asset data or format)
@@ -149,6 +151,7 @@ The asset is stored in the asset store and an `id` is assigned (auto-generated U
 **Error Responses**
 
 - `400 Bad Request` – Invalid parameters
+- `401 Unauthorized` – Authentication required or invalid
 - `404 Not Found` – User not found
 - `500 Internal Server Error` – Server error
 
@@ -192,9 +195,75 @@ The asset is stored in the asset store and an `id` is assigned (auto-generated U
 **Error Responses**
 
 - `400 Bad Request` – Invalid request body
+- `401 Unauthorized` – Authentication required or invalid
 - `404 Not Found` – User or favourite not found
 - `422 Unprocessable Entity` – Validation error
 - `500 Internal Server Error` – Server error
+
+---
+
+## 5. Health check
+
+**Endpoint**
+
+- `GET /health`
+
+**Behavior**
+
+- Returns the health status of the service. This endpoint is kept simple for the take-home assignment.
+- No authentication required (typically public for load balancer and orchestration system health checks).
+
+**Response 200**
+
+```json
+{
+  "status": "healthy"
+}
+```
+
+**Error Responses**
+
+- This endpoint does not return error responses. If the service is running, it returns 200 with `{"status": "healthy"}`.
+
+---
+
+## 6. Metrics
+
+**Endpoint**
+
+- `GET /metrics`
+
+**Behavior**
+
+- Returns Prometheus-formatted metrics for monitoring and observability.
+- Exposes HTTP request counts, latency, error rates, and operation metrics.
+- Requires authentication (same `mockAuth` as other endpoints).
+
+**Response 200**
+
+Content-Type: `text/plain`
+
+Prometheus exposition format:
+
+```
+# HELP http_requests_total Total number of HTTP requests
+# TYPE http_requests_total counter
+http_requests_total{method="GET",endpoint="/v1/users/{userId}/favourites",status="200"} 42
+http_requests_total{method="POST",endpoint="/v1/users/{userId}/favourites",status="201"} 10
+# HELP http_request_duration_seconds HTTP request duration in seconds
+# TYPE http_request_duration_seconds histogram
+http_request_duration_seconds_bucket{method="GET",endpoint="/v1/users/{userId}/favourites",le="0.1"} 35
+http_request_duration_seconds_bucket{method="GET",endpoint="/v1/users/{userId}/favourites",le="0.5"} 40
+http_request_duration_seconds_bucket{method="GET",endpoint="/v1/users/{userId}/favourites",le="+Inf"} 42
+http_request_duration_seconds_sum{method="GET",endpoint="/v1/users/{userId}/favourites"} 8.5
+http_request_duration_seconds_count{method="GET",endpoint="/v1/users/{userId}/favourites"} 42
+```
+
+**Error Responses**
+
+- `401 Unauthorized` – Authentication required or invalid
+
+**Note:** In production environments, metrics endpoints should be protected with stronger security measures (e.g., network-level restrictions, service mesh policies, or dedicated monitoring credentials). For this take-home assignment, the same authentication mechanism (`mockAuth`) is used as the rest of the API.
 
 ---
 
