@@ -1,0 +1,5 @@
+// Go build artifacts
+bin/
+
+.env
+!.env.example

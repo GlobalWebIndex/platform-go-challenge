@@ -31,8 +31,9 @@ platform-go-challenge/
 │   ├── app/                    # Application setup and wiring
 │   ├── config/                 # Configuration management
 │   ├── api/                    # API layer
+│   │   ├── handler/            # Generic HTTP handlers (health, metrics, etc.)
 │   │   └── v1/                 # API version 1
-│   │       ├── handler/        # HTTP handlers
+│   │       ├── handler/        # Versioned HTTP handlers
 │   │       ├── dto/            # Data Transfer Objects
 │   │       └── middleware/     # API-specific middleware (auth, logging, etc.)
 │   ├── domain/                 # Domain layer
@@ -75,9 +76,13 @@ platform-go-challenge/
 - **internal/config**
   Configuration management (environment variables, defaults). Exposes a `Config` struct and loader (e.g. `config.Load()`).
 
+- **internal/api** – API layer
+
+  - **handler/**: Generic HTTP handlers for non-versioned endpoints (health checks, metrics, etc.). These are not part of the versioned API contract.
+
 - **internal/api/v1** – API version 1 layer
 
-  - **handler/**: HTTP handlers that parse/validate input, call services, and map responses.
+  - **handler/**: HTTP handlers that parse/validate input, call services, and map responses for versioned endpoints.
   - **dto/**: Request/response structs matching `api/openapi.yaml`.
   - **middleware/**: API-specific middleware (authentication, logging, recovery).
 
