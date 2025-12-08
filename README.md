@@ -1,31 +1,35 @@
-# GlobalWebIndex Engineering Challenge
+# Assets Favourites API
 
-## Introduction
+A REST API service for managing user favourites of assets (charts, insights, audiences), implemented as part of the GWI Engineering Challenge.
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+## Overview
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+This service provides endpoints for users to manage their personal list of favourite assets. Assets can be of different types (charts, insights, audiences) with varying structures, and are created inline when adding favourites.
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+## Architecture
 
-## Challenge
+The service follows a domain-driven design with a layered, hexagonal-style architecture:
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+- **Domain layer** (`internal/domain`) - Pure business concepts independent of transport and storage
+- **API layer** (`internal/api/v1`) - HTTP handlers, DTOs, and middleware
+- **Repository pattern** - Storage abstractions allowing easy swapping of implementations (in-memory → database)
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+The architecture emphasizes separation of concerns, testability, and extensibility. Observability (logging, metrics, health checks) and authentication are treated as first-class concerns. See [04-architecture-and-standards.md](docs/04-architecture-and-standards.md) for detailed architecture and coding standards.
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+## Documentation
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+Detailed documentation is available in the `docs/` directory. Instead of full PRD (Product Requirements Document) and Technical Design Document templates, a lighter free format is used to keep things simple and reviewable without the overhead of formal templates.
 
-It is appreciated, though not required, if a Dockerfile is included.
+- [00-challenge.md](docs/00-challenge.md) - Original GWI Engineering Challenge description
+- [01-context.md](docs/01-context.md) - Project context, constraints, and non-functional requirements
+- [02-domain-and-use-cases.md](docs/02-domain-and-use-cases.md) - Domain model and use cases
+- [03-api-shape.md](docs/03-api-shape.md) - API design and specifications
+- [04-architecture-and-standards.md](docs/04-architecture-and-standards.md) - Architecture and coding standards
 
-## Submission
+## API Specification
 
-Just create a fork from the current repo and send it to us!
+The OpenAPI specification is available at [api/openapi.yaml](api/openapi.yaml).
 
-Good luck, potential colleague!
+## Status
+
+This project is in the design phase. Implementation is pending.
