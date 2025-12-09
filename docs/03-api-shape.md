@@ -128,7 +128,6 @@ The asset is stored in the asset store and an `id` is assigned (auto-generated U
 - `400 Bad Request` – Invalid request body or missing required fields
 - `401 Unauthorized` – Authentication required or invalid
 - `404 Not Found` – User not found
-- `409 Conflict` – Favourite already exists for this user-asset pair
 - `422 Unprocessable Entity` – Validation error (invalid asset data or format)
 - `500 Internal Server Error` – Server error
 

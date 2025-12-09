@@ -71,9 +71,9 @@ For the challenge it can be assumed that:
 
    - Input: `user_id`, asset payload
    - Behavior:
-     - The asset is created inline.
+     - The asset is created inline with a new auto-generated UUID.
      - It is added to the user's favourites.
-     - If the favourite already exists for this user-asset pair, 409 Conflict is returned.
+     - Each call creates a new asset with a unique ID, so duplicates are impossible by design.
 
 3. **Remove favourite**
 
