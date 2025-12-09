@@ -297,4 +297,5 @@ Core principles:
 - [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments)
 - [Effective Go](https://go.dev/doc/effective_go)
 - [Google Go Style Guide](https://google.github.io/styleguide/go/)
+- [Table Driven Tests](https://go.dev/wiki/TableDrivenTests)
 - [5 API design patterns in Go that solve your biggest problems (2025)](https://cristiancurteanu.com/5-api-design-patterns-in-go-that-solve-your-biggest-problems-2025/)
