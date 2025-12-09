@@ -1,0 +1,181 @@
+package memory
+
+import (
+	"context"
+	"fmt"
+	"sync"
+	"time"
+
+	"github.com/google/uuid"
+
+	"github.com/GlobalWebIndex/platform-go-challenge/internal/domain/favourites"
+)
+
+// favouritesRepository is an in-memory implementation of favourites.Repository.
+// Safe for concurrent use.
+type favouritesRepository struct {
+	mu sync.RWMutex
+
+	// assets stores assets by ID.
+	assets map[string]favourites.Asset
+
+	// userFavourites stores favourites per user:
+	//   userID -> assetID -> Favourite
+	userFavourites map[string]map[string]favourites.Favourite
+}
+
+// NewFavouritesRepository creates a new in-memory favourites repository.
+func NewFavouritesRepository() favourites.Repository {
+	return &favouritesRepository{
+		assets:         make(map[string]favourites.Asset),
+		userFavourites: make(map[string]map[string]favourites.Favourite),
+	}
+}
+
+// CreateFavourite creates an asset and marks it as a favourite.
+// asset.ID must be empty; a new UUID v4 is generated.
+func (r *favouritesRepository) CreateFavourite(
+	ctx context.Context,
+	userID string,
+	asset favourites.Asset,
+) (favourites.FavouriteEntry, error) {
+	if err := ctx.Err(); err != nil {
+		return favourites.FavouriteEntry{}, err
+	}
+
+	if asset.ID != "" {
+		return favourites.FavouriteEntry{}, favourites.ErrInvalidAssetPayload
+	}
+
+	if err := asset.Validate(); err != nil {
+		return favourites.FavouriteEntry{}, err
+	}
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	// Generate a new unique asset ID (UUID v4).
+	assetID := uuid.NewString()
+	asset.ID = assetID
+
+	// Ensure per-user favourites map exists.
+	uf, ok := r.userFavourites[userID]
+	if !ok {
+		uf = make(map[string]favourites.Favourite)
+		r.userFavourites[userID] = uf
+	}
+
+	now := time.Now().UTC()
+	fav := favourites.Favourite{
+		UserID:    userID,
+		AssetID:   assetID,
+		CreatedAt: now,
+	}
+
+	r.assets[assetID] = asset
+	uf[assetID] = fav
+
+	return favourites.FavouriteEntry{
+		Favourite: fav,
+		Asset:     asset,
+	}, nil
+}
+
+// ListFavourites returns favourites for the given user, optionally filtered by type.
+func (r *favouritesRepository) ListFavourites(
+	ctx context.Context,
+	userID string,
+	filter favourites.ListFilter,
+) ([]favourites.FavouriteEntry, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	uf, ok := r.userFavourites[userID]
+	if !ok {
+		return nil, nil
+	}
+
+	entries := make([]favourites.FavouriteEntry, 0, len(uf))
+
+	for _, fav := range uf {
+		asset, ok := r.assets[fav.AssetID]
+		if !ok {
+			return nil, fmt.Errorf("invariant violation: asset %q not found for favourite", fav.AssetID)
+		}
+
+		if filter.Type != nil && asset.Type != *filter.Type {
+			continue
+		}
+
+		entries = append(entries, favourites.FavouriteEntry{
+			Favourite: fav,
+			Asset:     asset,
+		})
+	}
+
+	return entries, nil
+}
+
+// RemoveFavourite removes the favourite link. Idempotent: removing a favourite
+// that does not exist is a no-op and does not return ErrFavouriteNotFound.
+func (r *favouritesRepository) RemoveFavourite(
+	ctx context.Context,
+	userID, assetID string,
+) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	uf, ok := r.userFavourites[userID]
+	if !ok {
+		return nil
+	}
+
+	delete(uf, assetID)
+	if len(uf) == 0 {
+		delete(r.userFavourites, userID)
+	}
+
+	// Assets are kept even if no user references them (no cleanup needed for this challenge).
+	return nil
+}
+
+// UpdateDescriptionForUser updates an asset's description if the user has it as a favourite.
+// Returns ErrFavouriteNotFound if the favourite doesn't exist.
+func (r *favouritesRepository) UpdateDescriptionForUser(
+	ctx context.Context,
+	userID, assetID, description string,
+) (favourites.Asset, error) {
+	if err := ctx.Err(); err != nil {
+		return favourites.Asset{}, err
+	}
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	uf, ok := r.userFavourites[userID]
+	if !ok {
+		return favourites.Asset{}, favourites.ErrFavouriteNotFound
+	}
+
+	if _, ok := uf[assetID]; !ok {
+		return favourites.Asset{}, favourites.ErrFavouriteNotFound
+	}
+
+	asset, ok := r.assets[assetID]
+	if !ok {
+		return favourites.Asset{}, fmt.Errorf("invariant violation: asset %q not found for favourite", assetID)
+	}
+
+	asset.Description = description
+	r.assets[assetID] = asset
+
+	return asset, nil
+}

@@ -17,7 +17,7 @@ build:
 	go build -o bin/api ./cmd/api
 
 test:
-	go test ./...
+	go test ./... -race
 
 run:
 	go run ./cmd/api

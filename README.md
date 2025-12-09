@@ -78,7 +78,7 @@ HTTP_ADDR=:9090 go run ./cmd/api
 Run all tests:
 
 ```bash
-go test ./...
+go test ./... -race
 ```
 
 Run specific checks:
