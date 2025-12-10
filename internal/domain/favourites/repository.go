@@ -21,5 +21,5 @@ type Repository interface {
 	// UpdateDescriptionForUser updates an asset's description only if the given
 	// user has this asset as a favourite.
 	// Returns ErrFavouriteNotFound if the favourite (user, asset) does not exist.
-	UpdateDescriptionForUser(ctx context.Context, userID, assetID, description string) (Asset, error)
+	UpdateDescriptionForUser(ctx context.Context, userID, assetID, description string) (FavouriteEntry, error)
 }

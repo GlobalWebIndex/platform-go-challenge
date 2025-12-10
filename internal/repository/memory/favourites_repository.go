@@ -152,9 +152,9 @@ func (r *favouritesRepository) RemoveFavourite(
 func (r *favouritesRepository) UpdateDescriptionForUser(
 	ctx context.Context,
 	userID, assetID, description string,
-) (favourites.Asset, error) {
+) (favourites.FavouriteEntry, error) {
 	if err := ctx.Err(); err != nil {
-		return favourites.Asset{}, err
+		return favourites.FavouriteEntry{}, err
 	}
 
 	r.mu.Lock()
@@ -162,20 +162,24 @@ func (r *favouritesRepository) UpdateDescriptionForUser(
 
 	uf, ok := r.userFavourites[userID]
 	if !ok {
-		return favourites.Asset{}, favourites.ErrFavouriteNotFound
+		return favourites.FavouriteEntry{}, favourites.ErrFavouriteNotFound
 	}
 
-	if _, ok := uf[assetID]; !ok {
-		return favourites.Asset{}, favourites.ErrFavouriteNotFound
+	fav, ok := uf[assetID]
+	if !ok {
+		return favourites.FavouriteEntry{}, favourites.ErrFavouriteNotFound
 	}
 
 	asset, ok := r.assets[assetID]
 	if !ok {
-		return favourites.Asset{}, fmt.Errorf("invariant violation: asset %q not found for favourite", assetID)
+		return favourites.FavouriteEntry{}, fmt.Errorf("invariant violation: asset %q not found for favourite", assetID)
 	}
 
 	asset.Description = description
 	r.assets[assetID] = asset
 
-	return asset, nil
+	return favourites.FavouriteEntry{
+		Favourite: fav,
+		Asset:     asset,
+	}, nil
 }

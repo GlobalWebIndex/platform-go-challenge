@@ -11,7 +11,7 @@ Industry standards are followed to keep things consistent and maintainable:
 **Format & Protocol:**
 
 - **JSON:** All requests and responses use JSON (Content-Type: `application/json`)
-- **HTTP:** RFC 9110 (HTTP Semantics) - HTTP methods (GET, POST, PATCH, DELETE) and status codes (200, 201, 204, 400, 401, 404, 409, 422, 500)
+- **HTTP:** RFC 9110 (HTTP Semantics) - HTTP methods (GET, POST, PATCH, DELETE) and status codes (200, 201, 204, 400, 401, 404, 422, 500)
 - **Timestamps:** ISO 8601 format in UTC (e.g., `2025-01-01T12:00:00Z`)
 - **Error format:** RFC 9457 (Problem Details for HTTP APIs)
 
@@ -122,6 +122,8 @@ Create a new asset inline:
 ```
 
 The asset is stored in the asset store and an `id` is assigned (auto-generated UUID).
+
+**Note:** Each call to this endpoint creates a new asset with a unique UUID, even if the asset content is identical to a previously created asset. Duplicate favourites are impossible by design since each asset receives a unique identifier.
 
 **Error Responses**
 

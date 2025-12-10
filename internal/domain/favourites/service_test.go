@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 )
 
 // stubRepository is a test stub for the Repository interface.
@@ -32,7 +33,7 @@ type stubRepository struct {
 	}
 
 	// UpdateDescriptionForUser
-	updateResult Asset
+	updateResult FavouriteEntry
 	updateErr    error
 	lastUpdate   struct {
 		userID      string
@@ -73,7 +74,7 @@ func (s *stubRepository) RemoveFavourite(
 func (s *stubRepository) UpdateDescriptionForUser(
 	_ context.Context,
 	userID, assetID, description string,
-) (Asset, error) {
+) (FavouriteEntry, error) {
 	s.lastUpdate.userID = userID
 	s.lastUpdate.assetID = assetID
 	s.lastUpdate.description = description
@@ -371,6 +372,14 @@ func TestEditFavouriteDescription_DelegatesToRepositoryAndPropagatesErrors(t *te
 		Type:        AssetTypeChart,
 		Description: "new-desc",
 	}
+	wantEntry := FavouriteEntry{
+		Favourite: Favourite{
+			UserID:    "user-1",
+			AssetID:   "asset-1",
+			CreatedAt: time.Now().UTC(),
+		},
+		Asset: wantAsset,
+	}
 	repoErr := errors.New("repo error")
 
 	tests := []struct {
@@ -382,7 +391,7 @@ func TestEditFavouriteDescription_DelegatesToRepositoryAndPropagatesErrors(t *te
 		{
 			name: "success",
 			repo: &stubRepository{
-				updateResult: wantAsset,
+				updateResult: wantEntry,
 				updateErr:    nil,
 			},
 			wantErr:    nil,
@@ -415,8 +424,8 @@ func TestEditFavouriteDescription_DelegatesToRepositoryAndPropagatesErrors(t *te
 			}
 
 			if tt.wantErr == nil {
-				if got.Description != wantAsset.Description {
-					t.Fatalf("expected description %q, got %q", wantAsset.Description, got.Description)
+				if got.Asset.Description != wantAsset.Description {
+					t.Fatalf("expected description %q, got %q", wantAsset.Description, got.Asset.Description)
 				}
 			}
 

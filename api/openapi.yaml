@@ -94,7 +94,10 @@ paths:
       summary: Add a favourite for a user
       description: |
         Creates a new favourite for the user by creating a new asset inline.
-        The asset will be stored and assigned an ID automatically.
+        The asset will be stored and assigned a unique UUID automatically.
+        Each call creates a new asset with a unique identifier, even if the asset
+        content is identical to a previously created asset. Duplicate favourites
+        are impossible by design since each asset receives a unique ID.
       operationId: addFavourite
       security:
         - mockAuth: []
@@ -133,12 +136,6 @@ paths:
                 $ref: "#/components/schemas/Error"
         "404":
           description: User not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        "409":
-          description: Conflict - Favourite already exists for this user-asset pair
           content:
             application/json:
               schema:

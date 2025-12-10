@@ -279,8 +279,8 @@ func TestUpdateDescriptionForUser(t *testing.T) {
 				return
 			}
 
-			if updated.Description != tt.newDesc {
-				t.Fatalf("expected description %q, got %q", tt.newDesc, updated.Description)
+			if updated.Asset.Description != tt.newDesc {
+				t.Fatalf("expected description %q, got %q", tt.newDesc, updated.Asset.Description)
 			}
 
 			// Ensure subsequent listing shows updated description.

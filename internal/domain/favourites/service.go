@@ -27,7 +27,7 @@ type Service interface {
 
 	// EditFavouriteDescription updates the asset description for a favourite.
 	// Returns ErrFavouriteNotFound if the (user, asset) pair does not exist.
-	EditFavouriteDescription(ctx context.Context, userID, assetID, description string) (Asset, error)
+	EditFavouriteDescription(ctx context.Context, userID, assetID, description string) (FavouriteEntry, error)
 }
 
 // service is the concrete implementation behind the Service interface.
@@ -108,21 +108,21 @@ func (s *service) RemoveFavourite(
 func (s *service) EditFavouriteDescription(
 	ctx context.Context,
 	userID, assetID, description string,
-) (Asset, error) {
+) (FavouriteEntry, error) {
 	if userID == "" {
-		return Asset{}, ErrUserIDRequired
+		return FavouriteEntry{}, ErrUserIDRequired
 	}
 	if assetID == "" {
-		return Asset{}, ErrAssetIDRequired
+		return FavouriteEntry{}, ErrAssetIDRequired
 	}
 	if description == "" {
-		return Asset{}, ErrDescriptionRequired
+		return FavouriteEntry{}, ErrDescriptionRequired
 	}
 
-	updated, err := s.repo.UpdateDescriptionForUser(ctx, userID, assetID, description)
+	entry, err := s.repo.UpdateDescriptionForUser(ctx, userID, assetID, description)
 	if err != nil {
-		return Asset{}, err
+		return FavouriteEntry{}, err
 	}
 
-	return updated, nil
+	return entry, nil
 }
