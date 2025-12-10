@@ -9,6 +9,7 @@ import (
 	v1middleware "github.com/GlobalWebIndex/platform-go-challenge/internal/api/v1/middleware"
 	"github.com/GlobalWebIndex/platform-go-challenge/internal/auth"
 	"github.com/GlobalWebIndex/platform-go-challenge/internal/domain/favourites"
+	"github.com/GlobalWebIndex/platform-go-challenge/internal/infrastructure/logger"
 	"github.com/GlobalWebIndex/platform-go-challenge/internal/repository/memory"
 	"github.com/go-chi/chi/v5"
 )
@@ -17,8 +18,10 @@ import (
 func NewRouter() http.Handler {
 	r := chi.NewRouter()
 
+	log := logger.New()
+
 	// TODO: add middlewares (logging, metrics, auth)
-	// r.Use(loggingMiddleware)
+	r.Use(logger.RequestLoggingMiddleware(log))
 	// r.Use(metricsMiddleware)
 
 	// Unversioned endpoints (health, metrics, etc).
