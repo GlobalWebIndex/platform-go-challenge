@@ -19,6 +19,7 @@ import (
 // stubService implements favourites.Service for handler tests.
 type stubService struct {
 	listResult []favourites.FavouriteEntry
+	listTotal  int
 	listErr    error
 	lastList   struct {
 		ctx    context.Context
@@ -51,11 +52,11 @@ type stubService struct {
 	}
 }
 
-func (s *stubService) ListUserFavourites(ctx context.Context, userID string, filter favourites.ListFilter) ([]favourites.FavouriteEntry, error) {
+func (s *stubService) ListUserFavourites(ctx context.Context, userID string, filter favourites.ListFilter) ([]favourites.FavouriteEntry, int, error) {
 	s.lastList.ctx = ctx
 	s.lastList.userID = userID
 	s.lastList.filter = filter
-	return s.listResult, s.listErr
+	return s.listResult, s.listTotal, s.listErr
 }
 
 func (s *stubService) AddFavourite(ctx context.Context, userID string, asset favourites.Asset) (favourites.FavouriteEntry, error) {
@@ -102,6 +103,7 @@ func TestListUserFavourites_Success(t *testing.T) {
 				},
 			},
 		},
+		listTotal: 1,
 	}
 	h := NewFavouritesHandler(stub)
 

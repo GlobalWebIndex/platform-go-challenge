@@ -3,6 +3,7 @@ package memory
 import (
 	"context"
 	"fmt"
+	"sort"
 	"sync"
 	"time"
 
@@ -81,14 +82,16 @@ func (r *favouritesRepository) CreateFavourite(
 	}, nil
 }
 
-// ListFavourites returns favourites for the given user, optionally filtered by type.
+// ListFavourites returns favourites for the given user, optionally filtered by type,
+// and applies pagination based on Limit/Offset in the filter. It returns the page
+// of results plus the total number of matching entries (ignoring pagination).
 func (r *favouritesRepository) ListFavourites(
 	ctx context.Context,
 	userID string,
 	filter favourites.ListFilter,
-) ([]favourites.FavouriteEntry, error) {
+) ([]favourites.FavouriteEntry, int, error) {
 	if err := ctx.Err(); err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	r.mu.RLock()
@@ -96,7 +99,7 @@ func (r *favouritesRepository) ListFavourites(
 
 	uf, ok := r.userFavourites[userID]
 	if !ok {
-		return nil, nil
+		return []favourites.FavouriteEntry{}, 0, nil
 	}
 
 	entries := make([]favourites.FavouriteEntry, 0, len(uf))
@@ -104,7 +107,7 @@ func (r *favouritesRepository) ListFavourites(
 	for _, fav := range uf {
 		asset, ok := r.assets[fav.AssetID]
 		if !ok {
-			return nil, fmt.Errorf("invariant violation: asset %q not found for favourite", fav.AssetID)
+			return nil, 0, fmt.Errorf("invariant violation: asset %q not found for favourite", fav.AssetID)
 		}
 
 		if filter.Type != nil && asset.Type != *filter.Type {
@@ -117,7 +120,38 @@ func (r *favouritesRepository) ListFavourites(
 		})
 	}
 
-	return entries, nil
+	total := len(entries)
+	if total == 0 {
+		return []favourites.FavouriteEntry{}, 0, nil
+	}
+
+	// Ensure deterministic ordering for pagination: sort by CreatedAt ascending.
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[i].Favourite.CreatedAt.Before(entries[j].Favourite.CreatedAt)
+	})
+
+	// Apply pagination.
+	offset := filter.Offset
+	if offset < 0 {
+		offset = 0
+	}
+	if offset >= total {
+		return []favourites.FavouriteEntry{}, total, nil
+	}
+
+	limit := filter.Limit
+	if limit <= 0 {
+		// Treat non-positive limit as "no explicit limit" from this layer.
+		limit = total - offset
+	}
+
+	end := offset + limit
+	if end > total {
+		end = total
+	}
+
+	page := entries[offset:end]
+	return page, total, nil
 }
 
 // RemoveFavourite removes the favourite link. Idempotent: removing a favourite

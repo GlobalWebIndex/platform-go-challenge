@@ -12,10 +12,16 @@ var (
 	ErrDescriptionRequired = errors.New("description is required")
 )
 
+const (
+	defaultPageSize = 50
+	maxPageSize     = 100
+)
+
 // Service defines the business operations for managing favourites.
 type Service interface {
-	// ListUserFavourites returns all favourites for a user, optionally filtered by type.
-	ListUserFavourites(ctx context.Context, userID string, filter ListFilter) ([]FavouriteEntry, error)
+	// ListUserFavourites returns all favourites for a user plus the total count
+	// matching the filter (ignoring pagination) and optionally filtered by type.
+	ListUserFavourites(ctx context.Context, userID string, filter ListFilter) ([]FavouriteEntry, int, error)
 
 	// AddFavourite creates an asset inline and marks it as a favourite for the user.
 	// Asset IDs are auto-generated; callers must not provide an ID.
@@ -52,12 +58,27 @@ func (s *service) ListUserFavourites(
 	ctx context.Context,
 	userID string,
 	filter ListFilter,
-) ([]FavouriteEntry, error) {
+) ([]FavouriteEntry, int, error) {
 	if userID == "" {
-		return nil, ErrUserIDRequired
+		return nil, 0, ErrUserIDRequired
 	}
 
-	return s.repo.ListFavourites(ctx, userID, filter)
+	// Normalise pagination.
+	if filter.Offset < 0 {
+		filter.Offset = 0
+	}
+	if filter.Limit <= 0 {
+		filter.Limit = defaultPageSize
+	} else if filter.Limit > maxPageSize {
+		filter.Limit = maxPageSize
+	}
+
+	entries, total, err := s.repo.ListFavourites(ctx, userID, filter)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return entries, total, nil
 }
 
 // AddFavourite creates an asset inline and adds it to the user's favourites.

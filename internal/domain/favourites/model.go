@@ -66,7 +66,9 @@ type FavouriteEntry struct {
 // with pagination/sorting without changing the repository interface.
 type ListFilter struct {
 	// Type filters by asset type when non-nil.
-	Type *AssetType
+	Type   *AssetType
+	Limit  int
+	Offset int
 }
 
 // Domain errors used by the favourites package.

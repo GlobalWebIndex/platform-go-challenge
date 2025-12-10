@@ -47,8 +47,8 @@ Industry standards are followed to keep things consistent and maintainable:
 **Query params (optional)**
 
 - `type` – filter by asset type (`chart`, `insight`, `audience`)
-- `limit` – maximum number of results (accepted but not yet implemented; all results are returned)
-- `offset` – number of results to skip (accepted but not yet implemented)
+- `limit` – maximum number of results per page (default: 50, maximum: 100)
+- `offset` – number of results to skip (default: 0)
 
 **Response 200**
 
@@ -323,6 +323,6 @@ Note: More detailed validation (length limits, patterns, ranges) can be added la
 ## Notes
 
 - **Asset ID Generation:** When creating assets inline, IDs are auto-generated (UUID v4 format)
-- **Pagination:** The `limit` and `offset` parameters are accepted but not yet implemented. All results are returned regardless of these parameters.
+- **Pagination:** The `limit` and `offset` parameters should optionaly be available for pagination. Results are paginated with a default page size of 50 and a maximum of 100 items per page. The response includes `meta.total` (total matching items) and `meta.count` (items in current page).
 - **Idempotency:** DELETE operations are idempotent and 204 is returned even if the resource doesn't exist.
 - **Polymorphism:** Asset types are strictly enforced. Only the relevant type-specific field (`chart`, `insight`, or `audience`) should be present based on the `type` field.

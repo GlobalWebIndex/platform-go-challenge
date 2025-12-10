@@ -95,7 +95,6 @@ For the challenge it can be assumed that:
 - **Real authentication and authorization** (but authentication middleware architecture is **in scope** - see design notes below).
 - Real database, migrations, or persistence.
 - Full search and filtering.
-- Pagination (can be added later if needed).
 
 ## Design Considerations
 

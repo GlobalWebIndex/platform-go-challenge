@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 
@@ -33,7 +34,8 @@ func (h *FavouritesHandler) RegisterRoutes(r chi.Router) {
 	r.Patch("/users/{userId}/favourites/{assetId}", h.EditFavouriteDescription)
 }
 
-// ListUserFavourites handles GET /v1/users/{userId}/favourites?type=chart
+// ListUserFavourites handles
+// GET /v1/users/{userId}/favourites?type=chart&limit=50&offset=0
 func (h *FavouritesHandler) ListUserFavourites(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	userID := chi.URLParam(r, "userId")
@@ -42,8 +44,59 @@ func (h *FavouritesHandler) ListUserFavourites(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	filter := favourites.ListFilter{}
-	if t := r.URL.Query().Get("type"); t != "" {
+	const (
+		defaultLimit = 50
+		maxLimit     = 100
+	)
+
+	q := r.URL.Query()
+
+	// Parse limit
+	limit := defaultLimit
+	if raw := q.Get("limit"); raw != "" {
+		val, err := strconv.Atoi(raw)
+		if err != nil || val <= 0 {
+			httpx.WriteProblem(
+				w,
+				http.StatusBadRequest,
+				"invalid_pagination",
+				"invalid limit",
+				"limit must be a positive integer",
+				r.URL.Path,
+			)
+			return
+		}
+		if val > maxLimit {
+			val = maxLimit
+		}
+		limit = val
+	}
+
+	// Parse offset
+	offset := 0
+	if raw := q.Get("offset"); raw != "" {
+		val, err := strconv.Atoi(raw)
+		if err != nil || val < 0 {
+			httpx.WriteProblem(
+				w,
+				http.StatusBadRequest,
+				"invalid_pagination",
+				"invalid offset",
+				"offset must be a non-negative integer",
+				r.URL.Path,
+			)
+			return
+		}
+		offset = val
+	}
+
+	filter := favourites.ListFilter{
+		Limit:  limit,
+		Offset: offset,
+	}
+
+	// Optional type filter
+	if t := q.Get("type"); t != "" {
 		at, err := parseAssetType(t)
 		if err != nil {
 			httpx.WriteProblem(
@@ -59,7 +112,7 @@ func (h *FavouritesHandler) ListUserFavourites(w http.ResponseWriter, r *http.Re
 		filter.Type = &at
 	}
 
-	entries, err := h.svc.ListUserFavourites(ctx, userID, filter)
+	entries, total, err := h.svc.ListUserFavourites(ctx, userID, filter)
 	if err != nil {
 		status, typ, title, detail := mapServiceError(err)
 		httpx.WriteProblem(w, status, typ, title, detail, r.URL.Path)
@@ -74,8 +127,8 @@ func (h *FavouritesHandler) ListUserFavourites(w http.ResponseWriter, r *http.Re
 	resp := dto.ListFavouritesResponse{
 		Items: items,
 		Meta: dto.ListMetaResponse{
-			Total: len(entries),
-			Count: len(entries),
+			Total: total,      // total matching favourites (ignoring pagination)
+			Count: len(items), // items returned in this page
 		},
 	}
 

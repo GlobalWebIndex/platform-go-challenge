@@ -23,7 +23,7 @@ Non-functional goals for the implementation:
 - Clear separation of layers (e.g. handler / service / repository / domain).
 - Testable design with dependency injection.
 - **Middleware architecture:** Authentication middleware should be designed as a pluggable component that can be easily swapped (e.g. mock JWT → real JWT validation) without changing business logic.
-- Easy to extend later (e.g. add real DB, auth, pagination, search).
+- Easy to extend later (e.g. add real DB, auth, search).
 
 ## Observability & Health
 

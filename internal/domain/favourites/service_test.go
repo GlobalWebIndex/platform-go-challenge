@@ -11,6 +11,7 @@ import (
 type stubRepository struct {
 	// ListFavourites
 	listResult []FavouriteEntry
+	listTotal  int
 	listErr    error
 	lastList   struct {
 		userID string
@@ -56,10 +57,10 @@ func (s *stubRepository) ListFavourites(
 	_ context.Context,
 	userID string,
 	filter ListFilter,
-) ([]FavouriteEntry, error) {
+) ([]FavouriteEntry, int, error) {
 	s.lastList.userID = userID
 	s.lastList.filter = filter
-	return s.listResult, s.listErr
+	return s.listResult, s.listTotal, s.listErr
 }
 
 func (s *stubRepository) RemoveFavourite(
@@ -99,7 +100,7 @@ func TestListUserFavourites_Validation(t *testing.T) {
 	svc := NewService(&stubRepository{})
 	ctx := context.Background()
 
-	_, err := svc.ListUserFavourites(ctx, "", ListFilter{})
+	_, _, err := svc.ListUserFavourites(ctx, "", ListFilter{})
 	if !errors.Is(err, ErrUserIDRequired) {
 		t.Fatalf("expected ErrUserIDRequired, got %v", err)
 	}
@@ -121,12 +122,13 @@ func TestListUserFavourites_DelegatesToRepository(t *testing.T) {
 				},
 			},
 		},
+		listTotal: 1,
 	}
 	svc := NewService(stub)
 	ctx := context.Background()
 
 	filter := ListFilter{Type: nil}
-	result, err := svc.ListUserFavourites(ctx, "user-1", filter)
+	result, total, err := svc.ListUserFavourites(ctx, "user-1", filter)
 	if err != nil {
 		t.Fatalf("ListUserFavourites returned error: %v", err)
 	}
@@ -136,6 +138,9 @@ func TestListUserFavourites_DelegatesToRepository(t *testing.T) {
 	}
 	if len(result) != 1 {
 		t.Fatalf("expected 1 favourite entry, got %d", len(result))
+	}
+	if total != 1 {
+		t.Fatalf("expected total=1, got %d", total)
 	}
 }
 
@@ -149,7 +154,7 @@ func TestListUserFavourites_PropagatesRepositoryError(t *testing.T) {
 	svc := NewService(stub)
 	ctx := context.Background()
 
-	_, err := svc.ListUserFavourites(ctx, "user-1", ListFilter{})
+	_, _, err := svc.ListUserFavourites(ctx, "user-1", ListFilter{})
 	if !errors.Is(err, repoErr) {
 		t.Fatalf("expected repo error %v, got %v", repoErr, err)
 	}

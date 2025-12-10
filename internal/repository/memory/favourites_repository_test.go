@@ -59,7 +59,6 @@ func TestCreateFavourite_VariousScenarios(t *testing.T) {
 				Description: "Invalid chart",
 				Chart:       nil,
 			},
-			// If your Asset.Validate() uses ErrInvalidAssetPayload, keep this:
 			wantErr:   favourites.ErrInvalidAssetPayload,
 			wantIDSet: false,
 		},
@@ -138,19 +137,22 @@ func TestListFavourites_ByUserAndTypeFilter(t *testing.T) {
 	}
 
 	// List all for user-1
-	entries, err := repo.ListFavourites(ctx, "user-1", favourites.ListFilter{})
+	entries, total, err := repo.ListFavourites(ctx, "user-1", favourites.ListFilter{})
 	if err != nil {
 		t.Fatalf("ListFavourites returned error: %v", err)
 	}
 	if got, want := len(entries), 2; got != want {
 		t.Fatalf("expected %d entries for user-1, got %d", want, got)
 	}
+	if total != 2 {
+		t.Fatalf("expected total 2 for user-1, got %d", total)
+	}
 
 	// List only charts for user-1
 	tChart := favourites.AssetTypeChart
 	filter := favourites.ListFilter{Type: &tChart}
 
-	chartEntries, err := repo.ListFavourites(ctx, "user-1", filter)
+	chartEntries, totalCharts, err := repo.ListFavourites(ctx, "user-1", filter)
 	if err != nil {
 		t.Fatalf("ListFavourites with filter returned error: %v", err)
 	}
@@ -160,9 +162,12 @@ func TestListFavourites_ByUserAndTypeFilter(t *testing.T) {
 	if chartEntries[0].Asset.Type != favourites.AssetTypeChart {
 		t.Fatalf("expected AssetTypeChart, got %v", chartEntries[0].Asset.Type)
 	}
+	if totalCharts != 1 {
+		t.Fatalf("expected totalCharts=1, got %d", totalCharts)
+	}
 
 	// User-2 should not see user-1's favourites
-	entries2, err := repo.ListFavourites(ctx, "user-2", favourites.ListFilter{})
+	entries2, total2, err := repo.ListFavourites(ctx, "user-2", favourites.ListFilter{})
 	if err != nil {
 		t.Fatalf("ListFavourites user-2 returned error: %v", err)
 	}
@@ -171,6 +176,58 @@ func TestListFavourites_ByUserAndTypeFilter(t *testing.T) {
 	}
 	if entries2[0].Asset.Type != favourites.AssetTypeAudience {
 		t.Fatalf("expected AssetTypeAudience, got %v", entries2[0].Asset.Type)
+	}
+	if total2 != 1 {
+		t.Fatalf("expected total2=1 for user-2, got %d", total2)
+	}
+}
+
+func TestListFavourites_Pagination(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	repo := NewFavouritesRepository()
+
+	userID := "user-1"
+
+	// Create 5 favourites for the same user in sequence so CreatedAt ordering is stable.
+	for i := 0; i < 5; i++ {
+		asset := favourites.Asset{
+			Type: favourites.AssetTypeInsight,
+			Insight: &favourites.Insight{
+				Text: fmt.Sprintf("insight-%d", i),
+			},
+			Description: "for pagination test",
+		}
+		if _, err := repo.CreateFavourite(ctx, userID, asset); err != nil {
+			t.Fatalf("CreateFavourite #%d error: %v", i, err)
+		}
+	}
+
+	// Request page with limit=2, offset=1
+	filter := favourites.ListFilter{
+		Limit:  2,
+		Offset: 1,
+	}
+
+	page, total, err := repo.ListFavourites(ctx, userID, filter)
+	if err != nil {
+		t.Fatalf("ListFavourites returned error: %v", err)
+	}
+
+	if total != 5 {
+		t.Fatalf("expected total=5, got %d", total)
+	}
+	if len(page) != 2 {
+		t.Fatalf("expected page length 2, got %d", len(page))
+	}
+
+	// Sanity: ordering by CreatedAt ascending means we should see items 1 and 2
+	// (0-based index) in this page. We only check that their CreatedAt is within
+	// the range (i.e. page is not empty and sorted) rather than exact IDs/text.
+	if !page[0].Favourite.CreatedAt.Before(page[1].Favourite.CreatedAt) &&
+		!page[0].Favourite.CreatedAt.Equal(page[1].Favourite.CreatedAt) {
+		t.Fatalf("expected page to be ordered by CreatedAt ascending")
 	}
 }
 
@@ -182,7 +239,7 @@ func TestListFavourites_ContextCancelled(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // cancel immediately
 
-	_, err := repo.ListFavourites(ctx, "user-1", favourites.ListFilter{})
+	_, _, err := repo.ListFavourites(ctx, "user-1", favourites.ListFilter{})
 	if !errors.Is(err, context.Canceled) {
 		t.Fatalf("expected context.Canceled, got %v", err)
 	}
@@ -284,12 +341,15 @@ func TestUpdateDescriptionForUser_VariousScenarios(t *testing.T) {
 			}
 
 			// Ensure subsequent listing shows updated description.
-			entries, err := repo.ListFavourites(ctx, userID, favourites.ListFilter{})
+			entries, total, err := repo.ListFavourites(ctx, userID, favourites.ListFilter{})
 			if err != nil {
 				t.Fatalf("ListFavourites returned error: %v", err)
 			}
 			if got, want := len(entries), 1; got != want {
 				t.Fatalf("expected %d entry, got %d", want, got)
+			}
+			if total != 1 {
+				t.Fatalf("expected total=1, got %d", total)
 			}
 			if entries[0].Asset.Description != tt.newDesc {
 				t.Fatalf("expected description %q in listed asset, got %q",
@@ -372,7 +432,7 @@ func TestFavouritesRepository_ConcurrentAccess(t *testing.T) {
 		go func() {
 			defer wg.Done()
 
-			if _, err := repo.ListFavourites(ctx, userID, favourites.ListFilter{}); err != nil {
+			if _, _, err := repo.ListFavourites(ctx, userID, favourites.ListFilter{}); err != nil {
 				t.Errorf("ListFavourites error: %v", err)
 			}
 		}()
@@ -381,11 +441,14 @@ func TestFavouritesRepository_ConcurrentAccess(t *testing.T) {
 	wg.Wait()
 
 	// 3) After all concurrent operations, user-1 should have no favourites.
-	entries, err := repo.ListFavourites(ctx, userID, favourites.ListFilter{})
+	entries, total, err := repo.ListFavourites(ctx, userID, favourites.ListFilter{})
 	if err != nil {
 		t.Fatalf("final ListFavourites returned error: %v", err)
 	}
 	if len(entries) != 0 {
 		t.Fatalf("expected 0 favourites after concurrent removals, got %d", len(entries))
+	}
+	if total != 0 {
+		t.Fatalf("expected total=0 after concurrent removals, got %d", total)
 	}
 }

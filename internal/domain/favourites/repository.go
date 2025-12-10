@@ -12,7 +12,10 @@ type Repository interface {
 
 	// ListFavourites returns favourites for the given user, optionally filtered
 	// by type. Should be proportional to that user's favourites only.
-	ListFavourites(ctx context.Context, userID string, filter ListFilter) ([]FavouriteEntry, error)
+	// It returns:
+	//   - entries: the page of favourites after applying Limit/Offset
+	//   - total: total number of favourites matching the filter (ignoring pagination)
+	ListFavourites(ctx context.Context, userID string, filter ListFilter) ([]FavouriteEntry, int, error)
 
 	// RemoveFavourite removes the favourite link.
 	// Idempotent: does not return an error if already absent.
