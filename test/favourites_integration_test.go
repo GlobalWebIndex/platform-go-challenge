@@ -44,6 +44,7 @@ func TestFavouritesIntegration_AddAndList(t *testing.T) {
 		t.Fatalf("create POST request: %v", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-User-ID", "user-1")
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -72,7 +73,13 @@ func TestFavouritesIntegration_AddAndList(t *testing.T) {
 
 	// --- 2. List favourites and verify shape ---
 
-	listResp, err := client.Get(baseURL + "/v1/users/user-1/favourites")
+	listReq, err := http.NewRequest(http.MethodGet, baseURL+"/v1/users/user-1/favourites", nil)
+	if err != nil {
+		t.Fatalf("create GET request: %v", err)
+	}
+	listReq.Header.Set("X-User-ID", "user-1")
+
+	listResp, err := client.Do(listReq)
 	if err != nil {
 		t.Fatalf("GET favourites request error: %v", err)
 	}
@@ -139,7 +146,13 @@ func TestFavouritesIntegration_ListInvalidType(t *testing.T) {
 	client := server.Client()
 	baseURL := server.URL
 
-	resp, err := client.Get(baseURL + "/v1/users/user-1/favourites?type=invalid-type")
+	req, err := http.NewRequest(http.MethodGet, baseURL+"/v1/users/user-1/favourites?type=invalid-type", nil)
+	if err != nil {
+		t.Fatalf("create GET request: %v", err)
+	}
+	req.Header.Set("X-User-ID", "user-1")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		t.Fatalf("GET favourites with invalid type error: %v", err)
 	}
@@ -177,5 +190,32 @@ func TestFavouritesIntegration_ListInvalidType(t *testing.T) {
 	}
 	if problem.Instance == "" {
 		t.Fatalf("expected non-empty problem.instance")
+	}
+}
+
+// Error-path integration: missing X-User-ID header should return 401.
+func TestFavouritesIntegration_AuthMissingHeader(t *testing.T) {
+	t.Parallel()
+
+	router := app.NewRouter()
+	server := httptest.NewServer(router)
+	defer server.Close()
+
+	client := server.Client()
+	baseURL := server.URL
+
+	resp, err := client.Get(baseURL + "/v1/users/user-1/favourites")
+	if err != nil {
+		t.Fatalf("GET favourites without auth error: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("expected status 401, got %d", resp.StatusCode)
+	}
+
+	ct := resp.Header.Get("Content-Type")
+	if !strings.HasPrefix(ct, "application/problem+json") {
+		t.Fatalf("expected Content-Type application/problem+json, got %q", ct)
 	}
 }
