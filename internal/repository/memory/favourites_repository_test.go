@@ -10,7 +10,7 @@ import (
 	"github.com/GlobalWebIndex/platform-go-challenge/internal/domain/favourites"
 )
 
-func TestCreateFavourite(t *testing.T) {
+func TestCreateFavourite_VariousScenarios(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -100,7 +100,7 @@ func TestCreateFavourite(t *testing.T) {
 	}
 }
 
-func TestListFavouritesByUserAndTypeFilter(t *testing.T) {
+func TestListFavourites_ByUserAndTypeFilter(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -174,7 +174,7 @@ func TestListFavouritesByUserAndTypeFilter(t *testing.T) {
 	}
 }
 
-func TestListFavouritesContextCancelled(t *testing.T) {
+func TestListFavourites_ContextCancelled(t *testing.T) {
 	t.Parallel()
 
 	repo := NewFavouritesRepository()
@@ -188,7 +188,7 @@ func TestListFavouritesContextCancelled(t *testing.T) {
 	}
 }
 
-func TestRemoveFavouriteIsIdempotent(t *testing.T) {
+func TestRemoveFavourite_IsIdempotent(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
@@ -216,7 +216,7 @@ func TestRemoveFavouriteIsIdempotent(t *testing.T) {
 	}
 }
 
-func TestUpdateDescriptionForUser(t *testing.T) {
+func TestUpdateDescriptionForUser_VariousScenarios(t *testing.T) {
 	t.Parallel()
 
 	type setupFn func(t *testing.T, repo favourites.Repository) (userID, assetID string)
@@ -299,7 +299,7 @@ func TestUpdateDescriptionForUser(t *testing.T) {
 	}
 }
 
-func TestFavouritesRepositoryConcurrentAccess(t *testing.T) {
+func TestFavouritesRepository_ConcurrentAccess(t *testing.T) {
 	t.Parallel()
 
 	repo := NewFavouritesRepository()

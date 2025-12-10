@@ -87,7 +87,7 @@ func TestMetricsHandler_ExposesMetrics(t *testing.T) {
 	}
 }
 
-func TestMetricsRegistersCollectors(t *testing.T) {
+func TestMetrics_RegistersCollectors(t *testing.T) {
 	t.Parallel()
 
 	m := New()

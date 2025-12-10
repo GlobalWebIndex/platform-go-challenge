@@ -209,7 +209,7 @@ func errorsIsInvalidAssetPayload(err error) bool {
 	return err != nil && err == favourites.ErrInvalidAssetPayload
 }
 
-func TestFavouriteEntryToDTO_MapsFields(t *testing.T) {
+func TestFavouriteEntryToDTO_MapsAllFields(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now().UTC()
@@ -245,7 +245,7 @@ func TestFavouriteEntryToDTO_MapsFields(t *testing.T) {
 	}
 }
 
-func TestAssetToDTO_MapsAllPayloads(t *testing.T) {
+func TestAssetToDTO_MapsAllPayloadTypes(t *testing.T) {
 	t.Parallel()
 
 	asset := favourites.Asset{

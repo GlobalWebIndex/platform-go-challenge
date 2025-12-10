@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestWriteJSON(t *testing.T) {
+func TestWriteJSON_WritesJSONResponse(t *testing.T) {
 	type payload struct {
 		Message string `json:"message"`
 	}
@@ -34,7 +34,7 @@ func TestWriteJSON(t *testing.T) {
 	}
 }
 
-func TestWriteProblem(t *testing.T) {
+func TestWriteProblem_WritesProblemDetails(t *testing.T) {
 	const (
 		status   = http.StatusUnprocessableEntity
 		typ      = "invalid_asset"

@@ -81,7 +81,7 @@ func (s *stubRepository) UpdateDescriptionForUser(
 	return s.updateResult, s.updateErr
 }
 
-func TestNewServicePanicsOnNilRepo(t *testing.T) {
+func TestNewService_PanicsOnNilRepo(t *testing.T) {
 	t.Parallel()
 
 	defer func() {

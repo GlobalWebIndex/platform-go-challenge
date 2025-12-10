@@ -40,7 +40,7 @@ func TestHeaderAuthenticator_CustomHeaderName(t *testing.T) {
 	}
 }
 
-func TestHeaderAuthenticator_MissingHeaderReturnsErrUnauthenticated(t *testing.T) {
+func TestHeaderAuthenticator_MissingHeader_ReturnsErrUnauthenticated(t *testing.T) {
 	t.Parallel()
 
 	auth := NewHeaderAuthenticator("X-User-ID")

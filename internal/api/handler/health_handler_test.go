@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestHealth(t *testing.T) {
+func TestHealth_ReturnsHealthyStatus(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/health", nil)
 	rr := httptest.NewRecorder()
 

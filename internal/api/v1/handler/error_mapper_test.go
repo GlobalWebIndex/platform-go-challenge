@@ -8,7 +8,7 @@ import (
 	"github.com/GlobalWebIndex/platform-go-challenge/internal/domain/favourites"
 )
 
-func TestMapServiceError(t *testing.T) {
+func TestMapServiceError_MapsErrorsToStatusCodes(t *testing.T) {
 	t.Parallel()
 
 	unknownErr := errors.New("boom")
