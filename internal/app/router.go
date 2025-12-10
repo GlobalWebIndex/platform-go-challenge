@@ -10,6 +10,7 @@ import (
 	"github.com/GlobalWebIndex/platform-go-challenge/internal/auth"
 	"github.com/GlobalWebIndex/platform-go-challenge/internal/domain/favourites"
 	"github.com/GlobalWebIndex/platform-go-challenge/internal/infrastructure/logger"
+	metricsinfra "github.com/GlobalWebIndex/platform-go-challenge/internal/infrastructure/metrics"
 	"github.com/GlobalWebIndex/platform-go-challenge/internal/repository/memory"
 	"github.com/go-chi/chi/v5"
 )
@@ -18,14 +19,17 @@ import (
 func NewRouter() http.Handler {
 	r := chi.NewRouter()
 
+	// Infrastructure: logger and metrics.
 	log := logger.New()
+	metrics := metricsinfra.New()
 
-	// TODO: add middlewares (logging, metrics, auth)
+	// Global middlewares (applied to all routes).
 	r.Use(logger.RequestLoggingMiddleware(log))
-	// r.Use(metricsMiddleware)
+	r.Use(metricsinfra.RequestMetricsMiddleware(metrics))
 
 	// Unversioned endpoints (health, metrics, etc).
 	r.Get("/health", roothandler.Health)
+	r.Handle("/metrics", metrics.Handler())
 
 	// --- Dependency wiring for favourites API (v1) ---
 
