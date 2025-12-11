@@ -219,3 +219,63 @@ func TestFavouritesIntegration_AuthMissingHeader(t *testing.T) {
 		t.Fatalf("expected Content-Type application/problem+json, got %q", ct)
 	}
 }
+
+// Error-path integration: X-User-ID header present but does not match {userId}
+// should return 403 Forbidden.
+func TestFavouritesIntegration_AuthUserMismatch(t *testing.T) {
+	t.Parallel()
+
+	router := app.NewRouter()
+	server := httptest.NewServer(router)
+	defer server.Close()
+
+	client := server.Client()
+	baseURL := server.URL
+
+	req, err := http.NewRequest(http.MethodGet, baseURL+"/v1/users/user-1/favourites", nil)
+	if err != nil {
+		t.Fatalf("create GET request: %v", err)
+	}
+	// Authenticated as user-2, but requesting /users/user-1/...
+	req.Header.Set("X-User-ID", "user-2")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("GET favourites with user mismatch error: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusForbidden {
+		t.Fatalf("expected status 403, got %d", resp.StatusCode)
+	}
+
+	ct := resp.Header.Get("Content-Type")
+	if !strings.HasPrefix(ct, "application/problem+json") {
+		t.Fatalf("expected Content-Type application/problem+json, got %q", ct)
+	}
+
+	var problem struct {
+		Type     string `json:"type"`
+		Title    string `json:"title"`
+		Status   int    `json:"status"`
+		Detail   string `json:"detail"`
+		Instance string `json:"instance"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&problem); err != nil {
+		t.Fatalf("decode problem response: %v", err)
+	}
+
+	if problem.Status != http.StatusForbidden {
+		t.Fatalf("expected problem.status %d, got %d", http.StatusForbidden, problem.Status)
+	}
+	if problem.Type != "forbidden" {
+		t.Fatalf("expected problem.type %q, got %q", "forbidden", problem.Type)
+	}
+	if problem.Title == "" {
+		t.Fatalf("expected non-empty problem.title")
+	}
+	if problem.Instance == "" {
+		t.Fatalf("expected non-empty problem.instance")
+	}
+}

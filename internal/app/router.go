@@ -27,8 +27,13 @@ func NewRouter() http.Handler {
 	r.Use(logger.RequestLoggingMiddleware(log))
 	r.Use(metricsinfra.RequestMetricsMiddleware(metrics))
 
-	// Unversioned endpoints (health, metrics, etc).
+	// Unversioned endpoints (health, metrics, docs).
 	r.Get("/health", roothandler.Health)
+
+	// NOTE: /metrics is intentionally unauthenticated for this exercise so
+	// that Prometheus/Grafana in docker-compose can scrape it easily.
+	// TODO: In a real environment, protect /metrics with internal auth
+	//       (mTLS, IP allowlist, separate admin gateway, etc.).
 	r.Handle("/metrics", metrics.Handler())
 
 	// --- Dependency wiring for favourites API (v1) ---
@@ -47,15 +52,23 @@ func NewRouter() http.Handler {
 
 	// Versioned API routes.
 	r.Route("/v1", func(r chi.Router) {
-		// Apply auth middleware to all v1 routes.
-		r.Use(v1middleware.NewAuthUserMiddleware(headerAuth))
+		// Router that owns the {userId} path parameter.
+		r.Route("/users/{userId}", func(r chi.Router) {
+			// Apply auth middleware to all user-scoped routes so it can
+			// see {userId} via chi.URLParam and enforce the match against
+			// the authenticated user.
+			r.Use(v1middleware.NewAuthUserMiddleware(headerAuth))
 
-		// Registers:
-		//   GET    /users/{userId}/favourites
-		//   POST   /users/{userId}/favourites
-		//   DELETE /users/{userId}/favourites/{assetId}
-		//   PATCH  /users/{userId}/favourites/{assetId}
-		favHandler.RegisterRoutes(r)
+			// Registers:
+			//   GET    /v1/users/{userId}/favourites
+			//   POST   /v1/users/{userId}/favourites
+			//   DELETE /v1/users/{userId}/favourites/{assetId}
+			//   PATCH  /v1/users/{userId}/favourites/{assetId}
+			r.Get("/favourites", favHandler.ListUserFavourites)
+			r.Post("/favourites", favHandler.AddFavourite)
+			r.Delete("/favourites/{assetId}", favHandler.RemoveFavourite)
+			r.Patch("/favourites/{assetId}", favHandler.EditFavouriteDescription)
+		})
 	})
 
 	return r
