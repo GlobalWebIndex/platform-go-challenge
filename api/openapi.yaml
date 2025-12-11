@@ -1,0 +1,637 @@
+openapi: 3.1.0
+info:
+  title: Assets Favourites API
+  version: "1.0.0"
+  description: |
+    RESTful API for managing user favourites of assets (charts, insights, audiences).
+
+    This API supports listing, adding, removing, and updating user favourites.
+    Assets are created inline when adding favourites.
+
+    **Note:** Authentication middleware is designed as a pluggable component (currently header-based mock authentication via X-User-ID).
+    Error responses follow RFC 9457 format.
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /v1/users/{userId}/favourites:
+    get:
+      summary: List favourites for a user
+      description: |
+        Returns all favourites for the specified user, optionally filtered by asset type.
+        Results include the full asset details for each favourite.
+      operationId: listFavourites
+      security:
+        - mockAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            $ref: "#/components/schemas/UserId"
+        - name: type
+          in: query
+          required: false
+          description: Filter favourites by asset type
+          schema:
+            $ref: "#/components/schemas/AssetType"
+        - name: limit
+          in: query
+          required: false
+          description: "Maximum number of results per page. (default: 50, maximum: 100)"
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: offset
+          in: query
+          required: false
+          description: "Number of results to skip (default: 0)"
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        "200":
+          description: List of favourites retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FavouritesListResponse"
+        "400":
+          description: Bad request (invalid parameters)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized (missing or invalid X-User-ID header)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden (authenticated user does not match userId path parameter)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Add a favourite for a user
+      description: |
+        Creates a new favourite for the user by creating a new asset inline.
+        The asset will be stored and assigned a unique UUID automatically.
+        Each call creates a new asset with a unique identifier, even if the asset
+        content is identical to a previously created asset. Duplicate favourites
+        are impossible by design since each asset receives a unique ID.
+      operationId: addFavourite
+      security:
+        - mockAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            $ref: "#/components/schemas/UserId"
+      requestBody:
+        required: true
+        description: Asset object to create inline
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFavouriteRequest"
+      responses:
+        "201":
+          description: Favourite created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateFavouriteResponse"
+        "400":
+          description: Bad request (invalid request body or missing required fields)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized (missing or invalid X-User-ID header)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden (authenticated user does not match userId path parameter)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Validation error (invalid asset data or format)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/users/{userId}/favourites/{assetId}:
+    delete:
+      summary: Remove a favourite (idempotent)
+      description: |
+        Removes a favourite for the specified user and asset. This operation is idempotent:
+        it returns success (204) even if the favourite did not exist.
+      operationId: removeFavourite
+      security:
+        - mockAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            $ref: "#/components/schemas/UserId"
+        - name: assetId
+          in: path
+          required: true
+          description: Unique identifier for the asset
+          schema:
+            $ref: "#/components/schemas/AssetId"
+      responses:
+        "204":
+          description: Favourite removed successfully (or did not exist)
+        "400":
+          description: Bad request (invalid parameters)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized (missing or invalid X-User-ID header)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden (authenticated user does not match userId path parameter)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    patch:
+      summary: Update favourite description
+      description: |
+        Updates the asset's description for this favourite.
+      operationId: updateFavourite
+      security:
+        - mockAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            $ref: "#/components/schemas/UserId"
+        - name: assetId
+          in: path
+          required: true
+          description: Unique identifier for the asset
+          schema:
+            $ref: "#/components/schemas/AssetId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFavouriteRequest"
+      responses:
+        "200":
+          description: Favourite updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [userId, assetId, createdAt, asset]
+                properties:
+                  userId:
+                    $ref: "#/components/schemas/UserId"
+                  assetId:
+                    $ref: "#/components/schemas/AssetId"
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: ISO 8601 timestamp when the favourite was created
+                  asset:
+                    $ref: "#/components/schemas/Asset"
+                    description: Full asset details
+        "400":
+          description: Bad request (invalid request body)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized (missing or invalid X-User-ID header)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden (authenticated user does not match userId path parameter)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Favourite not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /health:
+    get:
+      summary: Health check endpoint
+      description: |
+        Returns the health status of the service. This endpoint is kept simple for the take-home assignment.
+        In production, this could be extended to check dependencies (database, external services, etc.).
+      operationId: getHealth
+      tags:
+        - Monitoring
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy]
+                    description: Health status
+              examples:
+                healthy:
+                  value:
+                    status: "healthy"
+
+  /metrics:
+    get:
+      summary: Prometheus metrics endpoint
+      description: |
+        Returns Prometheus-formatted metrics for monitoring and observability.
+        This endpoint exposes HTTP request counts, latency, error rates, and operation metrics.
+        This endpoint is intentionally unauthenticated for this exercise to allow Prometheus/Grafana
+        in docker-compose to scrape it easily. In production, this should be protected with internal
+        auth (mTLS, IP allowlist, separate admin gateway, etc.).
+      operationId: getMetrics
+      tags:
+        - Monitoring
+      responses:
+        "200":
+          description: Metrics in Prometheus exposition format
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Prometheus metrics in text format
+              examples:
+                default:
+                  value: |
+                    # HELP http_requests_total Total number of HTTP requests
+                    # TYPE http_requests_total counter
+                    http_requests_total{method="GET",endpoint="/v1/users/{userId}/favourites",status="200"} 42
+                    http_requests_total{method="POST",endpoint="/v1/users/{userId}/favourites",status="201"} 10
+                    # HELP http_request_duration_seconds HTTP request duration in seconds
+                    # TYPE http_request_duration_seconds histogram
+                    http_request_duration_seconds_bucket{method="GET",endpoint="/v1/users/{userId}/favourites",le="0.1"} 35
+                    http_request_duration_seconds_bucket{method="GET",endpoint="/v1/users/{userId}/favourites",le="0.5"} 40
+                    http_request_duration_seconds_bucket{method="GET",endpoint="/v1/users/{userId}/favourites",le="+Inf"} 42
+                    http_request_duration_seconds_sum{method="GET",endpoint="/v1/users/{userId}/favourites"} 8.5
+                    http_request_duration_seconds_count{method="GET",endpoint="/v1/users/{userId}/favourites"} 42
+
+components:
+  securitySchemes:
+    mockAuth:
+      type: apiKey
+      in: header
+      name: X-User-ID
+      description: |
+        Mock authentication via X-User-ID header. The middleware reads the user ID from this header.
+        For this challenge, authentication is mocked (no real token validation).
+        The user ID from the header must match the userId path parameter.
+
+  schemas:
+    # Primitive types with validation
+    UserId:
+      type: string
+      description: User identifier
+      examples: ["user-123"]
+
+    AssetId:
+      type: string
+      description: Asset identifier
+      examples: ["asset-abc"]
+
+    AssetType:
+      type: string
+      enum: [chart, insight, audience]
+      description: Type of asset
+
+    Gender:
+      type: string
+      enum: [male, female, other]
+      description: Gender identifier
+
+    # Asset type-specific data schemas
+    Chart:
+      type: object
+      required: [title, xAxis, yAxis, data]
+      properties:
+        title:
+          type: string
+          description: Chart title
+          examples: ["Example Chart"]
+        xAxis:
+          type: string
+          description: X-axis label
+          examples: ["Age"]
+        yAxis:
+          type: string
+          description: Y-axis label
+          examples: ["Score"]
+        data:
+          type: array
+          items:
+            type: number
+            format: float
+          description: Chart data points
+          examples: [[1.2, 3.4, 5.6]]
+
+    Insight:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+          description: Insight text content
+          examples:
+            ["40% of millennials spend more than 3 hours on social media daily"]
+
+    Audience:
+      type: object
+      required:
+        [
+          gender,
+          birthCountry,
+          ageGroup,
+          hoursOnSocialMediaPerDay,
+          purchasesLastMonth,
+        ]
+      properties:
+        gender:
+          $ref: "#/components/schemas/Gender"
+        birthCountry:
+          type: string
+          description: Country of birth
+          examples: ["US"]
+        ageGroup:
+          type: string
+          description: Age range (e.g., "18-24")
+          examples: ["18-24"]
+        hoursOnSocialMediaPerDay:
+          type: integer
+          description: Hours spent on social media per day
+          examples: [3]
+        purchasesLastMonth:
+          type: integer
+          description: Number of purchases in the last month
+          examples: [5]
+
+    # Polymorphic Asset schema using oneOf
+    Asset:
+      oneOf:
+        - type: object
+          required: [id, type, description, chart]
+          properties:
+            id:
+              $ref: "#/components/schemas/AssetId"
+            type:
+              type: string
+              enum: [chart]
+            description:
+              type: string
+              description: Asset description
+              examples: ["Chart description"]
+            chart:
+              $ref: "#/components/schemas/Chart"
+        - type: object
+          required: [id, type, description, insight]
+          properties:
+            id:
+              $ref: "#/components/schemas/AssetId"
+            type:
+              type: string
+              enum: [insight]
+            description:
+              type: string
+              minLength: 1
+              maxLength: 1000
+              description: Asset description
+              examples: ["Insight description"]
+            insight:
+              $ref: "#/components/schemas/Insight"
+        - type: object
+          required: [id, type, description, audience]
+          properties:
+            id:
+              $ref: "#/components/schemas/AssetId"
+            type:
+              type: string
+              enum: [audience]
+            description:
+              type: string
+              minLength: 1
+              maxLength: 1000
+              description: Asset description
+              examples: ["Audience description"]
+            audience:
+              $ref: "#/components/schemas/Audience"
+
+    # Asset for creation (id is optional, will be auto-generated)
+    CreateAssetRequest:
+      oneOf:
+        - type: object
+          required: [type, description, chart]
+          properties:
+            type:
+              type: string
+              enum: [chart]
+            description:
+              type: string
+              minLength: 1
+              maxLength: 1000
+              description: Asset description
+            chart:
+              $ref: "#/components/schemas/Chart"
+        - type: object
+          required: [type, description, insight]
+          properties:
+            type:
+              type: string
+              enum: [insight]
+            description:
+              type: string
+              minLength: 1
+              maxLength: 1000
+              description: Asset description
+            insight:
+              $ref: "#/components/schemas/Insight"
+        - type: object
+          required: [type, description, audience]
+          properties:
+            type:
+              type: string
+              enum: [audience]
+            description:
+              type: string
+              minLength: 1
+              maxLength: 1000
+              description: Asset description
+            audience:
+              $ref: "#/components/schemas/Audience"
+
+    Favourite:
+      type: object
+      required: [userId, assetId, createdAt, asset]
+      properties:
+        userId:
+          $ref: "#/components/schemas/UserId"
+        assetId:
+          $ref: "#/components/schemas/AssetId"
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the favourite was created
+          examples: ["2025-01-01T12:00:00Z"]
+        asset:
+          $ref: "#/components/schemas/Asset"
+          description: Full asset details
+
+    FavouritesListResponse:
+      type: object
+      required: [items, meta]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Favourite"
+          description: List of favourites with asset details
+        meta:
+          type: object
+          required: [total, count]
+          properties:
+            total:
+              type: integer
+              description: Total number of favourites for the user
+              examples: [42]
+            count:
+              type: integer
+              description: Number of items returned in this response
+              examples: [42]
+
+    # CreateFavouriteRequest - creates asset inline
+    CreateFavouriteRequest:
+      type: object
+      required: [asset]
+      properties:
+        asset:
+          $ref: "#/components/schemas/CreateAssetRequest"
+
+    # CreateFavouriteResponse - response for POST /favourites (without full asset)
+    CreateFavouriteResponse:
+      type: object
+      required: [userId, assetId, createdAt]
+      properties:
+        userId:
+          $ref: "#/components/schemas/UserId"
+        assetId:
+          $ref: "#/components/schemas/AssetId"
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the favourite was created
+          examples: ["2025-01-01T12:00:00Z"]
+
+    UpdateFavouriteRequest:
+      type: object
+      required: [description]
+      properties:
+        description:
+          type: string
+          description: New description for the asset
+          examples: ["New description"]
+
+    # Error schema following RFC 9457 (Problem Details for HTTP APIs)
+    Error:
+      type: object
+      required: [type, title, status, detail]
+      properties:
+        type:
+          type: string
+          format: uri
+          description: URI identifying the problem type (e.g., "https://api.example.com/problems/bad-request", "https://api.example.com/problems/not-found")
+        title:
+          type: string
+          description: Short summary of the problem (e.g., "Bad Request", "Not Found", "Validation Error")
+        status:
+          type: integer
+          description: HTTP status code (400, 404, 422, 500)
+        detail:
+          type: string
+          description: Human-readable error message
+        instance:
+          type: string
+          format: uri
+          description: URI identifying the specific occurrence
