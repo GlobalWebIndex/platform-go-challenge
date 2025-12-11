@@ -8,7 +8,7 @@ info:
     This API supports listing, adding, removing, and updating user favourites.
     Assets are created inline when adding favourites.
 
-    **Note:** Authentication middleware is designed as a pluggable component (currently mock JWT validation).
+    **Note:** Authentication middleware is designed as a pluggable component (currently header-based mock authentication via X-User-ID).
     Error responses follow RFC 9457 format.
 
 servers:
@@ -69,13 +69,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized (invalid or missing authentication token)
+          description: Unauthorized (missing or invalid X-User-ID header)
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-        "404":
-          description: User not found
+        "403":
+          description: Forbidden (authenticated user does not match userId path parameter)
           content:
             application/json:
               schema:
@@ -132,13 +132,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized (invalid or missing authentication token)
+          description: Unauthorized (missing or invalid X-User-ID header)
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-        "404":
-          description: User not found
+        "403":
+          description: Forbidden (authenticated user does not match userId path parameter)
           content:
             application/json:
               schema:
@@ -188,13 +188,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized (invalid or missing authentication token)
+          description: Unauthorized (missing or invalid X-User-ID header)
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-        "404":
-          description: User not found
+        "403":
+          description: Forbidden (authenticated user does not match userId path parameter)
           content:
             application/json:
               schema:
@@ -238,7 +238,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Favourite"
+                type: object
+                required: [userId, assetId, createdAt, asset]
+                properties:
+                  userId:
+                    $ref: "#/components/schemas/UserId"
+                  assetId:
+                    $ref: "#/components/schemas/AssetId"
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: ISO 8601 timestamp when the favourite was created
+                  asset:
+                    $ref: "#/components/schemas/Asset"
+                    description: Full asset details
         "400":
           description: Bad request (invalid request body)
           content:
@@ -246,13 +259,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "401":
-          description: Unauthorized (invalid or missing authentication token)
+          description: Unauthorized (missing or invalid X-User-ID header)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden (authenticated user does not match userId path parameter)
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
         "404":
-          description: User or favourite not found
+          description: Favourite not found
           content:
             application/json:
               schema:
@@ -303,9 +322,10 @@ paths:
       description: |
         Returns Prometheus-formatted metrics for monitoring and observability.
         This endpoint exposes HTTP request counts, latency, error rates, and operation metrics.
+        This endpoint is intentionally unauthenticated for this exercise to allow Prometheus/Grafana
+        in docker-compose to scrape it easily. In production, this should be protected with internal
+        auth (mTLS, IP allowlist, separate admin gateway, etc.).
       operationId: getMetrics
-      security:
-        - mockAuth: []
       tags:
         - Monitoring
       responses:
@@ -330,23 +350,17 @@ paths:
                     http_request_duration_seconds_bucket{method="GET",endpoint="/v1/users/{userId}/favourites",le="+Inf"} 42
                     http_request_duration_seconds_sum{method="GET",endpoint="/v1/users/{userId}/favourites"} 8.5
                     http_request_duration_seconds_count{method="GET",endpoint="/v1/users/{userId}/favourites"} 42
-        "401":
-          description: Unauthorized (invalid or missing authentication token)
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
 
 components:
   securitySchemes:
     mockAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+      type: apiKey
+      in: header
+      name: X-User-ID
       description: |
-        Mock JWT authentication. The middleware validates the JWT token format and extracts the user_id.
-        For this challenge, the JWT validation is mocked (no real signature verification).
-        The user_id from the JWT should match the userId path parameter.
+        Mock authentication via X-User-ID header. The middleware reads the user ID from this header.
+        For this challenge, authentication is mocked (no real token validation).
+        The user ID from the header must match the userId path parameter.
 
   schemas:
     # Primitive types with validation
