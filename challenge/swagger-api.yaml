@@ -1,0 +1,559 @@
+openapi: 3.0.0
+
+info:
+  title: GWI Favorites Service API
+  version: 1.0.0
+  description: |
+    REST API for managing user favorite assets.
+
+    Asset types:
+    - Chart: visual data representation
+    - Insight: textual finding or observation
+    - Audience: demographic segment definition
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Development
+  - url: https://api.gwi.example.com/api/v1
+    description: Future Production
+
+components:
+  schemas:
+    UUID:
+      type: string
+      format: uuid
+      example: 550e8400-e29b-41d4-a716-446655440000
+
+    User:
+      type: object
+      required:
+        - id
+        - created_at
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        created_at:
+          type: string
+          format: date-time
+
+    Asset:
+      type: object
+      required:
+        - id
+        - type
+        - data
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        type:
+          type: string
+          enum: [chart, insight, audience]
+          description: Type of asset
+        data:
+          type: object
+          description: Type-specific asset data
+
+    ChartAsset:
+      allOf:
+        - $ref: '#/components/schemas/Asset'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                title:
+                  type: string
+                x_axis:
+                  type: string
+                y_axis:
+                  type: string
+                data:
+                  type: array
+                  items:
+                    type: number
+
+    InsightAsset:
+      allOf:
+        - $ref: '#/components/schemas/Asset'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                text:
+                  type: string
+                topic:
+                  type: string
+
+    AudienceAsset:
+      allOf:
+        - $ref: '#/components/schemas/Asset'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                gender:
+                  type: string
+                  enum: [Male, Female]
+                birth_country:
+                  type: string
+                age_groups:
+                  type: array
+                  items:
+                    type: string
+                social_media_hours_daily:
+                  type: string
+                purchases_last_month:
+                  type: integer
+
+    Favorite:
+      type: object
+      required:
+        - id
+        - user_id
+        - asset
+        - added_at
+        - is_deleted
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        user_id:
+          $ref: '#/components/schemas/UUID'
+        asset:
+          $ref: '#/components/schemas/Asset'
+        description_override:
+          type: string
+          nullable: true
+          description: User's custom description for this favorite
+        added_at:
+          type: string
+          format: date-time
+        is_deleted:
+          type: boolean
+
+    PaginationInfo:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - total_pages
+        - has_next
+        - has_prev
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total:
+          type: integer
+          minimum: 0
+        total_pages:
+          type: integer
+          minimum: 1
+        has_next:
+          type: boolean
+        has_prev:
+          type: boolean
+
+    PaginatedFavoritesResponse:
+      type: object
+      properties:
+        favorites:
+          type: array
+          items:
+            $ref: '#/components/schemas/Favorite'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    PaginatedUsersResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    PaginatedAssetsResponse:
+      type: object
+      properties:
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Conflict:
+      description: Resource conflict (e.g., already favorited)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+paths:
+  /users:
+    get:
+      summary: List all users
+      description: Retrieve a paginated list of all users in the system.
+      operationId: listUsers
+      parameters:
+        - name: page
+          in: query
+          description: Page number (1-based)
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          description: Results per page (max 100)
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUsersResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      summary: Create a new user
+      description: Create a new user in the system. User ID is generated automatically.
+      operationId: createUser
+      requestBody:
+        description: Optional metadata for the user (currently empty, reserved for future use)
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /users/{userID}:
+    delete:
+      summary: Delete a user
+      description: Delete a user and all their associated data from the system.
+      operationId: deleteUser
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: User deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /assets:
+    get:
+      summary: List all assets
+      description: Retrieve a paginated list of all assets in the system.
+      operationId: listAssets
+      parameters:
+        - name: page
+          in: query
+          description: Page number (1-based)
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          description: Results per page (max 100)
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: type
+          in: query
+          description: Filter by asset type
+          schema:
+            type: string
+            enum: [chart, insight, audience]
+      responses:
+        '200':
+          description: List of assets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAssetsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      summary: Create a new asset
+      description: Create a new asset in the system.
+      operationId: createAsset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+                - data
+              properties:
+                type:
+                  type: string
+                  enum: [chart, insight, audience]
+                  description: Asset type
+                data:
+                  type: object
+                  description: Type-specific asset data
+      responses:
+        '201':
+          description: Asset created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /assets/{assetID}:
+    delete:
+      summary: Delete an asset
+      description: Delete an asset from the system.
+      operationId: deleteAsset
+      parameters:
+        - name: assetID
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: Asset deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /users/{userID}/favorites:
+    get:
+      summary: Get user's favorite assets
+      description: |
+        Retrieve a paginated list of assets favorited by a user.
+        Results are sorted by newest first.
+      operationId: getFavorites
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: page
+          in: query
+          description: Page number (1-based)
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          description: Results per page (max 100)
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: type
+          in: query
+          description: Filter by asset type
+          schema:
+            type: string
+            enum: [chart, insight, audience]
+      responses:
+        '200':
+          description: List of favorites
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFavoritesResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      summary: Add asset to favorites
+      description: Add an asset to a user's favorites list.
+      operationId: addFavorite
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - asset_id
+              properties:
+                asset_id:
+                  $ref: '#/components/schemas/UUID'
+                description:
+                  type: string
+                  description: Optional custom description
+      responses:
+        '201':
+          description: Favorite created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favorite'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /users/{userID}/favorites/{assetID}:
+    put:
+      summary: Update favorite description
+      description: Update the description override for a favorited asset.
+      operationId: updateFavorite
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: assetID
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - description
+              properties:
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Favorite updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favorite'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    delete:
+      summary: Remove asset from favorites
+      description: Remove an asset from a user's favorites list (soft delete).
+      operationId: removeFavorite
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: assetID
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: Favorite removed
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /health:
+    get:
+      summary: Health check
+      description: Check if service is running and database is accessible.
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
