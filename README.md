@@ -1,31 +1,105 @@
-# GlobalWebIndex Engineering Challenge
+# Platform Go Challenge API
 
-## Introduction
+Go-Based REST API for users, assets, and favourites with JWT authentication. Ships with Docker, Swagger UI, and seed data so you can try it immediately.
+This application was made as a deliverble for GWI Engineering Challenge.
+It covers all the basic requirements: 
+- Web server 
+- Endpoint that receives user Id and returns user's favorite assets
+- Endpoints that would add an asset to favourites, remove it, or edit its description
+- Data structure of the assets
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+Extra attributes:
+- PostgreSQL database
+- Dockerfile and docker-compose.yml
+- unit tests
+- swagger documentation
+- JWT authentication (no user roles specified)
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+## Stack
+- Go 1.25.6
+- PostgreSQL 15
+- Docker + docker-compose
+- JWT via github.com/golang-jwt/jwt/v5
+- Password hashing via golang.org/x/crypto/bcrypt
+- Swagger UI via github.com/swaggo/http-swagger
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+## Quickstart (Docker)
+```bash
+cd docker
+docker compose up --build
+```
+- API: http://localhost:8080
+- Swagger UI: http://localhost:8080/swagger/index.html
+- Adminer (DB UI): http://localhost:8081 (System=PostgreSQL, Server=platform-db, Username=user, Password=password as below)
 
-## Challenge
+## Authentication
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+The API uses **JWT (JSON Web Tokens)** for authentication. All protected endpoints require a valid JWT bearer token in the `Authorization` header.
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+### How JWT Authentication Works
+1. **Register or Login**: Call `POST /register` or `POST /login` with credentials to receive a JWT token
+2. **Include Token**: Add the token to subsequent requests using the header: `Authorization: Bearer <your_token>`
+3. **Token Validation**: The API validates the token signature and expiration on each protected route
+4. **Token Expiration**: Tokens expire after 24 hours by default
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+### Configuration
+- **`JWT_SECRET`**: Environment variable for signing tokens (defaults to dev secret if not set)
+- **`AUTH_DISABLED=true`**: Bypass authentication for local testing (not recommended for production)
+- **Algorithm**: HS256 (HMAC with SHA-256)
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+### Seeded Users (for testing)
+- **User ID**: `u1` / **Password**: `alice123`
+- **User ID**: `u2` / **Password**: `bob123`
 
-It is appreciated, though not required, if a Dockerfile is included.
+### Authentication Endpoints
+- **POST /register** — Create new user (requires: `id`, `name`, `password`)
+- **POST /login** — Authenticate and get JWT token (requires: `id`, `password`)
 
-## Submission
+### Example Usage
+```bash
+# 1. Login to get token
+curl -X POST http://localhost:8080/login \
+  -H "Content-Type: application/json" \
+  -d '{"id":"u1","password":"alice123"}'
 
-Just create a fork from the current repo and send it to us!
+# Response: {"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}
 
-Good luck, potential colleague!
+# 2. Use token for protected endpoints
+curl -X GET http://localhost:8080/users/u1/favourites \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### Protected Routes
+All `/users/*` endpoints require valid JWT authentication (unless `AUTH_DISABLED=true`).
+
+## Endpoints (summary)
+- Auth: POST /login, POST /register
+- Health: GET /health
+- Users: GET /users, POST /users
+- Favourites: GET /users/{userId}/favourites, POST /users/{userId}/favourites, PATCH /users/{userId}/favourites/{assetId}, DELETE /users/{userId}/favourites/{assetId}
+- Assets: GET /assets/{id}, POST /assets
+
+See full request/response schemas in Swagger UI.
+http://localhost:8080/swagger/index.html#/
+
+## Database seeding
+`db/init/001_init.sql` creates tables and seeds:
+- Users u1/u2 (with bcrypt password hashes)
+- Sample assets (insight, chart)
+- Sample favourites linking users to assets
+
+## Running tests
+```bash
+go test ./...
+```
+
+## Configuration
+- `DATABASE_URL` (required): postgres connection string.
+- `PORT` (default 8080): HTTP port inside the container/process.
+- `JWT_SECRET`: secret for signing tokens.
+- `AUTH_DISABLED`: set to `true` to bypass auth checks (use only for local testing).
+
+## Useful URLs (Docker defaults)
+- API base: http://localhost:8080
+- Swagger: http://localhost:8080/swagger/index.html
+- Adminer: http://localhost:8081 (server=db, user=user, password=password, database=dashboard)
