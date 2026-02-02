@@ -1,104 +1,148 @@
 # GlobalWebIndex Engineering Challenge – Favorites API (Go)
 
 ## Overview
+
 This project implements a lightweight HTTP API that allows users to manage a list of favorite assets.
 
 The solution focuses on:
-- **Clean API design** (simple REST endpoints)
-- **Type-safe validation** (type-specific payload structs per asset type)
-- **Concurrency-safe in-memory storage** (RWMutex-protected store)
-- **No external dependencies** (standard library only)
+
+* **Clean API design** (simple REST endpoints)
+* **Type-safe validation** (type-specific payload structs per asset type)
+* **Concurrency-safe in-memory storage** (RWMutex-protected store)
+* **No external dependencies** (standard library only)
 
 ---
 
 ## Quickstart
 
 ### Prerequisites
-- Go 1.20+
-- Git
-- Docker 
 
---
+* Go 1.20+
+* Git
+* Docker
 
-### Run with Docker
+---
 
-Build the image:
+## Run with Docker
+
+### Build the image
+
 ```bash
 docker build -t gwi-favorites .
+```
 
-Run the container:
+### Run the container
 
+```bash
 docker run --rm -p 8080:8080 gwi-favorites
+```
 
-Health check:
+### Health check
 
+```bash
 curl http://localhost:8080/health
+```
 
-### Run locally
+---
+
+## Run locally
+
 ```bash
 go run ./cmd/server
+```
 
 Server runs at:
-http://localhost:8080
+`http://localhost:8080`
 
 Health check:
+
+```bash
 curl http://localhost:8080/health
+```
 
-Run tests
+Run tests:
+
+```bash
 go test ./...
+```
 
-API Endpoints
+---
 
-List favorites
-GET /users/{userId}/favorites
+## API Endpoints
+
+### List favorites
+
+**GET** `/users/{userId}/favorites`
 
 Response:
 
+```json
 {
   "items": [ ... ]
 }
+```
 
-Add favorite
-POST /users/{userId}/favorites
+---
 
-Request Body: an asset with supported type and valid payload.
+### Add favorite
 
-Update description
-PATCH /users/{userId}/favorites/{assetId}
+**POST** `/users/{userId}/favorites`
 
-Request Body:
+Request body: an asset with supported type and valid payload.
 
+---
+
+### Update description
+
+**PATCH** `/users/{userId}/favorites/{assetId}`
+
+Request body:
+
+```json
 {
   "description": "updated description"
 }
+```
 
-Remove favorite
-DELETE /users/{userId}/favorites/{assetId}
+---
+
+### Remove favorite
+
+**DELETE** `/users/{userId}/favorites/{assetId}`
 
 Returns:
 
-- 204 No Content on success
+* `204 No Content` on success
+* `404 Not Found` if the asset does not exist
 
-- 404 Not Found if the asset does not exist
+---
 
-Asset Model
+## Asset Model
+
 All asset types share a common wrapper:
 
+```json
 {
   "id": "a1",
   "type": "insight",
   "description": "optional description",
   "payload": { ... }
 }
-The payload structure depends on type and is validated accordingly.
+```
 
-Supported Asset Types & Payload Examples
+The payload structure depends on the asset type and is validated accordingly.
 
-1) Insight
+---
+
+## Supported Asset Types & Payload Examples
+
+### 1) Insight
+
 Represents a short piece of text.
 
 Example:
 
+```json
 {
   "id": "a1",
   "type": "insight",
@@ -107,15 +151,21 @@ Example:
     "text": "Users spend more time on mobile devices"
   }
 }
+```
+
 Validation:
 
-text must be non-empty
+* `text` must be non-empty
 
-2) Chart
+---
+
+### 2) Chart
+
 Represents a chart with minimal metadata.
 
 Example:
 
+```json
 {
   "id": "c1",
   "type": "chart",
@@ -129,20 +179,23 @@ Example:
     "data": [120, 150, 180]
   }
 }
+```
 
 Validation:
 
-- title must be present
+* `title` must be present
+* both axis labels (`x`, `y`) must be non-empty
+* `data` is intentionally flexible to support different chart shapes
 
-- both axis labels (x, y) must be non-empty
+---
 
-- data is intentionally flexible to support different chart shapes
+### 3) Audience
 
-3) Audience
 Represents an audience definition based on one or more dimensions.
 
 Example:
 
+```json
 {
   "id": "aud1",
   "type": "audience",
@@ -152,75 +205,75 @@ Example:
     "birthCountry": ["GR", "DE"]
   }
 }
+```
 
 Validation:
 
-- At least one audience dimension must be provided
+* at least one audience dimension must be provided
 
-Validation Strategy
+---
 
-- Payloads are decoded into type-specific structs
+## Validation Strategy
 
-- Only essential fields are validated (pragmatic correctness)
-
-- Schema is kept flexible to avoid over-constraining future extensions
+* Payloads are decoded into type-specific structs
+* Only essential fields are validated (pragmatic correctness)
+* Schema is kept flexible to avoid over-constraining future extensions
 
 Invalid payloads return:
 
-- 400 Bad Request
+* `400 Bad Request`
 
-Storage & Concurrency
+---
 
-- The service uses an in-memory store backed by:
+## Storage & Concurrency
 
-- userId -> assetId -> asset
+The service uses an in-memory store backed by:
+
+```
+userId -> assetId -> asset
+```
 
 Concurrency guarantees:
 
-- reads via RWMutex to allow parallel access
+* reads via `RWMutex` to allow parallel access
+* writes serialized to ensure consistency
 
-- writes serialized to ensure consistency
+Production alternatives (discussion points):
 
-- Production alternatives (discussion points):
+* PostgreSQL (JSONB payloads)
+* Document store (e.g. MongoDB)
+* Redis cache + persistent storage
 
-- PostgreSQL (JSONB payloads)
+---
 
-- Document store (e.g., MongoDB)
+## Testing
 
-- Redis cache + persistent storage
+Handler-level tests using `httptest` cover:
 
-Testing
+* add & list favorites
+* validation failures
+* update description
+* remove favorite
 
-- Handler-level tests using httptest cover:
+Run tests:
 
-- add + list favorites
-
-- validation failures
-
-- update description
-
-- remove favorite
-
-Run:
-
+```bash
 go test ./...
+```
 
-Trade-offs & Next Steps
+---
 
-Trade-offs:
+## Trade-offs & Next Steps
 
-- No external router library (minimal dependencies)
+### Trade-offs
 
-- Validation focuses on essentials, not strict schemas
+* No external router library (minimal dependencies)
+* Validation focuses on essentials, not strict schemas
+* In-memory store for clarity and speed
 
-- In-memory store for clarity and speed
+### Possible next steps
 
-Possible next steps:
-
-- pagination for list endpoint
-
-- authentication/authorization middleware
-
-- persistent storage
-
-- structured logging + metrics
+* Pagination for list endpoint
+* Authentication / authorization middleware
+* Persistent storage
+* Structured logging & metrics
