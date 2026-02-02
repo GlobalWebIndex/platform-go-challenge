@@ -1,0 +1,8 @@
+**/.git
+**/.gitignore
+**/.DS_Store
+private.pem
+*.log
+tmp/
+bin/
+dist/

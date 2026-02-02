@@ -1,0 +1,11 @@
+httpAddr: ":8080"
+enableDocs: true
+auth:
+  issuer: favourites-api
+  audience: web
+  publicKeyPath: public.pem
+  privateKeyPath: private.pem
+pagination:
+  defaultPage: 1
+  defaultLimit: 20
+  maxLimit: 100

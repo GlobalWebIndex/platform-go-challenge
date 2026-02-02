@@ -1,0 +1,220 @@
+openapi: 3.0.3
+info:
+  title: Favourites API
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080
+paths:
+  /v1/favourites:
+    get:
+      summary: List favourites for the authenticated user
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+          description: Page number (default 1)
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Page size (default 20, max 100)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Paginated favourites
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavouritePage'
+        '401':
+          description: Unauthorized
+    post:
+      summary: Add a new favourite for the authenticated user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddFavouriteRequest'
+      responses:
+        '201':
+          description: Created favourite ID
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Invalid request
+        '401':
+          description: Unauthorized
+  /v1/favourites/{id}:
+    delete:
+      summary: Delete a favourite by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+    patch:
+      summary: Update favourite description
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFavouriteRequest'
+      responses:
+        '204':
+          description: Updated
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+  /v1/assets/{type}/{id}:
+    get:
+      summary: Fetch an asset owned by the authenticated user
+      description: Supported types are `insights`, `audiences`, and `charts`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: [insights, audiences, charts]
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Asset details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Asset:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        ownerUserId:
+          type: string
+        type:
+          type: string
+          enum: [INSIGHT, AUDIENCE, CHART]
+        text:
+          type: string
+        xAxisTitle:
+          type: string
+        yAxisTitle:
+          type: string
+        data:
+          type: array
+          items:
+            type: number
+        sampleSize:
+          type: integer
+        totalRespondents:
+          type: integer
+        estimatedReach:
+          type: integer
+        populationPercent:
+          type: number
+    Favourite:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        type:
+          type: string
+          enum: [INSIGHT, AUDIENCE, CHART]
+        description:
+          type: string
+        asset:
+          $ref: '#/components/schemas/Asset'
+    FavouritePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Favourite'
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+    AddFavouriteRequest:
+      type: object
+      required: [type, assetId]
+      properties:
+        type:
+          type: string
+          enum: [INSIGHT, AUDIENCE, CHART]
+        assetId:
+          type: string
+        description:
+          type: string
+    UpdateFavouriteRequest:
+      type: object
+      properties:
+        description:
+          type: string
