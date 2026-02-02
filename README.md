@@ -1,31 +1,226 @@
-# GlobalWebIndex Engineering Challenge
+# GlobalWebIndex Engineering Challenge – Favorites API (Go)
 
-## Introduction
+## Overview
+This project implements a lightweight HTTP API that allows users to manage a list of favorite assets.
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+The solution focuses on:
+- **Clean API design** (simple REST endpoints)
+- **Type-safe validation** (type-specific payload structs per asset type)
+- **Concurrency-safe in-memory storage** (RWMutex-protected store)
+- **No external dependencies** (standard library only)
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+---
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+## Quickstart
 
-## Challenge
+### Prerequisites
+- Go 1.20+
+- Git
+- Docker 
 
-Let's say that in GWI platform all of our users have access to a huge list of assets. We want our users to have a peronal list of favourites, meaning assets that favourite or “star” so that they have them in their frontpage dashboard for quick access. An asset can be one the following
-* Chart (that has a small title, axes titles and data)
-* Insight (a small piece of text that provides some insight into a topic, e.g. "40% of millenials spend more than 3hours on social media daily")
-* Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent daily on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3 hours on social media daily.
+--
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s favourites. Also we want endpoints that would add an asset to favourites, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+### Run with Docker
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+Build the image:
+```bash
+docker build -t gwi-favorites .
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably
+Run the container:
 
-It is appreciated, though not required, if a Dockerfile is included.
+docker run --rm -p 8080:8080 gwi-favorites
 
-## Submission
+Health check:
 
-Just create a fork from the current repo and send it to us!
+curl http://localhost:8080/health
 
-Good luck, potential colleague!
+### Run locally
+```bash
+go run ./cmd/server
+
+Server runs at:
+http://localhost:8080
+
+Health check:
+curl http://localhost:8080/health
+
+Run tests
+go test ./...
+
+API Endpoints
+
+List favorites
+GET /users/{userId}/favorites
+
+Response:
+
+{
+  "items": [ ... ]
+}
+
+Add favorite
+POST /users/{userId}/favorites
+
+Request Body: an asset with supported type and valid payload.
+
+Update description
+PATCH /users/{userId}/favorites/{assetId}
+
+Request Body:
+
+{
+  "description": "updated description"
+}
+
+Remove favorite
+DELETE /users/{userId}/favorites/{assetId}
+
+Returns:
+
+- 204 No Content on success
+
+- 404 Not Found if the asset does not exist
+
+Asset Model
+All asset types share a common wrapper:
+
+{
+  "id": "a1",
+  "type": "insight",
+  "description": "optional description",
+  "payload": { ... }
+}
+The payload structure depends on type and is validated accordingly.
+
+Supported Asset Types & Payload Examples
+
+1) Insight
+Represents a short piece of text.
+
+Example:
+
+{
+  "id": "a1",
+  "type": "insight",
+  "description": "Example insight",
+  "payload": {
+    "text": "Users spend more time on mobile devices"
+  }
+}
+Validation:
+
+text must be non-empty
+
+2) Chart
+Represents a chart with minimal metadata.
+
+Example:
+
+{
+  "id": "c1",
+  "type": "chart",
+  "description": "Sales performance",
+  "payload": {
+    "title": "Monthly Sales",
+    "axes": {
+      "x": "Month",
+      "y": "Revenue"
+    },
+    "data": [120, 150, 180]
+  }
+}
+
+Validation:
+
+- title must be present
+
+- both axis labels (x, y) must be non-empty
+
+- data is intentionally flexible to support different chart shapes
+
+3) Audience
+Represents an audience definition based on one or more dimensions.
+
+Example:
+
+{
+  "id": "aud1",
+  "type": "audience",
+  "description": "Young adults in EU",
+  "payload": {
+    "ageGroups": ["18-24", "25-34"],
+    "birthCountry": ["GR", "DE"]
+  }
+}
+
+Validation:
+
+- At least one audience dimension must be provided
+
+Validation Strategy
+
+- Payloads are decoded into type-specific structs
+
+- Only essential fields are validated (pragmatic correctness)
+
+- Schema is kept flexible to avoid over-constraining future extensions
+
+Invalid payloads return:
+
+- 400 Bad Request
+
+Storage & Concurrency
+
+- The service uses an in-memory store backed by:
+
+- userId -> assetId -> asset
+
+Concurrency guarantees:
+
+- reads via RWMutex to allow parallel access
+
+- writes serialized to ensure consistency
+
+- Production alternatives (discussion points):
+
+- PostgreSQL (JSONB payloads)
+
+- Document store (e.g., MongoDB)
+
+- Redis cache + persistent storage
+
+Testing
+
+- Handler-level tests using httptest cover:
+
+- add + list favorites
+
+- validation failures
+
+- update description
+
+- remove favorite
+
+Run:
+
+go test ./...
+
+Trade-offs & Next Steps
+
+Trade-offs:
+
+- No external router library (minimal dependencies)
+
+- Validation focuses on essentials, not strict schemas
+
+- In-memory store for clarity and speed
+
+Possible next steps:
+
+- pagination for list endpoint
+
+- authentication/authorization middleware
+
+- persistent storage
+
+- structured logging + metrics
