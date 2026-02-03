@@ -1,0 +1,4 @@
+@host = http://localhost:8080
+
+### Get Metrics (Prometheus)
+GET {{host}}/metrics

@@ -1,0 +1,82 @@
+@host = http://localhost:8080
+
+### Prerequisites: Ensure a user exists. You can use users.http to Sign Up.
+### Login to get Access Token
+# @name login
+POST {{host}}/login
+Content-Type: application/json
+
+{
+    "email": "testuser@example.com",
+    "password": "password123"
+}
+
+@token = {{login.response.body.token}}
+
+### Create a Chart Asset
+POST {{host}}/favorites
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": "550e8400-e29b-41d4-a716-446655440001",
+  "type": "chart",
+  "name": "User Growth Chart",
+  "description": "Chart showing user growth over time",
+  "x_axis": "Date",
+  "y_axis": "Users"
+}
+
+### Create an Insight Asset
+POST {{host}}/favorites
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": "550e8400-e29b-41d4-a716-446655440002",
+  "type": "insight",
+  "name": "Q3 Performance",
+  "description": "Analysis of Q3 sales",
+  "content": "Sales increased by 20% compared to last year."
+}
+
+### Create an Audience Asset
+POST {{host}}/favorites
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": "550e8400-e29b-41d4-a716-446655440003",
+  "type": "audience",
+  "name": "Target Audience",
+  "description": "Females in the US aged 18-35",
+  "rules": {
+    "gender": "Female",
+    "country": "US",
+    "age_min": 18,
+    "age_max": 35
+  }
+}
+
+### List My Favorites (Protected)
+GET {{host}}/favorites
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### Update Asset Description
+PATCH {{host}}/favorites/550e8400-e29b-41d4-a716-446655440001
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "description": "Updated description: User growth chart including Q4 projections"
+}
+
+### Get the Asset by ID
+GET {{host}}/favorites/550e8400-e29b-41d4-a716-446655440001
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### Delete an Asset
+DELETE {{host}}/favorites/550e8400-e29b-41d4-a716-446655440001
+Authorization: Bearer {{token}}

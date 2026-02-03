@@ -1,0 +1,221 @@
+openapi: 3.1.0
+info:
+  title: GlobalWebIndex Engineering Challenge
+  version: 1.0.0
+paths:
+  /signup:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Invalid input
+        '409':
+          description: User already exists
+
+  /login:
+    post:
+      summary: Authenticate user and get token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Invalid credentials
+
+  /favorites:
+    get:
+      summary: List assets
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: A paged list of favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Asset'
+                  total:
+                    type: integer
+
+    post:
+      summary: Add an asset
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Asset'
+      responses:
+        '201':
+          description: Asset created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+
+  /favorites/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    patch:
+      summary: Update description
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Asset updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+
+    delete:
+      summary: Remove asset
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Asset removed
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    UserCredentials:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+
+    Asset:
+      oneOf:
+        - $ref: '#/components/schemas/Chart'
+        - $ref: '#/components/schemas/Insight'
+        - $ref: '#/components/schemas/Audience'
+      discriminator:
+        propertyName: type
+        mapping:
+          chart: '#/components/schemas/Chart'
+          insight: '#/components/schemas/Insight'
+          audience: '#/components/schemas/Audience'
+
+    BaseAsset:
+      type: object
+      required:
+        - id
+        - type
+        - name
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [chart, insight, audience]
+        name:
+          type: string
+        description:
+          type: string
+
+    Chart:
+      allOf:
+        - $ref: '#/components/schemas/BaseAsset'
+        - type: object
+          properties:
+            type:
+              const: chart
+            x_axis:
+              type: string
+            y_axis:
+              type: string
+
+    Insight:
+      allOf:
+        - $ref: '#/components/schemas/BaseAsset'
+        - type: object
+          properties:
+            type:
+              const: insight
+            content:
+              type: string
+
+    Audience:
+      allOf:
+        - $ref: '#/components/schemas/BaseAsset'
+        - type: object
+          properties:
+            type:
+              const: audience
+            rules:
+              type: object
+              properties:
+                gender:
+                  type: string
+                country:
+                  type: string
+                age_min:
+                  type: integer
+                age_max:
+                  type: integer
+              required:
+                - country
