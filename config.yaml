@@ -1,0 +1,18 @@
+# Default configuration for local development.
+# .env file overrides these defaults
+# In production, override via environment variables (API_PORT, HEALTH_PORT).
+api_port: "8000"
+health_port: "8001"
+
+# HTTP server timeouts (optional — defaults: read=15s, write=15s, idle=60s)
+# read_timeout: 15s
+# write_timeout: 15s
+# idle_timeout: 60s
+
+# Rate limiting (optional — 0 = disabled)
+# Limits requests per user per time window to protect against abuse.
+# Can be overridden via RATE_LIMIT_REQUESTS and RATE_LIMIT_WINDOW env vars.
+rate_limit_requests: 100  # Max requests per window per user
+rate_limit_window: 1m     # Time window (e.g., 1m, 30s, 1h)
+
+allow_unsigned_tokens: false # SHOULD BE FALSE IN PRODUCTION! Only for local development/testing.

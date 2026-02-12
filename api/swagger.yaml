@@ -1,0 +1,362 @@
+openapi: 3.0.3
+info:
+    title: Platform Go Challenge - Favourites API
+    description: REST API for managing user favourite assets (charts, insights, audiences).
+    version: 1.0.0
+paths:
+    /api/v1/favourites:
+        get:
+            tags:
+                - Favourites
+            summary: List user favourites
+            description: Returns all favourite assets for the authenticated user.
+            operationId: getUserFavourites
+            security:
+                - BearerAuth: []
+            responses:
+                "200":
+                    description: A list of favourite assets
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/FavouriteAsset'
+                "401":
+                    description: Unauthorized - missing or invalid JWT
+                "406":
+                    description: Not Acceptable - Accept header must include application/json
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "500":
+                    description: Internal server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+        post:
+            tags:
+                - Favourites
+            summary: Add a favourite
+            description: Adds a new asset to the authenticated user's favourites.
+            operationId: addUserFavourite
+            security:
+                - BearerAuth: []
+            requestBody:
+                required: true
+                description: Asset to favourite
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AddFavouriteRequest'
+            responses:
+                "201":
+                    description: Favourite added
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessMessage'
+                "400":
+                    description: Invalid request body or validation error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "401":
+                    description: Unauthorized
+                "406":
+                    description: Not Acceptable - Accept header must include application/json
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "409":
+                    description: Favourite already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "415":
+                    description: Unsupported Media Type - Content-Type must be application/json
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "500":
+                    description: Internal server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+    /api/v1/favourites/{assetID}:
+        patch:
+            tags:
+                - Favourites
+            summary: Update favourite description
+            description: Updates the description of an existing favourite asset.
+            operationId: updateUserFavourite
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: assetID
+                  in: path
+                  description: Unique identifier of the favourite asset
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateDescriptionRequest'
+            responses:
+                "200":
+                    description: Description updated
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessMessage'
+                "400":
+                    description: Invalid request body or validation error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "401":
+                    description: Unauthorized
+                "404":
+                    description: Favourite not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "406":
+                    description: Not Acceptable - Accept header must include application/json
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "415":
+                    description: Unsupported Media Type - Content-Type must be application/json
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "500":
+                    description: Internal server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+        delete:
+            tags:
+                - Favourites
+            summary: Remove a favourite
+            description: Removes an asset from the authenticated user's favourites.
+            operationId: removeUserFavourite
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: assetID
+                  in: path
+                  description: Unique identifier of the favourite asset
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: Favourite removed
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SuccessMessage'
+                "400":
+                    description: Missing asset ID
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "401":
+                    description: Unauthorized
+                "404":
+                    description: Favourite not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "406":
+                    description: Not Acceptable - Accept header must include application/json
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                "500":
+                    description: Internal server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+components:
+    schemas:
+        AddFavouriteRequest:
+            type: object
+            description: Payload for adding a favourite asset. The asset_data shape depends on asset_type.
+            properties:
+                asset_data:
+                    description: Asset payload - one of Chart, Insight or Audience
+                    oneOf:
+                        - $ref: '#/components/schemas/Chart'
+                        - $ref: '#/components/schemas/Insight'
+                        - $ref: '#/components/schemas/Audience'
+                asset_type:
+                    type: string
+                    description: Type of asset being favourited
+                    enum:
+                        - chart
+                        - insight
+                        - audience
+                description:
+                    type: string
+                    description: Optional description for the favourite (max 255 chars)
+            required:
+                - asset_type
+                - asset_data
+        Audience:
+            type: object
+            description: An audience segment asset.
+            properties:
+                age_groups:
+                    type: array
+                    items:
+                        type: string
+                        enum:
+                            - 18-24
+                            - 25-34
+                            - 35-44
+                            - 45-54
+                            - 55+
+                birth_country:
+                    type: array
+                    items:
+                        type: string
+                gender:
+                    type: array
+                    items:
+                        type: string
+                        enum:
+                            - Male
+                            - Female
+                id:
+                    type: string
+                purchases_last_month:
+                    type: integer
+                    description: Must be non-negative
+                social_media_hours_daily:
+                    type: string
+                    enum:
+                        - 0-1
+                        - 1-3
+                        - 3-5
+                        - 5+
+            required:
+                - id
+        Chart:
+            type: object
+            description: A chart asset.
+            properties:
+                data:
+                    type: object
+                    description: Arbitrary chart data points
+                    additionalProperties: {}
+                id:
+                    type: string
+                title:
+                    type: string
+                x_axis_title:
+                    type: string
+                y_axis_title:
+                    type: string
+            required:
+                - id
+                - title
+                - x_axis_title
+                - y_axis_title
+        ErrorResponse:
+            type: object
+            properties:
+                error:
+                    type: string
+                    description: Human-readable error message
+            required:
+                - error
+        FavouriteAsset:
+            type: object
+            description: A user's favourited asset with metadata.
+            properties:
+                asset_type:
+                    type: string
+                    enum:
+                        - chart
+                        - insight
+                        - audience
+                created_at:
+                    type: string
+                    format: date-time
+                data:
+                    description: The full asset object
+                    oneOf:
+                        - $ref: '#/components/schemas/Chart'
+                        - $ref: '#/components/schemas/Insight'
+                        - $ref: '#/components/schemas/Audience'
+                description:
+                    type: string
+                id:
+                    type: string
+                updated_at:
+                    type: string
+                    format: date-time
+                user_id:
+                    type: string
+            required:
+                - id
+                - user_id
+                - asset_type
+                - created_at
+                - updated_at
+                - data
+        Insight:
+            type: object
+            description: An insight asset.
+            properties:
+                id:
+                    type: string
+                text:
+                    type: string
+            required:
+                - id
+                - text
+        SuccessMessage:
+            type: object
+            properties:
+                message:
+                    type: string
+                    description: Success message
+            required:
+                - message
+        UpdateDescriptionRequest:
+            type: object
+            properties:
+                description:
+                    type: string
+                    description: New description (max 255 chars)
+            required:
+                - description
+    securitySchemes:
+        BearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+            description: JWT token with a 'sub' claim identifying the user.
