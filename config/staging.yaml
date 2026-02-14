@@ -1,0 +1,14 @@
+# Staging environment
+# Set JWT_SECRET in environment; do not commit secrets
+server:
+  port: 8080
+  shutdown_timeout_seconds: 15
+  read_timeout_seconds: 15
+  write_timeout_seconds: 15
+  idle_timeout_seconds: 60
+  max_request_body_bytes: 1048576  # 1MB
+  rate_limit_per_second: 50
+  rate_limit_burst: 100
+
+jwt:
+  token_expiry_seconds: 1800  # 30 minutes

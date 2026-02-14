@@ -1,0 +1,14 @@
+# Production environment
+# Always set JWT_SECRET via environment or secret manager
+server:
+  port: 8080
+  shutdown_timeout_seconds: 30
+  read_timeout_seconds: 15
+  write_timeout_seconds: 15
+  idle_timeout_seconds: 60
+  max_request_body_bytes: 1048576  # 1MB
+  rate_limit_per_second: 50
+  rate_limit_burst: 100
+
+jwt:
+  token_expiry_seconds: 900  # 15 minutes

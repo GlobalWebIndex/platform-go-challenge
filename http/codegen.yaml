@@ -1,0 +1,7 @@
+# oapi-codegen: https://github.com/oapi-codegen/oapi-codegen
+# Generate with: go generate ./http  (from repo root)
+package: http
+generate:
+  models: true
+  std-http-server: true
+output: openapi.gen.go

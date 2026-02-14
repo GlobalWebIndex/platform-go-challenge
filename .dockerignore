@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+EXAMPLES.md
+*.md
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+favourites-server
+favourites-server.exe
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test
+*_test.go
+*.test
+coverage.txt
+coverage.html
+
+# Temporary files
+*.tmp
+*.log
+*.out

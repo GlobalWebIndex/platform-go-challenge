@@ -1,0 +1,12 @@
+#Keys
+keys/*.pem
+*.pem
+
+# Build
+*.exe
+server.exe
+
+# IDE / OS
+.idea
+.vscode
+.DS_Store
