@@ -1,0 +1,287 @@
+basePath: /api/v1
+definitions:
+  main.CreateFavouriteRequest:
+    additionalProperties: {}
+    type: object
+  main.EnvelopeHealth:
+    properties:
+      cache:
+        properties:
+          hit_rate:
+            example: 90.00%
+            type: string
+          hits:
+            example: 10
+            type: integer
+          misses:
+            example: 1
+            type: integer
+          size:
+            example: 1
+            type: integer
+        type: object
+      env:
+        example: development
+        type: string
+      status:
+        example: healthy
+        type: string
+      version:
+        example: 1.0.0
+        type: string
+    type: object
+  main.EnvelopeResponse:
+    properties:
+      data: {}
+    type: object
+  main.ErrorResponse:
+    properties:
+      error:
+        example: invalid cursor
+        type: string
+    type: object
+  main.PaginatedFavouritesResponse:
+    properties:
+      data:
+        items: {}
+        type: array
+      meta:
+        $ref: '#/definitions/pagination.Meta'
+    type: object
+  main.UpdateDescriptionRequest:
+    properties:
+      description:
+        example: Updated description
+        type: string
+    type: object
+  pagination.Meta:
+    properties:
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      next_cursor:
+        type: string
+      total:
+        type: integer
+    type: object
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: API for managing user favourite assets
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Favourites API
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      description: Service liveness and cache stats.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.EnvelopeHealth'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Health check
+      tags:
+      - system
+  /users/{userID}/favourites:
+    get:
+      description: Returns paginated favourites for a user using cursor-based pagination
+        (keyset).
+      parameters:
+      - description: User ID (external identifier)
+        example: user-123
+        in: path
+        name: userID
+        required: true
+        type: string
+      - default: 20
+        description: Items per page (1-100)
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Pagination cursor (favourited_at|asset_id). URL-encode when using
+          curl.
+        example: 2026-02-18T15:02:16.236972Z|asset-42
+        in: query
+        name: cursor
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.PaginatedFavouritesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: List user favourites
+      tags:
+      - favourites
+    post:
+      consumes:
+      - application/json
+      description: Adds an asset to a user's favourites. asset_id is an external identifier
+        from upstream systems.
+      parameters:
+      - description: User ID (external identifier)
+        example: user-123
+        in: path
+        name: userID
+        required: true
+        type: string
+      - description: Asset payload
+        in: body
+        name: asset
+        required: true
+        schema:
+          $ref: '#/definitions/main.CreateFavouriteRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/main.EnvelopeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Add favourite
+      tags:
+      - favourites
+  /users/{userID}/favourites/{assetID}:
+    delete:
+      description: Removes an asset from a user's favourites.
+      parameters:
+      - description: User ID
+        example: user-123
+        in: path
+        name: userID
+        required: true
+        type: string
+      - description: Asset ID (external identifier)
+        example: asset-42
+        in: path
+        name: assetID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Remove favourite
+      tags:
+      - favourites
+    get:
+      description: Retrieves a specific favourited asset for a user.
+      parameters:
+      - description: User ID
+        example: user-123
+        in: path
+        name: userID
+        required: true
+        type: string
+      - description: Asset ID (external identifier)
+        example: asset-42
+        in: path
+        name: assetID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.EnvelopeResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Get favourite
+      tags:
+      - favourites
+  /users/{userID}/favourites/{assetID}/description:
+    put:
+      consumes:
+      - application/json
+      description: Updates the description of a favourited asset.
+      parameters:
+      - description: User ID
+        example: user-123
+        in: path
+        name: userID
+        required: true
+        type: string
+      - description: Asset ID
+        example: asset-42
+        in: path
+        name: assetID
+        required: true
+        type: string
+      - description: New description payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.UpdateDescriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Update favourite description
+      tags:
+      - favourites
+swagger: "2.0"
